@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:background="#2f4f4f"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        >
+
+        <TextView
+            android:id="@+id/word_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="accuse of"
+            android:textSize="30dp"
+            android:textColor="#FF7F00"
+        />
+        <TextView
+            android:id="@+id/C_meaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/word_group"
+            android:layout_marginTop="-30dp"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp"
+            android:text="指责；指控"
+            />
+
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>

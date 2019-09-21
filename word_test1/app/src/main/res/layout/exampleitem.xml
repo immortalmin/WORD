@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#2f4f4f">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        >
+
+        <TextView
+            android:id="@+id/word_meaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="指责"
+            android:textSize="20dp"
+            android:textColor="#FF7F00"
+        />
+        <TextView
+            android:id="@+id/E_sentence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/word_meaning"
+            android:singleLine="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:text="The newly described languages were often so strikingly different from the well studied languages of Europe and Southeast Asia that some scholars even accused Boas and Sapir of fabricating their data."
+            />
+
+        <TextView
+            android:id="@+id/C_translate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/E_sentence"
+            android:singleLine="false"
+            android:textSize="15dp"
+            android:textColor="#C0C0C0"
+            android:layout_marginTop="5dp"
+            android:text="相比经过充分研究的欧洲及东南亚语言,这些新近被描述的语言通常表现出明显差异,使得有些学者甚至指责博厄斯和沙比尔伪造数据。"
+            />
+
+
+        <View
+            android:layout_below="@+id/C_translate"
+            android:layout_width="match_parent"
+            android:textColor="#FFFFFF"
+            android:layout_height="1dp" />
+
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>
