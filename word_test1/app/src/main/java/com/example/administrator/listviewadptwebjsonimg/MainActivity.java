@@ -1,6 +1,8 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     JsonRe jsonRe;
     List<Map<String,Object>> word_list=null;
-    Button btn_wordlist,btn_test;
+    Button btn_wordlist,btn_recite,btn_test;
     WordDAO wordDAO = new WordDAO();
     private DBAdapter dbAdapter;
     @Override
@@ -26,9 +28,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btn_wordlist = (Button)findViewById(R.id.btn_wordlist);
+        btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_test = (Button)findViewById(R.id.btn_test);
         btn_wordlist.setOnClickListener(wordlistClick);
-        btn_test.setOnClickListener(testClick);
+        btn_recite.setOnClickListener(reciteClick);
+        btn_test.setOnClickListener(colorTest);
         dbAdapter = new DBAdapter(this);
         dbAdapter.open();
         jsonRe=new JsonRe();
@@ -40,11 +44,25 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     };
-    View.OnClickListener testClick = new View.OnClickListener() {
+    View.OnClickListener reciteClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this,ReciteActivity.class);
             startActivity(intent);
+        }
+    };
+    View.OnClickListener colorTest = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SystemClock.sleep(1000);
+                    btn_test.setBackgroundColor(Color.RED);
+                }
+            }).start();
+//            SystemClock.sleep(1000);
+            btn_test.setBackgroundColor(Color.GREEN);
         }
     };
 

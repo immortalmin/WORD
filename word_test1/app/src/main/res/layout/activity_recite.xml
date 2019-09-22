@@ -27,12 +27,15 @@
             android:id="@+id/sel1"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:background="#b5beb5"
             android:text="指责；指控.....,指责；指控指责；指控,指责；指控指责；指控" />
 
         <Button
             android:id="@+id/sel2"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:background="#b5beb5"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/sel1"
             android:text="对...起作用（有功效）" />
 
@@ -40,6 +43,8 @@
             android:id="@+id/sel3"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:background="#b5beb5"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/sel2"
             android:text="变得习惯于...；使适应于" />
 
@@ -47,6 +52,8 @@
             android:id="@+id/sel4"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:background="#b5beb5"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/sel3"
             android:text="增加，加强" />
     </RelativeLayout>
