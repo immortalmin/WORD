@@ -86,6 +86,7 @@ public class JsonRe {
                 map.put("correct_times",correct_times);
                 map.put("error_times",error_times);
                 map.put("prof_flag",prof_flag);
+                map.put("today_correct_times",0);
                 wordList.add(map);// 将一个节点的数据（一条商家信息）添加到list容器中
             }
         } catch (JSONException e) {
