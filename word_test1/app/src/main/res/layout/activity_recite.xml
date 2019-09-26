@@ -4,8 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/timg5"
     tools:context=".ReciteActivity">
 
+    <TextView
+        android:id="@+id/finish_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="1/5" />
+
+    <TextView
+        android:id="@+id/all_finish_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:text="1/20" />
 
     <TextView
         android:id="@+id/wordview"
@@ -14,6 +36,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:textSize="80px"
+        android:textColor="#FFFFFF"
         android:text="accuse of" />
 
     <RelativeLayout
@@ -27,14 +50,14 @@
             android:id="@+id/sel1"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:background="#b5beb5"
+            android:background="#30000000"
             android:text="指责；指控.....,指责；指控指责；指控,指责；指控指责；指控" />
 
         <Button
             android:id="@+id/sel2"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:background="#b5beb5"
+            android:background="#30000000"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel1"
             android:text="对...起作用（有功效）" />
@@ -43,7 +66,7 @@
             android:id="@+id/sel3"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:background="#b5beb5"
+            android:background="#30000000"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel2"
             android:text="变得习惯于...；使适应于" />
@@ -52,7 +75,7 @@
             android:id="@+id/sel4"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:background="#b5beb5"
+            android:background="#30000000"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel3"
             android:text="增加，加强" />

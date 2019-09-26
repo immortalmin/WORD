@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@mipmap/bk6"
+    android:background="@mipmap/timg1"
     tools:context=".MainActivity">
 
 
@@ -24,12 +24,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:textColor="#4e4b4b"
-        android:text="开始背单词" />
+        android:text="选择模式背单词" />
+
+    <Button
+        android:id="@+id/btn_spell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="拼写模式背单词" />
 
     <Button
         android:id="@+id/btn_test"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="变色测试按钮" />
+        android:text="跳转到例句  测试按钮" />
 
 </LinearLayout>

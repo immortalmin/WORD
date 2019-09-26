@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     JsonRe jsonRe;
     List<Map<String,Object>> word_list=null;
-    Button btn_wordlist,btn_recite,btn_test;
+    Button btn_wordlist,btn_recite,btn_test,btn_spell;
     WordDAO wordDAO = new WordDAO();
     private DBAdapter dbAdapter;
     @Override
@@ -29,10 +29,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btn_wordlist = (Button)findViewById(R.id.btn_wordlist);
         btn_recite = (Button)findViewById(R.id.btn_recite);
+        btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
         btn_wordlist.setOnClickListener(wordlistClick);
         btn_recite.setOnClickListener(reciteClick);
         btn_test.setOnClickListener(colorTest);
+        btn_spell.setOnClickListener(spellClick);
         dbAdapter = new DBAdapter(this);
         dbAdapter.open();
         jsonRe=new JsonRe();
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this,word1Activity.class);
+            startActivity(intent);
+        }
+    };
+    View.OnClickListener spellClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this,spell_reciteActivity.class);
             startActivity(intent);
         }
     };
@@ -54,15 +63,9 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener colorTest = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    SystemClock.sleep(1000);
-                    btn_test.setBackgroundColor(Color.RED);
-                }
-            }).start();
-//            SystemClock.sleep(1000);
-            btn_test.setBackgroundColor(Color.GREEN);
+            Intent intent = new Intent(MainActivity.this, ExampleActivity.class);
+            intent.putExtra("id",String.valueOf(10));
+            startActivity(intent);
         }
     };
 

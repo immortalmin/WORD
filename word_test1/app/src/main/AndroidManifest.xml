@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".word1Activity" />
         <activity android:name=".ExampleActivity" />
-        <activity android:name=".ReciteActivity"></activity>
+        <activity android:name=".ReciteActivity" />
+        <activity android:name=".spell_reciteActivity"></activity>
     </application>
 
 </manifest>
