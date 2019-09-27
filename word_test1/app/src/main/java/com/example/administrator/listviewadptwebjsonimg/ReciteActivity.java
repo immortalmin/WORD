@@ -41,7 +41,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int prof_times = 2;//达到掌握需要的次数
     int correct_sel = 0;//正确答案的下标
     int[] select = null;//下标转换到在recite_list中的下标
-    int[] finishi_ind = new int[10000];//今天是否已经连续背对5次
+    int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
     String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
@@ -59,7 +59,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         finish_view = (TextView)findViewById(R.id.finish_view);
         all_finish_view = (TextView)findViewById(R.id.all_finish_view);
         jsonRe=new JsonRe();
-        Arrays.fill(finishi_ind,0);
+        Arrays.fill(finish_ind,0);
         getrecitelist();
         sel1.setOnClickListener(this);
         sel2.setOnClickListener(this);
@@ -137,7 +137,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         while(true){
             while(true){
                 num = (int)(Math.random()*(recite_num+recite_scope));
-                if(mark[num]==0 && finishi_ind[num]==0){
+                if(mark[num]==0 && finish_ind[num]==0){
                     mark[num]=1;
                     select[count]=num;
                     count++;
@@ -221,7 +221,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             correct_word.put("today_correct_times",correct_to_times+1);
             if(correct_to_times+1 >= c_times){
                 correct_word.put("correct_times",correct_all_times+1);
-                finishi_ind[select[correct_sel]]=1;
+                finish_ind[select[correct_sel]]=1;
                 finish_num++;
                 //如果答对单词的次数达到掌握的程度，就进行标记
                 if(correct_all_times+1>=prof_times){
