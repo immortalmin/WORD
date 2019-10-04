@@ -94,4 +94,62 @@ public class JsonRe {
         }
         return wordList;
     }
+    public List<Map<String, Object>>  getSpanish(String jsonStr) {
+        HttpGetContext  httpGetContext=new HttpGetContext();
+        wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
+        Map<String, Object> map = new HashMap<String, Object>();
+        List<String> shitai = new ArrayList<String>();
+        shitai.add("陈述式-现在时");
+        shitai.add("虚拟式-现在时");
+        shitai.add("陈述式-现在完成时");
+        shitai.add("虚拟式-现在完成时");
+        shitai.add("陈述式-将来完成时");
+        shitai.add("虚拟式-将来完成时");
+        shitai.add("陈述式-将来时");
+        shitai.add("虚拟式-将来时");
+        shitai.add("陈述式-过去未完成时");
+        shitai.add("虚拟式-过去未完成时A");
+        shitai.add("陈述式-简单过去时");
+        shitai.add("虚拟式-过去未完成时B");
+        shitai.add("陈述式-过去完成时");
+        shitai.add("虚拟式-过去完成时A");
+        shitai.add("陈述式-先过去时");
+        shitai.add("虚拟式-过去完成时B");
+        shitai.add("简单条件式");
+        shitai.add("复合条件式");
+        shitai.add("命令式-肯定时");
+        shitai.add("命令式-否定时");
+        try {
+            JSONArray  jsonArray=new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++)
+            {
+                //jsonArray.length()获取json中数组元素的个数
+                map = new HashMap<String, Object>();
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);//获取数组中第i个数组元素
+                String word = jsonObject.getString("word");
+                String va_b = jsonObject.getString("variable bit");
+                JSONObject variable_bit = new JSONObject(va_b);
+//                Log.i("variable_bit",variable_bit.toString());
+                Map<String, Object> v_bit = new HashMap<String, Object>();
+                for(int j=0;j<shitai.size();j++){
+                    String st = variable_bit.getString(shitai.get(j));
+                    Map<String, Object> six = new HashMap<String, Object>();
+                    JSONObject va_b2 = new JSONObject(st);
+                    six.put("yo",va_b2.get("yo"));
+                    six.put("tú",va_b2.get("tú"));
+                    six.put("él",va_b2.get("él"));
+                    six.put("nos.",va_b2.get("nos."));
+                    six.put("vos.",va_b2.get("vos."));
+                    six.put("ellos.",va_b2.get("ellos."));
+                    v_bit.put(shitai.get(j),six);
+                }
+                map.put("word",word);
+                map.put("va_b",v_bit);
+                wordList.add(map);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return wordList;
+    }
 }

@@ -21,7 +21,8 @@
         <activity android:name=".word1Activity" />
         <activity android:name=".ExampleActivity" />
         <activity android:name=".ReciteActivity" />
-        <activity android:name=".spell_reciteActivity"></activity>
+        <activity android:name=".spell_reciteActivity" />
+        <activity android:name=".SpanishActivity"></activity>
     </application>
 
 </manifest>
