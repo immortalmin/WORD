@@ -43,10 +43,13 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int[] select = null;//下标转换到在recite_list中的下标
     int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
-    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
-    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
+//    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
+    String word_info_url="http://47.97.116.200/word/querybyid.php?id=";
+//    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
+    String recite_list_url="http://47.97.116.200/word/getrecitelist.php?mount=";
     //http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
-    String update_url="http://192.168.57.1/word/update_recite.php?";
+//    String update_url="http://192.168.57.1/word/update_recite.php?";
+    String update_url="http://47.97.116.200/word/update_recite.php?";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         wordview = (TextView)findViewById(R.id.wordview);
         finish_view = (TextView)findViewById(R.id.finish_view);
         all_finish_view = (TextView)findViewById(R.id.all_finish_view);
+        mHandler.obtainMessage(1).sendToTarget();//清空内容
         jsonRe=new JsonRe();
         Arrays.fill(finish_ind,0);
         getrecitelist();
@@ -119,7 +123,15 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 wordview.setText(recite_info.get("wordview").toString());
                 finish_view.setText(recite_info.get("finish_view").toString());
                 all_finish_view.setText(recite_info.get("all_finish_view").toString());
-                Log.i("handler",recite_info.toString());
+//                Log.i("handler",recite_info.toString());
+            }else if(msg.what==1){
+                wordview.setText("");
+                finish_view.setText("");
+                all_finish_view.setText("");
+                sel1.setText("");
+                sel2.setText("");
+                sel3.setText("");
+                sel4.setText("");
             }
         }
     };

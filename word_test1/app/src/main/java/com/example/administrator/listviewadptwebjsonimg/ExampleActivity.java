@@ -25,7 +25,8 @@ public class ExampleActivity extends AppCompatActivity {
     ListView example_list;
     JsonRe  jsonRe;
     List<Map<String,Object>> word_list=null;
-    String  url="http://192.168.57.1/word/querybyid.php?id=";
+//    String  url="http://192.168.57.1/word/querybyid.php?id=";
+    String  url="http://47.97.116.200/word/querybyid.php?id=";
     String id = "1";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ExampleActivity extends AppCompatActivity {
         word_group = (TextView)findViewById(R.id.word_group);
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
+        mHandler.obtainMessage(1).sendToTarget();
         getwordlist();
         jsonRe=new JsonRe();
         Intent intent = getIntent();
@@ -59,30 +61,30 @@ public class ExampleActivity extends AppCompatActivity {
     }
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg){
-            word_list = (List<Map<String,Object>>)msg.obj;
-            Map<String,Object> word = word_list.get(0);
+            if(msg.what == 0){
+                word_list = (List<Map<String,Object>>)msg.obj;
+                Map<String,Object> word = word_list.get(0);
 //            Log.i("word",word.toString());
-            List<Map<String,Object>> translates = (List<Map<String,Object>>)word.get("translate");
-            page.setText("页码："+word.get("page").toString());
-            word_group.setText(word.get("word_group").toString());
-            C_meaning.setText(word.get("C_meaning").toString());
-            if(translates.size() == 0){
-                Log.i("translates","为空");
-                non_example.setVisibility(View.VISIBLE);
-                example_list.setVisibility(View.GONE);
+                List<Map<String,Object>> translates = (List<Map<String,Object>>)word.get("translate");
+                page.setText("页码："+word.get("page").toString());
+                word_group.setText(word.get("word_group").toString());
+                C_meaning.setText(word.get("C_meaning").toString());
+                if(translates.size() == 0){
+                    Log.i("translates","为空");
+                    non_example.setVisibility(View.VISIBLE);
+                    example_list.setVisibility(View.GONE);
+                }
+                SimpleAdapter adapter = new SimpleAdapter(ExampleActivity.this,
+                        translates,R.layout.exampleitem,new String[]{
+                        "word_meaning","E_sentence","C_translate"},
+                        new int[]{R.id.word_meaning,R.id.E_sentence,R.id.C_translate});
+                example_list.setAdapter(adapter);
+            }else if (msg.what==1){
+                page.setText("");
+                word_group.setText("");
+                C_meaning.setText("");
             }
-//            Map<String,Object> translate = translates.get(0);
-//            String wordmeaning = translate.get("word_meaning").toString();
-//            String Esentence = translate.get("E_sentence").toString();
-//            String Ctranslate = translate.get("C_translate").toString();
-//            word_meaning.setText(wordmeaning);
-//            E_sentence.setText(Esentence);
-//            C_translate.setText(Ctranslate);
-            SimpleAdapter adapter = new SimpleAdapter(ExampleActivity.this,
-                    translates,R.layout.exampleitem,new String[]{
-                    "word_meaning","E_sentence","C_translate"},
-                    new int[]{R.id.word_meaning,R.id.E_sentence,R.id.C_translate});
-            example_list.setAdapter(adapter);
+
         }
     };
 }

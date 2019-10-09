@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+//    lintOptions{
+//        checkReleaseBuilds false
+//        abortOnError false
+//    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.administrator.listviewadptwebjsonimg"

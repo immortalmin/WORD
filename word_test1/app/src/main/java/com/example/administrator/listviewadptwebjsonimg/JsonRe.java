@@ -15,7 +15,8 @@ public class JsonRe {
 
     List<Map<String, Object>> wordInfoList;// 定义List容器，节点类型是map
     List<Map<String, Object>> wordList;// 定义List容器，节点类型是map
-    String hostip="http://192.168.57.1/";
+//    String hostip="http://192.168.57.1/";
+    String hostip="http://47.97.116.200/";
     //商家数据json数据(商家基本信息)转arraylist格式商家数据
     public List<Map<String, Object>>  getWordList(String jsonStr) {
         HttpGetContext  httpGetContext=new HttpGetContext();

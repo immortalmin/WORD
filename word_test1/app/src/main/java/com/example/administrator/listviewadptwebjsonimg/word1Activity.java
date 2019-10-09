@@ -27,7 +27,8 @@ public class word1Activity extends AppCompatActivity {
     JsonRe  jsonRe;
     ListView listView;
     List<Map<String,Object>> word_list=null; //商家列表数据arraylist数组
-    String  url="http://192.168.57.1/word/db3-conn.php"; //获取商家基本信息的API
+//    String  url="http://192.168.57.1/word/db3-conn.php"; //获取商家基本信息的API
+    String  url="http://47.97.116.200/word/db3-conn.php"; //获取商家基本信息的API
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

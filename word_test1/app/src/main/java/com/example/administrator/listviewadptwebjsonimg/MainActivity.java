@@ -63,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener colorTest = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MainActivity.this,SpanishActivity.class);
-            startActivity(intent);
+
         }
     };
 
