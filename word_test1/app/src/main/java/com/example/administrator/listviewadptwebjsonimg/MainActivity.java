@@ -1,9 +1,15 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+//import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,25 +25,32 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     JsonRe jsonRe;
+    private Context context;
     List<Map<String,Object>> word_list=null;
     Button btn_wordlist,btn_recite,btn_test,btn_spell;
     WordDAO wordDAO = new WordDAO();
+    private SoundPool soundPool;
+    private int sound_success,sound_fail;
     private DBAdapter dbAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
         btn_wordlist = (Button)findViewById(R.id.btn_wordlist);
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
         btn_wordlist.setOnClickListener(wordlistClick);
         btn_recite.setOnClickListener(reciteClick);
-        btn_test.setOnClickListener(colorTest);
+        btn_test.setOnClickListener(Test);
         btn_spell.setOnClickListener(spellClick);
         dbAdapter = new DBAdapter(this);
         dbAdapter.open();
         jsonRe=new JsonRe();
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        sound_success = soundPool.load(this, R.raw.success, 1);
+        sound_fail = soundPool.load(this, R.raw.fail, 1);
     }
     View.OnClickListener wordlistClick = new View.OnClickListener() {
         @Override
@@ -60,10 +73,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     };
-    View.OnClickListener colorTest = new View.OnClickListener() {
+    View.OnClickListener Test = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            Log.i("music","play");
+            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
         }
     };
 

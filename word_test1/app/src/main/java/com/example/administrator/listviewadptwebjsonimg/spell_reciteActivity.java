@@ -2,6 +2,8 @@ package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -32,25 +34,30 @@ public class spell_reciteActivity extends AppCompatActivity {
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     Runnable correct_action,worry_action,spell_update;
     private Context context;
+    private SoundPool soundPool;
+    private int sound_success,sound_fail;
     TextView cword,numInfo1,numInfo2;
     EditText eword;
     JsonRe  jsonRe;
     List<Map<String,Object>> spell_list=null;
     Map<String,Object> update_word = new HashMap<String, Object>();
-    int spell_num = 3;//今天要背的单词数
+    int spell_num = 20;//今天要背的单词数
     int finish_num = 0;//今天背完的单词数
     int word_index = -1;//当前单词的下标
     Boolean once_flag = true;//是否第一次就拼写正确
     int[] finish_ind = new int[1000];//用于标记是否该单词是否还需要背
 //    String spell_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
-    String spell_list_url="http://47.97.116.200/word/getrecitelist.php?mount=";
+    String spell_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
 //    String update_url="http://192.168.57.1/word/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
-    String update_url="http://47.97.116.200/word/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
+    String update_url="http://47.98.239.237/word/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spell_recite);
         context = this;
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        sound_success = soundPool.load(this, R.raw.success, 1);
+        sound_fail = soundPool.load(this, R.raw.fail, 1);
         cword = (TextView)findViewById(R.id.cword);
         numInfo1 = (TextView)findViewById(R.id.numInfo1);
         numInfo2 = (TextView)findViewById(R.id.numInfo2);
@@ -116,6 +123,7 @@ public class spell_reciteActivity extends AppCompatActivity {
                 int correct_times = Integer.valueOf(word.get("correct_times").toString());
                 int error_times = Integer.valueOf(word.get("error_times").toString());
                 if(ans.equals(correct_ans)){
+                    soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     if(once_flag){
                         finish_ind[word_index]=1;
                         finish_num++;
@@ -125,6 +133,7 @@ public class spell_reciteActivity extends AppCompatActivity {
                     showMyToast(Toast.makeText(context,"回答正确",Toast.LENGTH_LONG),500);
                     scheduledThreadPool.schedule(correct_action,500, TimeUnit.MILLISECONDS);
                 }else{
+                    soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
                     once_flag = false;
                     word.put("error_times",error_times+1);
                     showMyToast(Toast.makeText(context,"回答错误",Toast.LENGTH_LONG),300);

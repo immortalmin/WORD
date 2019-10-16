@@ -2,9 +2,12 @@ package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +32,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     ExecutorService mExecutorService = null;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     Runnable changeColor,update_recite_data;
+    Vibrator vibrator;//vibrator.vibrate(30);
+    private SoundPool soundPool;
+    private int sound_success,sound_fail;
     Button sel1,sel2,sel3,sel4;
     TextView wordview,finish_view,all_finish_view;
     JsonRe  jsonRe;
@@ -44,16 +50,20 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
 //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
-    String word_info_url="http://47.97.116.200/word/querybyid.php?id=";
+    String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
 //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
-    String recite_list_url="http://47.97.116.200/word/getrecitelist.php?mount=";
+    String recite_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
     //http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
 //    String update_url="http://192.168.57.1/word/update_recite.php?";
-    String update_url="http://47.97.116.200/word/update_recite.php?";
+    String update_url="http://47.98.239.237/word/update_recite.php?";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recite);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        sound_success = soundPool.load(this, R.raw.success, 1);
+        sound_fail = soundPool.load(this, R.raw.fail, 1);
         sel1 = (Button)findViewById(R.id.sel1);
         sel2 = (Button)findViewById(R.id.sel2);
         sel3 = (Button)findViewById(R.id.sel3);
@@ -229,7 +239,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         int user_error_times = Integer.parseInt(recite_list.get(select[user_sel]).get("error_times").toString());
         Map<String,Object> correct_word = recite_list.get(select[correct_sel]);
         Map<String,Object> user_word = recite_list.get(select[user_sel]);
-        if(user_sel == correct_sel){
+        if(user_sel == correct_sel){//回答正确
+            soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
             correct_word.put("today_correct_times",correct_to_times+1);
             if(correct_to_times+1 >= c_times){
                 correct_word.put("correct_times",correct_all_times+1);
@@ -241,7 +252,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
             recite_list.set(select[correct_sel],correct_word);
-        }else{
+        }else{//回答错误
+            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
             correct_word.put("today_correct_times",0);
             correct_word.put("error_times",correct_error_times+1);
             user_word.put("today_correct_times",0);

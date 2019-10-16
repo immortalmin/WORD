@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-//    lintOptions{
-//        checkReleaseBuilds false
-//        abortOnError false
-//    }
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.administrator.listviewadptwebjsonimg"
@@ -15,10 +15,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         useLibrary 'org.apache.http.legacy'
     }
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                // 此处指定生成的apk文件名
+                outputFileName = "lianlian.apk"
+            }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            aaptOptions.cruncherEnabled = false
+            aaptOptions.useNewCruncher = false
         }
     }
 }
