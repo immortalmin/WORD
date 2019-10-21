@@ -1,6 +1,7 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
@@ -8,6 +9,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(this, R.raw.success, 1);
         sound_fail = soundPool.load(this, R.raw.fail, 1);
+
     }
     View.OnClickListener wordlistClick = new View.OnClickListener() {
         @Override
@@ -76,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener Test = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.i("music","play");
-            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+            Log.i("test","test");
         }
     };
+
 
 }

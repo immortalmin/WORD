@@ -27,6 +27,7 @@
         android:background="@null"
         android:textAlignment="center"
         android:textSize="24dp"
+        android:inputType="none"
         android:text=""/>
 
     <TextView

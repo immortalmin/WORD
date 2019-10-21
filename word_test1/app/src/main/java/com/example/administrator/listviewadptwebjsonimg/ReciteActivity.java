@@ -1,5 +1,7 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -8,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +39,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     Vibrator vibrator;//vibrator.vibrate(30);
     private SoundPool soundPool;
     private int sound_success,sound_fail;
-    Button sel1,sel2,sel3,sel4;
+    static Activity ActivityRA;
+    AlertDialog finish_Dialog;
+    Button sel1,sel2,sel3,sel4,sel5;
     TextView wordview,finish_view,all_finish_view;
     JsonRe  jsonRe;
     Boolean flag=Boolean.FALSE;
@@ -44,11 +50,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int recite_num = 20;//今天要背的单词数
     int recite_scope = 10;//额外加入的单词数
     int c_times = 2;//每个单词变成今天背完需要的次数
-    int prof_times = 2;//达到掌握需要的次数
+    int prof_times = 5;//达到掌握需要的次数
     int correct_sel = 0;//正确答案的下标
     int[] select = null;//下标转换到在recite_list中的下标
     int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
+    int pre_ind = 0;//上一个单词的id
 //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
 //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
@@ -64,10 +71,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(this, R.raw.success, 1);
         sound_fail = soundPool.load(this, R.raw.fail, 1);
+        ActivityRA = this;
         sel1 = (Button)findViewById(R.id.sel1);
         sel2 = (Button)findViewById(R.id.sel2);
         sel3 = (Button)findViewById(R.id.sel3);
         sel4 = (Button)findViewById(R.id.sel4);
+        sel5 = (Button)findViewById(R.id.sel5);
         wordview = (TextView)findViewById(R.id.wordview);
         finish_view = (TextView)findViewById(R.id.finish_view);
         all_finish_view = (TextView)findViewById(R.id.all_finish_view);
@@ -79,6 +88,35 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         sel2.setOnClickListener(this);
         sel3.setOnClickListener(this);
         sel4.setOnClickListener(this);
+        sel5.setOnClickListener(this);
+        finish_Dialog = new AlertDialog.Builder(this)
+                .setTitle("任务完成")
+                .setMessage("返回主页")
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        Toast.makeText(ReciteActivity.this, "这是确定按钮", Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(ReciteActivity.this, "这是取消按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(ReciteActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create();
         changeColor = new Runnable(){
             public void run(){
                 sel1.setBackgroundColor(Color.parseColor("#30000000"));
@@ -86,10 +124,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel3.setBackgroundColor(Color.parseColor("#30000000"));
                 sel4.setBackgroundColor(Color.parseColor("#30000000"));
                 if(finish_num>=recite_num){
-//                    Log.i("背诵完成",recite_list.toString());
                     scheduledThreadPool.schedule(update_recite_data,0, TimeUnit.MILLISECONDS);
-                    Intent intent = new Intent(ReciteActivity.this,MainActivity.class);
-                    startActivity(intent);
                 }else{
                     recite();
                 }
@@ -98,17 +133,16 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         update_recite_data = new Runnable() {
             @Override
             public void run() {
-                Log.i("update_recite_data","开始更新数据库");
                 HttpGetContext httpGetContext=new HttpGetContext();
                 for(int i=0;i<recite_list.size();i++){
-//                    Log.i("update",recite_list.get(i).toString());
                     httpGetContext.update_recite_list(update_url+"id="+recite_list.get(i).get("id")+"&correct_times="+recite_list.get(i).get("correct_times")+"&error_times="+recite_list.get(i).get("error_times")+"&prof_flag="+recite_list.get(i).get("prof_flag"));
                 }
                 Log.i("update_recite_data","更新数据库完成");
+                mHandler.obtainMessage(2).sendToTarget();
             }
         };
-    }
 
+    }
     /**
      * 获取今天要背的单词列表
      */
@@ -142,6 +176,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel2.setText("");
                 sel3.setText("");
                 sel4.setText("");
+            }else if(msg.what==2){//弹出alertdialog
+                finish_Dialog.show();
             }
         }
     };
@@ -159,7 +195,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         while(true){
             while(true){
                 num = (int)(Math.random()*(recite_num+recite_scope));
-                if(mark[num]==0 && finish_ind[num]==0){
+                if(mark[num]==0 && finish_ind[num]==0 && num!=pre_ind){
                     mark[num]=1;
                     select[count]=num;
                     count++;
@@ -171,6 +207,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
         correct_sel = (int)(Math.random()*4);
+        pre_ind = select[correct_sel];
         Map<String, Object> recite_info = new HashMap<String, Object>();
         recite_info.put("wordview",recite_list.get(select[correct_sel]).get("word_group").toString());
         recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times").toString()+"/"+String.valueOf(c_times));
@@ -224,6 +261,10 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
+            case R.id.sel5:
+                update_recite_list(-1);
+                scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
+                break;
         }
     }
     public void update_recite_list(int user_sel){
@@ -233,41 +274,47 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         int correct_all_times = Integer.parseInt(recite_list.get(select[correct_sel]).get("correct_times").toString());
         //正确选项错误的次数
         int correct_error_times = Integer.parseInt(recite_list.get(select[correct_sel]).get("error_times").toString());
-        //用户选择的选项连续正确的次数
-        int user_to_times = Integer.parseInt(recite_list.get(select[user_sel]).get("today_correct_times").toString());
-        //用户选择的选项错误的次数
-        int user_error_times = Integer.parseInt(recite_list.get(select[user_sel]).get("error_times").toString());
         Map<String,Object> correct_word = recite_list.get(select[correct_sel]);
-        Map<String,Object> user_word = recite_list.get(select[user_sel]);
-        if(user_sel == correct_sel){//回答正确
-            soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
-            correct_word.put("today_correct_times",correct_to_times+1);
-            if(correct_to_times+1 >= c_times){
-                correct_word.put("correct_times",correct_all_times+1);
-                finish_ind[select[correct_sel]]=1;
-                finish_num++;
-                //如果答对单词的次数达到掌握的程度，就进行标记
-                if(correct_all_times+1>=prof_times){
-                    correct_word.put("prof_flag",1);
-                }
-            }
-            recite_list.set(select[correct_sel],correct_word);
-        }else{//回答错误
+        if(user_sel==-1){//选择了"不知道"选项
             soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
             correct_word.put("today_correct_times",0);
             correct_word.put("error_times",correct_error_times+1);
-            user_word.put("today_correct_times",0);
-            user_word.put("error_times",user_error_times+1);
             recite_list.set(select[correct_sel],correct_word);
-            recite_list.set(select[user_sel],user_word);
             jump_to_example(select[correct_sel]);
+        }else{
+            //用户选择的选项连续正确的次数
+//            int user_to_times = Integer.parseInt(recite_list.get(select[user_sel]).get("today_correct_times").toString());
+            //用户选择的选项错误的次数
+            int user_error_times = Integer.parseInt(recite_list.get(select[user_sel]).get("error_times").toString());
+            Map<String,Object> user_word = recite_list.get(select[user_sel]);
+            if(user_sel == correct_sel){//回答正确
+                soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
+                correct_word.put("today_correct_times",correct_to_times+1);
+                if(correct_to_times+1 >= c_times){
+                    correct_word.put("correct_times",correct_all_times+1);
+                    finish_ind[select[correct_sel]]=1;
+                    finish_num++;
+                    //如果答对单词的次数达到掌握的程度，就进行标记
+                    if(correct_all_times+1>=prof_times){
+                        correct_word.put("prof_flag",1);
+                    }
+                }
+                recite_list.set(select[correct_sel],correct_word);
+            }else{//回答错误
+                soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+                correct_word.put("today_correct_times",0);
+                correct_word.put("error_times",correct_error_times+1);
+                user_word.put("today_correct_times",0);
+                user_word.put("error_times",user_error_times+1);
+                recite_list.set(select[correct_sel],correct_word);
+                recite_list.set(select[user_sel],user_word);
+                jump_to_example(select[correct_sel]);
+            }
         }
-        Log.i("已答对的单词数",String.valueOf(finish_num));
-        Log.i("该单词今天答对的次数",correct_word.get("today_correct_times").toString());
-        Log.i("recite_list",recite_list.toString());
+
     }
     public void jump_to_example(int id){
-        Log.i("跳转到例句",recite_list.get(id).get("word_group").toString());
+//        Log.i("跳转到例句",recite_list.get(id).get("word_group").toString());
         Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);

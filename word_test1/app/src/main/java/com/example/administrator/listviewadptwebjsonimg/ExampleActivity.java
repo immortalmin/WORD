@@ -42,10 +42,10 @@ public class ExampleActivity extends AppCompatActivity {
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
         mHandler.obtainMessage(1).sendToTarget();
-        getwordlist();
         jsonRe=new JsonRe();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
+        getwordlist();
     }
     private void getwordlist()
     {

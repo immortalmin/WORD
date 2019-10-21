@@ -1,6 +1,7 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -8,8 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.renderscript.Sampler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,12 +42,14 @@ public class spell_reciteActivity extends AppCompatActivity {
     TextView cword,numInfo1,numInfo2;
     EditText eword;
     JsonRe  jsonRe;
+    AlertDialog finish_Dialog;
     List<Map<String,Object>> spell_list=null;
     Map<String,Object> update_word = new HashMap<String, Object>();
     int spell_num = 20;//今天要背的单词数
     int finish_num = 0;//今天背完的单词数
     int word_index = -1;//当前单词的下标
     Boolean once_flag = true;//是否第一次就拼写正确
+    Boolean btn_flag = true;
     int[] finish_ind = new int[1000];//用于标记是否该单词是否还需要背
 //    String spell_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
     String spell_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
@@ -62,6 +67,7 @@ public class spell_reciteActivity extends AppCompatActivity {
         numInfo1 = (TextView)findViewById(R.id.numInfo1);
         numInfo2 = (TextView)findViewById(R.id.numInfo2);
         eword = (EditText) findViewById(R.id.eword);
+//        eword.setInputType(InputType.TYPE_CLASS_NUMBER);
         mHandler.obtainMessage(2).sendToTarget();//清空内容
         Arrays.fill(finish_ind,0);
         eword.setOnEditorActionListener(ewordEd);
@@ -73,14 +79,13 @@ public class spell_reciteActivity extends AppCompatActivity {
         correct_action = new Runnable() {
             @Override
             public void run() {
-                eword.setText("");
+                mHandler.obtainMessage(3).sendToTarget();
                 if(finish_num == spell_num){
                     update_recite_date();
-                    Intent intent = new Intent(spell_reciteActivity.this, MainActivity.class);
-                    startActivity(intent);
                 }else{
                     start_spell();
                 }
+                btn_flag = true;
             }
         };
         /**
@@ -90,7 +95,8 @@ public class spell_reciteActivity extends AppCompatActivity {
             @Override
             public void run() {
                 jump_to_example(spell_list.get(word_index).get("id").toString());
-                eword.setText("");
+                mHandler.obtainMessage(3).sendToTarget();
+                btn_flag = true;
             }
         };
         /**
@@ -107,6 +113,33 @@ public class spell_reciteActivity extends AppCompatActivity {
                 httpGetContext.httpclientgettext(update_url+"id="+id+"&correct_times="+correct_times+"&error_times="+error_times+"&prof_flag="+prof_flag);
             }
         };
+        finish_Dialog = new AlertDialog.Builder(this)
+                .setTitle("任务完成")
+                .setMessage("返回主页")
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(spell_reciteActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(spell_reciteActivity.this, "这是取消按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(spell_reciteActivity.this, "备用按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create();
     }
 
     /**
@@ -116,7 +149,8 @@ public class spell_reciteActivity extends AppCompatActivity {
     TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            if ((keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction())) {
+            if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+                btn_flag = false;
                 String ans = eword.getText().toString();
                 String correct_ans = spell_list.get(word_index).get("word_group").toString();
                 Map<String,Object> word = spell_list.get(word_index);
@@ -210,6 +244,10 @@ public class spell_reciteActivity extends AppCompatActivity {
                 numInfo1.setText("");
                 numInfo2.setText("");
                 cword.setText("");
+            }else if(msg.what==3){//清空输入框的内容
+                eword.setText("");
+            }else if(msg.what==4){//弹出alertdialog
+                finish_Dialog.show();
             }
         }
     };
@@ -236,5 +274,6 @@ public class spell_reciteActivity extends AppCompatActivity {
             scheduledThreadPool.schedule(spell_update,0, TimeUnit.MILLISECONDS);
         }
         Log.i("update","更新数据库完成");
+        mHandler.obtainMessage(4).sendToTarget();
     }
 }

@@ -72,13 +72,24 @@
             android:text="变得习惯于...；使适应于" />
 
         <Button
-            android:id="@+id/sel4"
-            android:layout_width="300dp"
-            android:layout_height="60dp"
-            android:background="#30000000"
+        android:id="@+id/sel4"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="#30000000"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/sel3"
+        android:text="增加，加强" />
+
+        <Button
+            android:id="@+id/sel5"
+            android:layout_width="150dp"
+            android:layout_height="30dp"
+            android:background="#40ed0808"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/sel3"
-            android:text="增加，加强" />
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/sel4"
+            android:textColor="#FFFFFF"
+            android:text="不知道" />
     </RelativeLayout>
 
 </RelativeLayout>
