@@ -28,6 +28,7 @@
         android:textAlignment="center"
         android:textSize="24dp"
         android:inputType="none"
+        android:textCursorDrawable="@drawable/cursor"
         android:text=""/>
 
     <TextView

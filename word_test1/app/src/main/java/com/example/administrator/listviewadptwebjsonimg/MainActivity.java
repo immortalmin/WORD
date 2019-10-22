@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private DBAdapter dbAdapter;
+    Boolean flag=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,5 +86,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (flag && (keyCode == KeyEvent.KEYCODE_BACK)) {
+            Toast.makeText(this, "按下了back键   onKeyDown()", Toast.LENGTH_SHORT).show();
+            return false;
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 
 }

@@ -42,7 +42,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     TextView cword,numInfo1,numInfo2;
     EditText eword;
     JsonRe  jsonRe;
-    AlertDialog finish_Dialog;
+    AlertDialog finish_Dialog,interrupt_Dialog;
     List<Map<String,Object>> spell_list=null;
     Map<String,Object> update_word = new HashMap<String, Object>();
     int spell_num = 20;//今天要背的单词数
@@ -140,6 +140,34 @@ public class spell_reciteActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+        interrupt_Dialog = new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确定要退出?")
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent=new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(spell_reciteActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(spell_reciteActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create();
+//        WordList wordList = getIntent().getParcelableExtra("wordlist");
+//        Log.i("WordList",wordList.getName());
     }
 
     /**
@@ -275,5 +303,20 @@ public class spell_reciteActivity extends AppCompatActivity {
         }
         Log.i("update","更新数据库完成");
         mHandler.obtainMessage(4).sendToTarget();
+    }
+    /**
+     * 回车键事件
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            interrupt_Dialog.show();
+            return false;
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }

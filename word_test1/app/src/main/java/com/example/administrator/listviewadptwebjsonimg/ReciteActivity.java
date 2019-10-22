@@ -8,20 +8,18 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -40,12 +38,14 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     static Activity ActivityRA;
-    AlertDialog finish_Dialog;
+    AlertDialog finish_Dialog,interrupt_Dialog;
     Button sel1,sel2,sel3,sel4,sel5;
     TextView wordview,finish_view,all_finish_view;
     JsonRe  jsonRe;
-    Boolean flag=Boolean.FALSE;
+    Boolean flag =false;
+    Boolean reciting_flag = true;
     List<Map<String,Object>> recite_list=null;
+    List<Map<String,Object>> spell_list = new ArrayList<Map<String, Object>>();
 //    int r_id,r_correct_times,r_error_times,r_pro
     int recite_num = 20;//今天要背的单词数
     int recite_scope = 10;//额外加入的单词数
@@ -91,12 +91,43 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         sel5.setOnClickListener(this);
         finish_Dialog = new AlertDialog.Builder(this)
                 .setTitle("任务完成")
-                .setMessage("返回主页")
+                .setMessage("开始拼写")
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        Toast.makeText(ReciteActivity.this, "这是确定按钮", Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.putExtra("spell_list",new Gson());
+//                        WordList wordList = new WordList();
+//                        wordList.setName("csk");
+//                        intent.putExtra("wordlist",wordList);
+                        intent.setClass(ReciteActivity.this,MainActivity.class);
+//                        intent.setClass(ReciteActivity.this,spell_reciteActivity.class);
+                        startActivity(intent);
+                    }
+                })
+
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(ReciteActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create();
+        interrupt_Dialog = new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确定要退出?")
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent=new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setClass(ReciteActivity.this,MainActivity.class);
@@ -107,7 +138,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(ReciteActivity.this, "这是取消按钮", Toast.LENGTH_SHORT).show();
+                        dialogInterface.dismiss();
                     }
                 })
                 .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
@@ -124,6 +155,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel3.setBackgroundColor(Color.parseColor("#30000000"));
                 sel4.setBackgroundColor(Color.parseColor("#30000000"));
                 if(finish_num>=recite_num){
+                    Log.i("spell_list",spell_list.toString());
                     scheduledThreadPool.schedule(update_recite_data,0, TimeUnit.MILLISECONDS);
                 }else{
                     recite();
@@ -276,7 +308,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         int correct_error_times = Integer.parseInt(recite_list.get(select[correct_sel]).get("error_times").toString());
         Map<String,Object> correct_word = recite_list.get(select[correct_sel]);
         if(user_sel==-1){//选择了"不知道"选项
-            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+            soundPool.play(sound_fail, 0.5f, 0.5f, 0, 0, 1.0f);
             correct_word.put("today_correct_times",0);
             correct_word.put("error_times",correct_error_times+1);
             recite_list.set(select[correct_sel],correct_word);
@@ -288,10 +320,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             int user_error_times = Integer.parseInt(recite_list.get(select[user_sel]).get("error_times").toString());
             Map<String,Object> user_word = recite_list.get(select[user_sel]);
             if(user_sel == correct_sel){//回答正确
-                soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
+                soundPool.play(sound_success, 0.5f, 0.5f, 0, 0, 1.0f);
                 correct_word.put("today_correct_times",correct_to_times+1);
                 if(correct_to_times+1 >= c_times){
                     correct_word.put("correct_times",correct_all_times+1);
+                    spell_list.add(user_word);
+
                     finish_ind[select[correct_sel]]=1;
                     finish_num++;
                     //如果答对单词的次数达到掌握的程度，就进行标记
@@ -318,5 +352,21 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);
+    }
+
+    /**
+     * 回车键事件
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            interrupt_Dialog.show();
+            return false;
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }
