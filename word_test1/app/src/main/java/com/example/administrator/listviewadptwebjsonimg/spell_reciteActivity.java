@@ -6,28 +6,23 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.renderscript.Sampler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,9 +38,10 @@ public class spell_reciteActivity extends AppCompatActivity {
     EditText eword;
     JsonRe  jsonRe;
     AlertDialog finish_Dialog,interrupt_Dialog;
-    List<Map<String,Object>> spell_list=null;
+    List<Map<String,Object>> spell_list = new ArrayList<Map<String, Object>>();
     Map<String,Object> update_word = new HashMap<String, Object>();
-    int spell_num = 20;//今天要背的单词数
+    List<WordList> id_list = new ArrayList<WordList>();
+    int spell_num = 1;//今天要背的单词数
     int finish_num = 0;//今天背完的单词数
     int word_index = -1;//当前单词的下标
     Boolean once_flag = true;//是否第一次就拼写正确
@@ -72,7 +68,7 @@ public class spell_reciteActivity extends AppCompatActivity {
         Arrays.fill(finish_ind,0);
         eword.setOnEditorActionListener(ewordEd);
         jsonRe=new JsonRe();
-        getspelllist();
+
         /**
          * 答案正确执行的操作
          */
@@ -99,24 +95,10 @@ public class spell_reciteActivity extends AppCompatActivity {
                 btn_flag = true;
             }
         };
-        /**
-         * 更新数据库的线程
-         */
-        spell_update = new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext=new HttpGetContext();
-                String id = update_word.get("id").toString();
-                String correct_times = update_word.get("correct_times").toString();
-                String error_times = update_word.get("error_times").toString();
-                String prof_flag = update_word.get("prof_flag").toString();
-                httpGetContext.httpclientgettext(update_url+"id="+id+"&correct_times="+correct_times+"&error_times="+error_times+"&prof_flag="+prof_flag);
-            }
-        };
         finish_Dialog = new AlertDialog.Builder(this)
                 .setTitle("任务完成")
                 .setMessage("返回主页")
-                .setIcon(R.mipmap.ic_launcher)
+                .setIcon(R.mipmap.finish_icon)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -143,7 +125,7 @@ public class spell_reciteActivity extends AppCompatActivity {
         interrupt_Dialog = new AlertDialog.Builder(this)
                 .setTitle("提示")
                 .setMessage("确定要退出?")
-                .setIcon(R.mipmap.ic_launcher)
+                .setIcon(R.mipmap.warning_icon)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -166,8 +148,9 @@ public class spell_reciteActivity extends AppCompatActivity {
                     }
                 })
                 .create();
-//        WordList wordList = getIntent().getParcelableExtra("wordlist");
-//        Log.i("WordList",wordList.getName());
+        id_list= getIntent().getParcelableArrayListExtra("id_list");
+        spell_num = id_list.size();
+        getspelllist();
     }
 
     /**
@@ -234,9 +217,13 @@ public class spell_reciteActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpGetContext httpGetContext=new HttpGetContext();
-                String wordlistjson=httpGetContext.httpclientgettext(spell_list_url+String.valueOf(spell_num));
-                spell_list=jsonRe.getReciteList(wordlistjson);
+                for(int i=0;i<id_list.size();i++){
+                    spell_list.add(id_list.get(i).toMap());
+                }
+//                Log.i("spell_list",spell_list.toString());
+//                HttpGetContext httpGetContext=new HttpGetContext();
+//                String wordlistjson=httpGetContext.httpclientgettext(spell_list_url+String.valueOf(spell_num));
+//                spell_list=jsonRe.getReciteList(wordlistjson);
                 start_spell();
             }
         }).start();
@@ -299,7 +286,9 @@ public class spell_reciteActivity extends AppCompatActivity {
             update_word.put("correct_times",spell_list.get(i).get("correct_times").toString());
             update_word.put("error_times",spell_list.get(i).get("error_times").toString());
             update_word.put("prof_flag",spell_list.get(i).get("prof_flag").toString());
-            scheduledThreadPool.schedule(spell_update,0, TimeUnit.MILLISECONDS);
+            sendIdToServer sendIdToserver = new sendIdToServer();
+            sendIdToserver.sendMap(update_word);
+            sendIdToserver.run();
         }
         Log.i("update","更新数据库完成");
         mHandler.obtainMessage(4).sendToTarget();

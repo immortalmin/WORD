@@ -8,6 +8,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
 
     ExecutorService mExecutorService = null;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
-    Runnable changeColor,update_recite_data;
+    Runnable changeColor,update_recite_data,select_update;
+    private boolean fresh_run = false;
+    private final Handler fresh_handler = new Handler();
     Vibrator vibrator;//vibrator.vibrate(30);
     private SoundPool soundPool;
     private int sound_success,sound_fail;
@@ -45,7 +48,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     Boolean flag =false;
     Boolean reciting_flag = true;
     List<Map<String,Object>> recite_list=null;
-    List<Map<String,Object>> spell_list = new ArrayList<Map<String, Object>>();
+    Map<String,Object> update_word = new HashMap<String, Object>();
+    List<WordList> id_list = new ArrayList<WordList>();//要拼写的单词的id列表
+
 //    int r_id,r_correct_times,r_error_times,r_pro
     int recite_num = 20;//今天要背的单词数
     int recite_scope = 10;//额外加入的单词数
@@ -89,29 +94,33 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         sel3.setOnClickListener(this);
         sel4.setOnClickListener(this);
         sel5.setOnClickListener(this);
+//        fresh_handler.post(fresh_task);
+//        fresh_run = true;
+//        fresh_handler.postDelayed(fresh_task, 1000);
         finish_Dialog = new AlertDialog.Builder(this)
                 .setTitle("任务完成")
                 .setMessage("开始拼写")
-                .setIcon(R.mipmap.ic_launcher)
+                .setIcon(R.mipmap.finish_icon)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent=new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.putExtra("spell_list",new Gson());
-//                        WordList wordList = new WordList();
-//                        wordList.setName("csk");
-//                        intent.putExtra("wordlist",wordList);
-                        intent.setClass(ReciteActivity.this,MainActivity.class);
-//                        intent.setClass(ReciteActivity.this,spell_reciteActivity.class);
+                        intent.putParcelableArrayListExtra("id_list",(ArrayList<? extends Parcelable>) id_list);
+//                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        intent.setClass(ReciteActivity.this,spell_reciteActivity.class);
                         startActivity(intent);
                     }
                 })
 
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                .setNegativeButton("我不", new DialogInterface.OnClickListener() {//添加取消
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
+                        Intent intent=new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        startActivity(intent);
                     }
                 })
                 .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
@@ -124,7 +133,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         interrupt_Dialog = new AlertDialog.Builder(this)
                 .setTitle("提示")
                 .setMessage("确定要退出?")
-                .setIcon(R.mipmap.ic_launcher)
+                .setIcon(R.mipmap.warning_icon)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -148,6 +157,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 })
                 .create();
+
         changeColor = new Runnable(){
             public void run(){
                 sel1.setBackgroundColor(Color.parseColor("#30000000"));
@@ -155,26 +165,23 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel3.setBackgroundColor(Color.parseColor("#30000000"));
                 sel4.setBackgroundColor(Color.parseColor("#30000000"));
                 if(finish_num>=recite_num){
-                    Log.i("spell_list",spell_list.toString());
-                    scheduledThreadPool.schedule(update_recite_data,0, TimeUnit.MILLISECONDS);
+                    update_sql_data();
                 }else{
                     recite();
                 }
             }
         };
-        update_recite_data = new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext=new HttpGetContext();
-                for(int i=0;i<recite_list.size();i++){
-                    httpGetContext.update_recite_list(update_url+"id="+recite_list.get(i).get("id")+"&correct_times="+recite_list.get(i).get("correct_times")+"&error_times="+recite_list.get(i).get("error_times")+"&prof_flag="+recite_list.get(i).get("prof_flag"));
-                }
-                Log.i("update_recite_data","更新数据库完成");
-                mHandler.obtainMessage(2).sendToTarget();
-            }
-        };
 
     }
+    private final Runnable fresh_task = new Runnable() {
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+            Log.i("freshinging","刷新页面");
+//            fresh_handler.postDelayed(this, 500);
+            fresh_handler.post(this);
+        }
+    };
     /**
      * 获取今天要背的单词列表
      */
@@ -186,6 +193,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 HttpGetContext httpGetContext=new HttpGetContext();
                 String wordlistjson=httpGetContext.httpclientgettext(recite_list_url+String.valueOf(recite_num+recite_scope));
                 recite_list=jsonRe.getReciteList(wordlistjson);
+                Log.i("recite_list",recite_list.toString());
                 recite();
             }
         }).start();
@@ -199,7 +207,10 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 wordview.setText(recite_info.get("wordview").toString());
                 finish_view.setText(recite_info.get("finish_view").toString());
                 all_finish_view.setText(recite_info.get("all_finish_view").toString());
-//                Log.i("handler",recite_info.toString());
+                sel1.setText(recite_info.get("sel1").toString());
+                sel2.setText(recite_info.get("sel2").toString());
+                sel3.setText(recite_info.get("sel3").toString());
+                sel4.setText(recite_info.get("sel4").toString());
             }else if(msg.what==1){
                 wordview.setText("");
                 finish_view.setText("");
@@ -218,7 +229,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
      * 随机生成选项
      */
     private void recite(){
-//        Log.i("recite","刷新选项");
         int count = 0;
         int[] mark = new int[10000];
         select = new int[4];
@@ -244,12 +254,19 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         recite_info.put("wordview",recite_list.get(select[correct_sel]).get("word_group").toString());
         recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times").toString()+"/"+String.valueOf(c_times));
         recite_info.put("all_finish_view",String.valueOf(finish_num)+"/"+String.valueOf(recite_num));
+        recite_info.put("sel1",recite_list.get(select[0]).get("C_meaning").toString());
+        recite_info.put("sel2",recite_list.get(select[1]).get("C_meaning").toString());
+        recite_info.put("sel3",recite_list.get(select[2]).get("C_meaning").toString());
+        recite_info.put("sel4",recite_list.get(select[3]).get("C_meaning").toString());
+
         mHandler.obtainMessage(0,recite_info).sendToTarget();
-        sel1.setText(recite_list.get(select[0]).get("C_meaning").toString());
-        sel2.setText(recite_list.get(select[1]).get("C_meaning").toString());
-        sel3.setText(recite_list.get(select[2]).get("C_meaning").toString());
-        sel4.setText(recite_list.get(select[3]).get("C_meaning").toString());
+//        sel1.setText(recite_list.get(select[0]).get("C_meaning").toString());
+//        sel2.setText(recite_list.get(select[1]).get("C_meaning").toString());
+//        sel3.setText(recite_list.get(select[2]).get("C_meaning").toString());
+//        sel4.setText(recite_list.get(select[3]).get("C_meaning").toString());
+//        fresh_handler.post(fresh_task);
     }
+
 
     /**
      * 选项按钮点击事件
@@ -324,8 +341,14 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 correct_word.put("today_correct_times",correct_to_times+1);
                 if(correct_to_times+1 >= c_times){
                     correct_word.put("correct_times",correct_all_times+1);
-                    spell_list.add(user_word);
-
+                    WordList wordList = new WordList();
+                    wordList.setId(user_word.get("id").toString());
+                    wordList.setWord_group(user_word.get("word_group").toString());
+                    wordList.setC_meaning(user_word.get("C_meaning").toString());
+                    wordList.setCorrect_times(Integer.valueOf(user_word.get("correct_times").toString()));
+                    wordList.setError_times(Integer.valueOf(user_word.get("error_times").toString()));
+                    wordList.setProf_flag(Integer.valueOf(user_word.get("prof_flag").toString()));
+                    id_list.add(wordList);
                     finish_ind[select[correct_sel]]=1;
                     finish_num++;
                     //如果答对单词的次数达到掌握的程度，就进行标记
@@ -347,8 +370,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         }
 
     }
+
+    /**
+     * 跳转到例句页面
+     * @param id
+     */
     public void jump_to_example(int id){
-//        Log.i("跳转到例句",recite_list.get(id).get("word_group").toString());
         Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);
@@ -368,5 +395,19 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         }else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    public void update_sql_data(){
+        for(int i=0;i<recite_list.size();i++){
+            update_word.put("id",recite_list.get(i).get("id").toString());
+            update_word.put("correct_times",recite_list.get(i).get("correct_times").toString());
+            update_word.put("error_times",recite_list.get(i).get("error_times").toString());
+            update_word.put("prof_flag",recite_list.get(i).get("prof_flag").toString());
+            sendIdToServer sendIdToserver = new sendIdToServer();
+            sendIdToserver.sendMap(update_word);
+            sendIdToserver.run();
+        }
+        Log.i("update","更新数据库完成");
+        mHandler.obtainMessage(2).sendToTarget();
     }
 }

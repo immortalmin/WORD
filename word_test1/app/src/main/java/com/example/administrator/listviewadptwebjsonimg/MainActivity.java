@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener Test = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.i("test","test");
+            Log.i("Test","test");
         }
     };
 
