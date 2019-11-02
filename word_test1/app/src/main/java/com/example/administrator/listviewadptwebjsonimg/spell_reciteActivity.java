@@ -44,6 +44,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     int spell_num = 1;//今天要背的单词数
     int finish_num = 0;//今天背完的单词数
     int word_index = -1;//当前单词的下标
+    int prof_times = 5;//标为掌握的次数
     Boolean once_flag = true;//是否第一次就拼写正确
     Boolean btn_flag = true;
     int[] finish_ind = new int[1000];//用于标记是否该单词是否还需要背
@@ -173,6 +174,9 @@ public class spell_reciteActivity extends AppCompatActivity {
                         finish_ind[word_index]=1;
                         finish_num++;
                         word.put("correct_times",correct_times+1);
+                        if(correct_times+1 >= prof_times){
+                            word.put("prof_flag",1);
+                        }
                     }
                     once_flag = true;
                     showMyToast(Toast.makeText(context,"回答正确",Toast.LENGTH_LONG),500);

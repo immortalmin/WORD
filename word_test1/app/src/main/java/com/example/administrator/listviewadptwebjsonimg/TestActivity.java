@@ -14,7 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,8 +32,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ReciteActivity extends AppCompatActivity implements View.OnClickListener {
-
+public class TestActivity extends Activity implements View.OnClickListener{
+    GestureDetector detector;
+    private TextView activity_main_tv;
     ExecutorService mExecutorService = null;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     Runnable changeColor,update_recite_data,select_update;
@@ -51,7 +54,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     Map<String,Object> update_word = new HashMap<String, Object>();
     List<WordList> id_list = new ArrayList<WordList>();//要拼写的单词的id列表
 
-//    int r_id,r_correct_times,r_error_times,r_pro
+    //    int r_id,r_correct_times,r_error_times,r_pro
     int recite_num = 20;//今天要背的单词数
     int recite_scope = 10;//额外加入的单词数
     int c_times = 2;//每个单词变成今天背完需要的次数
@@ -61,9 +64,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
     int pre_ind = 0;//上一个单词的id
-//    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
+    //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
-//    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
+    //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
     String recite_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
     //http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
 //    String update_url="http://192.168.57.1/word/update_recite.php?";
@@ -94,6 +97,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         sel3.setOnClickListener(this);
         sel4.setOnClickListener(this);
         sel5.setOnClickListener(this);
+//        fresh_handler.post(fresh_task);
+//        fresh_run = true;
+//        fresh_handler.postDelayed(fresh_task, 1000);
         finish_Dialog = new AlertDialog.Builder(this)
                 .setTitle("任务完成")
                 .setMessage("开始拼写")
@@ -105,7 +111,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putParcelableArrayListExtra("id_list",(ArrayList<? extends Parcelable>) id_list);
 //                        intent.setClass(ReciteActivity.this,MainActivity.class);
-                        intent.setClass(ReciteActivity.this,spell_reciteActivity.class);
+                        intent.setClass(TestActivity.this,spell_reciteActivity.class);
                         startActivity(intent);
                     }
                 })
@@ -116,14 +122,14 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                         Intent intent=new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        intent.setClass(ReciteActivity.this,MainActivity.class);
-                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        intent.setClass(TestActivity.this,MainActivity.class);
                         startActivity(intent);
                     }
                 })
                 .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(ReciteActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TestActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .create();
@@ -136,7 +142,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent=new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteActivity.this,MainActivity.class);
+                        intent.setClass(TestActivity.this,MainActivity.class);
                         startActivity(intent);
                     }
                 })
@@ -150,7 +156,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(ReciteActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TestActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .create();
@@ -169,16 +175,55 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             }
         };
 
+        detector = new GestureDetector(this, new MyGestureListener(
+                new MyRightLeftListener() {
+                    @Override
+                    public void onRight() {
+//                        activity_main_tv.setBackgroundColor(Color.GREEN);
+                        jump_to_example(select[correct_sel]);
+                    }
+
+                    @Override
+                    public void onLeft() {
+//                        activity_main_tv.setBackgroundColor(Color.RED);
+                        jump_to_example(select[correct_sel]);
+                    }
+
+                    @Override
+                    public void onUp() {
+                        // TODO Auto-generated method stub
+//                        activity_main_tv.setBackgroundColor(Color.BLUE);
+                        jump_to_example(3);
+                    }
+                    @Override
+                    public void onDown() {
+                        // TODO Auto-generated method stub
+//                        activity_main_tv.setBackgroundColor(Color.YELLOW);
+                        jump_to_example(4);
+                    }
+
+                    @Override
+                    public void onSlide() {
+//                        activity_main_tv.setText("斜画的结果");
+                        jump_to_example(5);
+                    }
+                }));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        return detector.onTouchEvent(event);
     }
     private final Runnable fresh_task = new Runnable() {
-    @Override
-    public void run() {
-        // TODO Auto-generated method stub
-        Log.i("freshinging","刷新页面");
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+            Log.i("freshinging","刷新页面");
 //            fresh_handler.postDelayed(this, 500);
-        fresh_handler.post(this);
-    }
-};
+            fresh_handler.post(this);
+        }
+    };
     /**
      * 获取今天要背的单词列表
      */
@@ -277,7 +322,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
                 }else{
                     sel1.setBackgroundColor(Color.parseColor("#60FF2400"));
-                    correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
@@ -287,7 +331,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     sel2.setBackgroundColor(Color.parseColor("#6093DB70"));
                 }else{
                     sel2.setBackgroundColor(Color.parseColor("#60FF2400"));
-                    correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
@@ -297,7 +340,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     sel3.setBackgroundColor(Color.parseColor("#6093DB70"));
                 }else{
                     sel3.setBackgroundColor(Color.parseColor("#60FF2400"));
-                    correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
@@ -307,7 +349,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     sel4.setBackgroundColor(Color.parseColor("#6093DB70"));
                 }else{
                     sel4.setBackgroundColor(Color.parseColor("#60FF2400"));
-                    correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
@@ -317,23 +358,6 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
-
-    /**
-     * 正确选项发绿
-     */
-    public void correct_shine(){
-//        correct_sel = select[correct_sel];
-        if(correct_sel == 0){
-            sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
-        }else if (correct_sel == 1){
-            sel2.setBackgroundColor(Color.parseColor("#6093DB70"));
-        }else if (correct_sel == 2){
-            sel3.setBackgroundColor(Color.parseColor("#6093DB70"));
-        }else{
-            sel4.setBackgroundColor(Color.parseColor("#6093DB70"));
-        }
-    }
-
     public void update_recite_list(int user_sel){
         //正确选项今天已连续回答正确的次数
         int correct_to_times = Integer.parseInt(recite_list.get(select[correct_sel]).get("today_correct_times").toString());
@@ -394,9 +418,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
      * @param id
      */
     public void jump_to_example(int id){
-        Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
+        Intent intent = new Intent(TestActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
+//        startActivity(new Intent(TestActivity.this,ExampleActivity.class));
+//        overridePendingTransition(R.anim.slide_left_in, R.anim.fade_out);
     }
 
     /**
