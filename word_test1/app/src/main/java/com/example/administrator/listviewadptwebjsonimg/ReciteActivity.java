@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     AlertDialog finish_Dialog,interrupt_Dialog;
     Button sel1,sel2,sel3,sel4,sel5;
     TextView wordview,finish_view,all_finish_view;
+    ProgressBar progressBar;
     JsonRe  jsonRe;
     Boolean flag =false;
     Boolean reciting_flag = true;
@@ -85,6 +88,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         wordview = (TextView)findViewById(R.id.wordview);
         finish_view = (TextView)findViewById(R.id.finish_view);
         all_finish_view = (TextView)findViewById(R.id.all_finish_view);
+        progressBar = (ProgressBar)findViewById(R.id.my_progress);
         mHandler.obtainMessage(1).sendToTarget();//清空内容
         jsonRe=new JsonRe();
         Arrays.fill(finish_ind,0);
@@ -157,11 +161,24 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
 
         changeColor = new Runnable(){
             public void run(){
-                sel1.setBackgroundColor(Color.parseColor("#30000000"));
-                sel2.setBackgroundColor(Color.parseColor("#30000000"));
-                sel3.setBackgroundColor(Color.parseColor("#30000000"));
-                sel4.setBackgroundColor(Color.parseColor("#30000000"));
+                sel1.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel2.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel3.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel4.setBackgroundResource(R.drawable.rounded_corners_gray);
+//                progressBar.setProgress(finish_num/recite_num);
+                progressBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int pro_num = finish_num*100/recite_num;
+                        progressBar.setProgress(pro_num);
+                    }
+                });
                 if(finish_num>=recite_num){
+                    //设置按钮不可用
+                    sel1.setClickable(false);
+                    sel2.setClickable(false);
+                    sel3.setClickable(false);
+                    sel4.setClickable(false);
                     update_sql_data();
                 }else{
                     recite();
@@ -274,9 +291,12 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sel1:
                 update_recite_list(0);
                 if(correct_sel == 0){
-                    sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
+//                    sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
+                    sel1.setBackgroundResource(R.drawable.rounded_corners_green);
                 }else{
-                    sel1.setBackgroundColor(Color.parseColor("#60FF2400"));
+//                    sel1.setBackgroundColor(Color.parseColor("#60FF2400"));
+                    sel1.setBackgroundResource(R.drawable.rounded_corners_red);
+
                     correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
@@ -284,9 +304,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sel2:
                 update_recite_list(1);
                 if(correct_sel == 1){
-                    sel2.setBackgroundColor(Color.parseColor("#6093DB70"));
+                    sel2.setBackgroundResource(R.drawable.rounded_corners_green);
                 }else{
-                    sel2.setBackgroundColor(Color.parseColor("#60FF2400"));
+                    sel2.setBackgroundResource(R.drawable.rounded_corners_red);
                     correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
@@ -294,9 +314,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sel3:
                 update_recite_list(2);
                 if(correct_sel == 2){
-                    sel3.setBackgroundColor(Color.parseColor("#6093DB70"));
+                    sel3.setBackgroundResource(R.drawable.rounded_corners_green);
                 }else{
-                    sel3.setBackgroundColor(Color.parseColor("#60FF2400"));
+                    sel3.setBackgroundResource(R.drawable.rounded_corners_red);
                     correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
@@ -304,9 +324,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sel4:
                 update_recite_list(3);
                 if(correct_sel == 3){
-                    sel4.setBackgroundColor(Color.parseColor("#6093DB70"));
+                    sel4.setBackgroundResource(R.drawable.rounded_corners_green);
                 }else{
-                    sel4.setBackgroundColor(Color.parseColor("#60FF2400"));
+                    sel4.setBackgroundResource(R.drawable.rounded_corners_red);
                     correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
@@ -324,13 +344,13 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     public void correct_shine(){
 //        correct_sel = select[correct_sel];
         if(correct_sel == 0){
-            sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
+            sel1.setBackgroundResource(R.drawable.rounded_corners_green);
         }else if (correct_sel == 1){
-            sel2.setBackgroundColor(Color.parseColor("#6093DB70"));
+            sel2.setBackgroundResource(R.drawable.rounded_corners_green);
         }else if (correct_sel == 2){
-            sel3.setBackgroundColor(Color.parseColor("#6093DB70"));
+            sel3.setBackgroundResource(R.drawable.rounded_corners_green);
         }else{
-            sel4.setBackgroundColor(Color.parseColor("#6093DB70"));
+            sel4.setBackgroundResource(R.drawable.rounded_corners_green);
         }
     }
 

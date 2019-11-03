@@ -78,6 +78,7 @@ public class spell_reciteActivity extends AppCompatActivity {
             public void run() {
                 mHandler.obtainMessage(3).sendToTarget();
                 if(finish_num == spell_num){
+                    eword.setFocusableInTouchMode(false);//设置输入框无法编辑
                     update_recite_date();
                 }else{
                     start_spell();
