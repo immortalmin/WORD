@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     private int sound_success,sound_fail;
     TextView cword,numInfo1,numInfo2;
     EditText eword;
+    ProgressBar progressBar;
     JsonRe  jsonRe;
     AlertDialog finish_Dialog,interrupt_Dialog;
     List<Map<String,Object>> spell_list = new ArrayList<Map<String, Object>>();
@@ -64,6 +66,7 @@ public class spell_reciteActivity extends AppCompatActivity {
         numInfo1 = (TextView)findViewById(R.id.numInfo1);
         numInfo2 = (TextView)findViewById(R.id.numInfo2);
         eword = (EditText) findViewById(R.id.eword);
+        progressBar = (ProgressBar) findViewById(R.id.my_progress);
 //        eword.setInputType(InputType.TYPE_CLASS_NUMBER);
         mHandler.obtainMessage(2).sendToTarget();//清空内容
         Arrays.fill(finish_ind,0);
@@ -77,7 +80,14 @@ public class spell_reciteActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mHandler.obtainMessage(3).sendToTarget();
-                if(finish_num == spell_num){
+                progressBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int pro_num = finish_num*100/spell_num;
+                        progressBar.setProgress(pro_num);
+                    }
+                });
+                if(finish_num >= spell_num){
                     eword.setFocusableInTouchMode(false);//设置输入框无法编辑
                     update_recite_date();
                 }else{
