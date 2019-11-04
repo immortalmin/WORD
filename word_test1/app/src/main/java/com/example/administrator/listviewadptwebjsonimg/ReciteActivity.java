@@ -46,7 +46,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     AlertDialog finish_Dialog,interrupt_Dialog;
     Button sel1,sel2,sel3,sel4,sel5;
     TextView wordview,finish_view,all_finish_view;
-    ProgressBar progressBar;
+    ProgressBar progressBar,progressBar2;
     JsonRe  jsonRe;
     Boolean flag =false;
     Boolean reciting_flag = true;
@@ -63,6 +63,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int[] select = null;//下标转换到在recite_list中的下标
     int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     int finish_num = 0;//今天背完的单词数
+    int today_finish = 0;//该单词今天背完的次数
     int pre_ind = 0;//上一个单词的id
 //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
@@ -89,6 +90,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         finish_view = (TextView)findViewById(R.id.finish_view);
         all_finish_view = (TextView)findViewById(R.id.all_finish_view);
         progressBar = (ProgressBar)findViewById(R.id.my_progress);
+        progressBar2 = (ProgressBar)findViewById(R.id.my_progress2);
         mHandler.obtainMessage(1).sendToTarget();//清空内容
         jsonRe=new JsonRe();
         Arrays.fill(finish_ind,0);
@@ -173,6 +175,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                         progressBar.setProgress(pro_num);
                     }
                 });
+
                 if(finish_num>=recite_num){
                     //设置按钮不可用
                     sel1.setClickable(false);
@@ -219,7 +222,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 recite_info = (Map<String, Object>)msg.obj;
 //                String word=msg.obj.toString();
                 wordview.setText(recite_info.get("wordview").toString());
-                finish_view.setText(recite_info.get("finish_view").toString());
+                finish_view.setText(recite_info.get("finish_view").toString()+"/"+String.valueOf(c_times));
                 all_finish_view.setText(recite_info.get("all_finish_view").toString());
                 sel1.setText(recite_info.get("sel1").toString());
                 sel2.setText(recite_info.get("sel2").toString());
@@ -266,19 +269,22 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         pre_ind = select[correct_sel];
         Map<String, Object> recite_info = new HashMap<String, Object>();
         recite_info.put("wordview",recite_list.get(select[correct_sel]).get("word_group").toString());
-        recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times").toString()+"/"+String.valueOf(c_times));
+//        recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times").toString()+"/"+String.valueOf(c_times));
+        recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times"));
         recite_info.put("all_finish_view",String.valueOf(finish_num)+"/"+String.valueOf(recite_num));
         recite_info.put("sel1",recite_list.get(select[0]).get("C_meaning").toString());
         recite_info.put("sel2",recite_list.get(select[1]).get("C_meaning").toString());
         recite_info.put("sel3",recite_list.get(select[2]).get("C_meaning").toString());
         recite_info.put("sel4",recite_list.get(select[3]).get("C_meaning").toString());
-
+        today_finish=Integer.valueOf(recite_info.get("finish_view").toString());
+        progressBar2.post(new Runnable() {
+            @Override
+            public void run() {
+                int pro_num = today_finish*10/c_times;
+                progressBar2.setProgress(pro_num);
+            }
+        });
         mHandler.obtainMessage(0,recite_info).sendToTarget();
-//        sel1.setText(recite_list.get(select[0]).get("C_meaning").toString());
-//        sel2.setText(recite_list.get(select[1]).get("C_meaning").toString());
-//        sel3.setText(recite_list.get(select[2]).get("C_meaning").toString());
-//        sel4.setText(recite_list.get(select[3]).get("C_meaning").toString());
-//        fresh_handler.post(fresh_task);
     }
 
 
@@ -291,12 +297,9 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sel1:
                 update_recite_list(0);
                 if(correct_sel == 0){
-//                    sel1.setBackgroundColor(Color.parseColor("#6093DB70"));
                     sel1.setBackgroundResource(R.drawable.rounded_corners_green);
                 }else{
-//                    sel1.setBackgroundColor(Color.parseColor("#60FF2400"));
                     sel1.setBackgroundResource(R.drawable.rounded_corners_red);
-
                     correct_shine();
                 }
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
@@ -342,7 +345,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
      * 正确选项发绿
      */
     public void correct_shine(){
-//        correct_sel = select[correct_sel];
+//        today_finish --;
         if(correct_sel == 0){
             sel1.setBackgroundResource(R.drawable.rounded_corners_green);
         }else if (correct_sel == 1){
@@ -352,6 +355,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         }else{
             sel4.setBackgroundResource(R.drawable.rounded_corners_green);
         }
+
     }
 
     public void update_recite_list(int user_sel){

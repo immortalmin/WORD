@@ -50,6 +50,18 @@
         android:textColor="#FFFFFF"
         android:text="accuse of" />
 
+    <ProgressBar
+        android:id="@+id/my_progress2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="8dp"
+        android:layout_height="25dp"
+        android:layout_toRightOf="@+id/wordview"
+        android:layout_marginTop="110dp"
+        android:layout_marginLeft="10dp"
+        android:max="10"
+        android:progress="3"
+        android:progressDrawable="@drawable/progress_bar_drawable"/>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
