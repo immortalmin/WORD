@@ -174,8 +174,10 @@ public class spell_reciteActivity extends AppCompatActivity {
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 btn_flag = false;
-                String ans = eword.getText().toString();
-                String correct_ans = spell_list.get(word_index).get("word_group").toString();
+                String ans = eword.getText().toString().replaceAll(" ","");
+//                ans.replaceAll(" ","");//去除所有的空格再进行判断
+                String correct_ans = spell_list.get(word_index).get("word_group").toString().replaceAll(" ","");
+//                correct_ans.replaceAll(" ","");
                 Map<String,Object> word = spell_list.get(word_index);
                 int correct_times = Integer.valueOf(word.get("correct_times").toString());
                 int error_times = Integer.valueOf(word.get("error_times").toString());

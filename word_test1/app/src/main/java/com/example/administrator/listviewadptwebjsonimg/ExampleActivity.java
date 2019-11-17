@@ -45,6 +45,7 @@ public class ExampleActivity extends AppCompatActivity {
         jsonRe=new JsonRe();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
+//        Log.i("Example__id",String.valueOf(id));
         getwordlist();
     }
     private void getwordlist()

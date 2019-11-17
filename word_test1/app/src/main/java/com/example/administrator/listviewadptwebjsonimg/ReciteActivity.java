@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -65,6 +67,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int finish_num = 0;//今天背完的单词数
     int today_finish = 0;//该单词今天背完的次数
     int pre_ind = 0;//上一个单词的id
+    Boolean living_flag=true;
 //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
 //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
@@ -284,6 +287,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 progressBar2.setProgress(pro_num);
             }
         });
+        living_flag = true;//button relive
         mHandler.obtainMessage(0,recite_info).sendToTarget();
     }
 
@@ -293,6 +297,11 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
      * @param view
      */
     public void onClick(View view){
+        if(!living_flag){
+            Log.i("living_flag","button deaded!");
+            return;
+        }
+        living_flag = false;
         switch(view.getId()){
             case R.id.sel1:
                 update_recite_list(0);
@@ -421,6 +430,18 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);
+
+//        final Timer timer=new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                Intent intent=new Intent(ReciteActivity.this, ExampleActivity.class);
+//                intent.putExtra("id",recite_list.get(id).get("id").toString());
+//                startActivity(intent);
+//                timer.cancel();
+//            }
+//        },1000);
+
     }
 
     /**

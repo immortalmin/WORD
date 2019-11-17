@@ -19,7 +19,6 @@ public class JsonRe {
     String hostip="http://47.98.239.237/";
     //商家数据json数据(商家基本信息)转arraylist格式商家数据
     public List<Map<String, Object>>  getWordList(String jsonStr) {
-        HttpGetContext  httpGetContext=new HttpGetContext();
         wordInfoList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         List<Map<String, Object>> ExampleList;// 定义List容器，节点类型是map
         Map<String, Object> map = new HashMap<String, Object>();
@@ -63,7 +62,6 @@ public class JsonRe {
         return wordInfoList;
     }
     public List<Map<String, Object>>  getReciteList(String jsonStr) {
-        HttpGetContext  httpGetContext=new HttpGetContext();
         wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -96,7 +94,6 @@ public class JsonRe {
         return wordList;
     }
     public List<Map<String, Object>>  getSpanish(String jsonStr) {
-        HttpGetContext  httpGetContext=new HttpGetContext();
         wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> shitai = new ArrayList<String>();
@@ -152,5 +149,16 @@ public class JsonRe {
             e.printStackTrace();
         }
         return wordList;
+    }
+    public String get_amount(String jsonStr) {
+        String amount="0";
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject num = (JSONObject) jsonArray.opt(0);
+            amount = num.getString("count(*)");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return amount;
     }
 }
