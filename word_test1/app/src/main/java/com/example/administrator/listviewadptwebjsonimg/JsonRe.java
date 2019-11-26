@@ -161,4 +161,38 @@ public class JsonRe {
         }
         return amount;
     }
+
+    /**
+     * 获取单词完成数据
+     * @param jsonStr
+     * @return
+     */
+    public List<Map<String, Object>> get_wordinfo(String jsonStr) {
+        wordList = new ArrayList<Map<String, Object>>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject word = (JSONObject) jsonArray.opt(i);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("id",word.getString("id"));
+                map.put("word_group",word.getString("word_group"));
+                map.put("C_meaning",word.getString("C_meaning"));
+                map.put("correct_times",word.getString("correct_times"));
+                map.put("error_times",word.getString("error_times"));
+                map.put("prof_flag",word.getString("prof_flag"));
+                if("1".equals(word.getString("prof_flag"))){
+                    map.put("ACorWA","AC");
+                }else if("0".equals(word.getString("error_times"))){
+                    map.put("ACorWA"," ");
+                }else{
+                    map.put("ACorWA","-"+word.getString("error_times"));
+                }
+                wordList.add(map);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return wordList;
+    }
 }

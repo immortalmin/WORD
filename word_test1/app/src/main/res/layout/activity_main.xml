@@ -9,6 +9,14 @@
     android:background="@mipmap/rc1"
     tools:context=".MainActivity">
 
+    <SearchView
+        android:id="@+id/searchview1"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+         />
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,6 +69,8 @@
             android:layout_toRightOf="@+id/btn_spell"
             android:text="TEST" />
     </RelativeLayout>
+
+
     <!--<ProgressBar-->
         <!--android:id="@+id/my_progress"-->
         <!--style="?android:attr/progressBarStyleHorizontal"-->

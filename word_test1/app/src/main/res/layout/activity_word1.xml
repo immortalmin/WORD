@@ -11,7 +11,6 @@
         android:id="@+id/linear1"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_marginTop="10dp"
         android:weightSum="100"
         android:background="@drawable/num_bk"
         android:orientation="horizontal">
@@ -78,6 +77,7 @@
     <ListView
         android:id="@+id/ListView1"
         android:layout_below="@+id/linear1"
+        android:layout_marginTop="-25dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

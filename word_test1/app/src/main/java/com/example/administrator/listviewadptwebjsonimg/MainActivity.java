@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     List<Map<String,Object>> word_list=null;
     Button btn_wordlist,btn_recite,btn_test,btn_spell;
+    SearchView searchView1;
     WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
+        searchView1 = (SearchView)findViewById(R.id.searchview1);
         btn_wordlist.setOnClickListener(wordlistClick);
         btn_recite.setOnClickListener(reciteClick);
         btn_test.setOnClickListener(Test);
@@ -85,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener Test = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MainActivity.this,TestActivity.class);
+            Intent intent = new Intent(MainActivity.this,SearchActivity.class);
             startActivity(intent);
         }
     };

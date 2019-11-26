@@ -29,6 +29,18 @@
             android:text="指责；指控"
             />
 
+        <TextView
+            android:id="@+id/finished_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#23e709"
+            android:text="" />
+
 
     </RelativeLayout>
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,8 @@ public class word1Activity extends AppCompatActivity {
     TextView all_num,finished_num;
     List<Map<String,Object>> word_list=null; //商家列表数据arraylist数组
 //    String  url="http://192.168.57.1/word/db3-conn.php"; //获取商家基本信息的API
-    String  url="http://47.98.239.237/word/getall.php"; //获取商家基本信息的API
+    String url="http://47.98.239.237/word/getall.php"; //获取商家基本信息的API
+    String getwordinfo_url = "http://47.98.239.237/word/php_file/getallinfo.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +61,13 @@ public class word1Activity extends AppCompatActivity {
             @Override
             public void run() {
                 HttpGetContext httpGetContext=new HttpGetContext();
-                String wordlistjson=httpGetContext.httpclientgettext(url);
-                word_list=jsonRe.getWordList(wordlistjson);
-                mHandler.obtainMessage(0,word_list).sendToTarget();
+//                String wordlistjson=httpGetContext.httpclientgettext(url);
+//                word_list=jsonRe.getWordList(wordlistjson);
+                String wordinfo=httpGetContext.httpclientgettext(getwordinfo_url);
+                List<Map<String, Object>> word_info = new ArrayList<Map<String, Object>>();
+                word_info=jsonRe.get_wordinfo(wordinfo);
+//                Log.i("word_info",word_info.toString());
+                mHandler.obtainMessage(0,word_info).sendToTarget();
             }
         }).start();
     }
@@ -89,8 +95,8 @@ public class word1Activity extends AppCompatActivity {
                 String translate = word_list.get(1).toString();
                 SimpleAdapter adapter = new SimpleAdapter(word1Activity.this,
                         word_list,R.layout.worditem,new String[]{
-                        "word_group","C_meaning"},
-                        new int[]{R.id.word_group,R.id.C_meaning});
+                        "word_group","C_meaning","ACorWA"},
+                        new int[]{R.id.word_group,R.id.C_meaning,R.id.finished_flag});
                 listView.setAdapter(adapter);
             }else if(msg.what == 1){
                 List<String> amount = (ArrayList<String>)msg.obj;
