@@ -65,12 +65,12 @@ public class TestActivity extends Activity implements View.OnClickListener{
     int finish_num = 0;//今天背完的单词数
     int pre_ind = 0;//上一个单词的id
     //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
-    String word_info_url="http://47.98.239.237/word/querybyid.php?id=";
+    String word_info_url="http://47.98.239.237/word/php_file/querybyid.php?id=";
     //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
-    String recite_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
+    String recite_list_url="http://47.98.239.237/word/php_file/getrecitelist.php?mount=";
     //http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
 //    String update_url="http://192.168.57.1/word/update_recite.php?";
-    String update_url="http://47.98.239.237/word/update_recite.php?";
+    String update_url="http://47.98.239.237/word/php_file/update_recite.php?";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

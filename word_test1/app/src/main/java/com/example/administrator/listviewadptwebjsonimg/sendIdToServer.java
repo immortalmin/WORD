@@ -12,7 +12,7 @@ import java.util.Map;
 public class sendIdToServer implements Runnable{
 
     Map<String,Object> update_word = new HashMap<String, Object>();
-    String update_url="http://47.98.239.237/word/update_recite.php?";
+    String update_url="http://47.98.239.237/word/php_file/update_recite.php?";
 
     public void sendMap(Map<String,Object> update_word){
         this.update_word=update_word;

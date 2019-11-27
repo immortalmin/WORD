@@ -31,7 +31,7 @@ public class word1Activity extends AppCompatActivity {
     TextView all_num,finished_num;
     List<Map<String,Object>> word_list=null; //商家列表数据arraylist数组
 //    String  url="http://192.168.57.1/word/db3-conn.php"; //获取商家基本信息的API
-    String url="http://47.98.239.237/word/getall.php"; //获取商家基本信息的API
+    String url="http://47.98.239.237/word/php_file/getall.php"; //获取商家基本信息的API
     String getwordinfo_url = "http://47.98.239.237/word/php_file/getallinfo.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

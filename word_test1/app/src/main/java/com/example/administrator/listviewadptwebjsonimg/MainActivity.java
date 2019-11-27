@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
     JsonRe jsonRe;
     private Context context;
     List<Map<String,Object>> word_list=null;
-    Button btn_wordlist,btn_recite,btn_test,btn_spell;
-    SearchView searchView1;
+    Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
     WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
@@ -51,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
-        searchView1 = (SearchView)findViewById(R.id.searchview1);
+        search1 = (Button)findViewById(R.id.search1);
         btn_wordlist.setOnClickListener(wordlistClick);
         btn_recite.setOnClickListener(reciteClick);
         btn_test.setOnClickListener(Test);
         btn_spell.setOnClickListener(spellClick);
+        search1.setOnClickListener(search1Click);
         dbAdapter = new DBAdapter(this);
         dbAdapter.open();
         jsonRe=new JsonRe();
@@ -64,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         sound_fail = soundPool.load(this, R.raw.fail, 1);
 
     }
+    View.OnClickListener search1Click = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this,SearchActivity.class);
+            startActivity(intent);
+        }
+    };
     View.OnClickListener wordlistClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {

@@ -26,7 +26,7 @@ public class ExampleActivity extends AppCompatActivity {
     JsonRe  jsonRe;
     List<Map<String,Object>> word_list=null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
-    String  url="http://47.98.239.237/word/querybyid.php?id=";
+    String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
     String id = "1";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -51,9 +51,9 @@ public class spell_reciteActivity extends AppCompatActivity {
     Boolean btn_flag = true;
     int[] finish_ind = new int[1000];//用于标记是否该单词是否还需要背
 //    String spell_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
-    String spell_list_url="http://47.98.239.237/word/getrecitelist.php?mount=";
+    String spell_list_url="http://47.98.239.237/word/php_file/getrecitelist.php?mount=";
 //    String update_url="http://192.168.57.1/word/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
-    String update_url="http://47.98.239.237/word/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
+    String update_url="http://47.98.239.237/word/php_file/update_recite.php?";//http://192.168.57.1/word/update_recite.php?id=1&correct_times=1&error_times=1&prof_flag=1
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

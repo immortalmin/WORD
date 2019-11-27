@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="40dp"
     >
 
 
     <TextView
         android:id="@+id/word"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
+        android:textSize="19dp"
+        android:layout_marginLeft="10dp"
+        android:singleLine="true"
+        android:layout_centerVertical="true"
+        android:textColor="#FFFFFF"
         android:text="TextView" />
-</LinearLayout>
+    <TextView
+        android:id="@+id/C_meaning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/word"
+        android:textColor="#d2cccc"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:maxWidth="250dp"
+        android:ellipsize="end"
+        android:text="TextView2" />
+</RelativeLayout>
