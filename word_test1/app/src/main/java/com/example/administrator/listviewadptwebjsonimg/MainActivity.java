@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
@@ -19,10 +20,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     List<Map<String,Object>> word_list=null;
     Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
+    EditText editText;
     WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
@@ -62,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(this, R.raw.success, 1);
         sound_fail = soundPool.load(this, R.raw.fail, 1);
+//        search1.setBackgroundColor(Color.TRANSPARENT); //背景透明
+        search1.getBackground().setAlpha(150); //int 在0-255之间, 设置半透明
 
     }
     View.OnClickListener search1Click = new View.OnClickListener() {
@@ -92,11 +99,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     };
+
     View.OnClickListener Test = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MainActivity.this,SearchActivity.class);
-            startActivity(intent);
+            //
+
         }
     };
 

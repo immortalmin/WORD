@@ -1,16 +1,20 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.Vibrator;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +26,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +44,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
 
     ExecutorService mExecutorService = null;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
-    Runnable changeColor,update_recite_data,select_update;
+    Runnable changeColor,update_recite_data,select_update,playvideo;
     private boolean fresh_run = false;
     private final Handler fresh_handler = new Handler();
     Vibrator vibrator;//vibrator.vibrate(30);
@@ -68,6 +74,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     int today_finish = 0;//该单词今天背完的次数
     int pre_ind = 0;//上一个单词的id
     Boolean living_flag=true;
+    Boolean pron_lock = false;
+    private MediaPlayer mediaPlayer;
 //    String word_info_url="http://192.168.57.1/word/querybyid.php?id=";
     String word_info_url="http://47.98.239.237/word/php_file/querybyid.php?id=";
 //    String recite_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
@@ -103,6 +111,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         sel3.setOnClickListener(this);
         sel4.setOnClickListener(this);
         sel5.setOnClickListener(this);
+        wordview.setOnClickListener(this);
+
         finish_Dialog = new AlertDialog.Builder(this)
                 .setTitle("任务完成")
                 .setMessage("开始拼写")
@@ -186,13 +196,26 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                     sel3.setClickable(false);
                     sel4.setClickable(false);
                     update_sql_data();
-                }else{
+                }else if(!pron_lock){
                     recite();
                 }
             }
         };
-
+        /**
+         * release mediaPlayer at the end of the playing
+         */
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+//                Log.i("my_mediaPlayer","END!!!!!");
+                mediaPlayer.release();
+            }
+        });
     }
+
+
+
     private final Runnable fresh_task = new Runnable() {
     @Override
     public void run() {
@@ -231,6 +254,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel2.setText(recite_info.get("sel2").toString());
                 sel3.setText(recite_info.get("sel3").toString());
                 sel4.setText(recite_info.get("sel4").toString());
+                mediaPlayer.start();
             }else if(msg.what==1){
                 wordview.setText("");
                 finish_view.setText("");
@@ -288,7 +312,15 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
         living_flag = true;//button relive
+        //set music of word
+        mediaPlayer = new MediaPlayer();
+        String word;
+        word = recite_list.get(select[correct_sel]).get("word_group").toString();
+        initMediaPlayer(word);//音频初始化
         mHandler.obtainMessage(0,recite_info).sendToTarget();
+
+
+
     }
 
 
@@ -297,13 +329,14 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
      * @param view
      */
     public void onClick(View view){
+        //the lock of button
         if(!living_flag){
             Log.i("living_flag","button deaded!");
             return;
         }
-        living_flag = false;
         switch(view.getId()){
             case R.id.sel1:
+                living_flag = false;
                 update_recite_list(0);
                 if(correct_sel == 0){
                     sel1.setBackgroundResource(R.drawable.rounded_corners_green);
@@ -314,6 +347,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel2:
+                living_flag = false;
                 update_recite_list(1);
                 if(correct_sel == 1){
                     sel2.setBackgroundResource(R.drawable.rounded_corners_green);
@@ -324,6 +358,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel3:
+                living_flag = false;
                 update_recite_list(2);
                 if(correct_sel == 2){
                     sel3.setBackgroundResource(R.drawable.rounded_corners_green);
@@ -334,6 +369,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel4:
+                living_flag = false;
                 update_recite_list(3);
                 if(correct_sel == 3){
                     sel4.setBackgroundResource(R.drawable.rounded_corners_green);
@@ -344,12 +380,28 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel5:
+                living_flag = false;
                 update_recite_list(-1);
                 scheduledThreadPool.schedule(changeColor,500, TimeUnit.MILLISECONDS);
+                break;
+            case R.id.wordview:
+                mediaPlayer.start();
                 break;
         }
     }
 
+    /**
+     * 音频播放
+     */
+    private void initMediaPlayer(String word) {
+        try {
+            //modify type to change pronunciation between US and UK
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 正确选项发绿
      */
@@ -380,6 +432,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             correct_word.put("today_correct_times",0);
             correct_word.put("error_times",correct_error_times+1);
             recite_list.set(select[correct_sel],correct_word);
+            pron_lock = true;
             jump_to_example(select[correct_sel]);
         }else{
             //用户选择的选项连续正确的次数
@@ -416,6 +469,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 user_word.put("error_times",user_error_times+1);
                 recite_list.set(select[correct_sel],correct_word);
                 recite_list.set(select[user_sel],user_word);
+                pron_lock = true;
                 jump_to_example(select[correct_sel]);
             }
         }
@@ -429,19 +483,18 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
     public void jump_to_example(int id){
         Intent intent = new Intent(ReciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
-        startActivity(intent);
+//        startActivity(intent);
+        startActivityForResult(intent,1);
 
-//        final Timer timer=new Timer();
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                Intent intent=new Intent(ReciteActivity.this, ExampleActivity.class);
-//                intent.putExtra("id",recite_list.get(id).get("id").toString());
-//                startActivity(intent);
-//                timer.cancel();
-//            }
-//        },1000);
-
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
+        if (requestCode == 1 && resultCode == 1) {
+            pron_lock = false;
+            recite();
+        }
     }
 
     /**

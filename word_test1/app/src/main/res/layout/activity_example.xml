@@ -8,12 +8,20 @@
     tools:context=".ExampleActivity">
 
 
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#30000000"
+        android:textColor="#FFFFFF"
+        android:text="返回" />
+
     <TextView
         android:id="@+id/word_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"
         android:textColor="#FF7F00"
         android:textSize="35dp"

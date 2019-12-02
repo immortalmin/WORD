@@ -77,9 +77,9 @@ public class word1Activity extends AppCompatActivity {
             @Override
             public void run() {
                 HttpGetContext httpGetContext=new HttpGetContext();
-                String amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/total_amount.php");
+                String amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file/total_amount.php");
                 String total_amount = jsonRe.get_amount(amount);
-                amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/prof_amount.php");
+                amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file/prof_amount.php");
                 String finished_amount = jsonRe.get_amount(amount);
                 List<String> amount_list = new ArrayList<String>();
                 amount_list.add(total_amount);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     TextView word_meaning,E_sentence,C_translate,non_example,page,word_group,C_meaning;
     ListView example_list;
+    Button btn1;
     JsonRe  jsonRe;
     List<Map<String,Object>> word_list=null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
@@ -41,11 +43,21 @@ public class ExampleActivity extends AppCompatActivity {
         word_group = (TextView)findViewById(R.id.word_group);
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
+        btn1 = (Button)findViewById(R.id.btn1);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
+//                intent.putExtra("result","");
+                setResult(1,intent);
+                finish();
+            }
+        });
         mHandler.obtainMessage(1).sendToTarget();
         jsonRe=new JsonRe();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-//        Log.i("Example__id",String.valueOf(id));
+        Log.i("Example__id",String.valueOf(id));
         getwordlist();
     }
     private void getwordlist()

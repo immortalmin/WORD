@@ -68,6 +68,7 @@
             android:layout_below="@+id/btn_recite"
             android:layout_toRightOf="@+id/btn_spell"
             android:text="TEST" />
+
     </RelativeLayout>
 
 

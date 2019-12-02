@@ -77,6 +77,7 @@ public class HttpGetContext {
         }
         return  bmp;
     }
+    //http://dict.youdao.com/dictvoice?type=1&audio=accuse%20of
 
     public int update_recite_list(String url) {
         int res=0;
