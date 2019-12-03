@@ -1,22 +1,28 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class spell_reciteActivity extends AppCompatActivity {
+public class spell_reciteActivity extends AppCompatActivity implements View.OnClickListener{
 
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     Runnable correct_action,worry_action,spell_update;
@@ -40,6 +46,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     ProgressBar progressBar;
     JsonRe  jsonRe;
     AlertDialog finish_Dialog,interrupt_Dialog;
+    private MediaPlayer mediaPlayer;
     List<Map<String,Object>> spell_list = new ArrayList<Map<String, Object>>();
     Map<String,Object> update_word = new HashMap<String, Object>();
     List<WordList> id_list = new ArrayList<WordList>();
@@ -49,6 +56,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     int prof_times = 5;//标为掌握的次数
     Boolean once_flag = true;//是否第一次就拼写正确
     Boolean btn_flag = true;
+    Boolean pron_lock = false;
     int[] finish_ind = new int[1000];//用于标记是否该单词是否还需要背
 //    String spell_list_url="http://192.168.57.1/word/getrecitelist.php?mount=";
     String spell_list_url="http://47.98.239.237/word/php_file/getrecitelist.php?mount=";
@@ -72,7 +80,7 @@ public class spell_reciteActivity extends AppCompatActivity {
         Arrays.fill(finish_ind,0);
         eword.setOnEditorActionListener(ewordEd);
         jsonRe=new JsonRe();
-
+        cword.setOnClickListener(this);
         /**
          * 答案正确执行的操作
          */
@@ -91,7 +99,7 @@ public class spell_reciteActivity extends AppCompatActivity {
                     eword.setFocusableInTouchMode(false);//设置输入框无法编辑
                     update_recite_date();
                 }else{
-                    start_spell();
+                    start_spell(100);
                 }
                 btn_flag = true;
             }
@@ -162,7 +170,26 @@ public class spell_reciteActivity extends AppCompatActivity {
                 .create();
         id_list= getIntent().getParcelableArrayListExtra("id_list");
         spell_num = id_list.size();
+        /**
+         * release mediaPlayer at the end of the playing
+         */
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+//                Log.i("my_mediaPlayer","END!!!!!");
+                mediaPlayer.release();
+            }
+        });
         getspelllist();
+    }
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.cword:
+                mediaPlayer.start();
+                break;
+        }
     }
 
     /**
@@ -197,6 +224,7 @@ public class spell_reciteActivity extends AppCompatActivity {
                 }else{
                     soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
                     once_flag = false;
+                    pron_lock = true;
                     word.put("error_times",error_times+1);
                     showMyToast(Toast.makeText(context,"回答错误",Toast.LENGTH_LONG),300);
                     scheduledThreadPool.schedule(worry_action,700, TimeUnit.MILLISECONDS);
@@ -241,7 +269,7 @@ public class spell_reciteActivity extends AppCompatActivity {
 //                HttpGetContext httpGetContext=new HttpGetContext();
 //                String wordlistjson=httpGetContext.httpclientgettext(spell_list_url+String.valueOf(spell_num));
 //                spell_list=jsonRe.getReciteList(wordlistjson);
-                start_spell();
+                start_spell(100);
             }
         }).start();
     }
@@ -249,19 +277,26 @@ public class spell_reciteActivity extends AppCompatActivity {
     /**
      * 开始拼写
      */
-    public void start_spell(){
-        word_index++;
-        while(true){
-            if(word_index == spell_num){
-                word_index = 0;
-            }
-            if(finish_ind[word_index]==0){
-                break;
-            }
+    public void start_spell(int code){
+        if (code==100){//if answer is true
             word_index++;
+            while(true){
+                if(word_index == spell_num){
+                    word_index = 0;
+                }
+                if(finish_ind[word_index]==0){
+                    break;
+                }
+                word_index++;
 
+            }
         }
         String c_word = spell_list.get(word_index).get("C_meaning").toString();
+        //set music of word
+        mediaPlayer = new MediaPlayer();
+        String word;
+        word = spell_list.get(word_index).get("word_group").toString();
+        initMediaPlayer(word);//音频初始化
         mHandler.obtainMessage(0,c_word).sendToTarget();
     }
     private Handler mHandler = new Handler(){
@@ -270,6 +305,7 @@ public class spell_reciteActivity extends AppCompatActivity {
                 numInfo1.setText(String.valueOf(word_index+1)+"/"+String.valueOf(spell_num));
                 numInfo2.setText(String.valueOf(finish_num)+"/"+String.valueOf(spell_num));
                 cword.setText(msg.obj.toString());
+                mediaPlayer.start();
             }else if(msg.what==1){
                 Toast.makeText(context,msg.obj.toString(),Toast.LENGTH_LONG).show();
             }else if(msg.what==2){//清空所有内容
@@ -291,7 +327,7 @@ public class spell_reciteActivity extends AppCompatActivity {
     public void jump_to_example(String id){
         Intent intent = new Intent(spell_reciteActivity.this, ExampleActivity.class);
         intent.putExtra("id",id);
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     /**
@@ -310,6 +346,34 @@ public class spell_reciteActivity extends AppCompatActivity {
         Log.i("update","更新数据库完成");
         mHandler.obtainMessage(4).sendToTarget();
     }
+    /**
+     * 音频播放
+     */
+    private void initMediaPlayer(String word) {
+        try {
+            //modify type to change pronunciation between US and UK
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 子页面跳回
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
+        if (requestCode == 1 && resultCode == 1) {
+            pron_lock = false;
+            start_spell(word_index);
+        }
+    }
+
     /**
      * 回车键事件
      * @param keyCode

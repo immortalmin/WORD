@@ -236,7 +236,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 HttpGetContext httpGetContext=new HttpGetContext();
                 String wordlistjson=httpGetContext.httpclientgettext(recite_list_url+String.valueOf(recite_num+recite_scope));
                 recite_list=jsonRe.getReciteList(wordlistjson);
-                Log.i("recite_list",recite_list.toString());
+//                Log.i("recite_list",recite_list.toString());
                 recite();
             }
         }).start();
@@ -254,7 +254,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 sel2.setText(recite_info.get("sel2").toString());
                 sel3.setText(recite_info.get("sel3").toString());
                 sel4.setText(recite_info.get("sel4").toString());
-                mediaPlayer.start();
+
             }else if(msg.what==1){
                 wordview.setText("");
                 finish_view.setText("");
@@ -318,7 +318,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         word = recite_list.get(select[correct_sel]).get("word_group").toString();
         initMediaPlayer(word);//音频初始化
         mHandler.obtainMessage(0,recite_info).sendToTarget();
-
+        mediaPlayer.start();
 
 
     }
@@ -487,6 +487,13 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         startActivityForResult(intent,1);
 
     }
+
+    /**
+     * 子页面跳回
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
