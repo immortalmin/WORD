@@ -209,7 +209,8 @@ public class spell_reciteActivity extends AppCompatActivity implements View.OnCl
                 int correct_times = Integer.valueOf(word.get("correct_times").toString());
                 int error_times = Integer.valueOf(word.get("error_times").toString());
                 if(ans.equals(correct_ans)){
-                    soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
+                    mediaPlayer.start();
+//                    soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
                     if(once_flag){
                         finish_ind[word_index]=1;
                         finish_num++;
@@ -222,7 +223,7 @@ public class spell_reciteActivity extends AppCompatActivity implements View.OnCl
                     showMyToast(Toast.makeText(context,"回答正确",Toast.LENGTH_LONG),500);
                     scheduledThreadPool.schedule(correct_action,500, TimeUnit.MILLISECONDS);
                 }else{
-                    soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+                    soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
                     once_flag = false;
                     pron_lock = true;
                     word.put("error_times",error_times+1);
@@ -305,7 +306,7 @@ public class spell_reciteActivity extends AppCompatActivity implements View.OnCl
                 numInfo1.setText(String.valueOf(word_index+1)+"/"+String.valueOf(spell_num));
                 numInfo2.setText(String.valueOf(finish_num)+"/"+String.valueOf(spell_num));
                 cword.setText(msg.obj.toString());
-                mediaPlayer.start();
+//                mediaPlayer.start();
             }else if(msg.what==1){
                 Toast.makeText(context,msg.obj.toString(),Toast.LENGTH_LONG).show();
             }else if(msg.what==2){//清空所有内容

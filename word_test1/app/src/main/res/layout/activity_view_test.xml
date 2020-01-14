@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <!--<com.example.administrator.listviewadptwebjsonimg.MyTextView-->
+        <!--android:background="@color/colorAccent"-->
+        <!--app:lctyColor="@color/colorPrimary"-->
+        <!--app:lctyText="@string/app_name"-->
+        <!--android:padding="10dp"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <com.example.administrator.listviewadptwebjsonimg.CountDownProgressBar
+        android:id="@+id/cpb_countdown"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="170dp"
+        app:countDown_centerTextColor="#2395FF"
+        app:countDown_centerTextSize="25dp"
+        app:countDown_circleWidth="4dp"
+        app:countDown_firstColor="@color/colorPrimary"
+        app:countDown_isShowGradient="true"
+        app:countDown_secondColor="@color/colorAccent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_below="@+id/cpb_countdown">
+
+        <Button
+            android:id="@+id/acquaint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="acquaint" />
+
+        <Button
+            android:id="@+id/vague"
+            android:layout_toRightOf="@+id/acquaint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="vague" />
+
+        <Button
+            android:id="@+id/strange"
+            android:layout_toRightOf="@+id/vague"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="strange" />
+
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

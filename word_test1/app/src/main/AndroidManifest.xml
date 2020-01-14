@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".word1Activity" />
         <activity android:name=".ExampleActivity" />
         <activity android:name=".ReciteActivity" />
@@ -25,7 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".CountDownActivity" />
+        <activity android:name=".ViewTestActivity"></activity>
     </application>
 
 </manifest>

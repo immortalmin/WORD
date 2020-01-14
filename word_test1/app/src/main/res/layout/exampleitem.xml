@@ -27,7 +27,7 @@
             android:layout_below="@+id/word_meaning"
             android:layout_marginTop="-5dp"
             android:singleLine="false"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:textSize="17dp"
             android:text="The newly described languages were often so strikingly different from the well studied languages of Europe and Southeast Asia that some scholars even accused Boas and Sapir of fabricating their data."
             />
@@ -48,7 +48,7 @@
         <View
             android:layout_below="@+id/C_translate"
             android:layout_width="match_parent"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:layout_height="1dp" />
 
 

@@ -89,6 +89,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_recite);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        //play voice in local
         sound_success = soundPool.load(this, R.raw.success, 1);
         sound_fail = soundPool.load(this, R.raw.fail, 1);
         ActivityRA = this;
@@ -316,7 +317,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         mediaPlayer = new MediaPlayer();
         String word;
         word = recite_list.get(select[correct_sel]).get("word_group").toString();
-        initMediaPlayer(word);//音频初始化
+        initMediaPlayer(word,0);//音频初始化
         mHandler.obtainMessage(0,recite_info).sendToTarget();
         mediaPlayer.start();
 
@@ -392,11 +393,17 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
 
     /**
      * 音频播放
+     * @param word
+     * @param what
      */
-    private void initMediaPlayer(String word) {
+    private void initMediaPlayer(String word,int what) {
         try {
-            //modify type to change pronunciation between US and UK
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            if(what == 0){
+                //modify type to change pronunciation between US and UK
+                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            }else if(what == 1){
+                mediaPlayer.setDataSource(word);
+            }
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
@@ -428,7 +435,8 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
         int correct_error_times = Integer.parseInt(recite_list.get(select[correct_sel]).get("error_times").toString());
         Map<String,Object> correct_word = recite_list.get(select[correct_sel]);
         if(user_sel==-1){//选择了"不知道"选项
-            soundPool.play(sound_fail, 0.5f, 0.5f, 0, 0, 1.0f);
+            //play voice in local
+            soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
             correct_word.put("today_correct_times",0);
             correct_word.put("error_times",correct_error_times+1);
             recite_list.set(select[correct_sel],correct_word);
@@ -441,7 +449,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
             int user_error_times = Integer.parseInt(recite_list.get(select[user_sel]).get("error_times").toString());
             Map<String,Object> user_word = recite_list.get(select[user_sel]);
             if(user_sel == correct_sel){//回答正确
-                soundPool.play(sound_success, 0.5f, 0.5f, 0, 0, 1.0f);
+                soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
                 correct_word.put("today_correct_times",correct_to_times+1);
                 if(correct_to_times+1 >= c_times){
                     correct_word.put("correct_times",correct_all_times+1);
@@ -462,7 +470,7 @@ public class ReciteActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 recite_list.set(select[correct_sel],correct_word);
             }else{//回答错误
-                soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+                soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
                 correct_word.put("today_correct_times",0);
                 correct_word.put("error_times",correct_error_times+1);
                 user_word.put("today_correct_times",0);

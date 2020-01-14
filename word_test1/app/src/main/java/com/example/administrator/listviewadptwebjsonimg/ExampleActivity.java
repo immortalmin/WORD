@@ -58,7 +58,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 //        Log.i("Example__id",String.valueOf(id));
-        getwordlist();
+
         /**
          * release mediaPlayer at the end of the playing
          */
@@ -70,6 +70,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 mediaPlayer.release();
             }
         });
+        getwordlist();
     }
     /**
      * 音频播放
@@ -106,9 +107,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 String wordlistjson=httpGetContext.httpclientgettext(url+id);
                 word_list=jsonRe.getWordList(wordlistjson);
                 mHandler.obtainMessage(0,word_list).sendToTarget();
-                //set music of word
-                mediaPlayer = new MediaPlayer();
-                initMediaPlayer(current_word);//音频初始化
+
             }
         }).start();
     }
@@ -122,7 +121,11 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 page.setText("页码："+word.get("page").toString());
                 word_group.setText(word.get("word_group").toString());
                 C_meaning.setText(word.get("C_meaning").toString());
+                //set music of word
                 current_word = word.get("word_group").toString();
+                mediaPlayer = new MediaPlayer();
+                initMediaPlayer(current_word);//音频初始化
+                mediaPlayer.start();
                 if(translates.size() == 0){
                     Log.i("translates","为空");
                     non_example.setVisibility(View.VISIBLE);

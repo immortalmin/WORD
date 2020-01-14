@@ -4,8 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/item2"
+    android:background="#232430"
+
     tools:context=".ExampleActivity">
+    <!--android:background="@mipmap/item2"
+    android:background="@drawable/bk125_4"
+    -->
 
 
     <RelativeLayout
@@ -16,8 +20,8 @@
         >
         <Button
             android:id="@+id/btn1"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/return2"
@@ -31,7 +35,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:textSize="20dp"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:textStyle="bold"
             android:text="单词详情" />
     </RelativeLayout>
@@ -43,18 +47,20 @@
         >
         <TextView
             android:id="@+id/word_group"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
             android:textColor="#FF7F00"
-            android:textSize="35dp"
+            android:singleLine="false"
+            android:inputType="textMultiLine"
+            android:textSize="30dp"
             android:text="accuse of" />
 
         <Button
             android:id="@+id/voice_btn"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="@drawable/voice2"
             android:layout_toRightOf="@+id/word_group"
             android:layout_marginTop="7dp"
@@ -68,10 +74,11 @@
             android:padding="0dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="-30dp"
-            android:textSize="18dp"
-            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:textColor="#DCDDDF"
             android:layout_below="@+id/word_group"
             android:text="指责" />
+        <!---->
 
         <TextView
             android:id="@+id/page"
@@ -83,7 +90,7 @@
             android:textSize="13dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:text="页码：1" />
 
         <TextView
@@ -91,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/page"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:textSize="20dp"
             android:layout_marginLeft="10dp"
             android:text="例句" />
@@ -102,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="#FFFFFF"
+            android:background="#DCDDDF"
             android:layout_height="5px" />
 
         <ListView
@@ -124,7 +131,7 @@
             android:layout_gravity="center_vertical"
             android:visibility="invisible"
             android:textSize="20dp"
-            android:textColor="#FFFFFF"
+            android:textColor="#DCDDDF"
             android:text="暂无例句" />
     </RelativeLayout>
 

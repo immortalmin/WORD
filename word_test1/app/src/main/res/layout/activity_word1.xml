@@ -4,29 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/wordlist"
+    android:background="@drawable/bk1210_2"
     tools:context=".word1Activity">
+    <!--android:background="@mipmap/wordlist"-->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linear1"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:weightSum="100"
-        android:background="@drawable/num_bk"
-        android:orientation="horizontal">
+>
+        <!--android:background="@drawable/num_bk"-->
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_weight="50"
+            android:layout_width="130dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/rounded_corners_gray"
             android:orientation="vertical">
+            <!--android:background="#60444444"-->
 
             <TextView
                 android:id="@+id/all_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
+                android:layout_marginTop="5dp"
                 android:text="总词组数"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#000000"
@@ -41,16 +43,18 @@
                 android:textSize="20dp" />
         </LinearLayout>
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_weight="50"
+            android:layout_width="130dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/rounded_corners_gray"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/finished_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/all_view"
                 android:layout_gravity="center_horizontal"
                 android:text="已完成数"
@@ -71,13 +75,13 @@
 
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <ListView
         android:id="@+id/ListView1"
         android:layout_below="@+id/linear1"
-        android:layout_marginTop="-25dp"
+        android:layout_marginTop="-46dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>
