@@ -321,4 +321,15 @@ public class CountDownProgressBar extends View {
     public void setWord(String word) {
         this.word = word;
     }
+
+    /**
+     * an early closure
+     */
+    public void finishProgressBar() {
+        animator.end();
+    }
+
+    public void setCenterTextColor(int centerTextColor) {
+        this.centerTextColor = centerTextColor;
+    }
 }

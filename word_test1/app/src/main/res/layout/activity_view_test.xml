@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@mipmap/timg5"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -38,6 +39,9 @@
             android:id="@+id/acquaint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners_gray"
+            android:textAllCaps="false"
+            android:textColor="#252222"
             android:text="acquaint" />
 
         <Button
@@ -46,6 +50,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:textAllCaps="false"
+            android:textColor="#252222"
             android:text="vague" />
 
         <Button
@@ -54,6 +61,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:textAllCaps="false"
+            android:textColor="#252222"
             android:text="strange" />
 
 
