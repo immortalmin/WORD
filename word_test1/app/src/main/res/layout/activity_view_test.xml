@@ -7,14 +7,6 @@
     android:layout_height="match_parent">
 
 
-    <!--<com.example.administrator.listviewadptwebjsonimg.MyTextView-->
-        <!--android:background="@color/colorAccent"-->
-        <!--app:lctyColor="@color/colorPrimary"-->
-        <!--app:lctyText="@string/app_name"-->
-        <!--android:padding="10dp"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"/>-->
-
     <com.example.administrator.listviewadptwebjsonimg.CountDownProgressBar
         android:id="@+id/cpb_countdown"
         android:layout_width="250dp"
@@ -69,7 +61,6 @@
 
 
     </RelativeLayout>
-
 
 
 
