@@ -8,9 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class CountDownFragment extends Fragment {
     private final static String TAG = "CountDownFragment";
+    private View mView;
+    private String res = "false";
+    TextView textView1;
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -34,7 +38,20 @@ public class CountDownFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.activity_view_test,null);
+        Log.d(TAG,"onCreateView");
+        mView = view;
+        textView1 = mView.findViewById(R.id.tv1);
+        textView1.setText("YES");
+//        Log.d("gettextttttt",..toString());
+        res = "ture";
         return view;
     }
+
+    public String getV(){
+
+
+        return res;
+    }
+
 
 }
