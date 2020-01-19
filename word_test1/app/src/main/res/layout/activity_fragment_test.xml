@@ -8,12 +8,20 @@
     >
 
 
-    <!--<fragment-->
-        <!--android:id="@+id/f1"-->
-        <!--android:name="com.example.administrator.listviewadptwebjsonimg.CountDownFragment"-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="200dp"-->
-        <!--/>-->
+    <fragment
+        android:id="@+id/f1"
+        android:name="com.example.administrator.listviewadptwebjsonimg.CountDownFragment"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        />
+    <FrameLayout
+        android:layout_below="@+id/f1"
+        android:id="@+id/f2"
+        android:layout_width="100dp"
+        android:layout_height="100dp">
+
+
+    </FrameLayout>
 
 
     <Button
@@ -24,5 +32,14 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="27dp"
         android:layout_marginEnd="48dp"
-        android:text="Button" />
+        android:text="show" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/btn1"
+        android:layout_marginStart="87dp"
+        android:text="hide" />
 </RelativeLayout>
