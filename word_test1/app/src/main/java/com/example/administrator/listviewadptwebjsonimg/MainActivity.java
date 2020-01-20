@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             //
 //            Intent intent = new Intent(MainActivity.this,ViewTestActivity.class);
-            Intent intent = new Intent(MainActivity.this,FragmentTestActivity.class);
+            Intent intent = new Intent(MainActivity.this,ReciteWordActivity.class);
             startActivity(intent);
         }
     };

@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class CountDownFragment extends Fragment {
     private final static String TAG = "CountDownFragment";
     private View mView;
     private String res = "false";
     TextView tv1;
     Button acquaint;
+    private OnFragmentInteractionListener mListener;
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -27,6 +30,12 @@ public class CountDownFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         Log.d(TAG,"onAttach");
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     /**
@@ -59,7 +68,18 @@ public class CountDownFragment extends Fragment {
 //            }
 //        });
 //        tv1.setText(res);
-
+        if (mListener != null) {
+            Log.i("mListener!!","okokok");
+            ArrayList a = new ArrayList();
+            a.add(1);
+            a.add(2);
+            a.add(3);
+            mListener.onFragmentInteraction(a);
+        }
+    }
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(ArrayList<Integer> s);
     }
 
 

@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class FragmentTestActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class FragmentTestActivity extends AppCompatActivity implements CountDownFragment.OnFragmentInteractionListener{
 
     TextView tv1;
     Button btn1,btn2;
@@ -62,6 +64,11 @@ public class FragmentTestActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onFragmentInteraction(ArrayList<Integer> s) {
+        Log.i("回调了",s.toString());
     }
 
 //    private void setFragment(){

@@ -28,7 +28,8 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".CountDownActivity" />
         <activity android:name=".ViewTestActivity" />
-        <activity android:name=".FragmentTestActivity"></activity>
+        <activity android:name=".FragmentTestActivity" />
+        <activity android:name=".ReciteWordActivity" />
     </application>
 
 </manifest>
