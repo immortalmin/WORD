@@ -7,4 +7,60 @@
     android:background="@drawable/recite_word_1"
     tools:context=".ReciteWordActivity">
 
+    <ProgressBar
+        android:id="@+id/total_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progressbar_color"/>
+    <TextView
+        android:id="@+id/word_times"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="1/5"
+        android:textColor="#1d231e"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/total_times"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#1d231e"
+        android:textSize="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:text="1/20" />
+
+    <FrameLayout
+        android:id="@+id/recite_model"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/operating_area">
+
+    </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/operating_area"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true">
+
+
+        <Button
+            android:id="@+id/turn_model"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="turn_model" />
+    </RelativeLayout>
+
+
 </RelativeLayout>

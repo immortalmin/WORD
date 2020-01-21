@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/wordview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:textSize="80px"
+        android:textColor="#FFFFFF"
+        android:text="accuse of" />
+
+    <ProgressBar
+        android:id="@+id/my_progress2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="8dp"
+        android:layout_height="25dp"
+        android:layout_toRightOf="@+id/wordview"
+        android:layout_marginTop="110dp"
+        android:layout_marginLeft="10dp"
+        android:max="10"
+        android:progress="3"
+        android:progressDrawable="@drawable/progress_bar_drawable"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:layout_below="@+id/wordview">
+
+        <Button
+            android:id="@+id/sel1"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:text="指责；指控.....,指责；指控指责；指控,指责；指控指责；指控" />
+
+        <Button
+            android:id="@+id/sel2"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sel1"
+            android:text="对...起作用（有功效）" />
+
+        <Button
+            android:id="@+id/sel3"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sel2"
+            android:text="变得习惯于...；使适应于" />
+
+        <Button
+            android:id="@+id/sel4"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sel3"
+            android:text="增加，加强" />
+
+        <Button
+            android:id="@+id/sel5"
+            android:layout_width="150dp"
+            android:layout_height="30dp"
+            android:background="#40ed0808"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/sel4"
+            android:textColor="#FFFFFF"
+            android:text="不知道" />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
