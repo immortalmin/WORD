@@ -11,11 +11,15 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class ReciteWordActivity extends AppCompatActivity implements View.OnClickListener,CountDownFragment.OnFragmentInteractionListener{
+public class ReciteWordActivity extends AppCompatActivity
+        implements View.OnClickListener,
+        CountDownFragment.OnFragmentInteractionListener,
+        SelectFragment.OnFragmentInteractionListener{
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     CountDownFragment countDownFragment = new CountDownFragment();
+    SelectFragment selectFragment = new SelectFragment();
     Button turn_model;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +27,25 @@ public class ReciteWordActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_recite_word);
         turn_model = (Button)findViewById(R.id.turn_model);
         turn_model.setOnClickListener(this);
-        initialize();
-        start_countdown();
+//        initialize();
+//        start_countdown();
+        start_select();
     }
 
     private void start_countdown(){
-
+        transaction = fragmentManager.beginTransaction();
         Bundle sendBundle = new Bundle();
-        sendBundle.putString("word","accuse of");
+        sendBundle.putString("word","space-time");
         countDownFragment.setArguments(sendBundle);
+        transaction.replace(R.id.recite_model,countDownFragment);
+        transaction.commit();
+    }
+    private void start_select(){
+        transaction = fragmentManager.beginTransaction();
+//        Bundle sendBundle = new Bundle();
+//        sendBundle.putString("word","space-time");
+//        selectFragment.setArguments(sendBundle);
+        transaction.replace(R.id.recite_model,selectFragment);
         transaction.commit();
     }
 
@@ -40,9 +54,7 @@ public class ReciteWordActivity extends AppCompatActivity implements View.OnClic
      * 初始化操作
      */
     public void initialize(){
-        transaction.add(R.id.recite_model,countDownFragment);
-//        transaction.show(countDownFragment);
-//        transaction.commit();
+        transaction.add(R.id.recite_model,selectFragment);
     }
 
     /**
@@ -52,7 +64,7 @@ public class ReciteWordActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view){
         switch(view.getId()){
             case R.id.turn_model:
-
+                start_countdown();
                 break;
 
         }

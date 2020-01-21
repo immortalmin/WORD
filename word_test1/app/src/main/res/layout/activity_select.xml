@@ -17,7 +17,7 @@
         android:text="accuse of" />
 
     <ProgressBar
-        android:id="@+id/my_progress2"
+        android:id="@+id/word_times_pro"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="8dp"
         android:layout_height="25dp"

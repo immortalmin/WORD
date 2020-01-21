@@ -10,15 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class SelectFragment extends Fragment implements View.OnClickListener{
-    private final static String TAG = "CountDownFragment";
+    private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
-    private String word,res;
-    private Button acquaint,vague,strange;
-    private CountDownProgressBar cpb_countdown;
+//    private String word,res;
+    private Button sel1,sel2,sel3,sel4,sel5;
+    private TextView wordview;
+    private ProgressBar word_times_pro;
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -47,7 +52,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.activity_countdown,null);
+        View view = inflater.inflate(R.layout.activity_select,null);
         Log.d(TAG,"onCreateView");
         return view;
     }
@@ -55,27 +60,32 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        acquaint = (Button)getActivity().findViewById(R.id.acquaint);
-        vague = (Button)getActivity().findViewById(R.id.vague);
-        strange = (Button)getActivity().findViewById(R.id.strange);
-        cpb_countdown = (CountDownProgressBar) getActivity().findViewById(R.id.cpb_countdown);
-        acquaint.setOnClickListener(this);
-        vague.setOnClickListener(this);
-        strange.setOnClickListener(this);
-        cpb_countdown.setOnClickListener(this);
+        sel1 = (Button)getActivity().findViewById(R.id.sel1);
+        sel2 = (Button)getActivity().findViewById(R.id.sel2);
+        sel3 = (Button)getActivity().findViewById(R.id.sel3);
+        sel4 = (Button)getActivity().findViewById(R.id.sel4);
+        sel5 = (Button)getActivity().findViewById(R.id.sel5);
+        wordview = (TextView) getActivity().findViewById(R.id.wordview);
+        word_times_pro = (ProgressBar) getActivity().findViewById(R.id.word_times_pro);
+        sel1.setOnClickListener(this);
+        sel2.setOnClickListener(this);
+        sel3.setOnClickListener(this);
+        sel4.setOnClickListener(this);
+        sel5.setOnClickListener(this);
+        wordview.setOnClickListener(this);
         /**
          * 接受来自activity的数据
          */
-        Bundle bundle = getArguments();
-        word = bundle.getString("word");
-        cpb_countdown.setWord(word);
-        cpb_countdown.setCenterTextColor(Color.BLUE);
-        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
-            @Override
-            public void onFinish() {
-//                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Bundle bundle = getArguments();
+//        word = bundle.getString("word");
+//        cpb_countdown.setWord(word);
+//        cpb_countdown.setCenterTextColor(Color.BLUE);
+//        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
+//            @Override
+//            public void onFinish() {
+////                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
 
@@ -94,20 +104,23 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      */
     public void onClick(View view){
         switch(view.getId()){
-            case R.id.cpb_countdown:
-                cpb_countdown.finishProgressBar();
+            case R.id.sel1:
+                send_to_activity("sel1");
                 break;
-            case R.id.acquaint:
-                res="acquaint";
-                send_to_activity(res);
+            case R.id.sel2:
+                send_to_activity("sel2");
                 break;
-            case R.id.vague:
-                res="vague";
-                send_to_activity(res);
+            case R.id.sel3:
+                send_to_activity("sel3");
                 break;
-            case R.id.strange:
-                res="strange";
-                send_to_activity(res);
+            case R.id.sel4:
+                send_to_activity("sel4");
+                break;
+            case R.id.sel5:
+                send_to_activity("sel5");
+                break;
+            case R.id.wordview:
+                send_to_activity("wordview");
                 break;
         }
 //        send_to_activity(res);
@@ -118,7 +131,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      */
     private void send_to_activity(String s){
         if (mListener != null) {
-//            Log.i("mListener!!","okokok");
             ArrayList a = new ArrayList();
             a.add(s);
             mListener.onFragmentInteraction(a);
