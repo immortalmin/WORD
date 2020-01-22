@@ -3,6 +3,8 @@ package com.example.administrator.listviewadptwebjsonimg;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +18,8 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
@@ -24,6 +28,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     private Button sel1,sel2,sel3,sel4,sel5;
     private TextView wordview;
     private ProgressBar word_times_pro;
+    private Map<String, Object> word_list = new HashMap<String, Object>();
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -76,8 +81,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         /**
          * 接受来自activity的数据
          */
-//        Bundle bundle = getArguments();
-//        word = bundle.getString("word");
+        Bundle bundle = getArguments();
+        word_list.put("wordview",bundle.getString("wordview"));
+        word_list.put("sel1",bundle.getString("sel1"));
+        word_list.put("sel2",bundle.getString("sel2"));
+        word_list.put("sel3",bundle.getString("sel3"));
+        word_list.put("sel4",bundle.getString("sel4"));
+        mHandler.obtainMessage(0).sendToTarget();
 //        cpb_countdown.setWord(word);
 //        cpb_countdown.setCenterTextColor(Color.BLUE);
 //        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
@@ -125,6 +135,20 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         }
 //        send_to_activity(res);
     }
+
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 0:
+//                    recite_info = (Map<String, Object>)msg.obj;
+                    wordview.setText(word_list.get("wordview").toString());
+                    sel1.setText(word_list.get("sel1").toString());
+                    sel2.setText(word_list.get("sel2").toString());
+                    sel3.setText(word_list.get("sel3").toString());
+                    sel4.setText(word_list.get("sel4").toString());
+            }
+        }
+    };
 
     /**
      * 向activity回送数据

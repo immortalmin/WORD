@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/recite_word_1"
+    android:background="@drawable/recite_word_2"
     tools:context=".ReciteWordActivity">
 
     <ProgressBar
@@ -55,7 +55,7 @@
 
 
         <Button
-            android:id="@+id/turn_model"
+            android:id="@+id/turn_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"

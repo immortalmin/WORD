@@ -5,7 +5,7 @@
             <corners
                 android:topLeftRadius="10dp"
                 android:topRightRadius="10dp"/>
-            <solid android:color="#50120a0a"/>
+            <solid android:color="#15120a0a"/>
         </shape>
     </item>
     <item android:id="@android:id/progress">
