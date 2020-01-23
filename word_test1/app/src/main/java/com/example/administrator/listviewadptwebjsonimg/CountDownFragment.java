@@ -87,7 +87,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(ArrayList<String> s);
+        void countdownonFragmentInteraction(ArrayList<String> s);
     }
 
     /**
@@ -123,7 +123,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
 //            Log.i("mListener!!","okokok");
             ArrayList a = new ArrayList();
             a.add(s);
-            mListener.onFragmentInteraction(a);
+            mListener.countdownonFragmentInteraction(a);
         }
     }
 

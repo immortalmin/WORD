@@ -2,6 +2,9 @@ package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,18 +20,32 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
+    private MediaPlayer mediaPlayer;
+    private SoundPool soundPool;
+    private int sound_success,sound_fail;
+    Runnable resetColor;
 //    private String word,res;
     private Button sel1,sel2,sel3,sel4,sel5;
     private TextView wordview;
     private ProgressBar word_times_pro;
     private Map<String, Object> word_list = new HashMap<String, Object>();
+    Boolean living_flag=true;
+    Boolean pron_lock = false;
+    ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
+    private int correct_sel = 0;//正确答案的下标
+    private int user_sel;
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -78,8 +95,39 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         sel4.setOnClickListener(this);
         sel5.setOnClickListener(this);
         wordview.setOnClickListener(this);
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
+        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
+        resetColor = new Runnable(){
+            public void run(){
+                sel1.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel2.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel3.setBackgroundResource(R.drawable.rounded_corners_gray);
+                sel4.setBackgroundResource(R.drawable.rounded_corners_gray);
+                send_to_activity(user_sel);
+//                progressBar.setProgress(finish_num/recite_num);
+//                progressBar.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        int pro_num = finish_num*100/recite_num;
+//                        progressBar.setProgress(pro_num);
+//                    }
+//                });
+//
+//                if(finish_num>=recite_num){
+//                    //设置按钮不可用
+//                    sel1.setClickable(false);
+//                    sel2.setClickable(false);
+//                    sel3.setClickable(false);
+//                    sel4.setClickable(false);
+//                    update_sql_data();
+//                }else if(!pron_lock){
+//                    recite();
+//                }
+            }
+        };
         /**
-         * 接受来自activity的数据
+         * 接受来自activity的数据(first time)
          */
         Bundle bundle = getArguments();
         word_list.put("wordview",bundle.getString("wordview"));
@@ -87,7 +135,22 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         word_list.put("sel2",bundle.getString("sel2"));
         word_list.put("sel3",bundle.getString("sel3"));
         word_list.put("sel4",bundle.getString("sel4"));
+        Log.i("SelectFragment!!!",word_list.toString());
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+//                Log.i("my_mediaPlayer","END!!!!!");
+                mediaPlayer.release();
+            }
+        });
+
+        mediaPlayer = new MediaPlayer();
+        initMediaPlayer(bundle.getString("wordview"),0);//音频初始化
+        mediaPlayer.start();
         mHandler.obtainMessage(0).sendToTarget();
+        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
+//        word_list.put("correct_sel",);
 //        cpb_countdown.setWord(word);
 //        cpb_countdown.setCenterTextColor(Color.BLUE);
 //        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
@@ -105,7 +168,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(ArrayList<String> s);
+        void selectonFragmentInteraction(HashMap<String,Object> res);
     }
 
     /**
@@ -115,25 +178,110 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view){
         switch(view.getId()){
             case R.id.sel1:
-                send_to_activity("sel1");
+                living_flag = false;
+                user_sel=0;
+                judge_ring();
+                if(correct_sel == 0){
+                    sel1.setBackgroundResource(R.drawable.rounded_corners_green);
+                }else{
+                    sel1.setBackgroundResource(R.drawable.rounded_corners_red);
+                    correct_shine();
+                }
+                scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel2:
-                send_to_activity("sel2");
+                living_flag = false;
+                user_sel=1;
+                judge_ring();
+                if(correct_sel == 1){
+                    sel2.setBackgroundResource(R.drawable.rounded_corners_green);
+                }else{
+                    sel2.setBackgroundResource(R.drawable.rounded_corners_red);
+                    correct_shine();
+                }
+                scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel3:
-                send_to_activity("sel3");
+                living_flag = false;
+                user_sel=2;
+                judge_ring();
+                if(correct_sel == 2){
+                    sel3.setBackgroundResource(R.drawable.rounded_corners_green);
+                }else{
+                    sel3.setBackgroundResource(R.drawable.rounded_corners_red);
+                    correct_shine();
+                }
+                scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel4:
-                send_to_activity("sel4");
+                living_flag = false;
+                user_sel=3;
+                judge_ring();
+                if(correct_sel == 3){
+                    sel4.setBackgroundResource(R.drawable.rounded_corners_green);
+                }else{
+                    sel4.setBackgroundResource(R.drawable.rounded_corners_red);
+                    correct_shine();
+                }
+                scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.sel5:
-                send_to_activity("sel5");
+                living_flag = false;
+                user_sel=-1;
+                judge_ring();
+                correct_shine();
+                scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
-            case R.id.wordview:
-                send_to_activity("wordview");
-                break;
+//            case R.id.wordview:
+//                mediaPlayer.start();
+//                break;
         }
-//        send_to_activity(res);
+    }
+
+    public void judge_ring(){
+        Log.i("user_selandcorrect_sel1",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
+        if(user_sel==correct_sel){
+            soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
+        }else{
+            soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
+        }
+
+    }
+
+    /**
+     * 正确选项发绿
+     */
+    public void correct_shine(){
+//        today_finish --;
+        if(correct_sel == 0){
+            sel1.setBackgroundResource(R.drawable.rounded_corners_green);
+        }else if (correct_sel == 1){
+            sel2.setBackgroundResource(R.drawable.rounded_corners_green);
+        }else if (correct_sel == 2){
+            sel3.setBackgroundResource(R.drawable.rounded_corners_green);
+        }else{
+            sel4.setBackgroundResource(R.drawable.rounded_corners_green);
+        }
+
+    }
+
+    /**
+     * 音频播放
+     * @param word
+     * @param what
+     */
+    private void initMediaPlayer(String word,int what) {
+        try {
+            if(what == 0){
+                //modify type to change pronunciation between US and UK
+                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            }else if(what == 1){
+                mediaPlayer.setDataSource(word);
+            }
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Handler mHandler = new Handler(){
@@ -153,12 +301,32 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     /**
      * 向activity回送数据
      */
-    private void send_to_activity(String s){
+    private void send_to_activity(int ans){
         if (mListener != null) {
-            ArrayList a = new ArrayList();
-            a.add(s);
-            mListener.onFragmentInteraction(a);
+            HashMap<String,Object> res = new HashMap<String,Object>();
+            if(ans==-1){//select unknown
+                res.put("judge",3);
+                res.put("correct_sel",correct_sel);
+            }else if(ans==correct_sel){//correct
+                res.put("judge",1);
+                res.put("correct_sel",correct_sel);
+            }else{//wrong
+                res.put("judge",2);
+                res.put("correct_sel",correct_sel);
+                res.put("wrong_sel",ans);
+            }
+            mListener.selectonFragmentInteraction(res);
         }
+    }
+    public void update_options(HashMap<String,Object>words){
+        word_list = words;
+        correct_sel = Integer.valueOf(words.get("correct_sel").toString());
+//        Log.i("SelectFragment!!!",word_list.toString());
+        mediaPlayer = new MediaPlayer();
+        initMediaPlayer(word_list.get("wordview").toString(),0);//音频初始化
+        mediaPlayer.start();
+        mHandler.obtainMessage(0).sendToTarget();
+        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
     }
 
 }
