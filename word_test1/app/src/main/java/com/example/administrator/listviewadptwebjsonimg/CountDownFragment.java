@@ -1,6 +1,7 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,11 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CountDownFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
-    private String word,res;
+    private String word;
     private Button acquaint,vague,strange;
     private CountDownProgressBar cpb_countdown;
 
@@ -100,16 +102,13 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 cpb_countdown.finishProgressBar();
                 break;
             case R.id.acquaint:
-                res="acquaint";
-                send_to_activity(res);
+                send_to_activity(1);
                 break;
             case R.id.vague:
-                res="vague";
-                send_to_activity(res);
+                send_to_activity(2);
                 break;
             case R.id.strange:
-                res="strange";
-                send_to_activity(res);
+                send_to_activity(3);
                 break;
         }
 //        send_to_activity(res);
@@ -118,13 +117,37 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     /**
      * 向activity回送数据
      */
-    private void send_to_activity(String s){
+    private void send_to_activity(int res){
         if (mListener != null) {
-//            Log.i("mListener!!","okokok");
             ArrayList a = new ArrayList();
-            a.add(s);
+            switch (res){
+                case 1://认识
+                    a.add("1");
+                    break;
+                case 2://模糊
+                    a.add("2");
+                    break;
+                case 3://不认识
+                    a.add("3");
+                    break;
+            }
+//            a.add(s);
             mListener.countdownonFragmentInteraction(a);
         }
+    }
+
+    public void update_options(String new_word){
+        word = new_word;
+//        cpb_countdown.finishProgressBar();
+        cpb_countdown.setWord(word);
+        cpb_countdown.setCenterTextColor(Color.BLUE);
+        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
+            @Override
+            public void onFinish() {
+//                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
+            }
+        });
+//        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
     }
 
 }

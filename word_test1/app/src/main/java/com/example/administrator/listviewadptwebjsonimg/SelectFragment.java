@@ -135,7 +135,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         word_list.put("sel2",bundle.getString("sel2"));
         word_list.put("sel3",bundle.getString("sel3"));
         word_list.put("sel4",bundle.getString("sel4"));
-        Log.i("SelectFragment!!!",word_list.toString());
+        word_list.put("finish_view",bundle.getString("finish_view"));
+        word_list.put("c_times",bundle.getString("c_times"));
+//        Log.i("SelectFragment!!!",word_list.toString());
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -239,7 +241,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     }
 
     public void judge_ring(){
-        Log.i("user_selandcorrect_sel1",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
+//        Log.i("user_selandcorrect_sel1",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
         if(user_sel==correct_sel){
             soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
         }else{
@@ -294,6 +296,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                     sel2.setText(word_list.get("sel2").toString());
                     sel3.setText(word_list.get("sel3").toString());
                     sel4.setText(word_list.get("sel4").toString());
+                    word_times_pro.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int pro_num = Integer.valueOf(word_list.get("finish_view").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
+                            word_times_pro.setProgress(pro_num);
+                        }
+                    });
             }
         }
     };
@@ -321,12 +330,12 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     public void update_options(HashMap<String,Object>words){
         word_list = words;
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
-//        Log.i("SelectFragment!!!",word_list.toString());
+        Log.i("SelectFragment!!!",word_list.toString());
         mediaPlayer = new MediaPlayer();
         initMediaPlayer(word_list.get("wordview").toString(),0);//音频初始化
         mediaPlayer.start();
         mHandler.obtainMessage(0).sendToTarget();
-        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
+//        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
     }
 
 }
