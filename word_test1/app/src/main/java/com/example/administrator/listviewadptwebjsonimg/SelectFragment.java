@@ -44,6 +44,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     Boolean living_flag=true;
     Boolean pron_lock = false;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
+//    ScheduledExecutorService scheduledThreadPool;
     private int correct_sel = 0;//正确答案的下标
     private int user_sel;
 
@@ -100,11 +101,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
         resetColor = new Runnable(){
             public void run(){
-                sel1.setBackgroundResource(R.drawable.rounded_corners_gray);
-                sel2.setBackgroundResource(R.drawable.rounded_corners_gray);
-                sel3.setBackgroundResource(R.drawable.rounded_corners_gray);
-                sel4.setBackgroundResource(R.drawable.rounded_corners_gray);
-                send_to_activity(user_sel);
+                mHandler.obtainMessage(1).sendToTarget();
 //                progressBar.setProgress(finish_num/recite_num);
 //                progressBar.post(new Runnable() {
 //                    @Override
@@ -127,7 +124,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
             }
         };
         /**
-         * 接受来自activity的数据(first time)
+         * 接收来自activity的数据(first time)
          */
         Bundle bundle = getArguments();
         word_list.put("wordview",bundle.getString("wordview"));
@@ -135,14 +132,14 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         word_list.put("sel2",bundle.getString("sel2"));
         word_list.put("sel3",bundle.getString("sel3"));
         word_list.put("sel4",bundle.getString("sel4"));
-        word_list.put("finish_view",bundle.getString("finish_view"));
+        word_list.put("today_correct_times",bundle.getString("today_correct_times"));
         word_list.put("c_times",bundle.getString("c_times"));
-//        Log.i("SelectFragment!!!",word_list.toString());
+        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-//                Log.i("my_mediaPlayer","END!!!!!");
                 mediaPlayer.release();
             }
         });
@@ -150,21 +147,8 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         mediaPlayer = new MediaPlayer();
         initMediaPlayer(bundle.getString("wordview"),0);//音频初始化
         mediaPlayer.start();
+
         mHandler.obtainMessage(0).sendToTarget();
-        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
-//        word_list.put("correct_sel",);
-//        cpb_countdown.setWord(word);
-//        cpb_countdown.setCenterTextColor(Color.BLUE);
-//        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
-//            @Override
-//            public void onFinish() {
-////                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-
-
 
 
     }
@@ -178,6 +162,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      * @param view
      */
     public void onClick(View view){
+        if(!living_flag){
+            return ;
+        }
         switch(view.getId()){
             case R.id.sel1:
                 living_flag = false;
@@ -234,14 +221,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 correct_shine();
                 scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
-//            case R.id.wordview:
-//                mediaPlayer.start();
-//                break;
+            case R.id.wordview:
+                mediaPlayer.start();
+                break;
         }
     }
 
     public void judge_ring(){
-//        Log.i("user_selandcorrect_sel1",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
         if(user_sel==correct_sel){
             soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
         }else{
@@ -290,7 +276,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         public void handleMessage(Message msg){
             switch (msg.what){
                 case 0:
-//                    recite_info = (Map<String, Object>)msg.obj;
                     wordview.setText(word_list.get("wordview").toString());
                     sel1.setText(word_list.get("sel1").toString());
                     sel2.setText(word_list.get("sel2").toString());
@@ -299,10 +284,17 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                     word_times_pro.post(new Runnable() {
                         @Override
                         public void run() {
-                            int pro_num = Integer.valueOf(word_list.get("finish_view").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
+                            int pro_num = Integer.valueOf(word_list.get("today_correct_times").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
                             word_times_pro.setProgress(pro_num);
                         }
                     });
+                    break;
+                case 1:
+                    sel1.setBackgroundResource(R.drawable.rounded_corners_gray);
+                    sel2.setBackgroundResource(R.drawable.rounded_corners_gray);
+                    sel3.setBackgroundResource(R.drawable.rounded_corners_gray);
+                    sel4.setBackgroundResource(R.drawable.rounded_corners_gray);
+                    send_to_activity(user_sel);
             }
         }
     };
@@ -328,14 +320,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         }
     }
     public void update_options(HashMap<String,Object>words){
+        living_flag = true;//激活按钮
         word_list = words;
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
-        Log.i("SelectFragment!!!",word_list.toString());
         mediaPlayer = new MediaPlayer();
         initMediaPlayer(word_list.get("wordview").toString(),0);//音频初始化
         mediaPlayer.start();
         mHandler.obtainMessage(0).sendToTarget();
-//        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
     }
 
 }

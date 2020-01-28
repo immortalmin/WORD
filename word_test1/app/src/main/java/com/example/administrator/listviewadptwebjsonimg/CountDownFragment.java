@@ -73,19 +73,14 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         Bundle bundle = getArguments();
         word = bundle.getString("word");
         cpb_countdown.setWord(word);
-        cpb_countdown.setCenterTextColor(Color.BLUE);
-        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
+        cpb_countdown.setCenterTextColor(Color.BLACK);
+//        cpb_countdown.setduration(2000,word);
+        cpb_countdown.setDuration(3000,word, new CountDownProgressBar.OnFinishListener() {
             @Override
             public void onFinish() {
 //                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
-
-
-
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -117,7 +112,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     /**
      * 向activity回送数据
      */
-    private void send_to_activity(int res){
+    public void send_to_activity(int res){
         if (mListener != null) {
             ArrayList a = new ArrayList();
             switch (res){
@@ -137,17 +132,13 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     }
 
     public void update_options(String new_word){
-        word = new_word;
-//        cpb_countdown.finishProgressBar();
-        cpb_countdown.setWord(word);
-        cpb_countdown.setCenterTextColor(Color.BLUE);
-        cpb_countdown.setDuration(5000, new CountDownProgressBar.OnFinishListener() {
+        cpb_countdown.setDuration(3000,new_word, new CountDownProgressBar.OnFinishListener() {
             @Override
             public void onFinish() {
 //                Toast.makeText(getActivity(), "完成了", Toast.LENGTH_SHORT).show();
             }
         });
-//        Log.i("user_selandcorrect_sel2",String.valueOf(user_sel)+"  "+String.valueOf(correct_sel));
+//        cpb_countdown.setduration(2000,new_word);
     }
 
 }

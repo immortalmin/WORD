@@ -78,7 +78,6 @@ public class HttpGetContext {
         return  bmp;
     }
     //http://dict.youdao.com/dictvoice?type=1&audio=accuse%20of
-
     public int update_recite_list(String url) {
         int res=0;
         try {
@@ -95,10 +94,12 @@ public class HttpGetContext {
                 //  Log.i("HTTP", "GET:" + result);
                 //  mHandler.obtainMessage(1,result).sendToTarget();
             } else {
+                res=2;
                 // mHandler.sendEmptyMessage(2);//2表示服务器未响应
             }
         } catch (Exception e) {
             e.printStackTrace();
+            res=3;
             //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
         }
         return res;
