@@ -3,6 +3,8 @@ package com.example.administrator.listviewadptwebjsonimg;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.nio.LongBuffer;
@@ -38,13 +41,14 @@ public class ReciteWordActivity extends AppCompatActivity
     SelectFragment selectFragment = new SelectFragment();
     CountDownFragment countDownFragment = new CountDownFragment();
     Button turn_mode;
+    TextView total_times,word_times;
     JsonRe  jsonRe;
     AlertDialog finish_Dialog,interrupt_Dialog;
     ProgressBar total_progress;
 
     private MediaPlayer mediaPlayer;
     List<Map<String,Object>> recite_list=null;//the list of word
-    int recite_num = 2;//the number of word today
+    int recite_num = 10;//the number of word today
     int recite_scope = 10;//additional number of word
     int c_times = 2;//每个单词变成今天背完需要的次数
     int prof_times = 5;//达到掌握需要的次数
@@ -65,6 +69,8 @@ public class ReciteWordActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recite_word);
+        total_times = (TextView)findViewById(R.id.total_times);
+        word_times = (TextView)findViewById(R.id.word_times);
         turn_mode = (Button)findViewById(R.id.turn_mode);
         turn_mode.setOnClickListener(this);
         total_progress = (ProgressBar)findViewById(R.id.total_progress);
@@ -75,7 +81,7 @@ public class ReciteWordActivity extends AppCompatActivity
      * select recite mode
      */
     private void start_recite(){
-        Log.i("ccc","start_recite");
+//        Log.i("ccc","start_recite");
         int count = 0;
         int[] mark = new int[10000];
         select = new int[4];
@@ -98,50 +104,36 @@ public class ReciteWordActivity extends AppCompatActivity
         correct_sel = (int)(Math.random()*4);
         pre_ind = select[correct_sel];
 //        HashMap<String, Object> recite_info = new HashMap<String, Object>();
-        Log.i("现在的词组的id是：",recite_list.get(select[correct_sel]).get("id").toString());
+        Log.i("现在的词组是：",recite_list.get(select[correct_sel]).toString());
         recite_info.put("wordview",recite_list.get(select[correct_sel]).get("word_group").toString());
 //        recite_info.put("finish_view",recite_list.get(select[correct_sel]).get("today_correct_times").toString()+"/"+String.valueOf(c_times));
         recite_info.put("today_correct_times",recite_list.get(select[correct_sel]).get("today_correct_times"));
-        recite_info.put("all_finish_view",String.valueOf(finish_num)+"/"+String.valueOf(recite_num));
+//        recite_info.put("all_finish_view",String.valueOf(finish_num)+"/"+String.valueOf(recite_num));
         recite_info.put("sel1",recite_list.get(select[0]).get("C_meaning").toString());
         recite_info.put("sel2",recite_list.get(select[1]).get("C_meaning").toString());
         recite_info.put("sel3",recite_list.get(select[2]).get("C_meaning").toString());
         recite_info.put("sel4",recite_list.get(select[3]).get("C_meaning").toString());
         recite_info.put("correct_sel",correct_sel);
         recite_info.put("c_times",String.valueOf(c_times));
-//        today_finish=Integer.valueOf(recite_info.get("today_correct_times").toString());
-        int mode = (int)(Math.random()*2);
-
-//        start_countdown_mode(recite_list.get(select[correct_sel]).get("word_group").toString());
-        switch (mode){
+        today_finish=Integer.valueOf(recite_info.get("today_correct_times").toString());
+//        int mode = (int)(Math.random()*2);
+//        int mode = 1;
+        switch (today_finish){
             case 0:
                 start_select_mode(recite_info);
                 break;
             case 1:
-                start_countdown_mode(recite_list.get(select[correct_sel]).get("word_group").toString());
+                int countdown_mode = (int)(Math.random()*3)+1;
+                HashMap<String,Object> words = new HashMap<>();
+                words.put("mode",countdown_mode);
+                words.put("word_group",recite_list.get(select[correct_sel]).get("word_group").toString());
+                words.put("C_meaning",recite_list.get(select[correct_sel]).get("C_meaning").toString());
+                start_countdown_mode(words);
                 break;
             default:
                 Log.i("ccc","随机数既不是0也不是1");
                 break;
         }
-
-//        living_flag = true;//button relive
-
-//        progressBar2.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                int pro_num = today_finish*10/c_times;
-//                progressBar2.setProgress(pro_num);
-//            }
-//        });
-
-        //set music of word
-//        mediaPlayer = new MediaPlayer();
-//        String word;
-//        word = recite_list.get(select[correct_sel]).get("word_group").toString();
-//        initMediaPlayer(word,0);//音频初始化
-//        mHandler.obtainMessage(0,recite_info).sendToTarget();
-//        mediaPlayer.start();
     }
 
     /**
@@ -163,15 +155,17 @@ public class ReciteWordActivity extends AppCompatActivity
     /**
      * start countdown mode
      */
-    private void start_countdown_mode(String word){
+    private void start_countdown_mode(HashMap<String,Object> words){
         if(countDownFragment.isAdded()){
             transaction = fragmentManager.beginTransaction();
             transaction.hide(selectFragment).show(countDownFragment);
             transaction.commit();
-            countDownFragment.update_options(word);//update data
+            countDownFragment.update_options(words);//update data
         }else{
             Bundle sendBundle = new Bundle();
-            sendBundle.putString("word",word);
+            sendBundle.putString("mode",words.get("mode").toString());
+            sendBundle.putString("word_group",words.get("word_group").toString());
+            sendBundle.putString("C_meaning",words.get("C_meaning").toString());
             countDownFragment.setArguments(sendBundle);
             transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.recite_model,countDownFragment);
@@ -223,7 +217,7 @@ public class ReciteWordActivity extends AppCompatActivity
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        intent.putParcelableArrayListExtra("id_list",(ArrayList<? extends Parcelable>) id_list);
 //                        intent.setClass(ReciteActivity.this,MainActivity.class);
-                        intent.setClass(ReciteWordActivity.this,spell_reciteActivity.class);
+                        intent.setClass(ReciteWordActivity.this,MainActivity.class);
                         startActivity(intent);
                     }
                 })
@@ -269,6 +263,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 })
                 .create();
         Arrays.fill(finish_ind,0);
+        mHandler.obtainMessage(0).sendToTarget();
         getrecitelist();//get the list of word
     }
 
@@ -279,30 +274,82 @@ public class ReciteWordActivity extends AppCompatActivity
     public void onClick(View view){
         switch(view.getId()){
             case R.id.turn_mode:
-                switch (mode_num){
-                    case 0:
-                        start_countdown_mode(recite_list.get(select[correct_sel]).get("word_group").toString());
-                        mode_num=1;
-                        break;
-                    case 1:
-                        start_countdown_mode(recite_list.get(select[correct_sel]).get("word_group").toString());
-                        mode_num=0;
-                        break;
-                }
+
                 break;
         }
     }
 
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 0:
+                    total_times.setText(String.valueOf(finish_num)+"/"+String.valueOf(recite_num));
+                    word_times.setText(String.valueOf(today_finish)+"/"+String.valueOf(c_times));
+                    break;
+                case 1:
+                    finish_Dialog.show();
+            }
+        }
+    };
+
     /**
      * CountDownFragment的回调函数
-     * ArrayList<String> s
-     * @param s
+     * HashMap<String,Object> res
+     * @param res
      */
     @Override
-    public void countdownonFragmentInteraction(ArrayList<String> s) {
-        Log.i("回调了",s.toString());
-        start_recite();
+    public void countdownonFragmentInteraction(HashMap<String,Object> res) {
+        Map<String,Object> now_word = new HashMap<String,Object>();
+        now_word = recite_list.get(select[correct_sel]);
+        int to_co_times = Integer.valueOf(now_word.get("today_correct_times").toString());
+        int er_times = Integer.valueOf(now_word.get("error_times").toString());
+        int co_times = Integer.valueOf(now_word.get("correct_times").toString());
+        switch (Integer.valueOf(res.get("judge").toString())){
+            case 1://acquaint
+                now_word.put("today_correct_times",to_co_times+1);
+                if(to_co_times+1>=c_times){
+                    finish_ind[select[correct_sel]]=1;
+                    finish_num++;
+                    total_progress.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int pro_num = finish_num*100/recite_num;
+                            total_progress.setProgress(pro_num);
+                        }
+                    });
+                    now_word.put("correct_times",co_times+1);
+                    if(co_times+1>=prof_times){
+                        now_word.put("prof_flag",1);
+                    }
+                    recite_list.set(select[correct_sel],now_word);
+                    update_sql_data(select[correct_sel]);
+                }else{
+                    recite_list.set(select[correct_sel],now_word);
+                }
+                break;
+            case 2://vague
+                now_word.put("today_correct_times",0);
+                recite_list.set(select[correct_sel],now_word);
+                pron_lock=true;
+                jump_to_example(select[correct_sel]);
+                break;
+            case 3://unknown
+                now_word.put("today_correct_times",0);
+                now_word.put("error_times",er_times+1);
+                recite_list.set(select[correct_sel],now_word);
+                pron_lock=true;
+                jump_to_example(select[correct_sel]);
+                break;
+        }
+        mHandler.obtainMessage(0).sendToTarget();
+        if(finish_num==recite_num){
+            mHandler.obtainMessage(1).sendToTarget();
+        }else if(!pron_lock){
+            start_recite();
+        }
     }
+
+
 
     /**
      * SelectFragment的回调函数
@@ -371,7 +418,10 @@ public class ReciteWordActivity extends AppCompatActivity
                 jump_to_example(select[correct_sel]);
                 break;
         }
-        if(!pron_lock){
+        mHandler.obtainMessage(0).sendToTarget();
+        if(finish_num==recite_num){
+            mHandler.obtainMessage(1).sendToTarget();
+        }else if(!pron_lock){
             start_recite();
         }
     }

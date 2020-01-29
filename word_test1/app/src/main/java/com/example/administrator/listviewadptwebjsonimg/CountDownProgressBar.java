@@ -31,7 +31,7 @@ public class CountDownProgressBar extends View {
     /**
      * 单词
      */
-    private String word = "None";
+    private String first_word = "None",second_word = "None";
 
     /**
      * 当前进度值
@@ -111,13 +111,15 @@ public class CountDownProgressBar extends View {
             switch (attr) {
                 case R.styleable.CountDownProgressBar_countDown_firstColor:
 //                    firstColor = ta.getColor(attr, Color.LTGRAY); // 默认底色为亮灰色
-                    firstColor = ta.getColor(attr, Color.parseColor("#508e4bf2")); // 默认底色为亮灰色
+                    firstColor = ta.getColor(attr, Color.parseColor("#50ea0a30")); //
                     break;
                 case R.styleable.CountDownProgressBar_countDown_secondColor:
-                    secondColor = ta.getColor(attr, Color.BLUE); // 默认进度条颜色为蓝色
+//                    secondColor = ta.getColor(attr, Color.BLUE); // 默认进度条颜色为蓝色
+                    secondColor = ta.getColor(attr, Color.parseColor("#50ea0a30")); //
                     break;
                 case R.styleable.CountDownProgressBar_countDown_centerTextSize:
                     centerTextSize = ta.getDimensionPixelSize(attr, (int) dip2px(40)); // 默认中间文字字体大小为40dp
+                    centerTextSize2 = ta.getDimensionPixelSize(attr, (int) dip2px(40)); // 默认中间文字字体大小为40dp
                     break;
                 case R.styleable.CountDownProgressBar_countDown_circleWidth:
                     circleWidth = ta.getDimensionPixelSize(attr, (int) dip2px(6f)); // 默认圆弧宽度为6dp
@@ -177,6 +179,7 @@ public class CountDownProgressBar extends View {
 //        Log.i("ccc","drawCircle");
         circlePaint.setShader(null); // 清除上一次的shader
         circlePaint.setColor(firstColor); // 设置底部圆环的颜色，这里使用第一种颜色
+//        Log.i("ccc firstColor",String.valueOf(firstColor));
         circlePaint.setStyle(Paint.Style.STROKE); // 设置绘制的圆为空心
         canvas.drawCircle(center, center, radius, circlePaint); // 画底部的空心圆
         RectF oval = new RectF(center - radius, center - radius, center + radius, center + radius); // 圆的外接正方形
@@ -187,7 +190,7 @@ public class CountDownProgressBar extends View {
                     - circleWidth, getMeasuredHeight() - circleWidth, colorArray, null, Shader.TileMode.MIRROR);
             circlePaint.setShader(linearGradient);
         }
-        circlePaint.setShadowLayer(10, 10, 10, Color.BLUE);
+        circlePaint.setShadowLayer(10, 10, 10, Color.TRANSPARENT);
         circlePaint.setColor(secondColor); // 设置圆弧的颜色
         circlePaint.setStrokeCap(Paint.Cap.ROUND); // 把每段圆弧改成圆角的
 
@@ -205,7 +208,7 @@ public class CountDownProgressBar extends View {
         int result = ((maxValue - currentValue) * (duration / 1000) / maxValue); // 计算进度
         String percent;
         if (maxValue == currentValue) {
-            percent = word;
+            percent = second_word;
             textPaint.setTextSize(centerTextSize2); // 设置要绘制的文字大小
         } else {
             /*
@@ -213,7 +216,7 @@ public class CountDownProgressBar extends View {
 //            percent = result+"秒";
             textPaint.setTextSize(centerTextSize+centerTextSize/3); // 设置要绘制的文字大小
             */
-            percent = "Guess who I am";
+            percent = first_word;
             textPaint.setTextSize(centerTextSize); // 设置要绘制的文字大小
         }
         textPaint.setTextAlign(Paint.Align.CENTER); // 设置文字居中，文字的x坐标要注意
@@ -238,7 +241,7 @@ public class CountDownProgressBar extends View {
                 .getDisplayMetrics());
         circlePaint.setStrokeWidth(circleWidth);
         //一般只是希望在View发生改变时对UI进行重绘。invalidate()方法系统会自动调用 View的onDraw()方法。
-        Log.i("ccc","setCircleWidth");
+//        Log.i("ccc","setCircleWidth");
         invalidate();
     }
 
@@ -251,7 +254,7 @@ public class CountDownProgressBar extends View {
         this.firstColor = color;
         circlePaint.setColor(firstColor);
         //一般只是希望在View发生改变时对UI进行重绘。invalidate()方法系统会自动调用 View的onDraw()方法。
-        Log.i("ccc","setFirstColor");
+//        Log.i("ccc","setFirstColor");
         invalidate();
     }
 
@@ -264,7 +267,7 @@ public class CountDownProgressBar extends View {
         this.secondColor = color;
         circlePaint.setColor(secondColor);
         //一般只是希望在View发生改变时对UI进行重绘。invalidate()方法系统会自动调用 View的onDraw()方法。
-        Log.i("ccc","setSecondColor");
+//        Log.i("ccc","setSecondColor");
         invalidate();
     }
 
@@ -276,7 +279,7 @@ public class CountDownProgressBar extends View {
     public void setColorArray(int[] colors) {
         this.colorArray = colors;
         //一般只是希望在View发生改变时对UI进行重绘。invalidate()方法系统会自动调用 View的onDraw()方法。
-        Log.i("ccc","setColorArray");
+//        Log.i("ccc","setColorArray");
         invalidate();
     }
 
@@ -286,22 +289,28 @@ public class CountDownProgressBar extends View {
      *
      * @param duration 动画时长
      */
-    public void setDuration(int duration,String word, OnFinishListener listener) {
-//        Log.i("ccc","!!!");
+    public void setDuration(int duration,String first_word,String second_word, OnFinishListener listener) {
         this.listener = listener;
         this.duration = duration + 1000;
-        this.word = word;
-
-        if(word.length()>=20){
+        this.first_word = first_word;
+        this.second_word = second_word;
+        setSecondColor(Color.RED);
+//        Log.i("ccc firstColor",String.valueOf(firstColor));
+        /*
+        if(first_word.length()>=20){
             //先简单设置一下
             //set textsize according to lenth of word
-            centerTextSize2=(int)dip2px(20);
+            centerTextSize=(int)dip2px(20);
         }else{
-            centerTextSize2=(int)dip2px(25);
-//            ta.getDimensionPixelSize(R.styleable.CountDownProgressBar_countDown_centerTextSize, (int) dip2px(40));
+            centerTextSize=(int)dip2px(25);
         }
-        /*
-        invalidate();
+        if(second_word.length()>=8){
+            //先简单设置一下
+            //set textsize according to lenth of word
+            centerTextSize2=(int)dip2px(10);
+        }else{
+            centerTextSize2=(int)dip2px(15);
+        }
         */
         if (animator != null) {
             animator.cancel();
@@ -324,6 +333,7 @@ public class CountDownProgressBar extends View {
     }
 
     public interface OnFinishListener {
+
         void onFinish();
     }
 
@@ -342,9 +352,14 @@ public class CountDownProgressBar extends View {
         return (dipValue * scale + 0.5f);
     }
 
-    public void setWord(String word) {
-        this.word = word;
+    public void setFirst_word(String first_word) {
+        this.first_word = first_word;
     }
+
+    public void setSecond_word(String second_word) {
+        this.second_word = second_word;
+    }
+
 
     /**
      * an early closure
@@ -365,7 +380,7 @@ public class CountDownProgressBar extends View {
     public void setduration(int duration, String word) {
         this.duration = duration+1000;
         this.currentValue = 0;
-        this.word = word;
+        this.first_word = word;
         invalidate();
         animator = ValueAnimator.ofInt(0, maxValue);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
