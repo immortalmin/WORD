@@ -40,6 +40,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * old version of recite
+ * 2020/1/30 stop using
+ */
 public class ReciteActivity extends AppCompatActivity implements View.OnClickListener {
 
     ExecutorService mExecutorService = null;
