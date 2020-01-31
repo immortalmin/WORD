@@ -229,6 +229,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
 
     public void judge_ring(){
         if(user_sel==correct_sel){
+            word_times_pro.post(new Runnable() {
+                @Override
+                public void run() {
+                    int pro_num = (Integer.valueOf(word_list.get("today_correct_times").toString())+1)*10/Integer.valueOf(word_list.get("c_times").toString());
+                    word_times_pro.setProgress(pro_num);
+                }
+            });
             soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
         }else{
             soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);

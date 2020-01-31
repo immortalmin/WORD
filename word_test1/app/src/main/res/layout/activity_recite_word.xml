@@ -25,9 +25,19 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
+        android:visibility="invisible"
         android:text="1/5"
         android:textColor="#1d231e"
         android:textSize="15dp" />
+    <Button
+        android:id="@+id/ret_btn"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/return3"
+        android:text="" />
 
     <TextView
         android:id="@+id/total_times"
@@ -46,6 +56,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/operating_area">
 
+
     </FrameLayout>
     <RelativeLayout
         android:id="@+id/operating_area"
@@ -58,6 +69,7 @@
             android:id="@+id/turn_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:textAllCaps="false"
             android:text="turn_model" />
     </RelativeLayout>

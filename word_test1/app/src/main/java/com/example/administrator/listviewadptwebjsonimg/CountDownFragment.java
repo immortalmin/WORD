@@ -32,7 +32,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private String word_group,C_meaning,mode;
     private Button acquaint,vague,strange;
     private CountDownProgressBar cpb_countdown;
-    private Boolean isCountdownfinish=false,pron_flag=true;
+    private Boolean isCountdownfinish=false,pron_flag=true,living_flag=true;//pron_flag:是否播放音频,living_flag:按钮是否激活
     private MediaPlayer mediaPlayer;
     private SoundPool soundPool;
     private int sound_acquaint,sound_vague,sound_unknown;
@@ -127,7 +127,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         void countdownonFragmentInteraction(HashMap<String,Object> res);
     }
     private void display_pro(){
-        Log.i("ccc","countdown was finished");
         isCountdownfinish = true;
         if(pron_flag){
             mediaPlayer = new MediaPlayer();
@@ -171,6 +170,11 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
      * @param view
      */
     public void onClick(View view){
+        //judge whether button is clicking or music is playing
+        if(!living_flag||mediaPlayer.isPlaying()){
+            return;
+        }
+        living_flag = false;
         switch(view.getId()){
             case R.id.cpb_countdown:
                 if(isCountdownfinish){
@@ -180,7 +184,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 }else{
                     cpb_countdown.finishProgressBar();
                 }
-
+                living_flag = true;
                 break;
             case R.id.acquaint:
                 if(!isCountdownfinish){
@@ -240,6 +244,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     public void update_options(HashMap<String,Object> words){
         isCountdownfinish = false;
         pron_flag=true;
+        living_flag = true;
         mode = words.get("mode").toString();
         word_group = words.get("word_group").toString();
         C_meaning = words.get("C_meaning").toString();

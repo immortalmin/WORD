@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
@@ -93,6 +96,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         C_meaning = bundle.getString("C_meaning");
         once_flag = bundle.getBoolean("once_flag");
         mHandler.obtainMessage(2).sendToTarget();
+        showInput(eword);
         //music
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(getActivity(), R.raw.success, 1);
@@ -143,7 +147,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
-//                btn_flag = false;
+                btn_flag = false;
+                eword.setEnabled(false);
+                mediaPlayer = new MediaPlayer();
+                initMediaPlayer(word_group,0);//音频初始化
+                mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
                 String co_word = word_group.replaceAll(" ","");
                 if(co_word.equals(user_ans)){
@@ -214,9 +222,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view){
         switch(view.getId()){
             case R.id.cword:
-                mediaPlayer = new MediaPlayer();
-                initMediaPlayer(word_group,0);//音频初始化
-                mediaPlayer.start();
+                if(!mediaPlayer.isPlaying()){
+                    mediaPlayer = new MediaPlayer();
+                    initMediaPlayer(word_group,0);//音频初始化
+                    mediaPlayer.start();
+                }
                 break;
 
         }
@@ -243,13 +253,26 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     }
     //String new_word
     public void update_options(HashMap<String,Object> words){
+        btn_flag = true;
+        eword.setEnabled(true);
 //        mode = words.get("mode").toString();
         word_group = words.get("word_group").toString();
         C_meaning = words.get("C_meaning").toString();
         once_flag = Boolean.valueOf(words.get("once_flag").toString());
 //        Log.i("once_flag",once_flag.toString());
         mHandler.obtainMessage(2).sendToTarget();
+        showInput(eword);
     }
 
+    /**
+     * 显示键盘
+     *
+     * @param et 输入焦点
+     */
+    public void showInput(final EditText et) {
+        et.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+    }
 
 }

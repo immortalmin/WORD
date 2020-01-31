@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener reciteClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MainActivity.this,ReciteActivity.class);
+            Intent intent = new Intent(MainActivity.this,ReciteWordActivity.class);
             startActivity(intent);
         }
     };
