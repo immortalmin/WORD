@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#2f4f4f"
+    android:background="@drawable/search_bg1"
     tools:context=".SearchActivity">
+    <!--#2f4f4f-->
 
     <SearchView
         android:id="@+id/searchview1"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
         android:queryHint="输入你要查询的词组"

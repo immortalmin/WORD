@@ -420,6 +420,7 @@ public class ReciteWordActivity extends AppCompatActivity
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setClass(ReciteWordActivity.this, MainActivity.class);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     }
                 })
                 .show();

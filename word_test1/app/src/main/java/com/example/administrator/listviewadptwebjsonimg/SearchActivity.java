@@ -1,11 +1,13 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -141,6 +143,21 @@ public class SearchActivity extends AppCompatActivity {
             } catch (Exception e){
 
             }
+        }
+    }
+    //
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            Log.i("ccc","点击了返回按钮");
+//            Intent intent = new Intent(SearchActivity.this,MainActivity.class);
+//            setResult(1,intent);
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            return false;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
     }
 }

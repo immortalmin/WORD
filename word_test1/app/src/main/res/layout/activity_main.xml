@@ -6,81 +6,84 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="@mipmap/rc1"
+    android:background="#1f2229"
     tools:context=".MainActivity">
+    <!--#1f2229-->
 
 
 
-    <Button
-        android:id="@+id/search1"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="3dp"
-        android:visibility="invisible"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/search2" />
+    <!--<Button-->
+        <!--android:id="@+id/search1"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_marginTop="3dp"-->
+        <!--android:visibility="invisible"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="@drawable/search2" />-->
 
-    <RelativeLayout
-        android:layout_width="300dp"
-        android:layout_height="30dp"
-        android:background="@drawable/search_bar_red"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        >
-
-    </RelativeLayout>
+    <SearchView
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:queryHint="输入你要查询的词组"
+        android:background="@drawable/rounded_corners_gray"
+        />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="320dp"
+        android:layout_marginTop="250dp"
         android:layout_centerHorizontal="true"
         >
 
         <Button
             android:id="@+id/btn_wordlist"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_gray"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/hacker_01"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:text="LIST" />
+            android:text="" />
 
 
         <Button
             android:id="@+id/btn_recite"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_toRightOf="@+id/btn_wordlist"
-            android:background="@drawable/rounded_corners_gray"
+            android:background="@drawable/hacker_02"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginLeft="15dp"
-            android:text="SELECT" />
+            android:layout_marginLeft="5dp"
+            android:text="" />
 
         <Button
             android:id="@+id/btn_spell"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_gray"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/hacker_03"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:layout_below="@+id/btn_wordlist"
-            android:layout_marginTop="15dp"
-            android:text="SPELL" />
+            android:layout_marginTop="5dp"
+            android:text="" />
 
         <Button
             android:id="@+id/btn_test"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_gray"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/hacker_04"
+            android:alpha="1"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:layout_below="@+id/btn_recite"
             android:layout_toRightOf="@+id/btn_spell"
-            android:text="TEST" />
+            android:text="" />
 
     </RelativeLayout>
 
