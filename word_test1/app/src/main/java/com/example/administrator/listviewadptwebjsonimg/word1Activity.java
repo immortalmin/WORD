@@ -34,6 +34,7 @@ public class word1Activity extends AppCompatActivity {
 //    String  url="http://192.168.57.1/word/db3-conn.php"; //获取商家基本信息的API
     String url="http://47.98.239.237/word/php_file/getall.php"; //获取商家基本信息的API
     String getwordinfo_url = "http://47.98.239.237/word/php_file/getallinfo.php";
+    List<Map<String, Object>> word_info = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +66,8 @@ public class word1Activity extends AppCompatActivity {
 //                String wordlistjson=httpGetContext.httpclientgettext(url);
 //                word_list=jsonRe.getWordList(wordlistjson);
                 String wordinfo=httpGetContext.httpclientgettext(getwordinfo_url);
-                List<Map<String, Object>> word_info = new ArrayList<Map<String, Object>>();
+                word_info = new ArrayList<Map<String, Object>>();
                 word_info=jsonRe.get_wordinfo(wordinfo);
-//                Log.i("word_info",word_info.toString());
                 mHandler.obtainMessage(0,word_info).sendToTarget();
             }
         }).start();
@@ -93,12 +93,7 @@ public class word1Activity extends AppCompatActivity {
         public void handleMessage(Message msg){
             if(msg.what == 0){
                 word_list = (List<Map<String,Object>>)msg.obj;
-                String translate = word_list.get(1).toString();
-                SimpleAdapter adapter = new SimpleAdapter(word1Activity.this,
-                        word_list,R.layout.worditem,new String[]{
-                        "word_group","C_meaning","ACorWA"},
-                        new int[]{R.id.word_group,R.id.C_meaning,R.id.finished_flag});
-                listView.setAdapter(adapter);
+                listView.setAdapter(new WordListAdapter(word1Activity.this,word_list));
             }else if(msg.what == 1){
                 List<String> amount = (ArrayList<String>)msg.obj;
                 all_num.setText(amount.get(0));
@@ -107,6 +102,7 @@ public class word1Activity extends AppCompatActivity {
 
         }
     };
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

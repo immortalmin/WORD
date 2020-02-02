@@ -26,7 +26,8 @@ import java.util.Map;
  */
 public class ExampleActivity extends AppCompatActivity implements View.OnClickListener{
 
-    TextView word_meaning,E_sentence,C_translate,non_example,page,word_group,C_meaning;
+    TextView word_meaning,E_sentence,C_translate,non_example,page,C_meaning;
+    WordView word_group;
     ListView example_list;
     Button btn1,voice_btn;
     JsonRe  jsonRe;
@@ -46,7 +47,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         C_translate = (TextView)findViewById(R.id.C_translate);
         non_example = (TextView)findViewById(R.id.non_example);
         page = (TextView)findViewById(R.id.page);
-        word_group = (TextView)findViewById(R.id.word_group);
+        word_group = (WordView) findViewById(R.id.word_group);
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
         btn1 = (Button)findViewById(R.id.btn1);
@@ -116,10 +117,11 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             if(msg.what == 0){
                 word_list = (List<Map<String,Object>>)msg.obj;
                 Map<String,Object> word = word_list.get(0);
-//            Log.i("word",word.toString());
+                Log.i("ccc","word:"+word.toString());
                 List<Map<String,Object>> translates = (List<Map<String,Object>>)word.get("translate");
                 page.setText("页码："+word.get("page").toString());
-                word_group.setText(word.get("word_group").toString());
+                word_group.setmText(word.get("word_group").toString());
+                word_group.setRank(Integer.valueOf(word.get("correct_times").toString()));
                 C_meaning.setText(word.get("C_meaning").toString());
                 //set music of word
                 current_word = word.get("word_group").toString();
@@ -138,7 +140,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 example_list.setAdapter(adapter);
             }else if (msg.what==1){
                 page.setText("");
-                word_group.setText("");
+                word_group.setmText("");
                 C_meaning.setText("");
             }
 

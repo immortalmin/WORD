@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -10,36 +11,42 @@
         android:layout_marginRight="10dp"
         >
 
-        <TextView
+        <!--<TextView-->
+            <!--android:id="@+id/word_group"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="accuse of"-->
+            <!--android:textSize="30dp"-->
+            <!--android:textColor="#FF7F00"-->
+        <!--/>-->
+        <com.example.administrator.listviewadptwebjsonimg.WordView
             android:id="@+id/word_group"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="accuse of"
-            android:textSize="30dp"
-            android:textColor="#FF7F00"
-        />
+            android:layout_height="35dp"
+            app:mText="accuse of"
+            app:mTextSize="25dp"
+            app:mTextColor="#231a19" />
         <TextView
             android:id="@+id/C_meaning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/word_group"
-            android:layout_marginTop="-30dp"
             android:textColor="#FFFFFF"
             android:textSize="15dp"
             android:text="指责；指控"
             />
 
-        <TextView
-            android:id="@+id/finished_flag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:textColor="#23e709"
-            android:text="" />
+        <!--<TextView-->
+            <!--android:id="@+id/finished_flag"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:textSize="20dp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="#23e709"-->
+            <!--android:text="" />-->
 
 
     </RelativeLayout>

@@ -97,11 +97,12 @@ public class SearchActivity extends AppCompatActivity {
         public void handleMessage(Message msg){
             if(msg.what == 0){
                 word_list = (List<Map<String,Object>>)msg.obj;
-                SimpleAdapter adapter = new SimpleAdapter(SearchActivity.this,
-                        word_list,R.layout.searchitem,new String[]{
-                        "word_group","C_meaning"},
-                        new int[]{R.id.word,R.id.C_meaning});
-                listView1.setAdapter(adapter);
+//                SimpleAdapter adapter = new SimpleAdapter(SearchActivity.this,
+//                        word_list,R.layout.searchitem,new String[]{
+//                        "word_group","C_meaning"},
+//                        new int[]{R.id.word,R.id.C_meaning});
+//                listView1.setAdapter(adapter);
+                listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
             }
 
         }

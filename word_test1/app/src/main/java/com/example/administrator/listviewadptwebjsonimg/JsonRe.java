@@ -32,6 +32,9 @@ public class JsonRe {
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(i);//获取数组中第i个数组元素
                 String id = jsonObject.getString("id");
                 String Word = jsonObject.getString("word");
+                map.put("correct_times",jsonObject.getString("correct_times"));
+                map.put("error_times",jsonObject.getString("error_times"));
+                map.put("prof_flag",jsonObject.getString("prof_flag"));
                 JSONObject  word=new JSONObject(Word);
                 map.put("page", word.getString("page"));
                 map.put("C_meaning", word.getString("C_meaning"));
@@ -180,13 +183,6 @@ public class JsonRe {
                 map.put("correct_times",word.getString("correct_times"));
                 map.put("error_times",word.getString("error_times"));
                 map.put("prof_flag",word.getString("prof_flag"));
-                if("1".equals(word.getString("prof_flag"))){
-                    map.put("ACorWA","AC");
-                }else if("0".equals(word.getString("error_times"))){
-                    map.put("ACorWA"," ");
-                }else{
-                    map.put("ACorWA","-"+word.getString("error_times"));
-                }
                 wordList.add(map);
             }
 

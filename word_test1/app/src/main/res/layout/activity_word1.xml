@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/wordlist_bg1"
+    android:background="@drawable/wordlist_bg4"
     tools:context=".word1Activity">
     <!--android:background="@mipmap/wordlist"-->
 
@@ -82,6 +82,7 @@
         android:id="@+id/ListView1"
         android:layout_below="@+id/linear1"
         android:layout_marginTop="-46dp"
+        android:dividerHeight="0dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>
