@@ -101,8 +101,8 @@ public class WordView extends View {
             height = heightSize;
         } else {
             float textHeight = mBound.height();
-            height = (int) (getTop() + textHeight + getBottom());
-//            height = (int) (getPaddingTop() + textHeight + getPaddingBottom());
+//            height = (int) (getTop() + textHeight + getBottom());
+            height = (int) (getPaddingTop() + textHeight + getPaddingBottom());
 //            Log.v("openxu", "文本的高度:"+textHeight + "控件的高度："+height);
         }
         //保存测量宽度和测量高度
