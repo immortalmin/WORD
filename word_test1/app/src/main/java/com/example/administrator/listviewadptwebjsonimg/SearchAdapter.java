@@ -28,7 +28,8 @@ public class SearchAdapter extends BaseAdapter {
         TextView C_meaning = (TextView)v.findViewById(R.id.C_meaning);
 
         word_group.setmText(mdata.get(position).get("word_group").toString());
-        word_group.setRank(Integer.valueOf(mdata.get(position).get("correct_times").toString()));
+//        word_group.setRank(Integer.valueOf(mdata.get(position).get("correct_times").toString()));
+        word_group.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
         C_meaning.setText(mdata.get(position).get("C_meaning").toString());
 
         return v;

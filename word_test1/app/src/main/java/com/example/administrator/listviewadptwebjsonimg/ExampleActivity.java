@@ -121,7 +121,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 List<Map<String,Object>> translates = (List<Map<String,Object>>)word.get("translate");
                 page.setText("页码："+word.get("page").toString());
                 word_group.setmText(word.get("word_group").toString());
-                word_group.setRank(Integer.valueOf(word.get("correct_times").toString()));
+//                word_group.setRank(Integer.valueOf(word.get("correct_times").toString()));
+                word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
                 C_meaning.setText(word.get("C_meaning").toString());
                 //set music of word
                 current_word = word.get("word_group").toString();
@@ -138,6 +139,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         "word_meaning","E_sentence","C_translate"},
                         new int[]{R.id.word_meaning,R.id.E_sentence,R.id.C_translate});
                 example_list.setAdapter(adapter);
+
             }else if (msg.what==1){
                 page.setText("");
                 word_group.setmText("");

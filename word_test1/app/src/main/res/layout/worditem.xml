@@ -25,7 +25,8 @@
             android:layout_height="35dp"
             app:mText="accuse of"
             app:mTextSize="25dp"
-            app:mTextColor="#231a19" />
+            app:mTextFirstColor="#0ced08"
+            app:mTextSecondColor="#FFFFFF" />
         <TextView
             android:id="@+id/C_meaning"
             android:layout_width="wrap_content"

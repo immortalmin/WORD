@@ -13,7 +13,8 @@
         android:layout_marginLeft="10dp"
         android:singleLine="true"
         android:layout_centerVertical="true"
-        app:mTextColor="#131313"
+        app:mTextFirstColor="#0ced08"
+        app:mTextSecondColor="#FFFFFF"
         app:mText="TextView" />
 
 

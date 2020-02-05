@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class TestView extends View {
     private Paint mPaint=new Paint();
+    private String text="abcdef";
     public TestView(Context context){
         this(context,null);
     }
@@ -36,7 +38,7 @@ public class TestView extends View {
 
     @Override
     protected void onDraw(Canvas canvas){
-        canvasClip(canvas);
+        drawMyText(canvas);
     }
 
 
@@ -46,6 +48,72 @@ public class TestView extends View {
     private void initPaint() {
 
     }
+
+    private void drawMyText(Canvas canvas){
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+        String text = "abcdefg";
+
+        canvas.translate(100,300);
+        mPaint.setColor(Color.RED);
+        mPaint.setTextSize(100);
+        Paint.FontMetrics fontMetrics=mPaint.getFontMetrics();
+//        Log.i("ccc","top"+String.valueOf(fontMetrics.top));
+//        Log.i("ccc","ascent"+String.valueOf(fontMetrics.ascent));
+//        Log.i("ccc","descent"+String.valueOf(fontMetrics.descent));
+//        Log.i("ccc","bottom"+String.valueOf(fontMetrics.bottom));
+        float TextHigh = fontMetrics.descent-fontMetrics.ascent;
+        float high1 = fontMetrics.ascent-fontMetrics.top;
+        canvas.drawText(text,0,-fontMetrics.top,mPaint);
+//        mPaint.setColor(Color.GREEN);
+//        canvas.drawText(text,0,fontMetrics.descent-fontMetrics.ascent,mPaint);
+        mPaint.setColor(Color.GRAY);
+        //top
+        canvas.drawLine(0,0,width,0,mPaint);
+        //baseline
+//        canvas.drawLine(0,-fontMetrics.top,width,-fontMetrics.top,mPaint);
+        //bottom
+        canvas.drawLine(0,fontMetrics.bottom-fontMetrics.top,width,fontMetrics.bottom-fontMetrics.top,mPaint);
+        //middle line
+//        canvas.drawLine(0,(fontMetrics.bottom-fontMetrics.top)/2,width,(fontMetrics.bottom-fontMetrics.top)/2,mPaint);
+        //ascent
+        canvas.drawLine(0,fontMetrics.ascent-fontMetrics.top,width,fontMetrics.ascent-fontMetrics.top,mPaint);
+        //descent
+        canvas.drawLine(0,fontMetrics.descent-fontMetrics.top,width,fontMetrics.descent-fontMetrics.top,mPaint);
+
+        //2/15   0.13  字母顶线
+        float TextTop = (float)(high1+TextHigh*0.13);
+        canvas.drawLine(0,(float)(high1+TextHigh*0.13),width,(float)(high1+TextHigh*0.13),mPaint);
+
+        //字母高度
+        float MyTextHigh=fontMetrics.descent-fontMetrics.top-TextTop;
+
+        //0.5
+        //canvas.drawLine(0,(float)(high1+0.5*TextHigh),width,(float)(high1+0.5*TextHigh),mPaint);
+
+        //占据字母的50%
+        canvas.drawLine(0,(float)(TextTop+MyTextHigh*0.5),width,(float)(float)(TextTop+MyTextHigh*0.5),mPaint);
+
+        mPaint.setColor(Color.BLUE);
+        canvas.clipRect(0,0,width,(float)(TextTop+MyTextHigh*0.5));
+        canvas.drawText(text,0,-fontMetrics.top,mPaint);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //绘制坐标系
     private void drawAxis(Canvas canvas) {
@@ -512,4 +580,7 @@ public class TestView extends View {
         canvas.drawRect(bounds, mPaint);
         canvas.restore();
     }
+
+
+
 }

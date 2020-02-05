@@ -5,12 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#232430"
-
     tools:context=".ExampleActivity">
-    <!--android:background="@mipmap/item2"
-    android:background="@drawable/bk125_4"
-    -->
-
 
     <RelativeLayout
         android:id="@+id/nav_bar"
@@ -48,15 +43,13 @@
 
         <com.example.administrator.listviewadptwebjsonimg.WordView
             android:id="@+id/word_group"
-            android:layout_width="300dp"
-            android:layout_height="40dp"
-            app:mTextColor="#FF7F00"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            app:mTextFirstColor="#0ced08"
+            app:mTextSecondColor="#FFFFFF"
             app:mTextSize="30dp"
             app:mText="accuse of"
             />
-        <!--android:singleLine="false"
-            android:inputType="textMultiLine"
-            android:padding="0dp"-->
 
         <Button
             android:id="@+id/voice_btn"
@@ -64,9 +57,10 @@
             android:layout_height="25dp"
             android:background="@drawable/voice2"
             android:layout_below="@+id/word_group"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
             android:text="" />
-        <!--android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"-->
 
         <TextView
             android:id="@+id/C_meaning"
@@ -74,9 +68,8 @@
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:textColor="#DCDDDF"
-            android:layout_below="@+id/voice_btn"
+            android:layout_below="@+id/word_group"
             android:text="指责" />
-        <!---->
 
         <TextView
             android:id="@+id/page"

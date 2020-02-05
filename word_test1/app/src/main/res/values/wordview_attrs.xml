@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="mText" format="string"/>
-    <attr name="mTextColor" format="color"/>
-    <attr name="mTextSize" format="dimension"/>
     <declare-styleable name="WordView">
-        <attr name="mText"/>
-        <attr name="mTextColor"/>
-        <attr name="mTextSize"/>
+        <attr name="mText" format="string"/>
+        <attr name="mTextFirstColor" format="color"/>
+        <attr name="mTextSecondColor" format="color"/>
+        <attr name="mTextSize" format="dimension"/>
+        <attr name="account" format="float"/>
     </declare-styleable>
 
 </resources>

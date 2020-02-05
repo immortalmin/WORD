@@ -4,42 +4,146 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#cec1c1"
     tools:context=".WordViewTestActivity">
-
-    <!--<com.example.administrator.listviewadptwebjsonimg.WordView-->
-        <!--android:id="@+id/word"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_marginTop="40dp"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--app:mText="I Love You gpfy"-->
-        <!--app:mTextColor="#d60a47"-->
-        <!--app:mTextSize="25sp"-->
-        <!--/>-->
-    <com.example.administrator.listviewadptwebjsonimg.TestView
-        android:layout_height="match_parent"
+    <RelativeLayout
+        android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        />
+        android:layout_height="60dp"
+        android:background="#70000000"
+        >
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/return3"
+            android:layout_centerVertical="true"
+            android:text="" />
 
-    <!--<Button-->
-        <!--android:id="@+id/btn1"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_marginBottom="0dp"-->
-        <!--android:textAllCaps="false"-->
-        <!--android:visibility="invisible"-->
-        <!--android:text="change color" />-->
+        <TextView
+            android:id="@+id/nav_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textSize="20dp"
+            android:textColor="#DCDDDF"
+            android:textStyle="bold"
+            android:text="单词详情" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/head"
+        android:layout_below="@+id/nav_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <!--<EditText-->
-        <!--android:id="@+id/editText"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:ems="10"-->
-        <!--android:visibility="invisible"-->
-        <!--android:inputType="textPersonName"-->
-        <!--android:text="Name" />-->
+        <com.example.administrator.listviewadptwebjsonimg.WordView
+            android:id="@+id/word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:mText="I Love You"
+            app:mTextFirstColor="#d60a47"
+            app:mTextSecondColor="#FFFFFF"
+            app:mTextSize="50sp"
+            app:account="0.5"
+            />
+
+        <Button
+            android:id="@+id/voice_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/voice2"
+            android:layout_toRightOf="@+id/word"
+            android:layout_marginTop="10dp"
+            android:text="" />
+        <!--android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"-->
+
+        <TextView
+            android:id="@+id/C_meaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="#DCDDDF"
+            android:layout_below="@+id/word"
+            android:text="指责" />
+        <!---->
+
+        <TextView
+            android:id="@+id/page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-10dp"
+            android:padding="0dp"
+            android:layout_below="@+id/C_meaning"
+            android:textSize="13dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:textColor="#DCDDDF"
+            android:text="页码：1" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/head"
+        >
+
+
+        <TextView
+            android:id="@+id/example"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#DCDDDF"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp"
+            android:text="例句" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_below="@+id/example"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#DCDDDF"
+            android:layout_height="5px" />
+
+        <ListView
+            android:id="@+id/example_list"
+            android:layout_below="@+id/view"
+            android:layout_marginTop="10dp"
+            android:padding="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/non_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="0dp"
+            android:layout_below="@+id/view"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_vertical"
+            android:visibility="invisible"
+            android:textSize="20dp"
+            android:textColor="#DCDDDF"
+            android:text="暂无例句" />
+    </RelativeLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        android:progress="50"
+        android:max="100"
+        android:layout_below="@+id/word"/>
+
+
 
 </RelativeLayout>
