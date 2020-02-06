@@ -29,7 +29,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     TextView word_meaning,E_sentence,C_translate,non_example,page,C_meaning;
     WordView word_group;
     ListView example_list;
-    Button btn1,voice_btn;
+    Button btn1;
     JsonRe  jsonRe;
     private MediaPlayer mediaPlayer;
     List<Map<String,Object>> word_list=null;
@@ -51,14 +51,12 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
         btn1 = (Button)findViewById(R.id.btn1);
-        voice_btn = (Button)findViewById(R.id.voice_btn);
         btn1.setOnClickListener(this);
-        voice_btn.setOnClickListener(this);
+        word_group.setOnClickListener(this);
         mHandler.obtainMessage(1).sendToTarget();
         jsonRe=new JsonRe();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-//        Log.i("Example__id",String.valueOf(id));
 
         /**
          * release mediaPlayer at the end of the playing
@@ -67,7 +65,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-//                Log.i("my_mediaPlayer","END!!!!!");
                 mediaPlayer.release();
             }
         });
@@ -93,7 +90,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 setResult(1,intent);
                 finish();
                 break;
-            case R.id.voice_btn:
+            case R.id.word_group:
                 mediaPlayer.start();
                 break;
         }
@@ -117,11 +114,9 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             if(msg.what == 0){
                 word_list = (List<Map<String,Object>>)msg.obj;
                 Map<String,Object> word = word_list.get(0);
-                Log.i("ccc","word:"+word.toString());
                 List<Map<String,Object>> translates = (List<Map<String,Object>>)word.get("translate");
                 page.setText("页码："+word.get("page").toString());
                 word_group.setmText(word.get("word_group").toString());
-//                word_group.setRank(Integer.valueOf(word.get("correct_times").toString()));
                 word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
                 C_meaning.setText(word.get("C_meaning").toString());
                 //set music of word
@@ -129,8 +124,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 mediaPlayer = new MediaPlayer();
                 initMediaPlayer(current_word);//音频初始化
                 mediaPlayer.start();
+
                 if(translates.size() == 0){
-                    Log.i("translates","为空");
                     non_example.setVisibility(View.VISIBLE);
                     example_list.setVisibility(View.GONE);
                 }

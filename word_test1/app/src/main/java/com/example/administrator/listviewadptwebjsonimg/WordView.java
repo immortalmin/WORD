@@ -14,6 +14,10 @@ import android.view.View;
 
 import java.util.HashMap;
 
+/**
+ * 注意设置wrap_content后，暂时无法重新设置view的大小，只能适应最开始的文本大小
+ * 所以建议 如果会用到setmText(),宽度就设置成match_parent
+ */
 public class WordView extends View {
     private String mText;//需要绘制的文字
     private int mTextFirstColor,mTextSecondColor;//文本的颜色
@@ -25,8 +29,6 @@ public class WordView extends View {
     private Paint.FontMetrics fontMetrics;
     private int canvasWidth;//画布宽度
     private int canvasHeight;//画布高度
-    //控件的宽
-    private int mViewWidth;
 
     public WordView(Context context){
         this(context,null);
@@ -60,8 +62,6 @@ public class WordView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        canvasHeight = getHeight();
-//        canvasWidth = getWidth();
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);   //获取宽的模式
         int heightMode = MeasureSpec.getMode(heightMeasureSpec); //获取高的模式
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);   //获取宽的尺寸

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232430"
+    android:background="@drawable/example_bg1"
     tools:context=".ExampleActivity">
+    <!--#232430-->
 
     <RelativeLayout
         android:id="@+id/nav_bar"
@@ -34,62 +35,54 @@
             android:textStyle="bold"
             android:text="单词详情" />
     </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/head"
         android:layout_below="@+id/nav_bar"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/example_round_corners"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+
         <com.example.administrator.listviewadptwebjsonimg.WordView
             android:id="@+id/word_group"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             app:mTextFirstColor="#0ced08"
-            app:mTextSecondColor="#FFFFFF"
+            app:mTextSecondColor="#e1dbdb"
             app:mTextSize="30dp"
             app:mText="accuse of"
             />
-
-        <Button
-            android:id="@+id/voice_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/voice2"
-            android:layout_below="@+id/word_group"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:text="" />
 
         <TextView
             android:id="@+id/C_meaning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:textColor="#DCDDDF"
+            android:textSize="17dp"
+            android:textColor="#707071"
             android:layout_below="@+id/word_group"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="10dp"
             android:text="指责" />
 
-        <TextView
-            android:id="@+id/page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-10dp"
-            android:padding="0dp"
-            android:layout_below="@+id/C_meaning"
-            android:textSize="13dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:textColor="#DCDDDF"
-            android:text="页码：1" />
+
+        <!---->
     </RelativeLayout>
 
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="500dp"
         android:layout_below="@+id/head"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/example_round_corners"
         >
 
 
@@ -97,10 +90,23 @@
             android:id="@+id/example"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#DCDDDF"
-            android:textSize="20dp"
+            android:textColor="#868687"
+            android:padding="10dp"
+            android:textSize="18dp"
             android:layout_marginLeft="10dp"
+            android:textStyle="bold"
             android:text="例句" />
+
+        <TextView
+            android:id="@+id/page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:textColor="#707071"
+            android:text="页码：1" />
 
         <View
             android:id="@+id/view"

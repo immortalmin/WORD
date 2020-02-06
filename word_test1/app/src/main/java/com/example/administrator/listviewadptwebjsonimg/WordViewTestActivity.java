@@ -18,7 +18,7 @@ public class WordViewTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_word_view_test);
         seekBar = (SeekBar)findViewById(R.id.seekBar);
         word = (WordView)findViewById(R.id.word);
-        word.setmText("dfoashfbgslkj");
+        word.setmText("dfoashfbgslkjjjjjjj");
         word.setAccount((float)0.5);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
