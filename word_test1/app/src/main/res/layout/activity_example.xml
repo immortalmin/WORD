@@ -11,8 +11,8 @@
     <RelativeLayout
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#70000000"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         >
         <Button
             android:id="@+id/btn1"
@@ -30,18 +30,18 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="20dp"
-            android:textColor="#DCDDDF"
+            android:textSize="18dp"
+            android:textColor="#898a8c"
             android:textStyle="bold"
             android:text="单词详情" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/head"
         android:layout_below="@+id/nav_bar"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/example_round_corners"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -53,8 +53,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             app:mTextFirstColor="#0ced08"
-            app:mTextSecondColor="#e1dbdb"
-            app:mTextSize="30dp"
+            app:mTextSecondColor="#fdfdfd"
+            app:mTextSize="28dp"
             app:mText="accuse of"
             />
 
@@ -62,8 +62,8 @@
             android:id="@+id/C_meaning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17dp"
-            android:textColor="#707071"
+            android:textSize="15dp"
+            android:textColor="#fbfbfc"
             android:layout_below="@+id/word_group"
             android:paddingLeft="10dp"
             android:layout_marginTop="10dp"
@@ -90,9 +90,9 @@
             android:id="@+id/example"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#868687"
+            android:textColor="#fdfdfd"
             android:padding="10dp"
-            android:textSize="18dp"
+            android:textSize="16dp"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
             android:text="例句" />
@@ -101,11 +101,11 @@
             android:id="@+id/page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
+            android:textSize="12dp"
             android:layout_marginTop="20dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:textColor="#707071"
+            android:textColor="#f9f9fa"
             android:text="页码：1" />
 
         <View
@@ -135,8 +135,8 @@
             android:gravity="center_horizontal"
             android:layout_gravity="center_vertical"
             android:visibility="invisible"
-            android:textSize="20dp"
-            android:textColor="#DCDDDF"
+            android:textSize="16dp"
+            android:textColor="#f6f7f9"
             android:text="暂无例句" />
     </RelativeLayout>
 

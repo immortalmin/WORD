@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="60dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -13,8 +13,8 @@
         android:layout_marginLeft="10dp"
         android:singleLine="true"
         android:layout_centerVertical="true"
-        app:mTextFirstColor="#0ced08"
-        app:mTextSecondColor="#FFFFFF"
+        app:mTextFirstColor="#FFFFFF"
+        app:mTextSecondColor="#494b49"
         app:mText="TextView" />
 
 
@@ -32,7 +32,7 @@
         android:id="@+id/C_meaning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
+        android:textSize="13dp"
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@+id/word_group"
         android:textColor="#d2cccc"
