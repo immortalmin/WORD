@@ -89,62 +89,7 @@ public class ReciteWordActivity extends AppCompatActivity
         initialize();
     }
 
-    /**
-     * select word(old version)
-     * 2020/1/30 stop using
-     */
-    private void start_recite2() {
-        int count = 0;
-        int[] mark = new int[10000];
-        select = new int[4];
-        Arrays.fill(mark, 0);
-        int num;
-        while (true) {
-            while (true) {
-                num = (int) (Math.random() * (recite_num + recite_scope));
-                if (mark[num] == 0 && finish_ind[num] == 0 && num != pre_ind) {
-                    mark[num] = 1;
-                    select[count] = num;
-                    count++;
-                    break;
-                }
-            }
-            if (count == 4) {
-                break;
-            }
-        }
-        correct_sel = (int) (Math.random() * 4);
-        pre_ind = select[correct_sel];
-//        HashMap<String, Object> recite_info = new ct[correct_sel];HashMap<String, Object>();
-        Log.i("ccc", recite_list.get(select[correct_sel]).toString());
-        recite_info.put("wordview", recite_list.get(select[correct_sel]).get("word_group").toString());
-        recite_info.put("today_correct_times", recite_list.get(select[correct_sel]).get("today_correct_times"));
-        recite_info.put("sel1", recite_list.get(select[0]).get("C_meaning").toString());
-        recite_info.put("sel2", recite_list.get(select[1]).get("C_meaning").toString());
-        recite_info.put("sel3", recite_list.get(select[2]).get("C_meaning").toString());
-        recite_info.put("sel4", recite_list.get(select[3]).get("C_meaning").toString());
-        recite_info.put("correct_sel", correct_sel);
-        recite_info.put("c_times", String.valueOf(c_times));
-        today_finish = Integer.valueOf(recite_info.get("today_correct_times").toString());
-//        int mode = (int)(Math.random()*2);
-//        int mode = 1;
-        switch (today_finish) {
-            case 0:
-                start_select_mode(recite_info);
-                break;
-            case 1:
-                int countdown_mode = (int) (Math.random() * 3) + 1;
-                HashMap<String, Object> words = new HashMap<>();
-                words.put("mode", countdown_mode);
-                words.put("word_group", recite_list.get(select[correct_sel]).get("word_group").toString());
-                words.put("C_meaning", recite_list.get(select[correct_sel]).get("C_meaning").toString());
-                start_countdown_mode(words);
-                break;
-            default:
 
-                break;
-        }
-    }
 
     /**
      * start a new recite round
@@ -159,8 +104,8 @@ public class ReciteWordActivity extends AppCompatActivity
         today_finish = Integer.valueOf(recite_list.get(correct_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
-        Log.i("ccc", recite_list.get(correct_ind).get("id").toString());
-        int mode = 2;
+//        Log.i("ccc", recite_list.get(correct_ind).get("id").toString());
+        int mode = 1;
         switch (today_finish) {//according to today_finish
             case 0://select
                 hideInput();

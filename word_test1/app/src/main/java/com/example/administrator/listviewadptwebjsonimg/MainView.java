@@ -1,7 +1,6 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,19 +17,24 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestView extends View {
+public class MainView extends View {
     private Paint mPaint=new Paint();
-    private String text="abcdef";
-    public TestView(Context context){
+    private int sunHigh=1920,maxHigh;
+
+    private int[][] color = new int[][]{
+            {Color.parseColor("#131128"),Color.parseColor("#c41a07")}
+    };
+
+
+
+    public MainView(Context context){
         this(context,null);
     }
-    public TestView(Context context, AttributeSet attrs){
+    public MainView(Context context, AttributeSet attrs){
         this(context,attrs,0);
     }
-    public TestView(Context context,AttributeSet attrs,int defStyleAttr){
+    public MainView(Context context, AttributeSet attrs, int defStyleAttr){
         super(context,attrs,defStyleAttr);
-
-        initPaint();
 
 
 
@@ -38,15 +42,22 @@ public class TestView extends View {
 
     @Override
     protected void onDraw(Canvas canvas){
-        drawMyText(canvas);
+        drawSun(canvas);
+
+
     }
 
+    private void drawSun(Canvas canvas){
+        mPaint.setStrokeWidth(10);
+        mPaint.setColor(color[0][1]);
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawColor(color[0][0]);
+        canvas.drawCircle(getWidth()/2,sunHigh+300,300,mPaint);
+    }
 
-    /**
-     * 初始化画笔
-     */
-    private void initPaint() {
-
+    public void setSunHigh(int High) {
+        this.sunHigh = (int)((float)(100-High)/100.0*getHeight());
+        invalidate();
     }
 
     private void drawMyText(Canvas canvas){
@@ -99,21 +110,6 @@ public class TestView extends View {
         canvas.drawText(text,0,-fontMetrics.top,mPaint);
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //绘制坐标系
     private void drawAxis(Canvas canvas) {

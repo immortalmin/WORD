@@ -2,28 +2,31 @@ package com.example.administrator.listviewadptwebjsonimg;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class WordViewTestActivity extends AppCompatActivity {
 
-    WordView word;
     SeekBar seekBar;
+    MainView mainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_view_test);
         seekBar = (SeekBar)findViewById(R.id.seekBar);
-        word = (WordView)findViewById(R.id.word);
-        word.setmText("dfoashfbgslkjjjjjjj");
-        word.setAccount((float)0.5);
+        mainView = (MainView)findViewById(R.id.mainView);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                word.setAccount((float)(i/100.0));
+//                Log.i("ccc",String.valueOf(i));
+                mainView.setSunHigh(i);
             }
 
             @Override

@@ -4,77 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0ca7ea"
+    android:background="#131128"
     tools:context=".WordViewTestActivity">
-    <!---->
 
-    <com.ocnyang.contourview.ContourView
-        android:layout_width="match_parent"
+    <com.example.administrator.listviewadptwebjsonimg.MainView
+        android:id="@+id/mainView"
         android:layout_height="match_parent"
-        app:contour_style="Sand"
-        app:shader_endcolor="#08b1f9"
-        app:shader_mode="RadialGradient"
-        app:shader_startcolor="#366cf2"
-        app:shader_style="Center"
-        app:smoothness="0.25"/>
-
-
-    <!--<RelativeLayout-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="200dp"-->
-        <!--android:layout_centerInParent="true"-->
-        <!--android:background="#80000000">-->
-
-
-        <!--<TextView-->
-            <!--android:id="@+id/textView2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginStart="11dp"-->
-            <!--android:text="HelloWorld"-->
-            <!--android:textStyle="italic"-->
-            <!--android:textColor="#FFFFFF"-->
-            <!--android:textSize="20dp" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/textView3"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_below="@+id/textView2"-->
-            <!--android:layout_marginEnd="32dp"-->
-            <!--android:text="HelloWorld2"-->
-            <!--android:textColor="#FFFFFF"-->
-            <!--android:textSize="20dp"-->
-            <!--android:textStyle="bold" />-->
-    <!--</RelativeLayout>-->
-
-    <com.example.administrator.listviewadptwebjsonimg.WordView
-        android:id="@+id/word"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:mText="I Love You"
-        app:mTextFirstColor="#d60a47"
-        app:mTextSecondColor="#FFFFFF"
-        android:visibility="invisible"
-        app:mTextSize="50sp"
-        app:account="0.5"
+        android:layout_width="match_parent"
         />
 
     <SeekBar
         android:id="@+id/seekBar"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:visibility="invisible"
-        android:progress="50"
-        android:max="100"
-        android:layout_below="@+id/word"/>
 
-
-
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp" />
 
 
 </RelativeLayout>
