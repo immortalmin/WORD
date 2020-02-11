@@ -27,6 +27,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -128,6 +130,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    private void getrecitelist() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String wordlistjson = httpGetContext.Getword("http://127.0.0.1/word/getrecitelist.php");
+                Log.i("wordlistjson",wordlistjson.toString());
+            }
+        }).start();
     }
 
 //    @Override

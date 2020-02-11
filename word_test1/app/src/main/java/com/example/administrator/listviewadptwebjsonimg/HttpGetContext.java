@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,11 +18,22 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * javadoc
@@ -103,5 +115,76 @@ public class HttpGetContext {
             //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
         }
         return res;
+    }
+
+    public String httpclient_worddate(String url){
+        String result="";
+        try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(url);
+            HttpPost httpPost = new HttpPost(url);
+            HttpResponse response = httpClient.execute(httpGet);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                HttpEntity entity = response.getEntity();
+                // 使用utf-8参数保证从网页获取的内容中文能正常显示
+                result = EntityUtils.toString(entity, "utf-8");
+                //去除返回文本消息中的换行回车字符
+                result = result.replace("\r\n", "");
+                //  Log.i("HTTP", "GET:" + result);
+                //  mHandler.obtainMessage(1,result).sendToTarget();
+            } else {
+                // mHandler.sendEmptyMessage(2);//2表示服务器未响应
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
+        }
+        return result;
+    }
+
+    public String Getword(String url) {
+        HttpPost httpPost = new HttpPost(url);
+        JSONObject jsonParam = new JSONObject();
+        try {
+            jsonParam.put("mount", "2");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringEntity entity = null;//解决中文乱码问题
+        try {
+            entity = new StringEntity(jsonParam.toString(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType("application/json");
+        }
+        httpPost.setEntity(entity);
+        HttpClient httpClient = new DefaultHttpClient();
+        // 获取HttpResponse实例
+        HttpResponse httpResp = null;
+        try {
+            httpResp = httpClient.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 判断是够请求成功
+        if (httpResp != null) {
+            if (httpResp.getStatusLine().getStatusCode() == 200) {
+                // 获取返回的数据
+                String result = null;
+                try {
+                    result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
+                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
+                    return result;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
+            }
+        }
+        return null;
     }
 }
