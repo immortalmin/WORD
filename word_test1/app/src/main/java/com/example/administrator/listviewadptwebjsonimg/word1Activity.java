@@ -56,19 +56,16 @@ public class word1Activity extends AppCompatActivity {
         jsonRe=new JsonRe();
 
     }
-    //获取服务器端商家数据
     private void getwordlist()
     {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpGetContext httpGetContext=new HttpGetContext();
-//                String wordlistjson=httpGetContext.httpclientgettext(url);
-//                word_list=jsonRe.getWordList(wordlistjson);
-                String wordinfo=httpGetContext.httpclientgettext(getwordinfo_url);
-                word_info = new ArrayList<Map<String, Object>>();
-                word_info=jsonRe.get_wordinfo(wordinfo);
-                mHandler.obtainMessage(0,word_info).sendToTarget();
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String recitejson = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file2/getwordlist.php");
+                List<HashMap<String,Object>> wordlist = null;
+                wordlist = jsonRe.allwordData(recitejson);
+                mHandler.obtainMessage(0,wordlist).sendToTarget();
             }
         }).start();
     }
@@ -77,15 +74,11 @@ public class word1Activity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpGetContext httpGetContext=new HttpGetContext();
-                String amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file/total_amount.php");
-                String total_amount = jsonRe.get_amount(amount);
-                amount = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file/prof_amount.php");
-                String finished_amount = jsonRe.get_amount(amount);
-                List<String> amount_list = new ArrayList<String>();
-                amount_list.add(total_amount);
-                amount_list.add(finished_amount);
-                mHandler.obtainMessage(1,amount_list).sendToTarget();
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String recitejson = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file2/get_count.php");
+                HashMap<String,Object> count = null;
+                count = jsonRe.getcount(recitejson);
+                mHandler.obtainMessage(1,count).sendToTarget();
             }
         }).start();
     }
@@ -95,9 +88,9 @@ public class word1Activity extends AppCompatActivity {
                 word_list = (List<Map<String,Object>>)msg.obj;
                 listView.setAdapter(new WordListAdapter(word1Activity.this,word_list));
             }else if(msg.what == 1){
-                List<String> amount = (ArrayList<String>)msg.obj;
-                all_num.setText(amount.get(0));
-                finished_num.setText(amount.get(1));
+                HashMap<String,Object> count = (HashMap<String,Object>)msg.obj;
+                all_num.setText(count.get("sum").toString());
+                finished_num.setText(count.get("prof_count").toString());
             }
 
         }

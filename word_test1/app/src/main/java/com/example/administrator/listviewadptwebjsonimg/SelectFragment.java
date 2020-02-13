@@ -40,7 +40,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     private Button sel1,sel2,sel3,sel4,sel5;
     private TextView wordview;
     private ProgressBar word_times_pro;
-    private Map<String, Object> word_list = new HashMap<String, Object>();
+    private HashMap<String, Object> word_list = new HashMap<String, Object>();
     Boolean living_flag=true;
     Boolean pron_lock = false;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);

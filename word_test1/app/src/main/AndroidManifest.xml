@@ -32,7 +32,8 @@
         <!-- <activity android:name=".ViewTestActivity" /> -->
         <!-- <activity android:name=".FragmentTestActivity" /> -->
         <activity android:name=".ReciteWordActivity" />
-        <activity android:name=".WordViewTestActivity"></activity>
+        <activity android:name=".WordViewTestActivity" />
+        <activity android:name=".DataTestActivity"></activity>
     </application>
 
 </manifest>

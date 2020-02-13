@@ -22,6 +22,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,8 +57,8 @@ public class ReciteWordActivity extends AppCompatActivity
     SweetAlertDialog finishDialog,interruptDialog;
 
     private MediaPlayer mediaPlayer;
-    List<Map<String, Object>> recite_list = null;//the list of word
-    int recite_num = 1;//the number of word today
+    List<HashMap<String, Object>> recite_list = null;//the list of word
+    int recite_num = 20;//the number of word today
     int recite_scope = 10;//additional number of word
     int c_times = 3;//每个单词变成今天背完需要的次数
     int prof_times = 5;//达到掌握需要的次数
@@ -172,12 +175,29 @@ public class ReciteWordActivity extends AppCompatActivity
      * 获取今天要背的单词列表
      */
     private void getrecitelist() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                HttpGetContext httpGetContext = new HttpGetContext();
+//                String wordlistjson = httpGetContext.httpclientgettext(recite_list_url + String.valueOf(recite_num + recite_scope));
+//                recite_list = jsonRe.getReciteList(wordlistjson);
+//                start_recite();
+//            }
+//        }).start();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                String wordlistjson = httpGetContext.httpclientgettext(recite_list_url + String.valueOf(recite_num + recite_scope));
-                recite_list = jsonRe.getReciteList(wordlistjson);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("mount",recite_num + recite_scope);
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getrecitelist.php",jsonObject);
+//                List<HashMap<String,Object>> reviewlist = null;
+                recite_list = jsonRe.reciteData(recitejson);
+//                Log.i("ccc",recite_list.toString());
                 start_recite();
             }
         }).start();
@@ -408,7 +428,7 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
-        Map<String, Object> now_word = new HashMap<String, Object>();
+        HashMap<String, Object> now_word = new HashMap<String, Object>();
         now_word = recite_list.get(correct_ind);
         int to_co_times = Integer.valueOf(now_word.get("today_correct_times").toString());
         int er_times = Integer.valueOf(now_word.get("error_times").toString());
@@ -465,8 +485,8 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void selectonFragmentInteraction(HashMap<String, Object> res) {
-        Map<String, Object> correct_word = new HashMap<String, Object>();
-        Map<String, Object> wrong_word = new HashMap<String, Object>();
+        HashMap<String, Object> correct_word = new HashMap<String, Object>();
+        HashMap<String, Object> wrong_word = new HashMap<String, Object>();
         switch (res.get("judge").hashCode()) {
             case 1:
                 correct_word = recite_list.get(correct_ind);
@@ -525,7 +545,7 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void spellFragmentInteraction(HashMap<String, Object> res) {
-        Map<String, Object> correct_word = new HashMap<String, Object>();
+        HashMap<String, Object> correct_word = new HashMap<String, Object>();
         correct_word = recite_list.get(correct_ind);
         int er_times = Integer.valueOf(correct_word.get("error_times").toString());
         int co_times = Integer.valueOf(correct_word.get("correct_times").toString());

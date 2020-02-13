@@ -15,9 +15,105 @@ public class JsonRe {
 
     List<Map<String, Object>> wordInfoList;// 定义List容器，节点类型是map
     List<Map<String, Object>> wordList;// 定义List容器，节点类型是map
-//    String hostip="http://192.168.57.1/";
-    String hostip="http://47.98.239.237/";
-    //商家数据json数据(商家基本信息)转arraylist格式商家数据
+
+    public HashMap<String,Object>getcount(String jsonStr){
+        HashMap<String,Object> word = new HashMap<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+            word.put("sum",jsonObject.getString("sum"));
+            word.put("prof_count",jsonObject.getString("prof_count"));
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }
+
+    public List<HashMap<String,Object>> allwordData(String jsonStr){
+        List<HashMap<String,Object>> wordList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                HashMap<String,Object> word = new HashMap<>();
+                word.put("wid",jsonObject.getString("wid"));
+                word.put("word_group",jsonObject.getString("word_group"));
+                word.put("C_meaning",jsonObject.getString("C_meaning"));
+                word.put("page",jsonObject.getString("page"));
+                word.put("collect",jsonObject.getString("collect"));
+                word.put("correct_times",jsonObject.getString("correct_times"));
+                word.put("error_times",jsonObject.getString("error_times"));
+                word.put("prof_flag",jsonObject.getString("prof_flag"));
+                word.put("last_date",jsonObject.getString("last_date"));
+                wordList.add(word);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return wordList;
+    }
+
+
+    public HashMap<String,Object> wordData(String jsonStr){
+        HashMap<String,Object> word = new HashMap<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+            word.put("wid",jsonObject.getString("wid"));
+            word.put("word_group",jsonObject.getString("word_group"));
+            word.put("C_meaning",jsonObject.getString("C_meaning"));
+            word.put("page",jsonObject.getString("page"));
+            word.put("collect",jsonObject.getString("collect"));
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }
+
+    public List<HashMap<String,Object>> exampleData(String jsonStr){
+        List<HashMap<String,Object>> exampleList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                HashMap<String,Object> example = new HashMap<>();
+                example.put("word_meaning",jsonObject.getString("word_meaning"));
+                example.put("E_sentence",jsonObject.getString("E_sentence"));
+                example.put("C_translate",jsonObject.getString("C_translate"));
+                exampleList.add(example);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return exampleList;
+    }
+
+    public List<HashMap<String,Object>> reciteData(String jsonStr){
+        List<HashMap<String,Object>> reciteList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                HashMap<String,Object> word = new HashMap<>();
+                word.put("C_meaning",jsonObject.getString("C_meaning"));
+                word.put("collect",jsonObject.getString("collect"));
+                word.put("correct_times",jsonObject.getString("correct_times"));
+                word.put("error_times",jsonObject.getString("error_times"));
+                word.put("last_date",jsonObject.getString("last_date"));
+                word.put("page",jsonObject.getString("page"));
+                word.put("prof_flag",jsonObject.getString("prof_flag"));
+                word.put("wid",jsonObject.getString("wid"));
+                word.put("word_group",jsonObject.getString("word_group"));
+                word.put("today_correct_times",0);
+                reciteList.add(word);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return reciteList;
+    }
+
+    //将json转为需要的数据结构
     public List<Map<String, Object>>  getWordList(String jsonStr) {
         wordInfoList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         List<Map<String, Object>> ExampleList;// 定义List容器，节点类型是map

@@ -10,6 +10,8 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -27,6 +29,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_test:
-                intent = new Intent(MainActivity.this,WordViewTestActivity.class);
+                intent = new Intent(MainActivity.this,DataTestActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -132,16 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getrecitelist() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String wordlistjson = httpGetContext.Getword("http://127.0.0.1/word/getrecitelist.php");
-                Log.i("wordlistjson",wordlistjson.toString());
-            }
-        }).start();
-    }
+
 
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -152,4 +146,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 //
 //    }
+
 }

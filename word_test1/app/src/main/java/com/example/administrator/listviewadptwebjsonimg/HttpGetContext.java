@@ -57,14 +57,13 @@ public class HttpGetContext {
                 result = EntityUtils.toString(entity, "utf-8");
                 //去除返回文本消息中的换行回车字符
                 result = result.replace("\r\n", "");
-              //  Log.i("HTTP", "GET:" + result);
               //  mHandler.obtainMessage(1,result).sendToTarget();
             } else {
-               // mHandler.sendEmptyMessage(2);//2表示服务器未响应
+                Log.i("***httpclientgettext***","服务器未响应");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
+            Log.i("***httpclientgettext***","HttpClient执行异常应");
         }
         return result;
     }
@@ -142,14 +141,13 @@ public class HttpGetContext {
         return result;
     }
 
-    public String Getword(String url) {
+    /**
+     * @param url
+     * @param jsonParam
+     * @return
+     */
+    public String getData(String url,JSONObject jsonParam) {
         HttpPost httpPost = new HttpPost(url);
-        JSONObject jsonParam = new JSONObject();
-        try {
-            jsonParam.put("mount", "2");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         StringEntity entity = null;//解决中文乱码问题
         try {
             entity = new StringEntity(jsonParam.toString(), "utf-8");
@@ -176,7 +174,8 @@ public class HttpGetContext {
                 String result = null;
                 try {
                     result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
-                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
+                    result = result.replace("\r\n", "");
+//                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
                     return result;
                 } catch (IOException e) {
                     e.printStackTrace();
