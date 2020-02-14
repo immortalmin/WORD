@@ -37,8 +37,8 @@ public class JsonRe {
                 JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
                 HashMap<String,Object> word = new HashMap<>();
                 word.put("wid",jsonObject.getString("wid"));
-                word.put("word_group",jsonObject.getString("word_group"));
-                word.put("C_meaning",jsonObject.getString("C_meaning"));
+                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
+                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
                 word.put("page",jsonObject.getString("page"));
                 word.put("collect",jsonObject.getString("collect"));
                 word.put("correct_times",jsonObject.getString("correct_times"));
@@ -53,17 +53,21 @@ public class JsonRe {
         return wordList;
     }
 
-
     public HashMap<String,Object> wordData(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("wid",jsonObject.getString("wid"));
-            word.put("word_group",jsonObject.getString("word_group"));
-            word.put("C_meaning",jsonObject.getString("C_meaning"));
-            word.put("page",jsonObject.getString("page"));
+            word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
             word.put("collect",jsonObject.getString("collect"));
+            word.put("correct_times",jsonObject.getString("correct_times"));
+            word.put("error_times",jsonObject.getString("error_times"));
+            word.put("last_date",jsonObject.getString("last_date"));
+            word.put("page",jsonObject.getString("page"));
+            word.put("prof_flag",jsonObject.getString("prof_flag"));
+            word.put("wid",jsonObject.getString("wid"));
+            word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
+            word.put("today_correct_times",0);
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,9 +81,9 @@ public class JsonRe {
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
                 HashMap<String,Object> example = new HashMap<>();
-                example.put("word_meaning",jsonObject.getString("word_meaning"));
-                example.put("E_sentence",jsonObject.getString("E_sentence"));
-                example.put("C_translate",jsonObject.getString("C_translate"));
+                example.put("word_meaning",jsonObject.getString("word_meaning").replaceAll("\\\\n","\\\n"));
+                example.put("E_sentence",jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n"));
+                example.put("C_translate",jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n"));
                 exampleList.add(example);
             }
         }catch (JSONException e) {
@@ -95,7 +99,7 @@ public class JsonRe {
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
                 HashMap<String,Object> word = new HashMap<>();
-                word.put("C_meaning",jsonObject.getString("C_meaning"));
+                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
                 word.put("collect",jsonObject.getString("collect"));
                 word.put("correct_times",jsonObject.getString("correct_times"));
                 word.put("error_times",jsonObject.getString("error_times"));
@@ -103,7 +107,7 @@ public class JsonRe {
                 word.put("page",jsonObject.getString("page"));
                 word.put("prof_flag",jsonObject.getString("prof_flag"));
                 word.put("wid",jsonObject.getString("wid"));
-                word.put("word_group",jsonObject.getString("word_group"));
+                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
                 word.put("today_correct_times",0);
                 reciteList.add(word);
             }

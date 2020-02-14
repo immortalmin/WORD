@@ -2,6 +2,9 @@ package com.example.administrator.listviewadptwebjsonimg;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -24,13 +27,25 @@ public class sendIdToServer implements Runnable{
     @Override
     public void run(){
 //        Log.i("sendIdToServer",update_word.toString());
-        HttpGetContext httpGetContext=new HttpGetContext();
-        String id = update_word.get("id").toString();
-        String correct_times = update_word.get("correct_times").toString();
-        String error_times = update_word.get("error_times").toString();
-        String prof_flag = update_word.get("prof_flag").toString();
-        String url=update_url+"id="+id+"&correct_times="+correct_times+"&error_times="+error_times+"&prof_flag="+prof_flag;
-        int res = httpGetContext.update_recite_list(url);
-        Log.i("httpGetContext_res",String.valueOf(res));
+//        HttpGetContext httpGetContext=new HttpGetContext();
+//        String id = update_word.get("id").toString();
+//        String correct_times = update_word.get("correct_times").toString();
+//        String error_times = update_word.get("error_times").toString();
+//        String prof_flag = update_word.get("prof_flag").toString();
+//        String url=update_url+"id="+id+"&correct_times="+correct_times+"&error_times="+error_times+"&prof_flag="+prof_flag;
+//        int res = httpGetContext.update_recite_list(url);
+//        Log.i("httpGetContext_res",String.valueOf(res));
+//        Log.i("ccc",update_word.toString());
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("id",update_word.get("id").toString());
+            jsonObject.put("correct_times",update_word.get("correct_times").toString());
+            jsonObject.put("error_times",update_word.get("error_times").toString());
+            jsonObject.put("prof_flag",update_word.get("prof_flag").toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpGetContext httpGetContext = new HttpGetContext();
+        httpGetContext.getData("http://47.98.239.237/word/php_file2/update_recite.php",jsonObject);
     }
 }

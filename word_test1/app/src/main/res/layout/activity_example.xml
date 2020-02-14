@@ -42,21 +42,31 @@
         android:layout_marginRight="10dp"
         android:background="@drawable/example_round_corners"
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
         <com.example.administrator.listviewadptwebjsonimg.WordView
             android:id="@+id/word_group"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginRight="40dp"
             app:mTextFirstColor="#0ced08"
             app:mTextSecondColor="#fdfdfd"
             app:mTextSize="28dp"
             app:mText="accuse of"
             />
+
+        <Button
+            android:id="@+id/collect"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/star_off"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:text="" />
 
         <TextView
             android:id="@+id/C_meaning"
@@ -66,7 +76,7 @@
             android:textColor="#fbfbfc"
             android:layout_below="@+id/word_group"
             android:paddingLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:paddingBottom="5dp"
             android:text="指责" />
 
 

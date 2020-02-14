@@ -7,15 +7,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SearchAdapter extends BaseAdapter {
 
-    List<Map<String,Object>> mdata;
+    List<HashMap<String,Object>> mdata;
     private LayoutInflater mInflater;//布局装载器对象
 
-    public SearchAdapter(Context context, List<Map<String,Object>> data) {
+    public SearchAdapter(Context context, List<HashMap<String,Object>> data) {
         this.mdata = data;
         mInflater = LayoutInflater.from(context);
     }

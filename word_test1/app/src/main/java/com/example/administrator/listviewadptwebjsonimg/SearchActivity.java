@@ -17,6 +17,9 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -28,9 +31,7 @@ public class SearchActivity extends AppCompatActivity {
 
     SearchView searchView1;
     ListView listView1;
-    String url = "http://47.98.239.237/word/php_file/fuzzyquerybyword.php?word=";
-    List<Map<String,Object>> word_list= new ArrayList<Map<String,Object>>();
-//    Map<Integer,Object> IdtoId = new HashMap<Integer, Object>();
+    List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
     JsonRe jsonRe;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class SearchActivity extends AppCompatActivity {
     ListView.OnItemClickListener listlistener1 = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            String id = word_list.get(position).get("id").toString();
+            String id = word_list.get(position).get("wid").toString();
             jump_to_example(id);
         }
     };
@@ -62,14 +63,11 @@ public class SearchActivity extends AppCompatActivity {
     SearchView.OnQueryTextListener searchlistener1 = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
-            Log.i("SearchView111","点击了按钮");
             return false;
         }
 
         @Override
         public boolean onQueryTextChange(String s) {
-//            Log.i("SearchView111","搜索内容发生改变");
-//            Log.i("SearchView111",s);
             fuzzyquery(s);
             return false;
         }
@@ -81,14 +79,19 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void fuzzyquery(final String word)
     {
-
         new Thread(new Runnable() {
             @Override
             public void run() {
                 word_list.clear();
-                HttpGetContext httpGetContext=new HttpGetContext();
-                String wordinfo=httpGetContext.httpclientgettext(url+URLEncoder.encode(word));
-                word_list=jsonRe.get_wordinfo(wordinfo);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("word",word);
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
+                word_list = jsonRe.allwordData(recitejson);
                 mHandler.obtainMessage(0,word_list).sendToTarget();
             }
         }).start();
@@ -96,12 +99,7 @@ public class SearchActivity extends AppCompatActivity {
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg){
             if(msg.what == 0){
-                word_list = (List<Map<String,Object>>)msg.obj;
-//                SimpleAdapter adapter = new SimpleAdapter(SearchActivity.this,
-//                        word_list,R.layout.searchitem,new String[]{
-//                        "word_group","C_meaning"},
-//                        new int[]{R.id.word,R.id.C_meaning});
-//                listView1.setAdapter(adapter);
+                word_list = (List<HashMap<String,Object>>)msg.obj;
                 listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
             }
 

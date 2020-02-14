@@ -1,5 +1,7 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +17,10 @@ import java.util.List;
 
 public class DataTestActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10;
+    Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11;
     JsonRe jsonRe;
     JSONObject jsonObject;
+    boolean flag=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         btn8 = (Button)findViewById(R.id.btn8);
         btn9 = (Button)findViewById(R.id.btn9);
         btn10 = (Button)findViewById(R.id.btn10);
+        btn11 = (Button)findViewById(R.id.btn11);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
@@ -42,7 +46,9 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         btn8.setOnClickListener(this);
         btn9.setOnClickListener(this);
         btn10.setOnClickListener(this);
+        btn11.setOnClickListener(this);
         jsonRe = new JsonRe();
+
     }
 
 
@@ -161,6 +167,16 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                     e.printStackTrace();
                 }
                 update_collect(jsonObject);
+                break;
+            case R.id.btn11:
+                if(flag){
+                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
+                    btn11.setBackground(drawable);
+                }else{
+                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
+                    btn11.setBackground(drawable);
+                }
+                flag=!flag;
                 break;
         }
     }

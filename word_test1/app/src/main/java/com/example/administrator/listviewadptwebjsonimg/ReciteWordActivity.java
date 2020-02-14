@@ -58,8 +58,8 @@ public class ReciteWordActivity extends AppCompatActivity
 
     private MediaPlayer mediaPlayer;
     List<HashMap<String, Object>> recite_list = null;//the list of word
-    int recite_num = 20;//the number of word today
-    int recite_scope = 10;//additional number of word
+    int recite_num = 1;//the number of word today
+    int recite_scope = 5;//additional number of word
     int c_times = 3;//每个单词变成今天背完需要的次数
     int prof_times = 5;//达到掌握需要的次数
     int correct_sel = 0;//正确答案的下标
@@ -175,15 +175,6 @@ public class ReciteWordActivity extends AppCompatActivity
      * 获取今天要背的单词列表
      */
     private void getrecitelist() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                HttpGetContext httpGetContext = new HttpGetContext();
-//                String wordlistjson = httpGetContext.httpclientgettext(recite_list_url + String.valueOf(recite_num + recite_scope));
-//                recite_list = jsonRe.getReciteList(wordlistjson);
-//                start_recite();
-//            }
-//        }).start();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -195,9 +186,7 @@ public class ReciteWordActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
                 String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getrecitelist.php",jsonObject);
-//                List<HashMap<String,Object>> reviewlist = null;
                 recite_list = jsonRe.reciteData(recitejson);
-//                Log.i("ccc",recite_list.toString());
                 start_recite();
             }
         }).start();
@@ -573,7 +562,7 @@ public class ReciteWordActivity extends AppCompatActivity
             }
             mHandler.obtainMessage(0).sendToTarget();
             if (finish_num >= recite_num) {
-                return_main();
+                update_all();
             }else{
                 start_recite();
             }
@@ -592,13 +581,23 @@ public class ReciteWordActivity extends AppCompatActivity
      * @param i
      */
     public void update_sql_data(int i) {
-        update_word.put("id", recite_list.get(i).get("id").toString());
+        update_word  = new HashMap<>();
+        update_word.put("id", recite_list.get(i).get("wid").toString());
         update_word.put("correct_times", recite_list.get(i).get("correct_times").toString());
         update_word.put("error_times", recite_list.get(i).get("error_times").toString());
         update_word.put("prof_flag", recite_list.get(i).get("prof_flag").toString());
         sendIdToServer sendIdToserver = new sendIdToServer();
         sendIdToserver.sendMap(update_word);
         scheduledThreadPool.schedule(sendIdToserver, 0, TimeUnit.MILLISECONDS);
+    }
+
+    private void update_all(){
+        for(int i=0;i<recite_num+recite_scope;i++){
+            if(finish_ind[i]==0){
+                update_sql_data(i);
+            }
+        }
+        return_main();
     }
 
     /**
@@ -608,7 +607,7 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void jump_to_example(int id) {
         Intent intent = new Intent(ReciteWordActivity.this, ExampleActivity.class);
-        intent.putExtra("id", recite_list.get(id).get("id").toString());
+        intent.putExtra("id", recite_list.get(id).get("wid").toString());
 //        startActivity(intent);
         startActivityForResult(intent, 1);
 
