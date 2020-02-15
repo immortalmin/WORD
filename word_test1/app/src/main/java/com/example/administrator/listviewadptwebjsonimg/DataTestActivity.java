@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,12 +17,19 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
-public class DataTestActivity extends AppCompatActivity implements View.OnClickListener{
+public class DataTestActivity extends AppCompatActivity implements View.OnClickListener,
+        AddWordDialog.OnDialogInteractionListener{
 
-    Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11;
+    Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13;
+    LinearLayout linearLayout;
     JsonRe jsonRe;
     JSONObject jsonObject;
     boolean flag=true;
+
+    //定义一个自己的dialog
+    private AddWordDialog addWordDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +45,9 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         btn9 = (Button)findViewById(R.id.btn9);
         btn10 = (Button)findViewById(R.id.btn10);
         btn11 = (Button)findViewById(R.id.btn11);
+        btn12 = (Button)findViewById(R.id.btn12);
+        btn13 = (Button)findViewById(R.id.btn13);
+        linearLayout = (LinearLayout)findViewById(R.id.total_lin);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
@@ -47,9 +59,14 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         btn9.setOnClickListener(this);
         btn10.setOnClickListener(this);
         btn11.setOnClickListener(this);
+        btn12.setOnClickListener(this);
+        btn13.setOnClickListener(this);
         jsonRe = new JsonRe();
 
+
+
     }
+
 
 
     public void onClick(View view) {
@@ -178,8 +195,34 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                 }
                 flag=!flag;
                 break;
+            case R.id.btn12:
+                showDialog();
+                break;
+            case R.id.btn13:
+                add_view();
+                break;
+
         }
     }
+
+    private void add_view(){
+        TextView textView = new TextView(this);
+        textView.setText("测试");
+        linearLayout.addView(textView);
+
+        TextView textView1 = (TextView)findViewById(11);
+        String res = textView1.getText().toString();
+        Log.i("ccc",res);
+    }
+
+
+    private void showDialog(){
+        AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
+        addWordDialog.show();
+    }
+
+
+
     //***********改***********
     private void update_recite(final JSONObject jsonObject){
         new Thread(new Runnable() {
@@ -299,5 +342,11 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                 Log.i("ccc",word.toString());
             }
         }).start();
+    }
+
+    @Override
+    public void addWordInteraction(JSONObject jsonObject){
+        add_wordandexample(jsonObject);
+        Log.i("ccc","addWordInteraction:"+jsonObject.toString());
     }
 }

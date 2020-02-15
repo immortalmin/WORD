@@ -12,13 +12,12 @@
         android:id="@+id/linear1"
         android:layout_width="match_parent"
         android:layout_height="120dp"
->
+        android:layout_marginTop="20dp">
         <!--android:background="@drawable/num_bk"-->
 
         <LinearLayout
             android:layout_width="130dp"
             android:layout_height="60dp"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="30dp"
             android:background="@drawable/rounded_corners_gray"
             android:orientation="vertical">
@@ -45,7 +44,6 @@
         <LinearLayout
             android:layout_width="130dp"
             android:layout_height="60dp"
-            android:layout_marginTop="10dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="30dp"
             android:background="@drawable/rounded_corners_gray"
