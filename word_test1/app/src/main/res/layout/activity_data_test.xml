@@ -5,129 +5,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     tools:context=".DataTestActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/total_lin"
+        android:orientation="vertical" >
 
+
+        <Button
+            android:id="@+id/btn6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="getreviewlist" />
+
+        <Button
+            android:id="@+id/btn7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="add word and example" />
+
+        <Button
+            android:id="@+id/btn8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="add example" />
+
+
+        <Button
+            android:id="@+id/btn12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:textAllCaps="false"
+            android:text="MyDialog1" />
+
+        <Button
+            android:id="@+id/btn13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="add view" />
         <LinearLayout
+            android:id="@+id/word_meaning_lin"
+            android:layout_below="@+id/btn13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/total_lin"
-            android:orientation="vertical" >
+            android:layout_marginTop="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            style="@style/WordInputStyle"
+            android:orientation="horizontal">
 
 
-            <Button
-                android:id="@+id/btn1"
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getrecitelist" />
-
-            <Button
-                android:id="@+id/btn2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getexampledata" />
-
-            <Button
-                android:id="@+id/btn3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getworddata" />
-
-            <Button
-                android:id="@+id/btn4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getallword" />
-
-            <Button
-                android:id="@+id/btn5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getsearchlist" />
-
-            <Button
-                android:id="@+id/btn6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="getreviewlist" />
-
-            <Button
-                android:id="@+id/btn7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="add word and example" />
-
-            <Button
-                android:id="@+id/btn8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="add example" />
-
-            <Button
-                android:id="@+id/btn9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="update recite" />
-
-            <Button
-                android:id="@+id/btn10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:text="update collect" />
-            <Button
-                android:id="@+id/btn11"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/star_on"
-                android:visibility="invisible"
+            <EditText
+                android:id="@+id/word_meaning"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="#00000000"
+                android:hint="在例句中的意思"
                 android:text="" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/NavigationView_FABtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:elevation="10dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                android:visibility="invisible"
-                app:layout_constraintVertical_bias="0.9"/>
-
-            <Button
-                android:id="@+id/btn12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:textAllCaps="false"
-                android:text="MyDialog1" />
-
-            <Button
-                android:id="@+id/btn13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:text="add view" />
-
-
         </LinearLayout>
-    </ScrollView>
+
+    </LinearLayout>
 
 
 </LinearLayout>

@@ -1,13 +1,20 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -20,10 +27,13 @@ import java.util.List;
 public class DataTestActivity extends AppCompatActivity implements View.OnClickListener,
         AddWordDialog.OnDialogInteractionListener{
 
-    Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13;
+    Button btn6,btn7,btn8,btn12,btn13;
     LinearLayout linearLayout;
     JsonRe jsonRe;
     JSONObject jsonObject;
+    LinearLayout[][] layout = new LinearLayout[10][5];
+    EditText[][] word_meaning = new EditText[10][5];
+    int index=0;
     boolean flag=true;
 
     //定义一个自己的dialog
@@ -34,31 +44,15 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_test);
-        btn1 = (Button)findViewById(R.id.btn1);
-        btn2 = (Button)findViewById(R.id.btn2);
-        btn3 = (Button)findViewById(R.id.btn3);
-        btn4 = (Button)findViewById(R.id.btn4);
-        btn5 = (Button)findViewById(R.id.btn5);
         btn6 = (Button)findViewById(R.id.btn6);
         btn7 = (Button)findViewById(R.id.btn7);
         btn8 = (Button)findViewById(R.id.btn8);
-        btn9 = (Button)findViewById(R.id.btn9);
-        btn10 = (Button)findViewById(R.id.btn10);
-        btn11 = (Button)findViewById(R.id.btn11);
         btn12 = (Button)findViewById(R.id.btn12);
         btn13 = (Button)findViewById(R.id.btn13);
         linearLayout = (LinearLayout)findViewById(R.id.total_lin);
-        btn1.setOnClickListener(this);
-        btn2.setOnClickListener(this);
-        btn3.setOnClickListener(this);
-        btn4.setOnClickListener(this);
-        btn5.setOnClickListener(this);
         btn6.setOnClickListener(this);
         btn7.setOnClickListener(this);
         btn8.setOnClickListener(this);
-        btn9.setOnClickListener(this);
-        btn10.setOnClickListener(this);
-        btn11.setOnClickListener(this);
         btn12.setOnClickListener(this);
         btn13.setOnClickListener(this);
         jsonRe = new JsonRe();
@@ -71,45 +65,6 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
 
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btn1:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("mount",3);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                getrecitelist(jsonObject);
-                break;
-            case R.id.btn2:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("id",22);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                getexampledata(jsonObject);
-                break;
-            case R.id.btn3:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("id",22);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                getworddata(jsonObject);
-                break;
-            case R.id.btn4:
-                getallword();
-                break;
-            case R.id.btn5:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("word","fu");
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                getsearchlist(jsonObject);
-                break;
             case R.id.btn6:
                 jsonObject = new JSONObject();
                 try{
@@ -163,57 +118,85 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                 }
                 add_example(jsonObject);
                 break;
-            case R.id.btn9:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("id",27);
-                    jsonObject.put("correct_times",1);
-                    jsonObject.put("error_times",1);
-                    jsonObject.put("prof_flag",1);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                update_recite(jsonObject);
-                break;
-            case R.id.btn10:
-                jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("id",27);
-                    jsonObject.put("collect",0);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                update_collect(jsonObject);
-                break;
-            case R.id.btn11:
-                if(flag){
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
-                    btn11.setBackground(drawable);
-                }else{
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
-                    btn11.setBackground(drawable);
-                }
-                flag=!flag;
-                break;
             case R.id.btn12:
                 showDialog();
                 break;
             case R.id.btn13:
-                add_view();
+                add_view2();
                 break;
 
         }
     }
 
     private void add_view(){
-        TextView textView = new TextView(this);
-        textView.setText("测试");
-        linearLayout.addView(textView);
-
-        TextView textView1 = (TextView)findViewById(11);
-        String res = textView1.getText().toString();
-        Log.i("ccc",res);
+        TextView[] textView = new TextView[20];
+        for(int i=0;i<10;i++){
+            textView[i] = new TextView(this);
+            textView[i].setText("测试"+String.valueOf(i));
+        }
+        for(int i=0;i<10;i++){
+            linearLayout.addView(textView[i]);
+        }
     }
+    private void add_view2(){
+//        LinearLayout[] layout = new LinearLayout[10];
+//        final EditText[] word_meaning = new EditText[10];
+        String[] hint = {"在例句中的意思","英文例句","中文翻译"};
+        for(int i=0;i<3;i++){
+            // 1.创建外围LinearLayout控件
+            layout[index][i] = new LinearLayout(this);
+            LinearLayout.LayoutParams eLayoutlayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            eLayoutlayoutParams.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics())),
+                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics())),
+                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics())), 0);
+            eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
+            layout[index][i].setLayoutParams(eLayoutlayoutParams);
+            layout[index][i].setGravity(Gravity.CENTER);
+            Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.word_input, null);
+            layout[index][i].setBackground(d);
+            layout[index][i].setPadding(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics())),0,
+                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics())),0);
+            layout[index][i].setOrientation(LinearLayout.HORIZONTAL);
+            //2.word_meaning
+            word_meaning[index][i] = new EditText(this);
+            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics())));
+            word_meaning[index][i].setPadding(0,0,0,0);
+            word_meaning[index][i].setLayoutParams(word_meaning_Params);
+            word_meaning[index][i].setBackgroundColor(Color.parseColor("#00000000"));
+            word_meaning[index][i].setHint(hint[i]);
+            layout[index][i].addView(word_meaning[index][i]);
+            linearLayout.addView(layout[index][i]);
+        }
+        Button add_btn = new Button(this);
+        LinearLayout.LayoutParams add_btn_Params = new LinearLayout.LayoutParams(
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())),
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())));
+//        LinearLayout.LayoutParams add_btn_Params = new LinearLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+        add_btn.setLayoutParams(add_btn_Params);
+        add_btn.setPadding(0,0,0,0);
+        add_btn.setBackgroundColor(Color.parseColor("#00000000"));
+        add_btn.setTextColor(Color.parseColor("#000000"));
+        add_btn.setTextSize(20);
+        add_btn.setText("+");
+        add_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                index++;
+                add_view2();
+//                String res = word_meaning[0].getText().toString();
+//                Log.i("ccc",res);
+            }
+        });
+        linearLayout.addView(add_btn);
+
+    }
+
 
 
     private void showDialog(){
