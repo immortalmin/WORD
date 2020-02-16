@@ -1,5 +1,6 @@
 package com.example.administrator.listviewadptwebjsonimg;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -10,12 +11,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +30,13 @@ import java.util.Map;
 /**
  * 获取单词列表
  * */
-public class word1Activity extends AppCompatActivity {
+public class word1Activity extends AppCompatActivity implements View.OnClickListener,
+        AddWordDialog.OnDialogInteractionListener {
 
     JsonRe  jsonRe;
     ListView listView;
     TextView all_num,finished_num;
+    Button add_btn;
     List<Map<String,Object>> word_list=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,8 @@ public class word1Activity extends AppCompatActivity {
         listView=(ListView)findViewById(R.id.ListView1);
         all_num = (TextView)findViewById(R.id.all_num);
         finished_num = (TextView)findViewById(R.id.finished_num);
+        add_btn = (Button)findViewById(R.id.add_btn);
+        add_btn.setOnClickListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -52,6 +61,15 @@ public class word1Activity extends AppCompatActivity {
         jsonRe=new JsonRe();
 
     }
+
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.add_btn:
+                showDialog();
+                break;
+        }
+    }
+
     private void getwordlist()
     {
         new Thread(new Runnable() {
@@ -92,6 +110,34 @@ public class word1Activity extends AppCompatActivity {
         }
     };
 
+    private void showDialog(){
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.5f;
+        getWindow().setAttributes(lp);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
+        addWordDialog.show();
+        addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.alpha = 1.0f;
+                getWindow().setAttributes(lp);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            }
+        });
+    }
+
+    private void add_wordandexample(final JSONObject jsonObject){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
+            }
+        }).start();
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -102,6 +148,11 @@ public class word1Activity extends AppCompatActivity {
         } else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    @Override
+    public void addWordInteraction(JSONObject jsonObject){
+        add_wordandexample(jsonObject);
     }
 
 }

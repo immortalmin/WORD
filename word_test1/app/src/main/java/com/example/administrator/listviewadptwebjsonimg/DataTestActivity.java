@@ -27,18 +27,20 @@ import java.util.List;
 public class DataTestActivity extends AppCompatActivity implements View.OnClickListener,
         AddWordDialog.OnDialogInteractionListener{
 
-    Button btn6,btn7,btn8,btn12,btn13;
+    Button btn6,btn7,btn8,btn12,btn13,btn14;
     LinearLayout linearLayout;
     JsonRe jsonRe;
     JSONObject jsonObject;
-    LinearLayout[][] layout = new LinearLayout[10][5];
     EditText[][] word_meaning = new EditText[10][5];
+    LinearLayout[][] word_layout = new LinearLayout[10][5];
+    RelativeLayout[] btn_layout = new RelativeLayout[10];
+    Button[] del_btn = new Button[10];
+    Button[] add_btn = new Button[10];
     int index=0;
     boolean flag=true;
 
     //定义一个自己的dialog
     private AddWordDialog addWordDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +51,19 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         btn8 = (Button)findViewById(R.id.btn8);
         btn12 = (Button)findViewById(R.id.btn12);
         btn13 = (Button)findViewById(R.id.btn13);
+        btn14 = (Button)findViewById(R.id.btn14);
         linearLayout = (LinearLayout)findViewById(R.id.total_lin);
         btn6.setOnClickListener(this);
         btn7.setOnClickListener(this);
         btn8.setOnClickListener(this);
         btn12.setOnClickListener(this);
         btn13.setOnClickListener(this);
+        btn14.setOnClickListener(this);
         jsonRe = new JsonRe();
 
 
 
     }
-
-
 
     public void onClick(View view) {
         switch (view.getId()){
@@ -124,7 +126,22 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn13:
                 add_view2();
                 break;
+            case R.id.btn14:
+                get_data();
+                break;
+        }
+    }
 
+    private void get_data(){
+//        Log.i("ccc","get_data"+String.valueOf(index));
+        for(int i=0;i<index;i++) {
+            String res1,res2,res3;
+            res1 = word_meaning[i][0].getText().toString();
+            res2 = word_meaning[i][1].getText().toString();
+            res3 = word_meaning[i][2].getText().toString();
+            Log.i("ccc",res1);
+            Log.i("ccc",res2);
+            Log.i("ccc",res3);
         }
     }
 
@@ -139,12 +156,10 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         }
     }
     private void add_view2(){
-//        LinearLayout[] layout = new LinearLayout[10];
-//        final EditText[] word_meaning = new EditText[10];
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
         for(int i=0;i<3;i++){
             // 1.创建外围LinearLayout控件
-            layout[index][i] = new LinearLayout(this);
+            word_layout[index][i] = new LinearLayout(this);
             LinearLayout.LayoutParams eLayoutlayoutParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -152,13 +167,13 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                     ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics())),
                     ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics())), 0);
             eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
-            layout[index][i].setLayoutParams(eLayoutlayoutParams);
-            layout[index][i].setGravity(Gravity.CENTER);
+            word_layout[index][i].setLayoutParams(eLayoutlayoutParams);
+            word_layout[index][i].setGravity(Gravity.CENTER);
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.word_input, null);
-            layout[index][i].setBackground(d);
-            layout[index][i].setPadding(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics())),0,
+            word_layout[index][i].setBackground(d);
+            word_layout[index][i].setPadding(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics())),0,
                     ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics())),0);
-            layout[index][i].setOrientation(LinearLayout.HORIZONTAL);
+            word_layout[index][i].setOrientation(LinearLayout.HORIZONTAL);
             //2.word_meaning
             word_meaning[index][i] = new EditText(this);
             LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(
@@ -168,33 +183,66 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
             word_meaning[index][i].setLayoutParams(word_meaning_Params);
             word_meaning[index][i].setBackgroundColor(Color.parseColor("#00000000"));
             word_meaning[index][i].setHint(hint[i]);
-            layout[index][i].addView(word_meaning[index][i]);
-            linearLayout.addView(layout[index][i]);
+            word_layout[index][i].addView(word_meaning[index][i]);
+            linearLayout.addView(word_layout[index][i]);
         }
-        Button add_btn = new Button(this);
-        LinearLayout.LayoutParams add_btn_Params = new LinearLayout.LayoutParams(
+        btn_layout[index] = new RelativeLayout(this);
+        LinearLayout.LayoutParams btn_layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        btn_layout[index].setLayoutParams(btn_layoutParams);
+
+        del_btn[index] = new Button(this);
+        RelativeLayout.LayoutParams del_btn_Params = new RelativeLayout.LayoutParams(
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())),
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())));
-//        LinearLayout.LayoutParams add_btn_Params = new LinearLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT);
-        add_btn.setLayoutParams(add_btn_Params);
-        add_btn.setPadding(0,0,0,0);
-        add_btn.setBackgroundColor(Color.parseColor("#00000000"));
-        add_btn.setTextColor(Color.parseColor("#000000"));
-        add_btn.setTextSize(20);
-        add_btn.setText("+");
-        add_btn.setOnClickListener(new View.OnClickListener() {
+//        add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics())), 0,
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics())), 0);
+        del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        del_btn[index].setLayoutParams(del_btn_Params);
+        del_btn[index].setPadding(0,0,0,0);
+        del_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
+        del_btn[index].setTextColor(Color.parseColor("#000000"));
+        del_btn[index].setTextSize(20);
+        del_btn[index].setText("-");
+        del_btn[index].setId(index);
+
+        add_btn[index] = new Button(this);
+        RelativeLayout.LayoutParams add_btn_Params = new RelativeLayout.LayoutParams(
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())),
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics())));
+        add_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics())), 0,
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics())), 0);
+        add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        add_btn[index].setLayoutParams(add_btn_Params);
+        add_btn[index].setPadding(0,0,0,0);
+        add_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
+        add_btn[index].setTextColor(Color.parseColor("#000000"));
+        add_btn[index].setTextSize(20);
+        add_btn[index].setText("+");
+        add_btn[index].setId(index);
+        add_btn[index].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                index++;
                 add_view2();
-//                String res = word_meaning[0].getText().toString();
-//                Log.i("ccc",res);
             }
         });
-        linearLayout.addView(add_btn);
-
+        final int ind=index;
+        del_btn[index].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linearLayout.removeView(word_layout[ind][0]);
+                linearLayout.removeView(word_layout[ind][1]);
+                linearLayout.removeView(word_layout[ind][2]);
+                linearLayout.removeView(btn_layout[ind]);
+            }
+        });
+        btn_layout[index].addView(add_btn[index]);
+        btn_layout[index].addView(del_btn[index]);
+        linearLayout.addView(btn_layout[index]);
+        index++;
     }
 
 

@@ -15,10 +15,13 @@
         android:layout_marginTop="20dp">
         <!--android:background="@drawable/num_bk"-->
 
+
+
         <LinearLayout
+            android:id="@+id/total_show"
             android:layout_width="130dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/rounded_corners_gray"
             android:orientation="vertical">
             <!--android:background="#60444444"-->
@@ -42,10 +45,11 @@
                 android:textSize="20dp" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/finish_show"
             android:layout_width="130dp"
             android:layout_height="60dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
+            android:layout_toRightOf="@+id/total_show"
+            android:layout_marginLeft="20dp"
             android:background="@drawable/rounded_corners_gray"
             android:orientation="vertical">
             <TextView
@@ -71,7 +75,14 @@
                 />
         </LinearLayout>
 
-
+        <Button
+            android:id="@+id/add_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/finish_show"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:text="添加单词" />
 
     </RelativeLayout>
 
@@ -82,5 +93,8 @@
         android:layout_marginTop="-46dp"
         android:dividerHeight="0dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+
+    </ListView>
 </RelativeLayout>
