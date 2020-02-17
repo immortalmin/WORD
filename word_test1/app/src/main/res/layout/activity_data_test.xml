@@ -49,33 +49,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="commit" />
+            android:text="dialogTest" />
         <Button
             android:id="@+id/btn13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:text="add view" />
-        <LinearLayout
-            android:id="@+id/word_meaning_lin"
-            android:layout_below="@+id/btn13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            style="@style/WordInputStyle"
-            android:orientation="horizontal">
 
-
-            <EditText
-                android:id="@+id/word_meaning"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="#00000000"
-                android:hint="在例句中的意思"
-                android:text="" />
-        </LinearLayout>
 
     </LinearLayout>
 

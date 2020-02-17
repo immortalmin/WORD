@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/worddialog_round_corners"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="15dp"
+        android:textColor="#ffffff"
+        android:text="新增例句" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        >
+
+
+        <LinearLayout
+            android:id="@+id/example_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <!--<RelativeLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <!--<Button-->
+                    <!--android:id="@+id/add_btn0"-->
+                    <!--android:layout_width="25dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_marginRight="20dp"-->
+                    <!--android:background="#00000000"-->
+                    <!--android:textColor="#ffffff"-->
+                    <!--android:textSize="20dp"-->
+                    <!--android:text="+" />-->
+            <!--</RelativeLayout>-->
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/commit_lin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            >
+
+            <Button
+                android:id="@+id/commit_btn"
+                android:background="@drawable/rounded_corners_green"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:text="commit" />
+
+            <Button
+                android:id="@+id/cancel_btn"
+                android:background="@drawable/rounded_corners_red"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:text="cancel"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/example_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--&gt;-->
+
+
+
+    <!--</LinearLayout>-->
+
+
+</LinearLayout>

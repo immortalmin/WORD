@@ -16,8 +16,8 @@
         >
         <Button
             android:id="@+id/btn1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/return3"
@@ -34,6 +34,17 @@
             android:textColor="#898a8c"
             android:textStyle="bold"
             android:text="单词详情" />
+        <Button
+            android:id="@+id/del_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/del1"
+            android:layout_centerVertical="true"
+            android:text="" />
+
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/head"
@@ -41,7 +52,6 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/example_round_corners"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -60,9 +70,10 @@
 
         <Button
             android:id="@+id/collect"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:background="@drawable/star_off"
+            android:padding="10dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
@@ -87,13 +98,13 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="500dp"
+        android:minHeight="450dp"
         android:layout_below="@+id/head"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/example_round_corners"
-        >
+        android:background="@drawable/example_round_corners">
+        <!---->
 
 
         <TextView
@@ -105,7 +116,7 @@
             android:textSize="16dp"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
-            android:text="例句" />
+            android:text="例句 +" />
 
         <TextView
             android:id="@+id/page"
@@ -133,7 +144,7 @@
             android:layout_marginTop="10dp"
             android:padding="0dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/non_example"

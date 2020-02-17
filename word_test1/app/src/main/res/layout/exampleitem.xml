@@ -45,6 +45,18 @@
             />
 
 
+        <Button
+            android:id="@+id/del_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:padding="0dp"
+            android:focusable="false"
+            android:layout_alignBaseline="@+id/word_meaning"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/del2"
+            android:text="" />
+
         <View
             android:layout_below="@+id/C_translate"
             android:layout_width="match_parent"

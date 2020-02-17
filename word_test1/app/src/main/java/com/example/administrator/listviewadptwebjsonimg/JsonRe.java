@@ -81,6 +81,7 @@ public class JsonRe {
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
                 HashMap<String,Object> example = new HashMap<>();
+                example.put("eid",jsonObject.getString("eid"));
                 example.put("word_meaning",jsonObject.getString("word_meaning").replaceAll("\\\\n","\\\n"));
                 example.put("E_sentence",jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n"));
                 example.put("C_translate",jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n"));

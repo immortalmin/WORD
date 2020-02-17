@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     ListView listView1;
     List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
     JsonRe jsonRe;
+    String fuzzy_str;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public boolean onQueryTextChange(String s) {
+            fuzzy_str = s;
             fuzzyquery(s);
             return false;
         }
@@ -113,8 +116,8 @@ public class SearchActivity extends AppCompatActivity {
     public void jump_to_example(String id){
         Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
         intent.putExtra("id",id);
-        startActivity(intent);
-
+        startActivityForResult(intent,1);
+        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
     }
 
     /**
@@ -157,6 +160,15 @@ public class SearchActivity extends AppCompatActivity {
             return false;
         } else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
+        if (requestCode == 1 && resultCode == 2) {
+            fuzzyquery(fuzzy_str);
         }
     }
 }

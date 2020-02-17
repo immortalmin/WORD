@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +25,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class DataTestActivity extends AppCompatActivity implements View.OnClickListener,
-        AddWordDialog.OnDialogInteractionListener{
+        AddWordDialog.OnDialogInteractionListener,
+        AddExampleDialog.OnDialogInteractionListener {
 
     Button btn6,btn7,btn8,btn12,btn13,btn14;
     LinearLayout linearLayout;
@@ -124,12 +128,35 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
                 showDialog();
                 break;
             case R.id.btn13:
-                add_view2();
+                showExampleDialog();
                 break;
             case R.id.btn14:
-                get_data();
+                del_warning();
                 break;
         }
+    }
+    private void del_warning(){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Really?")
+                .setContentText("Data will be permanently deleted.")
+                .setConfirmText("OK")
+                .setCancelText("No,cancel del!")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Toast.makeText(DataTestActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
+                        sweetAlertDialog.cancel();
+
+                    }
+                })
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private void get_data(){
@@ -252,6 +279,10 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
         addWordDialog.show();
     }
 
+    private void showExampleDialog(){
+        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,1);
+        addExampleDialog.show();
+    }
 
 
     //***********改***********
@@ -378,6 +409,12 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void addWordInteraction(JSONObject jsonObject){
         add_wordandexample(jsonObject);
+        Log.i("ccc","addWordInteraction:"+jsonObject.toString());
+    }
+
+    @Override
+    public void addExampleInteraction(JSONObject jsonObject){
+//        add_wordandexample(jsonObject);
         Log.i("ccc","addWordInteraction:"+jsonObject.toString());
     }
 }

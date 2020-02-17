@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,7 +54,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 Intent intent = new Intent(word1Activity.this, ExampleActivity.class);
                 String id = word_list.get(position).get("wid").toString();
                 intent.putExtra("id",id);
-                startActivity(intent);
+                startActivityForResult(intent,1);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         });
         getwordlist();
@@ -153,6 +155,16 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void addWordInteraction(JSONObject jsonObject){
         add_wordandexample(jsonObject);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
+        if (requestCode == 1 && resultCode == 2) {
+            getwordlist();
+            get_amount();
+        }
     }
 
 }
