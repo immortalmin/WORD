@@ -4,9 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/example_bg1"
+    android:background="#0ca7ea"
     tools:context=".ExampleActivity">
-    <!--#232430-->
+
+    <com.ocnyang.contourview.ContourView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:contour_style="Sand"
+        app:shader_endcolor="#08b1f9"
+        app:shader_mode="RadialGradient"
+        app:shader_startcolor="#366cf2"
+        app:shader_style="Center"
+        app:smoothness="0.25"/>
+
 
     <RelativeLayout
         android:id="@+id/nav_bar"
@@ -34,16 +44,19 @@
             android:textColor="#898a8c"
             android:textStyle="bold"
             android:text="单词详情" />
+
         <Button
-            android:id="@+id/del_btn"
+            android:id="@+id/edit_btn"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="24dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/del1"
+            android:background="@drawable/edit1"
             android:layout_centerVertical="true"
             android:text="" />
+
+
 
     </RelativeLayout>
     <RelativeLayout
@@ -67,6 +80,30 @@
             app:mTextSize="28dp"
             app:mText="accuse of"
             />
+
+        <Button
+            android:id="@+id/word_edit_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="40dp"
+            android:visibility="invisible"
+            android:background="@drawable/edit1"
+            android:layout_centerVertical="true"
+            android:text="" />
+
+        <Button
+            android:id="@+id/word_del_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="10dp"
+            android:visibility="invisible"
+            android:background="@drawable/del1"
+            android:layout_centerVertical="true"
+            android:text="" />
 
         <Button
             android:id="@+id/collect"

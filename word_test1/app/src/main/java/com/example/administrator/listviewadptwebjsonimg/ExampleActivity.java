@@ -39,13 +39,15 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  * 跳转到这个界面需要传id的值
  */
 public class ExampleActivity extends AppCompatActivity implements View.OnClickListener,
-        AddExampleDialog.OnDialogInteractionListener{
+        AddExampleDialog.OnDialogInteractionListener,
+        UpdateWordDialog.OnDialogInteractionListener{
 
     TextView word_meaning,E_sentence,C_translate,non_example,page,C_meaning,example;
     WordView word_group;
     ListView example_list;
-    Button btn1,collect,del_btn;
+    Button btn1,collect,word_del_btn,word_edit_btn,edit_btn;
     JsonRe  jsonRe;
+    private ExampleAdapter exampleAdapter;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private MediaPlayer mediaPlayer;
     private JSONObject jsonObject;
@@ -56,7 +58,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
     String id = "1";
     String current_word="error";
-    boolean first_coming = true;
+    private boolean first_coming = true;
+    int mode=0;//0 view,1 edit
     int del_id = 1;
     int collect_flag = 0,request_id;
     @Override
@@ -74,10 +77,14 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         C_meaning = (TextView)findViewById(R.id.C_meaning);
         example_list = (ListView)findViewById(R.id.example_list);
         btn1 = (Button)findViewById(R.id.btn1);
-        del_btn = (Button)findViewById(R.id.del_btn);
+        word_del_btn = (Button)findViewById(R.id.word_del_btn);
+        word_edit_btn = (Button)findViewById(R.id.word_edit_btn);
+        edit_btn = (Button)findViewById(R.id.edit_btn);
         collect = (Button)findViewById(R.id.collect);
         btn1.setOnClickListener(this);
-        del_btn.setOnClickListener(this);
+        word_del_btn.setOnClickListener(this);
+        word_edit_btn.setOnClickListener(this);
+        edit_btn.setOnClickListener(this);
         collect.setOnClickListener(this);
         word_group.setOnClickListener(this);
         example.setOnClickListener(this);
@@ -135,11 +142,23 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 update_collect();
                 break;
             case R.id.example:
-                showExampleDialog();
+                addExampleDialog();
                 break;
-            case R.id.del_btn:
+            case R.id.word_del_btn:
                 del_id=1;
                 del_warning();
+                break;
+            case R.id.word_edit_btn:
+                updateWordDialog(word);
+                break;
+            case R.id.edit_btn:
+                if(mode==0){
+                    mHandler.obtainMessage(2).sendToTarget();
+                    mode=1;
+                }else{
+                    mHandler.obtainMessage(3).sendToTarget();
+                    mode=0;
+                }
                 break;
         }
     }
@@ -201,6 +220,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg){
             if(msg.what == 0){
+//                Log.i("ccc",word.toString());
+//                Log.i("ccc",examplelist.toString());
                 page.setText("页码："+word.get("page").toString());
                 word_group.setmText(word.get("word_group").toString());
                 word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
@@ -228,9 +249,9 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     non_example.setVisibility(View.VISIBLE);
                     example_list.setVisibility(View.GONE);
                 }
-                ExampleAdapter exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist);
+                exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode);
                 example_list.setAdapter(exampleAdapter);
-                exampleAdapter.setOnItemDeleteClickListener(new ExampleAdapter.onItemDeleteListener() {
+                exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                     @Override
                     public void onDeleteClick(int i) {
                         jsonObject = new JSONObject();
@@ -242,25 +263,41 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         del_id=2;
                         del_warning();
                     }
+                    @Override
+                    public void onEditClick(int i) {
+                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
+                    }
                 });
-//                SimpleAdapter adapter = new SimpleAdapter(ExampleActivity.this,
-//                        examplelist,R.layout.exampleitem,new String[]{
-//                        "word_meaning","E_sentence","C_translate"},
-//                        new int[]{R.id.word_meaning,R.id.E_sentence,R.id.C_translate});
-//                example_list.setAdapter(adapter);
             }else if (msg.what==1){
                 page.setText("");
                 word_group.setmText("");
                 C_meaning.setText("");
+            }else if(msg.what==2){
+                word_del_btn.setVisibility(View.VISIBLE);
+                word_edit_btn.setVisibility(View.VISIBLE);
+                collect.setVisibility(View.INVISIBLE);
+                exampleAdapter.setVisible();
+                edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
+            }else if(msg.what==3){
+                word_del_btn.setVisibility(View.INVISIBLE);
+                word_edit_btn.setVisibility(View.INVISIBLE);
+                collect.setVisibility(View.VISIBLE);
+                exampleAdapter.setinVisible();
+                edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
             }
 
         }
     };
 
 
-    private void showExampleDialog(){
+    private void addExampleDialog(){
         AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,Integer.valueOf(id));
         addExampleDialog.show();
+    }
+
+    private void updateWordDialog(HashMap<String,Object> data){
+        UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
+        updateWordDialog.show();
     }
 
     /**
@@ -322,11 +359,33 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
         getwordlist();
     }
+    private void update_word(final JSONObject jsonObject){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_word.php",jsonObject);
+            }
+        }).start();
+        getwordlist();
+    }
 
     @Override
     public void addExampleInteraction(JSONObject jsonObject){
         add_example(jsonObject);
-        Log.i("ccc","addWordInteraction:"+jsonObject.toString());
+    }
+
+    @Override
+    public void updateWordInteraction(JSONObject jsonObject){
+        update_word(jsonObject);
+        //有时数据库同步太慢了，只能先直接把用户改过后的数据拿来显示
+        try{
+            word_group.setmText(jsonObject.getString("word_group"));
+            C_meaning.setText(jsonObject.getString("C_meaning"));
+            page.setText(jsonObject.getString("page"));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
     }
 
     /**

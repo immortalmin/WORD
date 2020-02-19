@@ -44,6 +44,17 @@
             android:text="相比经过充分研究的欧洲及东南亚语言,这些新近被描述的语言通常表现出明显差异,使得有些学者甚至指责博厄斯和沙比尔伪造数据。"
             />
 
+        <Button
+            android:id="@+id/edit_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:padding="0dp"
+            android:focusable="false"
+            android:layout_alignBaseline="@+id/word_meaning"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/edit2"
+            android:text="" />
 
         <Button
             android:id="@+id/del_btn"
@@ -53,7 +64,7 @@
             android:focusable="false"
             android:layout_alignBaseline="@+id/word_meaning"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="0dp"
             android:background="@drawable/del2"
             android:text="" />
 
