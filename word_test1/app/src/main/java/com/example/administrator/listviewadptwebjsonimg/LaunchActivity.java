@@ -34,7 +34,7 @@ public class LaunchActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+                startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 LaunchActivity.this.finish();
             }

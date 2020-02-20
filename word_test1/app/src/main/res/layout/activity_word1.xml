@@ -4,9 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/wordlist_bg4"
+    android:background="#0ca7ea"
     tools:context=".word1Activity">
     <!--android:background="@mipmap/wordlist"-->
+
+    <com.ocnyang.contourview.ContourView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:contour_style="Sand"
+        app:shader_endcolor="#08b1f9"
+        app:shader_mode="RadialGradient"
+        app:shader_startcolor="#366cf2"
+        app:shader_style="Center"
+        app:smoothness="0.25"/>
 
     <RelativeLayout
         android:id="@+id/linear1"

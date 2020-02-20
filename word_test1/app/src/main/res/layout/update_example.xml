@@ -14,10 +14,10 @@
         android:layout_marginLeft="10dp"
         android:textSize="15dp"
         android:textColor="#ffffff"
-        android:text="单词：" />
+        android:text="单词在例句中的意思：" />
 
     <LinearLayout
-        android:id="@+id/word_group_lin"
+        android:id="@+id/word_meaning_lin"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -27,11 +27,14 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/word_group"
+            android:id="@+id/word_meaning"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="60dp"
             android:background="#00000000"
-            android:hint="输入单词"
+            android:inputType="textMultiLine"
+            android:gravity="left|top"
+            android:minLines="2"
+            android:hint="输入单词意思"
             android:text="" />
 
     </LinearLayout>
@@ -44,10 +47,10 @@
         android:layout_marginLeft="10dp"
         android:textSize="15dp"
         android:textColor="#ffffff"
-        android:text="中文意思：" />
+        android:text="英文例句：" />
 
     <LinearLayout
-        android:id="@+id/C_meaning_lin"
+        android:id="@+id/E_sentence_lin"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         style="@style/WordInputStyle"
@@ -57,11 +60,14 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/C_meaning"
+            android:id="@+id/E_sentence"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="90dp"
             android:background="#00000000"
-            android:hint="输入中文意思"
+            android:inputType="textMultiLine"
+            android:gravity="left|top"
+            android:minLines="3"
+            android:hint="输入英文例句"
             android:text="" />
 
     </LinearLayout>
@@ -74,10 +80,10 @@
         android:layout_marginLeft="10dp"
         android:textSize="15dp"
         android:textColor="#ffffff"
-        android:text="页码：" />
+        android:text="中文翻译：" />
 
     <LinearLayout
-        android:id="@+id/page_lin"
+        android:id="@+id/C_translate_lin"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -87,11 +93,14 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/page"
+            android:id="@+id/C_translate"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="90dp"
             android:background="#00000000"
-            android:hint="输入页码"
+            android:inputType="textMultiLine"
+            android:gravity="left|top"
+            android:minLines="3"
+            android:hint="输入中文翻译"
             android:text="" />
 
     </LinearLayout>
@@ -100,7 +109,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        >
 
         <LinearLayout
             android:id="@+id/commit_lin"

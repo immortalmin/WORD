@@ -82,9 +82,22 @@ public class JsonRe {
                 JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
                 HashMap<String,Object> example = new HashMap<>();
                 example.put("eid",jsonObject.getString("eid"));
-                example.put("word_meaning",jsonObject.getString("word_meaning").replaceAll("\\\\n","\\\n"));
-                example.put("E_sentence",jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n"));
-                example.put("C_translate",jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n"));
+                String word_meaning,E_sentence,C_translate;
+                word_meaning = jsonObject.getString("word_meaning").replaceAll("\\\\n","\\\n");
+                E_sentence = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
+                C_translate = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
+                if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
+                    word_meaning = word_meaning.substring(0,word_meaning.length()-1);
+                }
+                if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
+                    E_sentence = E_sentence.substring(0,E_sentence.length()-1);
+                }
+                if(C_translate.charAt(C_translate.length()-1) == '\n'){
+                    C_translate = C_translate.substring(0,C_translate.length()-1);
+                }
+                example.put("word_meaning",word_meaning);
+                example.put("E_sentence",E_sentence);
+                example.put("C_translate",C_translate);
                 exampleList.add(example);
             }
         }catch (JSONException e) {

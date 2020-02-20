@@ -9,7 +9,7 @@ for($i=0;$i<strlen($word);$i++){
 	$newword .= $word[$i];
 	$newword .= "%";
 }
-$result =mysqli_query($conn,'SELECT * FROM word_table WHERE word_group LIKE "'.$newword.'"');
+$result =mysqli_query($conn,'SELECT word_table.`wid`,word_table.`word_group`,word_table.`C_meaning`,word_table.`page`,word_table.`collect`,recite_table.`correct_times`,recite_table.`error_times`,recite_table.`prof_flag`,recite_table.`last_date` FROM word_table,recite_table WHERE word_table.`wid`=recite_table.`wid` and word_table.`word_group` LIKE "'.$newword.'"');
 
 while ($shopInfo = mysqli_fetch_array($result,MYSQLI_ASSOC)){ //返回查询结果到数组
 	$output[]=$shopInfo;

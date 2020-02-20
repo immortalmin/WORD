@@ -40,7 +40,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 public class ExampleActivity extends AppCompatActivity implements View.OnClickListener,
         AddExampleDialog.OnDialogInteractionListener,
-        UpdateWordDialog.OnDialogInteractionListener{
+        UpdateWordDialog.OnDialogInteractionListener,
+        UpdateExampleDialog.OnDialogInteractionListener{
 
     TextView word_meaning,E_sentence,C_translate,non_example,page,C_meaning,example;
     WordView word_group;
@@ -265,7 +266,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     @Override
                     public void onEditClick(int i) {
-                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
+                        updateExampleDialog(examplelist.get(i));
+//                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
                     }
                 });
             }else if (msg.what==1){
@@ -298,6 +300,11 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     private void updateWordDialog(HashMap<String,Object> data){
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
+    }
+
+    private void updateExampleDialog(HashMap<String,Object> data){
+        UpdateExampleDialog updateExampleDialog = new UpdateExampleDialog(this,R.style.MyDialog,data);
+        updateExampleDialog.show();
     }
 
     /**
@@ -369,6 +376,16 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
         getwordlist();
     }
+    private void update_example(final JSONObject jsonObject){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_example.php",jsonObject);
+            }
+        }).start();
+        getwordlist();
+    }
 
     @Override
     public void addExampleInteraction(JSONObject jsonObject){
@@ -386,6 +403,12 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }catch (JSONException e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updateExampleInteraction(JSONObject jsonObject){
+        update_example(jsonObject);
+
     }
 
     /**

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.os.Handler;
+import android.os.Message;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +24,10 @@ public class ExampleAdapter extends BaseAdapter {
     private boolean flag = false;
     private View[] views = new View[100];
 
+
     public ExampleAdapter(Context context, List<HashMap<String,Object>> data,int mode) {
         this.mdata = data;
         this.mode = mode;
-//        total_num=0;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -36,8 +38,8 @@ public class ExampleAdapter extends BaseAdapter {
         TextView word_meaning = (TextView)v.findViewById(R.id.word_meaning);
         TextView E_sentence = (TextView)v.findViewById(R.id.E_sentence);
         TextView C_translate = (TextView)v.findViewById(R.id.C_translate);
-        Button del_btn = (Button)v.findViewById(R.id.del_btn);
-        Button edit_btn = (Button)v.findViewById(R.id.edit_btn);
+        Button del_btn = (Button)v.findViewById(R.id.example_del_btn);
+        Button edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
         if(mode==0){
             del_btn.setVisibility(View.INVISIBLE);
             edit_btn.setVisibility(View.INVISIBLE);
@@ -62,25 +64,33 @@ public class ExampleAdapter extends BaseAdapter {
 
     public void setVisible(){
         mode=1;
-        Log.i("ccc",String.valueOf(views.length));
-        for(int i=0;i<mdata.size();i++){
-            Button del_btn = views[i].findViewById(R.id.del_btn);
-            Button edit_btn = views[i].findViewById(R.id.edit_btn);
-            del_btn.setVisibility(View.VISIBLE);
-            edit_btn.setVisibility(View.VISIBLE);
-        }
+        mHandler.obtainMessage(0).sendToTarget();
     }
 
     public void setinVisible(){
         mode = 0;
-        Log.i("ccc",String.valueOf(views.length));
-        for(int i=0;i<mdata.size();i++){
-            Button del_btn = views[i].findViewById(R.id.del_btn);
-            Button edit_btn = views[i].findViewById(R.id.edit_btn);
-            del_btn.setVisibility(View.INVISIBLE);
-            edit_btn.setVisibility(View.INVISIBLE);
-        }
+        mHandler.obtainMessage(1).sendToTarget();
     }
+
+    private android.os.Handler mHandler = new Handler(){
+        public void handleMessage(Message msg){
+            if(msg.what == 0){
+                for(int i=0;i<mdata.size();i++){
+                    Button del_btn = views[i].findViewById(R.id.example_del_btn);
+                    Button edit_btn = views[i].findViewById(R.id.example_edit_btn);
+                    del_btn.setVisibility(View.VISIBLE);
+                    edit_btn.setVisibility(View.VISIBLE);
+                }
+            }else if(msg.what==1){
+                for(int i=0;i<mdata.size();i++){
+                    Button del_btn = views[i].findViewById(R.id.example_del_btn);
+                    Button edit_btn = views[i].findViewById(R.id.example_edit_btn);
+                    del_btn.setVisibility(View.INVISIBLE);
+                    edit_btn.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    };
 
     public interface onItemListener {
         void onDeleteClick(int i);
