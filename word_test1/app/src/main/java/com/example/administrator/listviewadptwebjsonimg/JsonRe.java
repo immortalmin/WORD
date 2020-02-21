@@ -131,7 +131,24 @@ public class JsonRe {
         return reciteList;
     }
 
-    //将json转为需要的数据结构
+    public HashMap<String,Object> userData(String jsonStr){
+        HashMap<String,Object> word = new HashMap<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+            word.put("uid",jsonObject.getString("uid"));
+            word.put("username",jsonObject.getString("username"));
+            word.put("pwd",jsonObject.getString("pwd"));
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }
+
+
+
+
+    //将json转为需要的数据结构  old version
     public List<Map<String, Object>>  getWordList(String jsonStr) {
         wordInfoList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         List<Map<String, Object>> ExampleList;// 定义List容器，节点类型是map

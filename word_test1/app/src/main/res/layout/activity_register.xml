@@ -5,17 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/launch1"
-    tools:context=".LoginActivity">
+    tools:context=".RegisterActivity">
 
-    <Button
-        android:id="@+id/reg_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:text="Register"/>
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -36,14 +27,26 @@
             android:textSize="20dp"
             android:hint="username" />
 
+        <TextView
+            android:id="@+id/warn_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/username"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="用户名已存在"
+            android:textColor="#f70606"
+            />
+
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/pwd"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/username"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="#FFFFFF"
@@ -52,14 +55,14 @@
             android:hint="password" />
 
         <Button
-            android:id="@+id/login_btn"
+            android:id="@+id/reg_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/password"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/pwd"
+            android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true"
             android:textAllCaps="false"
-            android:text="Login" />
+            android:text="Register" />
     </RelativeLayout>
 
 </RelativeLayout>
