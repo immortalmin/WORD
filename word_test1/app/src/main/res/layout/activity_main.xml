@@ -12,22 +12,22 @@
 
 
 
-    <!--<Button-->
-        <!--android:id="@+id/search1"-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_marginTop="3dp"-->
-        <!--android:visibility="invisible"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:background="@drawable/search2" />-->
+    <Button
+        android:id="@+id/setting_btn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="visible"
+        android:background="@drawable/setting_icon"/>
 
     <SearchView
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginLeft="60dp"
         android:queryHint="输入你要查询的词组"
         android:background="@drawable/rounded_corners_gray"
         />

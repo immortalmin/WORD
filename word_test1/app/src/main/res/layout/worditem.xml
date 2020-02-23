@@ -10,7 +10,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         >
-        <com.example.administrator.listviewadptwebjsonimg.WordView
+        <com.immortalmin.www.word.WordView
             android:id="@+id/word_group"
             android:layout_width="match_parent"
             android:layout_height="35dp"

@@ -9,12 +9,14 @@
 
     <Button
         android:id="@+id/reg_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
         android:textAllCaps="false"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_corners_purple"
+        android:textColor="#FFFFFF"
         android:text="Register"/>
 
     <RelativeLayout
@@ -27,38 +29,52 @@
         <EditText
             android:id="@+id/username"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="#FFFFFF"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textSize="20dp"
+            android:background="@drawable/rounded_edittext"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:drawableRight="@drawable/user_icon"
+            android:textSize="19dp"
+            android:textColor="#859aa6"
+            android:textColorHint="#28497F"
+            android:textCursorDrawable="@drawable/cursor"
             android:hint="username" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/username"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="#FFFFFF"
+            android:background="@drawable/rounded_edittext"
             android:inputType="textPassword"
-            android:textSize="20dp"
+            android:drawableRight="@drawable/pwd_icon"
+            android:textSize="19dp"
+            android:textColor="#859aa6"
+            android:textColorHint="#5B5287"
+            android:textCursorDrawable="@drawable/cursor"
             android:hint="password" />
 
         <Button
             android:id="@+id/login_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/password"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:layout_centerHorizontal="true"
             android:textAllCaps="false"
+            android:background="@drawable/rounded_corners_green"
+            android:textColor="#FFFFFF"
             android:text="Login" />
     </RelativeLayout>
 

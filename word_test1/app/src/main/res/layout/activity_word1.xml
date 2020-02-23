@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0ca7ea"
+    android:background="#4a82c7"
     tools:context=".word1Activity">
     <!--android:background="@mipmap/wordlist"-->
 
@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:contour_style="Sand"
-        app:shader_endcolor="#08b1f9"
+        app:shader_endcolor="#4f68c6"
         app:shader_mode="RadialGradient"
-        app:shader_startcolor="#366cf2"
+        app:shader_startcolor="#61a8d4"
         app:shader_style="Center"
         app:smoothness="0.25"/>
 

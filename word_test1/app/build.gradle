@@ -7,7 +7,7 @@ android {
     }
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.administrator.listviewadptwebjsonimg"
+        applicationId "com.immortalmin.www.word"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1

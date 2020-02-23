@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0ca7ea"
+    android:background="#4a82c7"
     tools:context=".ExampleActivity">
 
     <com.ocnyang.contourview.ContourView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:contour_style="Sand"
-        app:shader_endcolor="#08b1f9"
+        app:shader_endcolor="#4f68c6"
         app:shader_mode="RadialGradient"
-        app:shader_startcolor="#366cf2"
+        app:shader_startcolor="#61a8d4"
         app:shader_style="Center"
-        app:smoothness="0.25"/>
+        app:smoothness="0.15"/>
 
 
     <RelativeLayout
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content">
 
 
-        <com.example.administrator.listviewadptwebjsonimg.WordView
+        <com.immortalmin.www.word.WordView
             android:id="@+id/word_group"
             android:layout_width="match_parent"
             android:layout_height="40dp"

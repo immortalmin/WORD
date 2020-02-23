@@ -7,7 +7,7 @@
     android:background="#131128"
     tools:context=".WordViewTestActivity">
 
-    <com.example.administrator.listviewadptwebjsonimg.MainView
+    <com.immortalmin.www.word.MainView
         android:id="@+id/mainView"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
