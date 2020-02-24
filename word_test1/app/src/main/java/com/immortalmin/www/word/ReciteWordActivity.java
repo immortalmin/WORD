@@ -1,7 +1,9 @@
 package com.immortalmin.www.word;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -332,7 +334,10 @@ public class ReciteWordActivity extends AppCompatActivity
                 })
                 .create();
 
-
+        Handler handler = new Handler();
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        recite_num = sp.getInt("recite_num",20);
+        recite_scope = sp.getInt("recite_scope",10);
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getrecitelist();//get the list of word

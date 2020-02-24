@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText username,password;
     Button login_btn,reg_btn;
     private HashMap<String,Object> userdata=null;
+    private HashMap<String,Object> userSetting=null;
     JsonRe jsonRe = new JsonRe();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }).start();
 
     }
+
+    private void get_setting(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("uid",userdata.get("uid").toString());
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
+                userSetting = jsonRe.userSetting(s);
+                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                sp.edit().putString("uid",userSetting.get("uid").toString())
+                        .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
+                        .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
+                        .apply();
+            }
+        }).start();
+    }
+
     private void judge(){
         String pwd = password.getText().toString();
         Looper.prepare();
@@ -96,6 +120,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .putString("password", password.getText().toString())
                         .putString("status","1")
                         .apply();
+                get_setting();
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
@@ -113,6 +138,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 1) {
             username.setText(data.getExtras().getString("username"));
+            password.setText("");
         }
     }
 }

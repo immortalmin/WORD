@@ -145,6 +145,20 @@ public class JsonRe {
         return word;
     }
 
+    public HashMap<String,Object> userSetting(String jsonStr){
+        HashMap<String,Object> word = new HashMap<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+            word.put("uid",jsonObject.getString("uid"));
+            word.put("recite_num",jsonObject.getString("recite_num"));
+            word.put("recite_scope",jsonObject.getString("recite_scope"));
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }
+
 
 
 
