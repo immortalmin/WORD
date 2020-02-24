@@ -1,7 +1,9 @@
 package com.immortalmin.www.word;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +23,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -77,8 +80,15 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
+                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("uid",sp.getString("uid",null));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
                 HttpGetContext httpGetContext = new HttpGetContext();
-                String recitejson = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file2/getwordlist.php");
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getwordlist.php",jsonObject);
                 List<HashMap<String,Object>> wordlist = null;
                 wordlist = jsonRe.allwordData(recitejson);
                 mHandler.obtainMessage(0,wordlist).sendToTarget();
@@ -90,8 +100,15 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
+                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("uid",sp.getString("uid",null));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
                 HttpGetContext httpGetContext = new HttpGetContext();
-                String recitejson = httpGetContext.httpclientgettext("http://47.98.239.237/word/php_file2/get_count.php");
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
                 HashMap<String,Object> count = null;
                 count = jsonRe.getcount(recitejson);
                 mHandler.obtainMessage(1,count).sendToTarget();

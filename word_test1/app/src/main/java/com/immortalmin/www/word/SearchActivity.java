@@ -1,7 +1,9 @@
 package com.immortalmin.www.word;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -88,6 +90,8 @@ public class SearchActivity extends AppCompatActivity {
                 word_list.clear();
                 JSONObject jsonObject = new JSONObject();
                 try{
+                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                    jsonObject.put("uid",sp.getString("uid",null));
                     jsonObject.put("word",word);
                 }catch (JSONException e) {
                     e.printStackTrace();

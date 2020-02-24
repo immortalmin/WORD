@@ -57,7 +57,7 @@ public class ReciteWordActivity extends AppCompatActivity
     AlertDialog finish_Dialog, interrupt_Dialog;
     ProgressBar total_progress;
     SweetAlertDialog finishDialog,interruptDialog;
-
+    private HashMap<String,Object> setting = new HashMap<>();
     private MediaPlayer mediaPlayer;
     List<HashMap<String, Object>> recite_list = null;//the list of word
     int recite_num = 1;//the number of word today
@@ -183,7 +183,9 @@ public class ReciteWordActivity extends AppCompatActivity
                 HttpGetContext httpGetContext = new HttpGetContext();
                 JSONObject jsonObject = new JSONObject();
                 try{
+                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
                     jsonObject.put("mount",recite_num + recite_scope);
+                    jsonObject.put("uid",sp.getString("uid",null));
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -336,6 +338,7 @@ public class ReciteWordActivity extends AppCompatActivity
 
         Handler handler = new Handler();
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        setting.put("uid",sp.getString("uid",null));
         recite_num = sp.getInt("recite_num",20);
         recite_scope = sp.getInt("recite_scope",10);
         Arrays.fill(finish_ind, 0);
@@ -587,7 +590,9 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void update_sql_data(int i) {
         update_word  = new HashMap<>();
-        update_word.put("id", recite_list.get(i).get("wid").toString());
+
+        update_word.put("uid",setting.get("uid"));
+        update_word.put("wid", recite_list.get(i).get("wid").toString());
         update_word.put("correct_times", recite_list.get(i).get("correct_times").toString());
         update_word.put("error_times", recite_list.get(i).get("error_times").toString());
         update_word.put("prof_flag", recite_list.get(i).get("prof_flag").toString());

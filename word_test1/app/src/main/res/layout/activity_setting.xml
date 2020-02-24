@@ -17,6 +17,38 @@
         app:shader_style="Center"
         app:smoothness="0.15"/>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/photo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        app:civ_border_width="1dp"
+        app:civ_border_overlay="true"
+        app:civ_border_color="#8c8888"
+        app:civ_fill_color="#bab3b3"
+        android:src="@android:drawable/sym_def_app_icon"/>
+
+    <!--<ImageView-->
+        <!--android:id="@+id/photo"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--app:srcCompat="@android:drawable/sym_def_app_icon" />-->
+
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/photo"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="immortalmin" />
+
     <Button
         android:id="@+id/return_btn"
         android:layout_width="40dp"
@@ -31,7 +63,7 @@
         android:id="@+id/setting_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/return_btn">
+        android:layout_below="@+id/nickname">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,6 +87,7 @@
                     android:textSize="20dp"
                     android:layout_weight="1"/>
                 <EditText
+                    android:id="@+id/recite_num"
                     android:layout_width="50dp"
                     android:layout_height="30dp"
                     android:background="#00000000"
@@ -62,7 +95,7 @@
                     android:textSize="22dp"
                     android:maxLength="3"
                     android:textAlignment="textEnd"
-                    android:text="3"/>
+                    android:text="20"/>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -71,7 +104,38 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="额外范围"
+                    android:textSize="20dp"
+                    android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/recite_scope"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:background="#00000000"
+                    android:paddingRight="5dp"
+                    android:textSize="22dp"
+                    android:maxLength="3"
+                    android:textAlignment="textEnd"
+                    android:text="10"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
         </LinearLayout>
 
 

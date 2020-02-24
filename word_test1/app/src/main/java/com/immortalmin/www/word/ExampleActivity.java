@@ -1,7 +1,9 @@
 package com.immortalmin.www.word;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -57,7 +59,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     List<HashMap<String,Object>> examplelist = null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
-    String id = "1";
+    String wid = "1";
     String current_word="error";
     private boolean first_coming = true;
     int mode=0;//0 view,1 edit
@@ -93,7 +95,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         jsonRe=new JsonRe();
         first_coming = true;
         Intent intent = getIntent();
-        id = intent.getStringExtra("id");
+        wid = intent.getStringExtra("id");
         /**
          * release mediaPlayer at the end of the playing
          */
@@ -187,7 +189,9 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 HttpGetContext httpGetContext = new HttpGetContext();
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("id",word.get("wid"));
+                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("wid",word.get("wid"));
                     jsonObject.put("collect",collect_flag);
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -204,7 +208,9 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("id",Integer.valueOf(id));
+                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("wid",Integer.valueOf(wid));
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -293,7 +299,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void addExampleDialog(){
-        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,Integer.valueOf(id));
+        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,Integer.valueOf(wid));
         addExampleDialog.show();
     }
 

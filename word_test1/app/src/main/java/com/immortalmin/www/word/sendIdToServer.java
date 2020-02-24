@@ -38,7 +38,8 @@ public class sendIdToServer implements Runnable{
 //        Log.i("ccc",update_word.toString());
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("id",update_word.get("id").toString());
+            jsonObject.put("uid",update_word.get("uid").toString());
+            jsonObject.put("wid",update_word.get("wid").toString());
             jsonObject.put("correct_times",update_word.get("correct_times").toString());
             jsonObject.put("error_times",update_word.get("error_times").toString());
             jsonObject.put("prof_flag",update_word.get("prof_flag").toString());
