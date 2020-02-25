@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +44,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private TextView nickname;
     private CircleImageView photo;
     private String uid;
+    private ImageUtils imageUtils = new ImageUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +71,19 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         nickname.setText(sp.getString("username",null));
 
         setImage();
+
     }
 
+    private void setImage() {
+        Bitmap bitmap=imageUtils.getPhotoFromStorage("test1");
+        if(bitmap==null){
+            Log.i("ccc","照片不存在");
+            getImage();
+        }else{
+            Log.i("ccc","照片存在");
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
+        }
+    }
 
 
     public void onClick(View view){
@@ -93,7 +107,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.photo:
-
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i,0);
                 break;
         }
     }
@@ -121,12 +136,17 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
     }
 
-    private void setImage(){
+
+
+
+
+    private void getImage(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/1.jpg");
+                imageUtils.savePhotoToStorage(bitmap,"test1");
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
         }).start();
@@ -138,9 +158,39 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 case 0:
                     photo.setImageBitmap((Bitmap)msg.obj);
                     break;
+
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+//            case TAKEPHOTO:
+//                if(resultCode ==RESULT_OK){
+//                    draweeView.setImageURI(imageUri);
+//                }
+//                break;
+            case 0:
+                //打开相册并选择照片，这个方式选择单张
+                // 获取返回的数据，这里是android自定义的Uri地址
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                // 获取选择照片的数据视图
+                if(selectedImage!=null){
+                    Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    // 从数据视图中获取已选择图片的路径
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    // 将图片显示到界面上
+                    Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+                    mHandler.obtainMessage(0,bitmap).sendToTarget();
+                    cursor.close();
+                }
+                break;
+        }
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
