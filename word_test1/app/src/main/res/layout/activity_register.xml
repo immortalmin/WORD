@@ -15,10 +15,24 @@
         android:layout_centerHorizontal="true"
         >
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
+            android:src="@android:drawable/sym_def_app_icon"/>
+
         <EditText
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_below="@+id/profile_photo"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/rounded_edittext"

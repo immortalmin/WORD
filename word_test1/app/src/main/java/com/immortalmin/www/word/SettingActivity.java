@@ -3,6 +3,7 @@ package com.immortalmin.www.word;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,8 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener{
@@ -45,7 +48,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private CircleImageView photo;
     private String uid;
     private ImageUtils imageUtils = new ImageUtils();
-
+    private String profile_photo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,16 +72,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         recite_scope.setText(String.valueOf(sp.getInt("recite_scope",10)));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         nickname.setText(sp.getString("username",null));
-
-        setImage();
+        profile_photo = sp.getString("profile_photo",null);
+        setImage(profile_photo);
 
     }
 
-    private void setImage() {
-        Bitmap bitmap=imageUtils.getPhotoFromStorage("test1");
+    private void setImage(String pic) {
+        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
             Log.i("ccc","照片不存在");
-            getImage();
+            getImage(pic);
         }else{
             Log.i("ccc","照片存在");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
@@ -140,13 +143,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
 
 
-    private void getImage(){
+    private void getImage(final String pic){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/1.jpg");
-                imageUtils.savePhotoToStorage(bitmap,"test1");
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
+                imageUtils.savePhotoToStorage(bitmap,pic);
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
         }).start();
@@ -162,6 +165,21 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     };
+
+
+    private void uploadPic(final String url,final String file){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.uploadpic(url,file,uid);
+            }
+        }).start();
+
+    }
+
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -185,6 +203,15 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     String picturePath = cursor.getString(columnIndex);
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+
+                    File file = new File(picturePath);
+                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
+
+                    ImageUtils imageUtils = new ImageUtils();
+                    imageUtils.deletePhotoFromStorage(profile_photo);
+                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                    sp.edit().putString("profile_photo", profile_photo).apply();
+
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }

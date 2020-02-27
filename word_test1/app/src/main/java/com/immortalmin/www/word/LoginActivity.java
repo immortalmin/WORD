@@ -118,6 +118,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                 sp.edit().putString("username", username.getText().toString())
                         .putString("password", password.getText().toString())
+                        .putString("profile_photo", userdata.get("profile_photo").toString())
                         .putString("status","1")
                         .apply();
                 get_setting();

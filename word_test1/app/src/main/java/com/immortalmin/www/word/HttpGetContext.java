@@ -2,6 +2,7 @@ package com.immortalmin.www.word;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +36,17 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * javadoc
@@ -185,5 +198,83 @@ public class HttpGetContext {
             }
         }
         return null;
+    }
+
+    public void uploadpic(String url,String imagePath,String uid){
+        try{
+            Log.i("ccc",imagePath);
+            File file = new File(imagePath);
+            OkHttpClient okHttpClient = new OkHttpClient();
+            RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", imagePath, image)
+                    .addFormDataPart("uid",uid)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("ccc","upload failure");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()){
+                        Log.i("ccc","upload success");
+                        ResponseBody responseBody = response.body();
+                        String res = responseBody.string();
+//                        Log.i("ccc",res);
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void userRegister(String imagePath,JSONObject jsonObject){
+        try{
+            String url = "http://47.98.239.237/word/php_file2/register.php";
+            Log.i("ccc",imagePath);
+            File file = new File(imagePath);
+            OkHttpClient okHttpClient = new OkHttpClient();
+            RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", imagePath, image)
+                    .addFormDataPart("username",jsonObject.getString("username"))
+                    .addFormDataPart("pwd",jsonObject.getString("pwd"))
+                    .build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("ccc","upload failure");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()){
+                        Log.i("ccc","upload success");
+                        ResponseBody responseBody = response.body();
+                        String res = responseBody.string();
+                        Log.i("ccc",res);
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

@@ -1,9 +1,13 @@
 package com.immortalmin.www.word;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,17 +22,22 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     Button reg_btn;
     EditText username,pwd,confirm_pwd;
     TextView user_warn,pwd_warn,confirm_warn;
+    private CircleImageView profile_photo;
     JsonRe jsonRe;
     Runnable toLogin;
+    private String profilephotoPath=null;
     private HashMap<String,Object> userdata=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +50,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         user_warn = (TextView) findViewById(R.id.user_warn);
         pwd_warn = (TextView) findViewById(R.id.pwd_warn);
         confirm_warn = (TextView) findViewById(R.id.confirm_warn);
+        profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         reg_btn.setOnClickListener(this);
+        profile_photo.setOnClickListener(this);
 
         jsonRe = new JsonRe();
         init();
@@ -146,7 +157,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
-                register(jsonObject);
+                uploadPic(profilephotoPath,jsonObject);
+//                register(jsonObject);
+                break;
+            case R.id.profile_photo:
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i,0);
                 break;
         }
     }
@@ -215,9 +231,55 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     confirm_warn.setVisibility(View.VISIBLE);
                     reg_btn.setClickable(false);
                     break;
+                case 7:
+                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    break;
             }
         }
     };
 
+    private void uploadPic(final String file_path,final JSONObject userdata){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.userRegister(file_path,userdata);
+                mHandler.postDelayed(toLogin,2000);
+            }
+        }).start();
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+//            case TAKEPHOTO:
+//                if(resultCode ==RESULT_OK){
+//                    draweeView.setImageURI(imageUri);
+//                }
+//                break;
+            case 0:
+                //打开相册并选择照片，这个方式选择单张
+                // 获取返回的数据，这里是android自定义的Uri地址
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                // 获取选择照片的数据视图
+                if(selectedImage!=null){
+                    Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    // 从数据视图中获取已选择图片的路径
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    // 将图片显示到界面上
+                    Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+
+//                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
+                    profilephotoPath = picturePath;
+                    mHandler.obtainMessage(7,bitmap).sendToTarget();
+                    cursor.close();
+                }
+                break;
+        }
+    }
 
 }

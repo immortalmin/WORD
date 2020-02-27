@@ -139,6 +139,7 @@ public class JsonRe {
             word.put("uid",jsonObject.getString("uid"));
             word.put("username",jsonObject.getString("username"));
             word.put("pwd",jsonObject.getString("pwd"));
+            word.put("profile_photo",jsonObject.getString("profile_photo"));
         }catch (JSONException e) {
             e.printStackTrace();
         }

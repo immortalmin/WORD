@@ -15,9 +15,15 @@ import java.io.InputStream;
 import java.lang.ref.SoftReference;
 
 public class ImageUtils {
-    public static Bitmap getPhotoFromStorage(String u_id) {
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/" + u_id + ".jpg";
+    public static Bitmap getPhotoFromStorage(String pic) {
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/" + pic ;
         return getBitmapFromPath(photoPath, 80, 80);
+    }
+
+    public static void deletePhotoFromStorage(String pic){
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/" + pic ;
+        File file = new File(photoPath);
+        file.delete();
     }
     // 从路径获取Bitmap
     public static Bitmap getBitmapFromPath(String imgPath, int reqWidth, int reqHeight) {
@@ -60,6 +66,7 @@ public class ImageUtils {
                     break;
             }
         }
+        Log.i("ccc","degree"+String.valueOf(degree));
         if(degree!=0){
             Matrix m = new Matrix();
             m.postRotate(degree);
@@ -87,9 +94,9 @@ public class ImageUtils {
     }
 
     // 保存图片到sd卡
-    public static void savePhotoToStorage(Bitmap photoBitmap, String u_id) {
+    public static void savePhotoToStorage(Bitmap photoBitmap, String pic) {
         //更改的名字
-        String photoName = u_id + ".jpg";
+        String photoName = pic;
         String photoPath = Environment.getExternalStorageDirectory() + "/";
         File fileDir = new File(photoPath);
         if (!fileDir.exists()) {

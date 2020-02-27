@@ -30,6 +30,10 @@ android {
             aaptOptions.useNewCruncher = false
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -45,5 +49,6 @@ dependencies {
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
     implementation 'com.ocnyang:contourview:1.0.0'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-
+    implementation 'com.squareup.okhttp3:okhttp:3.14.2'
+    implementation 'com.squareup.okio:okio:1.17.4'
 }
