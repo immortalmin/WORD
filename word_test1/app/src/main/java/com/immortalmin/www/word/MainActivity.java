@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -41,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * 主界面
  */
@@ -49,13 +52,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     JsonRe jsonRe;
     private Context context;
     List<Map<String,Object>> word_list=null;
-    Button btn_wordlist,btn_recite,btn_test,btn_spell,search1,setting_btn;
+    Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
     EditText editText;
     SearchView search_bar;
     WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private DBAdapter dbAdapter;
+    private CircleImageView profile_photo;
+    private ImageUtils imageUtils = new ImageUtils();
     Intent intent;
     Boolean flag=false;
     @Override
@@ -67,15 +72,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
-        setting_btn = (Button)findViewById(R.id.setting_btn);
         search_bar = (SearchView) findViewById(R.id.search_bar);
+        profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         btn_wordlist.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_test.setOnClickListener(this);
         btn_spell.setOnClickListener(this);
-        setting_btn.setOnClickListener(this);
 //        search1.setOnClickListener(this);
         search_bar.setOnClickListener(this);
+        profile_photo.setOnClickListener(this);
 
         search_bar.setOnSearchClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +105,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         IntentFilter intentFilter = new IntentFilter("com.immortalmin.www.MainActivity");
         registerReceiver(closeReceiver, intentFilter);
 
+        init();
     }
+
+    private void init() {
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        setImage(sp.getString("profile_photo",null));
+    }
+    private void setImage(String pic) {
+        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
+        if(bitmap==null){
+            Log.i("ccc","照片不存在 正从服务器下载...");
+            getImage(pic);
+        }else{
+            Log.i("ccc","照片存在");
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
+        }
+    }
+
+    private void getImage(final String pic){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
+                imageUtils.savePhotoToStorage(bitmap,pic);
+                mHandler.obtainMessage(0,bitmap).sendToTarget();
+            }
+        }).start();
+    }
+
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    break;
+
+            }
+        }
+    };
 
     /**
      * 实现Activity的广播接收
@@ -115,11 +159,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.setting_btn:
-                intent = new Intent(MainActivity.this,SettingActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
-                break;
             case R.id.btn_wordlist:
                 intent = new Intent(MainActivity.this,word1Activity.class);
                 startActivity(intent);
@@ -144,6 +183,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
+            case R.id.profile_photo:
+                intent = new Intent(MainActivity.this,SettingActivity.class);
+                startActivityForResult(intent,1);
+                overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
+                break;
         }
     }
 
@@ -161,14 +205,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Log.i("ccc","返回了");
-//        if (requestCode == 1 && resultCode == 1) {
-//            Log.i("ccc","返回了2");
-//        }
-//
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == 1) {
+            init();
+        }
+    }
 
 }

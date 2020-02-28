@@ -80,7 +80,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
-            Log.i("ccc","照片不存在");
+            Log.i("ccc","照片不存在 正从服务器下载...");
             getImage(pic);
         }else{
             Log.i("ccc","照片存在");
@@ -95,13 +95,15 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 //                Intent intent = new Intent(SettingActivity.this,MainActivity.class);
 //                startActivity(intent);
                 update_setting();
+                Intent intent = new Intent();
+                setResult(1,intent);
                 finish();
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.logout_btn:
                 SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                 sp.edit().putString("status","0").apply();
-                Intent intent = new Intent();
+                intent = new Intent();
                 intent.setAction("com.immortalmin.www.MainActivity");
                 sendBroadcast(intent);
                 intent = new Intent(SettingActivity.this,LoginActivity.class);
@@ -190,12 +192,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 //                }
 //                break;
             case 0:
+                if(data==null){
+                    Log.i("ccc","数据为空");
+                    break;
+                }
                 //打开相册并选择照片，这个方式选择单张
                 // 获取返回的数据，这里是android自定义的Uri地址
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
                 // 获取选择照片的数据视图
                 if(selectedImage!=null){
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
                     Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                     cursor.moveToFirst();
                     // 从数据视图中获取已选择图片的路径
@@ -203,17 +209,20 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     String picturePath = cursor.getString(columnIndex);
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+                    //上传图片到服务器
+                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",android.os.Environment.getExternalStorageDirectory()+"/temp.jpg");
 
-                    File file = new File(picturePath);
-                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
-
+                    //删除老的，添加新的
                     ImageUtils imageUtils = new ImageUtils();
                     imageUtils.deletePhotoFromStorage(profile_photo);
+                    imageUtils.savePhotoToStorage(bitmap,profile_photo);
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                     sp.edit().putString("profile_photo", profile_photo).apply();
 
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
+                }else{
+                    Log.i("ccc","数据为空");
                 }
                 break;
         }
@@ -223,6 +232,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             update_setting();
+            Intent intent = new Intent();
+            setResult(1,intent);
             finish();
             overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
             return false;

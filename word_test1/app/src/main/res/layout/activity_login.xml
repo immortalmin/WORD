@@ -9,14 +9,14 @@
 
     <Button
         android:id="@+id/reg_btn"
-        android:layout_width="80dp"
+        android:layout_width="60dp"
         android:layout_height="30dp"
         android:textAllCaps="false"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corners_purple"
-        android:textColor="#FFFFFF"
+        android:textColor="#9e96a3"
         android:text="Register"/>
 
     <RelativeLayout
@@ -26,10 +26,24 @@
         android:layout_centerHorizontal="true"
         >
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
+            android:src="@drawable/unload"/>
+
         <EditText
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_photo"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/rounded_edittext"
@@ -40,7 +54,7 @@
             android:drawableRight="@drawable/user_icon"
             android:textSize="19dp"
             android:textColor="#859aa6"
-            android:textColorHint="#28497F"
+            android:textColorHint="#5B5287"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="username" />
 
@@ -61,7 +75,7 @@
             android:drawableRight="@drawable/pwd_icon"
             android:textSize="19dp"
             android:textColor="#859aa6"
-            android:textColorHint="#5B5287"
+            android:textColorHint="#24406c"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="password" />
 

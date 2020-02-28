@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,12 +32,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button reg_btn;
-    EditText username,pwd,confirm_pwd;
-    TextView user_warn,pwd_warn,confirm_warn;
+    private Button reg_btn,return_btn;
+    private EditText username,pwd,confirm_pwd;
+    private TextView user_warn,pwd_warn,confirm_warn;
     private CircleImageView profile_photo;
-    JsonRe jsonRe;
-    Runnable toLogin;
+    private JsonRe jsonRe;
+    private Runnable toLogin;
     private String profilephotoPath=null;
     private HashMap<String,Object> userdata=null;
     @Override
@@ -44,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         reg_btn = (Button)findViewById(R.id.reg_btn);
+        return_btn = (Button)findViewById(R.id.return_btn);
         username = (EditText)findViewById(R.id.username);
         pwd = (EditText)findViewById(R.id.pwd);
         confirm_pwd = (EditText)findViewById(R.id.confirm_pwd);
@@ -52,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         confirm_warn = (TextView) findViewById(R.id.confirm_warn);
         profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         reg_btn.setOnClickListener(this);
+        return_btn.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
 
         jsonRe = new JsonRe();
@@ -164,6 +167,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
                 break;
+            case R.id.return_btn:
+                finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
         }
     }
 
@@ -274,7 +281,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
 
 //                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
-                    profilephotoPath = picturePath;
+                    profilephotoPath = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
                     mHandler.obtainMessage(7,bitmap).sendToTarget();
                     cursor.close();
                 }
@@ -282,4 +289,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            return false;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 }

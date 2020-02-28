@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -54,9 +55,9 @@ public class ReciteWordActivity extends AppCompatActivity
     Button turn_mode,ret_btn;
     TextView total_times, word_times;
     JsonRe jsonRe;
-    AlertDialog finish_Dialog, interrupt_Dialog;
+//    AlertDialog finish_Dialog, interrupt_Dialog;
     ProgressBar total_progress;
-    SweetAlertDialog finishDialog,interruptDialog;
+    SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private MediaPlayer mediaPlayer;
     List<HashMap<String, Object>> recite_list = null;//the list of word
@@ -191,7 +192,14 @@ public class ReciteWordActivity extends AppCompatActivity
                 }
                 String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getrecitelist.php",jsonObject);
                 recite_list = jsonRe.reciteData(recitejson);
-                start_recite();
+                if(recite_list.size()<recite_num+recite_scope){
+                    Log.i("ccc","单词数不足");
+                    Looper.prepare();
+                    inadequateDialog.show();
+                    Looper.loop();
+                }else{
+                    start_recite();
+                }
             }
         }).start();
     }
@@ -272,71 +280,7 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void initialize() {
         jsonRe = new JsonRe();
-
-        /**
-         * stop using
-         * 2020/1/31
-         */
-        finish_Dialog = new AlertDialog.Builder(this)
-                .setTitle("任务完成")
-                .setMessage("返回主页")
-                .setIcon(R.mipmap.finish_icon)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-
-                .setNegativeButton("我不", new DialogInterface.OnClickListener() {//添加取消
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(ReciteWordActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .create();
-        /**
-         * stop using
-         * 2020/1/31
-         */
-        interrupt_Dialog = new AlertDialog.Builder(this)
-                .setTitle("提示")
-                .setMessage("确定要退出?")
-                .setIcon(R.mipmap.warning_icon)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setNeutralButton("备用按钮", new DialogInterface.OnClickListener() {//添加普通按钮
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(ReciteWordActivity.this, "这是普通按钮按钮", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .create();
-
-        Handler handler = new Handler();
+        dialog_init();
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
         setting.put("uid",sp.getString("uid",null));
         recite_num = sp.getInt("recite_num",20);
@@ -344,6 +288,61 @@ public class ReciteWordActivity extends AppCompatActivity
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getrecitelist();//get the list of word
+    }
+
+    private void dialog_init(){
+        /**
+         * finish recite
+         */
+        finishDialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                .setTitleText("Good job!")
+                .setContentText("return to main page.")
+                .setConfirmText("fine")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                });
+        /**
+         * quit midway
+         */
+        interruptDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Won't be able to recover this file!")
+                .setConfirmText("fine")
+                .setCancelText("nooo")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                });
+        /**
+         * shortage of words
+         */
+        inadequateDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                .setTitleText("shortage of words")
+                .setContentText("you finished all")
+                .setConfirmText("return to main")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                });;
     }
 
     /**
@@ -399,7 +398,8 @@ public class ReciteWordActivity extends AppCompatActivity
 
                 break;
             case R.id.ret_btn:
-                interrupt();
+                interruptDialog.show();
+//                interrupt();
                 break;
         }
     }
@@ -411,8 +411,8 @@ public class ReciteWordActivity extends AppCompatActivity
                     total_times.setText(String.valueOf(finish_num) + "/" + String.valueOf(recite_num));
                     word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
                     break;
-                case 1:
-                    finish_Dialog.show();
+//                case 1:
+//                    finish_Dialog.show();
             }
         }
     };
@@ -607,7 +607,8 @@ public class ReciteWordActivity extends AppCompatActivity
                 update_sql_data(i);
             }
         }
-        return_main();
+        finishDialog.show();
+//        return_main();
     }
 
     /**
@@ -650,7 +651,8 @@ public class ReciteWordActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            interrupt();
+            interruptDialog.show();
+//            interrupt();
             return false;
         } else {
             return super.onKeyDown(keyCode, event);

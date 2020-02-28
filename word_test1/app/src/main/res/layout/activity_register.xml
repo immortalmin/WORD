@@ -7,6 +7,14 @@
     android:background="@drawable/launch1"
     tools:context=".RegisterActivity">
 
+    <Button
+        android:id="@+id/return_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/return3"
+        android:text="" />
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -25,7 +33,7 @@
             app:civ_border_overlay="true"
             app:civ_border_color="#8c8888"
             app:civ_fill_color="#bab3b3"
-            android:src="@android:drawable/sym_def_app_icon"/>
+            android:src="@drawable/unload"/>
 
         <EditText
             android:id="@+id/username"
@@ -42,7 +50,7 @@
             android:paddingBottom="6dp"
             android:textCursorDrawable="@drawable/cursor"
             android:textColor="#859aa6"
-            android:textColorHint="#28497F"
+            android:textColorHint="#515a73"
             android:textSize="20dp"
             android:hint="username" />
 
@@ -74,7 +82,7 @@
             android:inputType="textPassword"
             android:textCursorDrawable="@drawable/cursor"
             android:textColor="#859aa6"
-            android:textColorHint="#28497F"
+            android:textColorHint="#5B5287"
             android:textSize="20dp"
             android:hint="password" />
 
@@ -106,7 +114,7 @@
             android:inputType="textPassword"
             android:textSize="20dp"
             android:textColor="#859aa6"
-            android:textColorHint="#5B5287"
+            android:textColorHint="#515a73"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="confirm password" />
 

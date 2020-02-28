@@ -11,21 +11,25 @@
     <!--#1f2229-->
 
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        app:civ_border_width="1dp"
+        app:civ_border_overlay="true"
+        app:civ_border_color="#8c8888"
+        app:civ_fill_color="#bab3b3"
+        android:src="@drawable/unload"/>
 
-    <Button
-        android:id="@+id/setting_btn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="6dp"
-        android:visibility="visible"
-        android:background="@drawable/setting_icon"/>
+
 
     <SearchView
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="60dp"
         android:layout_marginLeft="60dp"
         android:queryHint="输入你要查询的词组"
@@ -86,17 +90,5 @@
             android:text="" />
 
     </RelativeLayout>
-
-
-    <!--<ProgressBar-->
-        <!--android:id="@+id/my_progress"-->
-        <!--style="?android:attr/progressBarStyleHorizontal"-->
-        <!--android:layout_width="20dp"-->
-        <!--android:layout_height="100dp"-->
-        <!--android:layout_marginTop="20dp"-->
-        <!--android:max="100"-->
-        <!--android:progress="30"-->
-        <!--android:progressDrawable="@drawable/progress_bar_drawable"/>-->
-
 
 </RelativeLayout>

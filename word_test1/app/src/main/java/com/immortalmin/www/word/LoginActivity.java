@@ -3,7 +3,10 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,13 +21,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText username,password;
     Button login_btn,reg_btn;
+    private CircleImageView profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
-    JsonRe jsonRe = new JsonRe();
+    private JsonRe jsonRe = new JsonRe();
+    private ImageUtils imageUtils = new ImageUtils();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,24 +40,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         password = (EditText)findViewById(R.id.password);
         login_btn = (Button)findViewById(R.id.login_btn);
         reg_btn = (Button)findViewById(R.id.reg_btn);
+        profile_photo = (CircleImageView)findViewById(R.id.profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
+        profile_photo.setOnClickListener(this);
 
         //快速登录
-//        username.setText("luo");
-//        password.setText("123");
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         username.setText(sp.getString("username", null));
         password.setText(sp.getString("password", null));
-//        if(sp.getString("username", null)!=null&&sp.getString("password", null)!=null){
-//            login();
-//        }
+        getImage(sp.getString("profile_photo",null));
+        login();
+        init();
+    }
+
+    private void init() {
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                login();
+            }
+        });
     }
 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_btn:
-                login();
+//                login();
+                judge();
                 break;
             case R.id.reg_btn:
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -58,9 +85,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
 //                LoginActivity.this.finish();
                 break;
+            case R.id.profile_photo:
+
+                break;
         }
     }
 
+    /**
+     * 写好jsonObject后，获取userdata
+     * 名字难取
+     */
     private void login(){
         String uname = username.getText().toString();
         JSONObject jsonObject = new JSONObject();
@@ -79,7 +113,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
                 userdata = jsonRe.userData(wordjson);
-                judge();
+                if(userdata.size()!=0){
+                    setImage(userdata.get("profile_photo").toString());
+                }
+
 //                mHandler.obtainMessage(0).sendToTarget();
             }
         }).start();
@@ -109,29 +146,69 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void judge(){
-        String pwd = password.getText().toString();
-        Looper.prepare();
-        if(userdata.size()==0){
-            Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String pwd = password.getText().toString();
+                Looper.prepare();
+                if(userdata.size()==0){
+                    Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
+                }else{
+                    if(pwd.equals(userdata.get("pwd"))){
+                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                        sp.edit().putString("username", username.getText().toString())
+                                .putString("password", password.getText().toString())
+                                .putString("profile_photo", userdata.get("profile_photo").toString())
+                                .putString("status","1")
+                                .apply();
+
+                        get_setting();
+                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                        LoginActivity.this.finish();
+                    }else{
+                        Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                Looper.loop();
+            }
+        }).start();
+
+    }
+
+    private void setImage(String pic) {
+        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
+        if(bitmap==null){
+            Log.i("ccc","照片不存在");
+            getImage(pic);
         }else{
-            if(pwd.equals(userdata.get("pwd"))){
-                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putString("username", username.getText().toString())
-                        .putString("password", password.getText().toString())
-                        .putString("profile_photo", userdata.get("profile_photo").toString())
-                        .putString("status","1")
-                        .apply();
-                get_setting();
-                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                LoginActivity.this.finish();
-            }else{
-                Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+            Log.i("ccc","照片存在");
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
+        }
+    }
+
+    private void getImage(final String pic){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
+                imageUtils.savePhotoToStorage(bitmap,pic);
+                mHandler.obtainMessage(0,bitmap).sendToTarget();
+            }
+        }).start();
+    }
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    break;
+
             }
         }
-        Looper.loop();
-    }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
