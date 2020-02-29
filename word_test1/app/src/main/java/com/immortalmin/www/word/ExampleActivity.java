@@ -125,7 +125,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn1:
-                Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
+                Intent intent = new Intent(ExampleActivity.this, ReciteWordActivity.class);
                 setResult(1,intent);
                 finish();
                 break;
@@ -224,11 +224,10 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
 
     }
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-//                Log.i("ccc",word.toString());
-//                Log.i("ccc",examplelist.toString());
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            if(message.what == 0){
                 page.setText("页码："+word.get("page").toString());
                 word_group.setmText(word.get("word_group").toString());
                 word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
@@ -276,26 +275,26 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 //                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
                     }
                 });
-            }else if (msg.what==1){
+            }else if (message.what==1){
                 page.setText("");
                 word_group.setmText("");
                 C_meaning.setText("");
-            }else if(msg.what==2){
+            }else if(message.what==2){
                 word_del_btn.setVisibility(View.VISIBLE);
                 word_edit_btn.setVisibility(View.VISIBLE);
                 collect.setVisibility(View.INVISIBLE);
                 exampleAdapter.setVisible();
                 edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
-            }else if(msg.what==3){
+            }else if(message.what==3){
                 word_del_btn.setVisibility(View.INVISIBLE);
                 word_edit_btn.setVisibility(View.INVISIBLE);
                 collect.setVisibility(View.VISIBLE);
                 exampleAdapter.setinVisible();
                 edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
             }
-
+            return false;
         }
-    };
+    });
 
 
     private void addExampleDialog(){

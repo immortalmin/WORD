@@ -238,19 +238,31 @@ public class HttpGetContext {
 
     }
 
-    public void userRegister(String imagePath,JSONObject jsonObject){
+    public void userRegister(JSONObject jsonObject){
         try{
             String url = "http://47.98.239.237/word/php_file2/register.php";
-            Log.i("ccc",imagePath);
-            File file = new File(imagePath);
+            String imgpath = jsonObject.getString("imgpath");
             OkHttpClient okHttpClient = new OkHttpClient();
-            RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("image", imagePath, image)
-                    .addFormDataPart("username",jsonObject.getString("username"))
-                    .addFormDataPart("pwd",jsonObject.getString("pwd"))
-                    .build();
+            RequestBody requestBody = null;
+            //判断用户是否有上传头像
+            if(imgpath.equals("null")){
+                requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("username",jsonObject.getString("username"))
+                        .addFormDataPart("pwd",jsonObject.getString("pwd"))
+                        .addFormDataPart("img_flag","0")
+                        .build();
+            }else{
+                File file = new File(imgpath);
+                RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
+                requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("image", imgpath, image)
+                        .addFormDataPart("username",jsonObject.getString("username"))
+                        .addFormDataPart("pwd",jsonObject.getString("pwd"))
+                        .addFormDataPart("img_flag","1")
+                        .build();
+            }
             Request request = new Request.Builder()
                     .url(url)
                     .post(requestBody)

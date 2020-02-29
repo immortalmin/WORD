@@ -190,9 +190,10 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0://correct
                     eword.setTextColor(Color.parseColor("#05f725"));
                     break;
@@ -212,8 +213,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     eword.setTextColor(Color.parseColor("#000000"));
                     correct_word.setVisibility(View.INVISIBLE);
             }
+            return false;
         }
-    };
+    });
 
     /**
      * 选项按钮点击事件

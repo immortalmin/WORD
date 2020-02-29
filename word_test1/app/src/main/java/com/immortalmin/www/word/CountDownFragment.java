@@ -155,15 +155,17 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0:
                     send_to_activity(user_sel);
                     break;
             }
+            return false;
         }
-    };
+    });
 
     /**
      * 选项按钮点击事件

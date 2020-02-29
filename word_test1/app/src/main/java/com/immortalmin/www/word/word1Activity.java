@@ -115,19 +115,23 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
             }
         }).start();
     }
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-                word_list = (List<Map<String,Object>>)msg.obj;
-                listView.setAdapter(new WordListAdapter(word1Activity.this,word_list));
-            }else if(msg.what == 1){
-                HashMap<String,Object> count = (HashMap<String,Object>)msg.obj;
-                all_num.setText(count.get("sum").toString());
-                finished_num.setText(count.get("prof_count").toString());
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
+                    word_list = (List<Map<String,Object>>)message.obj;
+                    listView.setAdapter(new WordListAdapter(word1Activity.this,word_list));
+                    break;
+                case 1:
+                    HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
+                    all_num.setText(count.get("sum").toString());
+                    finished_num.setText(count.get("prof_count").toString());
+                    break;
             }
-
+            return false;
         }
-    };
+    });
 
     private void showDialog(){
         WindowManager.LayoutParams lp = getWindow().getAttributes();

@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/timg5"
-    tools:context=".ReciteActivity">
+    android:background="@mipmap/timg5">
 
     <ProgressBar
         android:id="@+id/my_progress"
@@ -96,13 +95,13 @@
             android:text="变得习惯于...；使适应于" />
 
         <Button
-        android:id="@+id/sel4"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:background="@drawable/rounded_corners_gray"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/sel3"
-        android:text="增加，加强" />
+            android:id="@+id/sel4"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sel3"
+            android:text="增加，加强" />
 
         <Button
             android:id="@+id/sel5"

@@ -135,16 +135,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg) {
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0:
-                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
-
             }
+            return false;
         }
-    };
+    });
 
     /**
      * 实现Activity的广播接收
@@ -165,8 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-                intent = new Intent(MainActivity.this,spell_reciteActivity.class);
-                startActivity(intent);
+
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);

@@ -103,15 +103,16 @@ public class SearchActivity extends AppCompatActivity {
             }
         }).start();
     }
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-                word_list = (List<HashMap<String,Object>>)msg.obj;
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            if(message.what == 0){
+                word_list = (List<HashMap<String,Object>>)message.obj;
                 listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
             }
-
+            return false;
         }
-    };
+    });
 
     /**
      * 跳转到例句页面

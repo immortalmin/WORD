@@ -88,12 +88,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
     public void onClick(View view){
         switch (view.getId()){
             case R.id.return_btn:
-//                Intent intent = new Intent(SettingActivity.this,MainActivity.class);
-//                startActivity(intent);
                 update_setting();
                 Intent intent = new Intent();
                 setResult(1,intent);
@@ -141,10 +138,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
     }
 
-
-
-
-
     private void getImage(final String pic){
         new Thread(new Runnable() {
             @Override
@@ -152,21 +145,24 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 HttpGetContext httpGetContext = new HttpGetContext();
                 Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
                 imageUtils.savePhotoToStorage(bitmap,pic);
+                Log.i("ccc","图片下载完成");
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
         }).start();
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg) {
+    private Handler mHandler = new Handler(new Handler.Callback(){
+        @Override
+        public boolean handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
                     photo.setImageBitmap((Bitmap)msg.obj);
                     break;
 
             }
+            return false;
         }
-    };
+    });
 
 
     private void uploadPic(final String url,final String file){
@@ -180,17 +176,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
-//            case TAKEPHOTO:
-//                if(resultCode ==RESULT_OK){
-//                    draweeView.setImageURI(imageUri);
-//                }
-//                break;
             case 0:
                 if(data==null){
                     Log.i("ccc","数据为空");
@@ -218,7 +206,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     imageUtils.savePhotoToStorage(bitmap,profile_photo);
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                     sp.edit().putString("profile_photo", profile_photo).apply();
-
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }else{

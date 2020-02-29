@@ -279,9 +279,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0:
                     wordview.setText(word_list.get("wordview").toString());
                     sel1.setText(word_list.get("sel1").toString());
@@ -303,8 +304,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                     sel4.setBackgroundResource(R.drawable.rounded_corners_gray);
                     send_to_activity(user_sel);
             }
+            return false;
         }
-    };
+    });
 
     /**
      * 向activity回送数据

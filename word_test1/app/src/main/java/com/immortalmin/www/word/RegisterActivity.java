@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private CircleImageView profile_photo;
     private JsonRe jsonRe;
     private Runnable toLogin;
-    private String profilephotoPath=null;
+    private String profilephotoPath="null";
     private HashMap<String,Object> userdata=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,11 +157,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try{
                     jsonObject.put("username",uname);
                     jsonObject.put("pwd",password);
+                    jsonObject.put("imgpath",profilephotoPath);
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
-                uploadPic(profilephotoPath,jsonObject);
-//                register(jsonObject);
+                register(jsonObject);
                 break;
             case R.id.profile_photo:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -179,19 +179,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Pattern p= Pattern.compile(regex);
         Matcher m=p.matcher(password);
         boolean isMatch=m.matches();
-        Log.i("ccc", "isPassword: 是否密码正则匹配"+isMatch);
         return isMatch;
-    }
-
-    private void register(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/register.php",jsonObject);
-                mHandler.postDelayed(toLogin,2000);
-            }
-        }).start();
     }
 
 
@@ -208,9 +196,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         }).start();
     }
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg) {
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0:
                     user_warn.setVisibility(View.INVISIBLE);
                     reg_btn.setClickable(true);
@@ -239,18 +228,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     reg_btn.setClickable(false);
                     break;
                 case 7:
-                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
             }
+            return false;
         }
-    };
+    });
 
-    private void uploadPic(final String file_path,final JSONObject userdata){
+    /**
+     * 进行注册
+     * @param userdata
+     */
+    private void register(final JSONObject userdata){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.userRegister(file_path,userdata);
+                httpGetContext.userRegister(userdata);
                 mHandler.postDelayed(toLogin,2000);
             }
         }).start();
@@ -260,12 +254,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
-//            case TAKEPHOTO:
-//                if(resultCode ==RESULT_OK){
-//                    draweeView.setImageURI(imageUri);
-//                }
-//                break;
             case 0:
+                if(data==null){
+                    Log.i("ccc","数据为空");
+                    break;
+                }
                 //打开相册并选择照片，这个方式选择单张
                 // 获取返回的数据，这里是android自定义的Uri地址
                 Uri selectedImage = data.getData();
@@ -279,8 +272,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     String picturePath = cursor.getString(columnIndex);
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
-
-//                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
                     profilephotoPath = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
                     mHandler.obtainMessage(7,bitmap).sendToTarget();
                     cursor.close();

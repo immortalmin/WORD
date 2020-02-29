@@ -4,20 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/launch1"
+    android:background="@drawable/launch2"
     tools:context=".LoginActivity">
 
-    <Button
-        android:id="@+id/reg_btn"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:textAllCaps="false"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_corners_purple"
-        android:textColor="#9e96a3"
-        android:text="Register"/>
+
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -54,7 +44,7 @@
             android:drawableRight="@drawable/user_icon"
             android:textSize="19dp"
             android:textColor="#859aa6"
-            android:textColorHint="#5B5287"
+            android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="username" />
 
@@ -75,21 +65,34 @@
             android:drawableRight="@drawable/pwd_icon"
             android:textSize="19dp"
             android:textColor="#859aa6"
-            android:textColorHint="#24406c"
+            android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="password" />
 
         <Button
             android:id="@+id/login_btn"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
             android:layout_below="@+id/password"
             android:layout_marginTop="50dp"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="30dp"
             android:textAllCaps="false"
-            android:background="@drawable/rounded_corners_green"
+            android:background="@drawable/rounded_corners_moregray"
             android:textColor="#FFFFFF"
             android:text="Login" />
+
+        <Button
+            android:id="@+id/reg_btn"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/password"
+            android:textAllCaps="false"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/rounded_corners_moregray"
+            android:textColor="#FFFFFF"
+            android:text="Register"/>
     </RelativeLayout>
 
 </RelativeLayout>

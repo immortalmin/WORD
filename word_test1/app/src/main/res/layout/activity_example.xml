@@ -41,7 +41,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:textSize="18dp"
-            android:textColor="#898a8c"
+            android:textColor="#303133"
             android:textStyle="bold"
             android:text="单词详情" />
 

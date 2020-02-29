@@ -199,16 +199,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }).start();
     }
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg) {
-            switch (msg.what){
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
                 case 0:
-                    profile_photo.setImageBitmap((Bitmap)msg.obj);
+                    profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
 
             }
+            return false;
         }
-    };
+    });
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

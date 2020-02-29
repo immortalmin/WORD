@@ -111,7 +111,7 @@ public class TestActivity extends Activity implements View.OnClickListener{
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putParcelableArrayListExtra("id_list",(ArrayList<? extends Parcelable>) id_list);
 //                        intent.setClass(ReciteActivity.this,MainActivity.class);
-                        intent.setClass(TestActivity.this,spell_reciteActivity.class);
+                        intent.setClass(TestActivity.this,MainActivity.class);
                         startActivity(intent);
                     }
                 })
