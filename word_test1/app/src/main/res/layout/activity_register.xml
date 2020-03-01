@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/launch1"
+    android:background="@drawable/launch2"
     tools:context=".RegisterActivity">
 
     <Button
@@ -43,15 +43,15 @@
             android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/rounded_edittext"
+            android:background="@drawable/login_edittext"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:textCursorDrawable="@drawable/cursor"
-            android:textColor="#859aa6"
-            android:textColorHint="#515a73"
-            android:textSize="20dp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="19dp"
             android:hint="username" />
 
         <TextView
@@ -78,12 +78,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/rounded_edittext"
+            android:background="@drawable/login_edittext"
             android:inputType="textPassword"
             android:textCursorDrawable="@drawable/cursor"
-            android:textColor="#859aa6"
-            android:textColorHint="#5B5287"
-            android:textSize="20dp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="19dp"
             android:hint="password" />
 
         <TextView
@@ -110,11 +110,11 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/rounded_edittext"
+            android:background="@drawable/login_edittext"
             android:inputType="textPassword"
-            android:textSize="20dp"
-            android:textColor="#859aa6"
-            android:textColorHint="#515a73"
+            android:textSize="19dp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
             android:hint="confirm password" />
 
@@ -137,7 +137,7 @@
             android:layout_below="@+id/confirm_pwd"
             android:layout_marginTop="50dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/rounded_corners_green"
+            android:background="@drawable/login_btn"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:text="Register" />
