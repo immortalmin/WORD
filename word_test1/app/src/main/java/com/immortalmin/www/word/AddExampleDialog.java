@@ -2,6 +2,7 @@ package com.immortalmin.www.word;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -39,15 +40,22 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
     private int id;
     private int index=0;
     private boolean[] del_flag = new boolean[100];
+    private String uid="1",wid ="1";
     public AddExampleDialog(Context context) {
         super(context);
         this.context=context;
     }
 
-    public AddExampleDialog(Context context, int themeResId,int id) {
+    public AddExampleDialog(Context context, int themeResId,JSONObject jsonObject) {
         super(context, themeResId);
         this.context=context;
-        this.id = id;
+        try{
+            this.wid = jsonObject.getString("wid");
+            this.uid = jsonObject.getString("uid");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
     }
 
     protected AddExampleDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
@@ -70,6 +78,7 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         setContentView(view);
         Arrays.fill(del_flag,true);
         add_view();
+
     }
 
     public interface OnDialogInteractionListener {
@@ -215,7 +224,8 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
 //            jsonObject.put("word_group",word_group.getText().toString());
 //            jsonObject.put("C_meaning",C_meaning.getText().toString());
 //            jsonObject.put("page",page.getText().toString());
-            jsonObject.put("id",id);
+            jsonObject.put("wid",wid);
+            jsonObject.put("uid",uid);
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<index;i++){
                 JSONObject translate = new JSONObject();

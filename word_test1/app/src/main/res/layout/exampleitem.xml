@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+
     >
 
     <RelativeLayout
@@ -44,6 +45,17 @@
             android:text="相比经过充分研究的欧洲及东南亚语言,这些新近被描述的语言通常表现出明显差异,使得有些学者甚至指责博厄斯和沙比尔伪造数据。"
             />
 
+        <TextView
+            android:id="@+id/source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/C_translate"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#e6e1e1"
+            android:text="—— 由sheng添加" />
+
         <Button
             android:id="@+id/example_edit_btn"
             android:layout_width="18dp"
@@ -68,8 +80,9 @@
             android:background="@drawable/del2"
             android:text="" />
 
+
         <View
-            android:layout_below="@+id/C_translate"
+            android:layout_below="@+id/source"
             android:layout_width="match_parent"
             android:textColor="#DCDDDF"
             android:layout_height="1dp" />

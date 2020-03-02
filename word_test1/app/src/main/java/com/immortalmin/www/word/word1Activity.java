@@ -157,6 +157,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
+                getwordlist();
+                get_amount();
             }
         }).start();
     }
@@ -176,16 +178,19 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void addWordInteraction(JSONObject jsonObject){
         add_wordandexample(jsonObject);
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
-        if (requestCode == 1 && resultCode == 2) {
-            getwordlist();
-            get_amount();
-        }
+        getwordlist();
+        get_amount();
+//        if (requestCode == 1 && resultCode == 2) {
+//            getwordlist();
+//            get_amount();
+//        }
     }
 
 }

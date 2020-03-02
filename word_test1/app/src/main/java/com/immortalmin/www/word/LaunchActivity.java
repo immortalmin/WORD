@@ -122,6 +122,7 @@ public class LaunchActivity extends AppCompatActivity {
                         .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
                         .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
                         .apply();
+
             }
         }).start();
     }

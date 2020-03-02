@@ -98,6 +98,7 @@ public class JsonRe {
                 example.put("word_meaning",word_meaning);
                 example.put("E_sentence",E_sentence);
                 example.put("C_translate",C_translate);
+                example.put("source",jsonObject.getString("source"));
                 exampleList.add(example);
             }
         }catch (JSONException e) {

@@ -38,6 +38,7 @@ public class ExampleAdapter extends BaseAdapter {
         TextView word_meaning = (TextView)v.findViewById(R.id.word_meaning);
         TextView E_sentence = (TextView)v.findViewById(R.id.E_sentence);
         TextView C_translate = (TextView)v.findViewById(R.id.C_translate);
+        TextView source = (TextView)v.findViewById(R.id.source);
         Button del_btn = (Button)v.findViewById(R.id.example_del_btn);
         Button edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
         if(mode==0){
@@ -47,6 +48,7 @@ public class ExampleAdapter extends BaseAdapter {
         word_meaning.setText(mdata.get(position).get("word_meaning").toString());
         E_sentence.setText(mdata.get(position).get("E_sentence").toString());
         C_translate.setText(mdata.get(position).get("C_translate").toString());
+        source.setText("——由"+mdata.get(position).get("source").toString()+"添加");
         del_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

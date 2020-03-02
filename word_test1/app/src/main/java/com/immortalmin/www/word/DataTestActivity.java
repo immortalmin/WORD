@@ -280,8 +280,8 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void showExampleDialog(){
-        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,1);
-        addExampleDialog.show();
+//        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,1);
+//        addExampleDialog.show();
     }
 
 

@@ -59,7 +59,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     List<HashMap<String,Object>> examplelist = null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
-    String wid = "1";
+    String wid = "1",uid = "1";
     String current_word="error";
     private boolean first_coming = true;
     int mode=0;//0 view,1 edit
@@ -96,6 +96,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         first_coming = true;
         Intent intent = getIntent();
         wid = intent.getStringExtra("id");
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        uid = sp.getString("uid",null);
         /**
          * release mediaPlayer at the end of the playing
          */
@@ -298,7 +300,14 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void addExampleDialog(){
-        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,Integer.valueOf(wid));
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("wid",wid);
+            jsonObject.put("uid",uid);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,jsonObject);
         addExampleDialog.show();
     }
 
