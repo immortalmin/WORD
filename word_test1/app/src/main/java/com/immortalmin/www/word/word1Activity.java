@@ -42,6 +42,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     TextView all_num,finished_num;
     Button add_btn;
     List<Map<String,Object>> word_list=null;
+    private WordListAdapter wordListAdapter = null;
+    private boolean add_flag=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         });
+
         getwordlist();
         get_amount();
         jsonRe=new JsonRe();
@@ -121,7 +124,12 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
             switch (message.what){
                 case 0:
                     word_list = (List<Map<String,Object>>)message.obj;
-                    listView.setAdapter(new WordListAdapter(word1Activity.this,word_list));
+                    wordListAdapter = new WordListAdapter(word1Activity.this,word_list);
+                    listView.setAdapter(wordListAdapter);
+                    if(add_flag){
+                        wordListAdapter.notifyDataSetChanged();
+                        listView.setSelection(wordListAdapter.getCount()-1);
+                    }
                     break;
                 case 1:
                     HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
@@ -177,8 +185,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void addWordInteraction(JSONObject jsonObject){
+        add_flag=true;
         add_wordandexample(jsonObject);
-
     }
 
     @Override

@@ -22,7 +22,7 @@ public class MainView extends View {
     private int sunHigh=1920,maxHigh;
 
     private int[][] color = new int[][]{
-            {Color.parseColor("#131128"),Color.parseColor("#c41a07")}
+            {Color.parseColor("#000000"),Color.parseColor("#c41a07")}
     };
 
 
@@ -42,8 +42,21 @@ public class MainView extends View {
 
     @Override
     protected void onDraw(Canvas canvas){
-        drawSun(canvas);
+//        drawSun(canvas);
+        drawMoon(canvas);
 
+    }
+
+    private void drawMoon(Canvas canvas){
+        BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.moon);
+        Bitmap bitmap = drawable.getBitmap();
+
+        //如果bitmap不存在，那么就不执行下面的绘制代码
+        if (bitmap == null) {
+            return;
+        }
+        //直接完全绘制Bitmap
+        canvas.drawBitmap(bitmap, 20, sunHigh, mPaint);
 
     }
 

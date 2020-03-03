@@ -229,71 +229,88 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
-            if(message.what == 0){
-                page.setText("页码："+word.get("page").toString());
-                word_group.setmText(word.get("word_group").toString());
-                word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
-                C_meaning.setText(word.get("C_meaning").toString());
-                //set music of word
-                current_word = word.get("word_group").toString();
-                collect_flag = Integer.valueOf(word.get("collect").toString());
-                if(first_coming){
-                    mediaPlayer = new MediaPlayer();
-                    initMediaPlayer(current_word);//音频初始化
-                    mediaPlayer.start();
-                    first_coming = false;
-                }
+            switch (message.what){
+                case 0:
+                    page.setText("页码："+word.get("page").toString());
+                    word_group.setmText(word.get("word_group").toString());
+                    word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
+                    C_meaning.setText(word.get("C_meaning").toString());
+                    //set music of word
+                    current_word = word.get("word_group").toString();
+                    collect_flag = Integer.valueOf(word.get("collect").toString());
+                    if(first_coming){
+                        mediaPlayer = new MediaPlayer();
+                        initMediaPlayer(current_word);//音频初始化
+                        mediaPlayer.start();
+                        first_coming = false;
+                    }
 
 
-                if(collect_flag==1){
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
-                    collect.setBackground(drawable);
-                }else{
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
-                    collect.setBackground(drawable);
-                }
+                    if(collect_flag==1){
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
+                        collect.setBackground(drawable);
+                    }else{
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
+                        collect.setBackground(drawable);
+                    }
 
-                if(examplelist.size() == 0){
-                    non_example.setVisibility(View.VISIBLE);
-                    example_list.setVisibility(View.GONE);
-                }
-                exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode);
-                example_list.setAdapter(exampleAdapter);
-                exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
-                    @Override
-                    public void onDeleteClick(int i) {
-                        jsonObject = new JSONObject();
-                        try{
-                            jsonObject.put("id",examplelist.get(i).get("eid").toString());
-                        }catch (JSONException e){
-                            e.printStackTrace();
+                    if(examplelist.size() == 0){
+                        non_example.setVisibility(View.VISIBLE);
+                        example_list.setVisibility(View.GONE);
+                    }
+                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode);
+                    example_list.setAdapter(exampleAdapter);
+                    exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
+                        @Override
+                        public void onDeleteClick(int i) {
+                            jsonObject = new JSONObject();
+                            try{
+                                jsonObject.put("id",examplelist.get(i).get("eid").toString());
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                            del_id=2;
+                            del_warning();
                         }
-                        del_id=2;
-                        del_warning();
-                    }
-                    @Override
-                    public void onEditClick(int i) {
-                        updateExampleDialog(examplelist.get(i));
+                        @Override
+                        public void onEditClick(int i) {
+                            updateExampleDialog(examplelist.get(i));
 //                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    break;
+                case 1:
+                    page.setText("");
+                    word_group.setmText("");
+                    C_meaning.setText("");
+                    break;
+                case 2:
+                    word_del_btn.setVisibility(View.VISIBLE);
+                    word_edit_btn.setVisibility(View.VISIBLE);
+                    collect.setVisibility(View.INVISIBLE);
+                    exampleAdapter.setVisible();
+                    edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
+                    break;
+                case 3:
+                    word_del_btn.setVisibility(View.INVISIBLE);
+                    word_edit_btn.setVisibility(View.INVISIBLE);
+                    collect.setVisibility(View.VISIBLE);
+                    exampleAdapter.setinVisible();
+                    edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
+                    break;
+                case 4:
+                    JSONObject jsonObject = (JSONObject)message.obj;
+                    try{
+                        word_group.setmText(jsonObject.getString("word_group"));
+                        C_meaning.setText(jsonObject.getString("C_meaning"));
+                        page.setText(jsonObject.getString("page"));
+                    }catch (JSONException e){
+                        e.printStackTrace();
                     }
-                });
-            }else if (message.what==1){
-                page.setText("");
-                word_group.setmText("");
-                C_meaning.setText("");
-            }else if(message.what==2){
-                word_del_btn.setVisibility(View.VISIBLE);
-                word_edit_btn.setVisibility(View.VISIBLE);
-                collect.setVisibility(View.INVISIBLE);
-                exampleAdapter.setVisible();
-                edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
-            }else if(message.what==3){
-                word_del_btn.setVisibility(View.INVISIBLE);
-                word_edit_btn.setVisibility(View.INVISIBLE);
-                collect.setVisibility(View.VISIBLE);
-                exampleAdapter.setinVisible();
-                edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
+                    break;
             }
+
             return false;
         }
     });
@@ -388,7 +405,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/update_word.php",jsonObject);
             }
         }).start();
-        getwordlist();
+//        getwordlist();
     }
     private void update_example(final JSONObject jsonObject){
         new Thread(new Runnable() {
@@ -410,13 +427,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     public void updateWordInteraction(JSONObject jsonObject){
         update_word(jsonObject);
         //有时数据库同步太慢了，只能先直接把用户改过后的数据拿来显示
-        try{
-            word_group.setmText(jsonObject.getString("word_group"));
-            C_meaning.setText(jsonObject.getString("C_meaning"));
-            page.setText(jsonObject.getString("page"));
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
+        mHandler.obtainMessage(4,jsonObject).sendToTarget();
     }
 
     @Override

@@ -22,7 +22,7 @@ public class WordView extends View {
     private String mText;//需要绘制的文字
     private int mTextFirstColor,mTextSecondColor;//文本的颜色
     private int mTextSize;//文本的大小
-    private int maxTextSize=50;//默认最大字号
+    private int maxTextSize=80;//默认最大字号
     private float account;
     private Rect mBound;
     private Paint mPaint;
@@ -96,6 +96,9 @@ public class WordView extends View {
         //红色的部分
         mPaint.setColor(mTextFirstColor);
         mPaint.setTextSize(mTextSize);
+
+        mPaint.setTextSize(Math.min(getRightSize(mText),maxTextSize));
+
         canvas.drawText(mText,0,-fontMetrics.top,mPaint);
 
         //白色的部分
@@ -105,13 +108,16 @@ public class WordView extends View {
         canvas.drawText(mText,0,-fontMetrics.top,mPaint);
         canvas.restore();
     }
-    private int getRightSize(){
-        float newSize = (float)(mTextSize*canvasWidth/mPaint.measureText(mText));
-        Log.i("ccc","mTextSize"+String.valueOf(mTextSize));
-        Log.i("ccc","canvasWidth"+String.valueOf(canvasWidth));
-        Log.i("ccc","mPaint.measureText(mText)"+String.valueOf(mPaint.measureText(mText)));
-        Log.i("ccc","newSize"+String.valueOf(newSize));
-        return (int)newSize;
+
+    private int getRightSize(String text){
+        Rect rect = new Rect();
+        mPaint.getTextBounds(text,0,text.length(),rect);
+        fontMetrics = mPaint.getFontMetrics();
+        float width = rect.width();
+        float height = fontMetrics.bottom-fontMetrics.top;
+        float canvasWidth = (float)getWidth()*0.9f;
+        float canvasHeight = (float)getHeight()*0.9f;
+        return Math.min((int)Math.floor(canvasWidth*(float)mTextSize/width),(int)Math.floor(canvasHeight*(float)mTextSize/height));
     }
 
     private void drawLine(Canvas canvas){
