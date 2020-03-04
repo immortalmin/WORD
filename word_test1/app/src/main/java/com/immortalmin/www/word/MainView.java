@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -56,7 +57,21 @@ public class MainView extends View {
             return;
         }
         //直接完全绘制Bitmap
-        canvas.drawBitmap(bitmap, 20, sunHigh, mPaint);
+        Rect srcRect = new Rect();
+        srcRect.left = 0;
+        srcRect.right = bitmap.getWidth();
+        srcRect.top = 0;
+        srcRect.bottom = bitmap.getHeight();
+        float radio = (float) (srcRect.bottom - srcRect.top) / bitmap.getWidth();
+        //dstRecF定义了要将绘制的Bitmap拉伸到哪里
+        RectF dstRecF = new RectF();
+        dstRecF.left = 0;
+        dstRecF.right = canvas.getWidth();
+        dstRecF.top = 0;
+//        float dstHeight = (dstRecF.right - dstRecF.left) * radio;
+        dstRecF.bottom = canvas.getHeight();
+        canvas.drawBitmap(bitmap, srcRect, dstRecF, mPaint);
+
 
     }
 
