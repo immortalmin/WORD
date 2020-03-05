@@ -59,7 +59,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     List<HashMap<String,Object>> examplelist = null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
-    String wid = "1",uid = "1";
+    String wid = "1",uid = "1",username;
     String current_word="error";
     private boolean first_coming = true;
     int mode=0;//0 view,1 edit
@@ -98,6 +98,8 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         wid = intent.getStringExtra("id");
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
         uid = sp.getString("uid",null);
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        username = sp.getString("username",null);
         /**
          * release mediaPlayer at the end of the playing
          */
@@ -258,7 +260,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         non_example.setVisibility(View.VISIBLE);
                         example_list.setVisibility(View.GONE);
                     }
-                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode);
+                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode,username);
                     example_list.setAdapter(exampleAdapter);
                     exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                         @Override
@@ -289,14 +291,16 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     word_del_btn.setVisibility(View.VISIBLE);
                     word_edit_btn.setVisibility(View.VISIBLE);
                     collect.setVisibility(View.INVISIBLE);
-                    exampleAdapter.setVisible();
+                    exampleAdapter.setMode(1);
+                    exampleAdapter.notifyDataSetChanged();
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
                     break;
                 case 3:
                     word_del_btn.setVisibility(View.INVISIBLE);
                     word_edit_btn.setVisibility(View.INVISIBLE);
                     collect.setVisibility(View.VISIBLE);
-                    exampleAdapter.setinVisible();
+                    exampleAdapter.setMode(0);
+                    exampleAdapter.notifyDataSetChanged();
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
                     break;
                 case 4:

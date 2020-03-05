@@ -1,6 +1,7 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,30 +21,35 @@ public class ExampleAdapter extends BaseAdapter {
     List<HashMap<String,Object>> mdata;
     private LayoutInflater mInflater;//布局装载器对象
     private onItemListener mOnItemListener;
-    private int mode=0;//0 view,1 edit
-    private boolean flag = false;
-    private View[] views = new View[100];
+    private int mode = 0;//0 view,1 edit
+    private TextView word_meaning,E_sentence,C_translate,source;
+    private Button del_btn,edit_btn;
+    private String username;
 
-
-    public ExampleAdapter(Context context, List<HashMap<String,Object>> data,int mode) {
+    public ExampleAdapter(Context context, List<HashMap<String,Object>> data,int mode,String username) {
         this.mdata = data;
         this.mode = mode;
+        this.username = username;
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.exampleitem,null);
-        views[position]=v;
-        TextView word_meaning = (TextView)v.findViewById(R.id.word_meaning);
-        TextView E_sentence = (TextView)v.findViewById(R.id.E_sentence);
-        TextView C_translate = (TextView)v.findViewById(R.id.C_translate);
-        TextView source = (TextView)v.findViewById(R.id.source);
-        Button del_btn = (Button)v.findViewById(R.id.example_del_btn);
-        Button edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
+        word_meaning = (TextView)v.findViewById(R.id.word_meaning);
+        E_sentence = (TextView)v.findViewById(R.id.E_sentence);
+        C_translate = (TextView)v.findViewById(R.id.C_translate);
+        source = (TextView)v.findViewById(R.id.source);
+        del_btn = (Button)v.findViewById(R.id.example_del_btn);
+        edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
         if(mode==0){
             del_btn.setVisibility(View.INVISIBLE);
             edit_btn.setVisibility(View.INVISIBLE);
+        }else if(mdata.get(position).get("source").toString().equals(username)){
+            Log.i("ccc",mdata.get(position).get("source").toString());
+            Log.i("ccc",username);
+            del_btn.setVisibility(View.VISIBLE);
+            edit_btn.setVisibility(View.VISIBLE);
         }
         word_meaning.setText(mdata.get(position).get("word_meaning").toString());
         E_sentence.setText(mdata.get(position).get("E_sentence").toString());
@@ -64,35 +70,26 @@ public class ExampleAdapter extends BaseAdapter {
         return v;
     }
 
-    public void setVisible(){
-        mode=1;
-        mHandler.obtainMessage(0).sendToTarget();
+    /**
+     * 1:visible
+     * 0:invisible
+     * @param mode
+     */
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
-    public void setinVisible(){
-        mode = 0;
-        mHandler.obtainMessage(1).sendToTarget();
-    }
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
 
-    private android.os.Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-                for(int i=0;i<mdata.size();i++){
-                    Button del_btn = views[i].findViewById(R.id.example_del_btn);
-                    Button edit_btn = views[i].findViewById(R.id.example_edit_btn);
-                    del_btn.setVisibility(View.VISIBLE);
-                    edit_btn.setVisibility(View.VISIBLE);
-                }
-            }else if(msg.what==1){
-                for(int i=0;i<mdata.size();i++){
-                    Button del_btn = views[i].findViewById(R.id.example_del_btn);
-                    Button edit_btn = views[i].findViewById(R.id.example_edit_btn);
-                    del_btn.setVisibility(View.INVISIBLE);
-                    edit_btn.setVisibility(View.INVISIBLE);
-                }
+                    break;
             }
+            return false;
         }
-    };
+    });
 
     public interface onItemListener {
         void onDeleteClick(int i);
