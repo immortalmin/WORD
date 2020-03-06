@@ -42,15 +42,22 @@ public class ExampleAdapter extends BaseAdapter {
         source = (TextView)v.findViewById(R.id.source);
         del_btn = (Button)v.findViewById(R.id.example_del_btn);
         edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
-        if(mode==0){
-            del_btn.setVisibility(View.INVISIBLE);
-            edit_btn.setVisibility(View.INVISIBLE);
-        }else if(mdata.get(position).get("source").toString().equals(username)){
-            Log.i("ccc",mdata.get(position).get("source").toString());
-            Log.i("ccc",username);
+        if(mode==1&&mdata.get(position).get("source").toString().equals(username)){
             del_btn.setVisibility(View.VISIBLE);
             edit_btn.setVisibility(View.VISIBLE);
+        }else{
+            del_btn.setVisibility(View.INVISIBLE);
+            edit_btn.setVisibility(View.INVISIBLE);
         }
+//        if(mode==0){
+//            del_btn.setVisibility(View.INVISIBLE);
+//            edit_btn.setVisibility(View.INVISIBLE);
+//        }else if(mdata.get(position).get("source").toString().equals(username)){
+//            Log.i("ccc",mdata.get(position).get("source").toString());
+//            Log.i("ccc",username);
+//            del_btn.setVisibility(View.VISIBLE);
+//            edit_btn.setVisibility(View.VISIBLE);
+//        }
         word_meaning.setText(mdata.get(position).get("word_meaning").toString());
         E_sentence.setText(mdata.get(position).get("E_sentence").toString());
         C_translate.setText(mdata.get(position).get("C_translate").toString());

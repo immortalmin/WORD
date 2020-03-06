@@ -31,7 +31,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
     private Context context;
     private HashMap<String,Object>data = null;
     private Button commit_btn,cancel_btn;
-    private EditText word_group,C_meaning,page;
+    private EditText word_group,C_meaning;
     private OnDialogInteractionListener listener;
     public UpdateWordDialog(Context context) {
         super(context);
@@ -56,10 +56,8 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
         word_group = (EditText)view.findViewById(R.id.word_group);
         C_meaning = (EditText)view.findViewById(R.id.C_meaning);
-        page = (EditText)view.findViewById(R.id.page);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
-
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
         mHandler.obtainMessage(0).sendToTarget();
@@ -71,7 +69,6 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
             if(msg.what == 0){
                 word_group.setText(data.get("word_group").toString());
                 C_meaning.setText(data.get("C_meaning").toString());
-                page.setText(data.get("page").toString());
             }
         }
     };
@@ -115,10 +112,9 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("id",data.get("wid").toString());
+            jsonObject.put("wid",data.get("wid").toString());
             jsonObject.put("word_group",word_group.getText().toString());
             jsonObject.put("C_meaning",C_meaning.getText().toString());
-            jsonObject.put("page",page.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();
         }

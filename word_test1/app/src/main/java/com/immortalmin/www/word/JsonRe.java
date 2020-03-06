@@ -39,7 +39,7 @@ public class JsonRe {
                 word.put("wid",jsonObject.getString("wid"));
                 word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
                 word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-                word.put("page",jsonObject.getString("page"));
+                word.put("source",jsonObject.getString("source"));
                 word.put("collect",jsonObject.getString("collect"));
                 word.put("correct_times",jsonObject.getString("correct_times"));
                 word.put("error_times",jsonObject.getString("error_times"));
@@ -63,7 +63,7 @@ public class JsonRe {
             word.put("correct_times",jsonObject.getString("correct_times"));
             word.put("error_times",jsonObject.getString("error_times"));
             word.put("last_date",jsonObject.getString("last_date"));
-            word.put("page",jsonObject.getString("page").replaceAll("\n",""));
+            word.put("source",jsonObject.getString("source").replaceAll("\n",""));
             word.put("prof_flag",jsonObject.getString("prof_flag"));
             word.put("wid",jsonObject.getString("wid"));
             word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
@@ -119,7 +119,7 @@ public class JsonRe {
                 word.put("correct_times",jsonObject.getString("correct_times"));
                 word.put("error_times",jsonObject.getString("error_times"));
                 word.put("last_date",jsonObject.getString("last_date"));
-                word.put("page",jsonObject.getString("page"));
+                word.put("source",jsonObject.getString("source"));
                 word.put("prof_flag",jsonObject.getString("prof_flag"));
                 word.put("wid",jsonObject.getString("wid"));
                 word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));

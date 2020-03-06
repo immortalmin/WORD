@@ -45,7 +45,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         UpdateWordDialog.OnDialogInteractionListener,
         UpdateExampleDialog.OnDialogInteractionListener{
 
-    TextView word_meaning,E_sentence,C_translate,non_example,page,C_meaning,example;
+    TextView word_meaning,E_sentence,C_translate,non_example,source,C_meaning,example;
     WordView word_group;
     ListView example_list;
     Button btn1,collect,word_del_btn,word_edit_btn,edit_btn;
@@ -61,6 +61,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
     String wid = "1",uid = "1",username;
     String current_word="error";
+    private String TAG = "ccc";
     private boolean first_coming = true;
     int mode=0;//0 view,1 edit
     int del_id = 1;
@@ -74,7 +75,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         E_sentence = (TextView)findViewById(R.id.E_sentence);
         C_translate = (TextView)findViewById(R.id.C_translate);
         non_example = (TextView)findViewById(R.id.non_example);
-        page = (TextView)findViewById(R.id.page);
+        source = (TextView)findViewById(R.id.source);
         example = (TextView)findViewById(R.id.example);
         word_group = (WordView) findViewById(R.id.word_group);
         C_meaning = (TextView)findViewById(R.id.C_meaning);
@@ -233,7 +234,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    page.setText("页码："+word.get("page").toString());
+                    source.setText("页码："+word.get("source").toString());
                     word_group.setmText(word.get("word_group").toString());
                     word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
                     C_meaning.setText(word.get("C_meaning").toString());
@@ -283,13 +284,15 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
                     break;
                 case 1:
-                    page.setText("");
+                    source.setText("");
                     word_group.setmText("");
                     C_meaning.setText("");
                     break;
                 case 2:
-                    word_del_btn.setVisibility(View.VISIBLE);
-                    word_edit_btn.setVisibility(View.VISIBLE);
+                    if(username.equals(word.get("source").toString())){
+                        word_del_btn.setVisibility(View.VISIBLE);
+                        word_edit_btn.setVisibility(View.VISIBLE);
+                    }
                     collect.setVisibility(View.INVISIBLE);
                     exampleAdapter.setMode(1);
                     exampleAdapter.notifyDataSetChanged();
@@ -308,7 +311,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     try{
                         word_group.setmText(jsonObject.getString("word_group"));
                         C_meaning.setText(jsonObject.getString("C_meaning"));
-                        page.setText(jsonObject.getString("page"));
+                        source.setText(jsonObject.getString("source"));
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -345,7 +348,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     /**
      * 删除警告
      */
-
     private void del_warning(){
         new SweetAlertDialog(ExampleActivity.this, SweetAlertDialog.WARNING_TYPE)
             .setTitleText("Really?")
@@ -378,7 +380,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             })
             .show();
     }
-
 
     private void delete_example(final JSONObject jsonObject){
         new Thread(new Runnable() {
@@ -429,7 +430,23 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void updateWordInteraction(JSONObject jsonObject){
+        try{
+            jsonObject.put("uid",uid);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
         update_word(jsonObject);
+
+        /**
+         * 音频修改
+         */
+        try{
+            current_word = jsonObject.getString("word_group");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        mediaPlayer = new MediaPlayer();
+        initMediaPlayer(current_word);//音频初始化
         //有时数据库同步太慢了，只能先直接把用户改过后的数据拿来显示
         mHandler.obtainMessage(4,jsonObject).sendToTarget();
     }
