@@ -186,6 +186,12 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void addWordInteraction(JSONObject jsonObject){
         add_flag=true;
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        try{
+            jsonObject.put("uid",sp.getString("uid",null));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
         add_wordandexample(jsonObject);
     }
 

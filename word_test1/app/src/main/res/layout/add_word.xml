@@ -56,25 +56,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/page_lin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        style="@style/WordInputStyle"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/page"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="#00000000"
-            android:hint="页码"
-            android:text="" />
-
-    </LinearLayout>
 
     <View
         android:id="@+id/view1"

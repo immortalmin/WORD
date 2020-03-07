@@ -106,7 +106,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="每组的单词数量"
+                    android:text="每组额外加入的数量"
                     android:textSize="15dp"
                     android:layout_weight="1"/>
                 <EditText

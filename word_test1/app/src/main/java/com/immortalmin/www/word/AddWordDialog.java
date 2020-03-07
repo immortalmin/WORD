@@ -34,7 +34,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
     private Button commit_btn,cancel_btn;
-    private EditText word_group,C_meaning,page;
+    private EditText word_group,C_meaning;
     private TextView tv2;
     private OnDialogInteractionListener listener;
     private EditText[][] word = new EditText[100][5];
@@ -67,7 +67,6 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
         word_group = (EditText)view.findViewById(R.id.word_group);
         C_meaning = (EditText)view.findViewById(R.id.C_meaning);
-        page = (EditText)view.findViewById(R.id.page);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
         example_layout = (LinearLayout) view.findViewById(R.id.example_layout);
@@ -199,8 +198,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         String s1,s2,s3;
         s1 = word_group.getText().toString();
         s2 = C_meaning.getText().toString();
-        s3 = page.getText().toString();
-        if(s1.length()==0||s2.length()==0||s3.length()==0){
+        if(s1.length()==0||s2.length()==0){
             Toast.makeText(context,"单词 请填写完整",Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -223,7 +221,6 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         try{
             jsonObject.put("word_group",word_group.getText().toString());
             jsonObject.put("C_meaning",C_meaning.getText().toString());
-            jsonObject.put("page",page.getText().toString());
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<index;i++){
                 JSONObject translate = new JSONObject();

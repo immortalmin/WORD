@@ -45,10 +45,11 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         UpdateWordDialog.OnDialogInteractionListener,
         UpdateExampleDialog.OnDialogInteractionListener{
 
+    private UserData userData = new UserData();
     TextView word_meaning,E_sentence,C_translate,non_example,source,C_meaning,example;
     WordView word_group;
     ListView example_list;
-    Button btn1,collect,word_del_btn,word_edit_btn,edit_btn;
+    Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
     JsonRe  jsonRe;
     private ExampleAdapter exampleAdapter;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
@@ -59,7 +60,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     List<HashMap<String,Object>> examplelist = null;
 //    String  url="http://192.168.57.1/word/querybyid.php?id=";
     String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
-    String wid = "1",uid = "1",username;
+    String wid = "1";
     String current_word="error";
     private String TAG = "ccc";
     private boolean first_coming = true;
@@ -85,6 +86,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         word_edit_btn = (Button)findViewById(R.id.word_edit_btn);
         edit_btn = (Button)findViewById(R.id.edit_btn);
         collect = (Button)findViewById(R.id.collect);
+        ban_icon = (Button)findViewById(R.id.ban_icon);
         btn1.setOnClickListener(this);
         word_del_btn.setOnClickListener(this);
         word_edit_btn.setOnClickListener(this);
@@ -97,10 +99,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         first_coming = true;
         Intent intent = getIntent();
         wid = intent.getStringExtra("id");
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        uid = sp.getString("uid",null);
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        username = sp.getString("username",null);
+        init_user();
         /**
          * release mediaPlayer at the end of the playing
          */
@@ -114,6 +113,16 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         getwordlist();
 
     }
+
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
+    }
+
     /**
      * 音频播放
      */
@@ -194,8 +203,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 HttpGetContext httpGetContext = new HttpGetContext();
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("uid",userData.getUid());
                     jsonObject.put("wid",word.get("wid"));
                     jsonObject.put("collect",collect_flag);
                 }catch (JSONException e) {
@@ -213,8 +221,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("uid",userData.getUid());
                     jsonObject.put("wid",Integer.valueOf(wid));
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -261,7 +268,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         non_example.setVisibility(View.VISIBLE);
                         example_list.setVisibility(View.GONE);
                     }
-                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode,username);
+                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode,userData.getUsername());
                     example_list.setAdapter(exampleAdapter);
                     exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                         @Override
@@ -289,9 +296,11 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     C_meaning.setText("");
                     break;
                 case 2:
-                    if(username.equals(word.get("source").toString())){
+                    if(userData.getUsername().equals(word.get("source").toString())){
                         word_del_btn.setVisibility(View.VISIBLE);
                         word_edit_btn.setVisibility(View.VISIBLE);
+                    }else{
+                        ban_icon.setVisibility(View.VISIBLE);
                     }
                     collect.setVisibility(View.INVISIBLE);
                     exampleAdapter.setMode(1);
@@ -301,6 +310,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 case 3:
                     word_del_btn.setVisibility(View.INVISIBLE);
                     word_edit_btn.setVisibility(View.INVISIBLE);
+                    ban_icon.setVisibility(View.INVISIBLE);
                     collect.setVisibility(View.VISIBLE);
                     exampleAdapter.setMode(0);
                     exampleAdapter.notifyDataSetChanged();
@@ -327,7 +337,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",wid);
-            jsonObject.put("uid",uid);
+            jsonObject.put("uid",userData.getUid());
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -431,7 +441,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void updateWordInteraction(JSONObject jsonObject){
         try{
-            jsonObject.put("uid",uid);
+            jsonObject.put("uid",userData.getUid());
         }catch (JSONException e){
             e.printStackTrace();
         }
