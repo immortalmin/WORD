@@ -185,6 +185,7 @@ public class LaunchActivity extends AppCompatActivity {
 
             }
 
+
         }else{
             //doSdCardResult();
         }

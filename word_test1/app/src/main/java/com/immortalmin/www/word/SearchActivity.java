@@ -32,21 +32,22 @@ import java.util.Map;
 
 public class SearchActivity extends AppCompatActivity {
 
-    SearchView searchView1;
-    ListView listView1;
-    List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
-    JsonRe jsonRe;
-    String fuzzy_str;
+    private SearchView searchView1;
+    private ListView listView1;
+    private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
+    private JsonRe jsonRe= new JsonRe();
+    private UserData userData = new UserData();
+    private String fuzzy_str;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         searchView1 = (SearchView)findViewById(R.id.searchview1);
         listView1 = (ListView)findViewById(R.id.ListView1);
-        jsonRe = new JsonRe();
         searchView1.setOnQueryTextListener(searchlistener1);
         listView1.setOnItemClickListener(listlistener1);
         searchView1.onActionViewExpanded();
+        init_user();
         setCursorIcon();
     }
 
@@ -60,7 +61,7 @@ public class SearchActivity extends AppCompatActivity {
             jump_to_example(id);
         }
     };
-//    SearchView.OnClickListener searchClick = new SearchView()
+
     /**
      * 搜索框searchView1监听事件
      */
@@ -78,20 +79,27 @@ public class SearchActivity extends AppCompatActivity {
         }
     };
 
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
+    }
+
     /**
      * 模糊查询的线程
      * @param word
      */
-    private void fuzzyquery(final String word)
-    {
+    private void fuzzyquery(final String word) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 word_list.clear();
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("uid",userData.getUid());
                     jsonObject.put("word",word);
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -103,6 +111,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -137,10 +146,6 @@ public class SearchActivity extends AppCompatActivity {
                     .getIdentifier("android:id/search_src_text", null, null);
             //文字颜色
             TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
-//            if (searchText != null) {
-//                searchText.setTextColor(Color.WHITE);
-//                searchText.setHintTextColor(Color.WHITE);
-//            }
 
             //光标颜色
             try {
@@ -148,18 +153,14 @@ public class SearchActivity extends AppCompatActivity {
                 mCursorDrawableRes.setAccessible(true);
                 mCursorDrawableRes.set(searchText, R.drawable.cursor);
             } catch (Exception e){
-
+                e.printStackTrace();
             }
         }
     }
-    //
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            Log.i("ccc","点击了返回按钮");
-//            Intent intent = new Intent(SearchActivity.this,MainActivity.class);
-//            setResult(1,intent);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             return false;

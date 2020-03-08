@@ -5,18 +5,19 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
-        tools:ignore="ProtectedPermissions"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+
 
     <application
         android:allowBackup="true"
@@ -29,8 +30,8 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".word1Activity" />
         <activity android:name=".ExampleActivity" />
-        <activity android:name=".ReciteActivity" />
-        <activity android:name=".spell_reciteActivity" />
+        <!--<activity android:name=".ReciteActivity" />-->
+        <!--<activity android:name=".spell_reciteActivity" />-->
         <activity android:name=".TestActivity" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
@@ -51,7 +52,8 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
+
     </application>
 
 </manifest>

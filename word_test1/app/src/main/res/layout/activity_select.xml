@@ -41,6 +41,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
+            android:textAllCaps="false"
             android:text="指责；指控.....,指责；指控指责；指控,指责；指控指责；指控" />
 
         <Button
@@ -49,6 +50,7 @@
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
             android:layout_marginTop="10dp"
+            android:textAllCaps="false"
             android:layout_below="@+id/sel1"
             android:text="对...起作用（有功效）" />
 
@@ -59,6 +61,7 @@
             android:background="@drawable/rounded_corners_gray"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel2"
+            android:textAllCaps="false"
             android:text="变得习惯于...；使适应于" />
 
         <Button
@@ -68,6 +71,7 @@
             android:background="@drawable/rounded_corners_gray"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel3"
+            android:textAllCaps="false"
             android:text="增加，加强" />
 
         <Button
@@ -79,6 +83,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/sel4"
             android:textColor="#000000"
+            android:textAllCaps="false"
             android:text="不知道" />
     </RelativeLayout>
 

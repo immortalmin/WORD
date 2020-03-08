@@ -1,5 +1,8 @@
 package com.immortalmin.www.word;
 
+/**
+ * user information
+ */
 public class UserData {
     private String uid,username;
     private int recite_num,recite_scope;

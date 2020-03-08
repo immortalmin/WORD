@@ -52,14 +52,10 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
     JsonRe  jsonRe;
     private ExampleAdapter exampleAdapter;
-    ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private MediaPlayer mediaPlayer;
     private JSONObject jsonObject;
-    List<Map<String,Object>> word_list=null;
     HashMap<String,Object> word = null;
     List<HashMap<String,Object>> examplelist = null;
-//    String  url="http://192.168.57.1/word/querybyid.php?id=";
-    String  url="http://47.98.239.237/word/php_file/querybyid.php?id=";
     String wid = "1";
     String current_word="error";
     private String TAG = "ccc";
@@ -241,7 +237,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    source.setText("页码："+word.get("source").toString());
+                    source.setText("来源："+word.get("source").toString());
                     word_group.setmText(word.get("word_group").toString());
                     word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
                     C_meaning.setText(word.get("C_meaning").toString());

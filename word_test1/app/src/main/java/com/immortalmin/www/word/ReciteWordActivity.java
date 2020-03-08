@@ -55,7 +55,7 @@ public class ReciteWordActivity extends AppCompatActivity
     Button turn_mode,ret_btn;
     TextView total_times, word_times;
     JsonRe jsonRe;
-//    AlertDialog finish_Dialog, interrupt_Dialog;
+    private UserData userData = new UserData();
     ProgressBar total_progress;
     SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
@@ -72,10 +72,7 @@ public class ReciteWordActivity extends AppCompatActivity
     int finish_num = 0;//今天背完的单词数
     int today_finish = 0;//该单词今天背完的次数
     int pre_ind = 0;//上一个单词的id
-    int mode_num = 0;//the number of mode
-    Boolean living_flag = true, test_flag = true;
     Boolean pron_lock = false;
-    String recite_list_url = "http://47.98.239.237/word/php_file/getrecitelist.php?mount=";
     HashMap<String, Object> recite_info = new HashMap<String, Object>();
     Map<String, Object> update_word = new HashMap<String, Object>();
     HashMap<String, Object> now_words = null;
@@ -94,8 +91,6 @@ public class ReciteWordActivity extends AppCompatActivity
         total_progress = (ProgressBar) findViewById(R.id.total_progress);
         initialize();
     }
-
-
 
     /**
      * start a new recite round
@@ -184,9 +179,8 @@ public class ReciteWordActivity extends AppCompatActivity
                 HttpGetContext httpGetContext = new HttpGetContext();
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
                     jsonObject.put("mount",recite_num + recite_scope);
-                    jsonObject.put("uid",sp.getString("uid",null));
+                    jsonObject.put("uid",userData.getUid());
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -280,11 +274,11 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void initialize() {
         jsonRe = new JsonRe();
+        init_user();
         dialog_init();
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        setting.put("uid",sp.getString("uid",null));
-        recite_num = sp.getInt("recite_num",20);
-        recite_scope = sp.getInt("recite_scope",10);
+        setting.put("uid",userData.getUid());
+        recite_num = userData.getRecite_num();
+        recite_scope = userData.getRecite_scope();
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getrecitelist();//get the list of word
@@ -343,6 +337,15 @@ public class ReciteWordActivity extends AppCompatActivity
                         overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     }
                 });;
+    }
+
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
     }
 
     /**
@@ -404,18 +407,18 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     }
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what) {
                 case 0:
                     total_times.setText(String.valueOf(finish_num) + "/" + String.valueOf(recite_num));
                     word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
                     break;
-//                case 1:
-//                    finish_Dialog.show();
             }
+            return false;
         }
-    };
+    });
 
     /**
      * CountDownFragment的回调函数
@@ -472,7 +475,6 @@ public class ReciteWordActivity extends AppCompatActivity
             start_recite();
         }
     }
-
 
     /**
      * SelectFragment的回调函数
@@ -585,7 +587,6 @@ public class ReciteWordActivity extends AppCompatActivity
     /**
      * 更新数据库
      * 传入词组在recite_list中的下标
-     *
      * @param i
      */
     public void update_sql_data(int i) {
@@ -601,6 +602,9 @@ public class ReciteWordActivity extends AppCompatActivity
         scheduledThreadPool.schedule(sendIdToserver, 0, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * update rest of word list
+     */
     private void update_all(){
         for(int i=0;i<recite_num+recite_scope;i++){
             if(finish_ind[i]==0){
