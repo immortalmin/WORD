@@ -1,8 +1,24 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.mob.sdk'
+// 添加插件
+apply plugin: 'com.mob.sdk'
+
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "2e4c7aea7f604"
+    appSecret "3bfc21408ce45cc25a1d91dd6c9b1137"
+    SMSSDK {}
+}
 
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'csk1314520'
+            storeFile file('D:/documents/WORD/Android/word.jks')
+            storePassword 'csk1314520'
+        }
+    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -30,6 +46,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             aaptOptions.cruncherEnabled = false
             aaptOptions.useNewCruncher = false
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -39,7 +56,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:support-v4:27.1.1'

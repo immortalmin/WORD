@@ -26,12 +26,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText username,password;
-    Button login_btn,reg_btn;
+    Button login_btn,reg_btn,forget_pwd;
     private CircleImageView profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private ImageUtils imageUtils = new ImageUtils();
+    private Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +41,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         password = (EditText)findViewById(R.id.password);
         login_btn = (Button)findViewById(R.id.login_btn);
         reg_btn = (Button)findViewById(R.id.reg_btn);
+        forget_pwd = (Button)findViewById(R.id.forget_pwd);
         profile_photo = (CircleImageView)findViewById(R.id.profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
+        forget_pwd.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
 
         //快速登录
@@ -80,13 +83,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 judge();
                 break;
             case R.id.reg_btn:
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
 //                LoginActivity.this.finish();
                 break;
             case R.id.profile_photo:
 
+                break;
+            case R.id.forget_pwd:
+                intent = new Intent(LoginActivity.this, UpdatePwdActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }
     }
