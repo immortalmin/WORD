@@ -44,7 +44,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     Boolean living_flag=true;
     Boolean pron_lock = false;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
-//    ScheduledExecutorService scheduledThreadPool;
     private int correct_sel = 0;//正确答案的下标
     private int user_sel;
 

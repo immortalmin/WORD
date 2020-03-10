@@ -17,7 +17,7 @@ import java.util.HashMap;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class UpdatePwdActivity extends AppCompatActivity implements View.OnClickListener{
+public class SMSVerificationActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "UpdatePwdActivity";
     private EventHandler eventHandler;
@@ -27,7 +27,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_pwd);
+        setContentView(R.layout.activity_sms_verification);
         get_btn = (Button)findViewById(R.id.get_btn);
         commit_btn = (Button)findViewById(R.id.commit_btn);
         verification = (EditText) findViewById(R.id.verification);

@@ -1,11 +1,15 @@
 package com.immortalmin.www.word;
 
+import java.io.Serializable;
+
 /**
  * user information
  */
-public class UserData {
-    private String uid,username;
+public class UserData implements Serializable{
+    private String uid,username,password,profile_photo,status="0";
+
     private int recite_num,recite_scope;
+
 
     public String getUid() {
         return uid;
@@ -37,5 +41,42 @@ public class UserData {
 
     public void setRecite_scope(int recite_scope) {
         this.recite_scope = recite_scope;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getProfile_photo() {
+        return profile_photo;
+    }
+
+    public void setProfile_photo(String profile_photo) {
+        this.profile_photo = profile_photo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "uid='" + uid + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", profile_photo='" + profile_photo + '\'' +
+                ", status='" + status + '\'' +
+                ", recite_num=" + recite_num +
+                ", recite_scope=" + recite_scope +
+                '}';
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/launch2"
-    tools:context=".UpdatePwdActivity">
+    tools:context=".SMSVerificationActivity">
 
     <RelativeLayout
         android:layout_width="300dp"

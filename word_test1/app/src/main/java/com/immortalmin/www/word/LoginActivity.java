@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 break;
             case R.id.forget_pwd:
-                intent = new Intent(LoginActivity.this, UpdatePwdActivity.class);
+                intent = new Intent(LoginActivity.this, SMSVerificationActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -164,8 +164,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else{
                     if(pwd.equals(userdata.get("pwd"))){
                         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                        sp.edit().putString("username", username.getText().toString())
-                                .putString("password", password.getText().toString())
+                        sp.edit().putString("username", userdata.get("username").toString())
+                                .putString("password", userdata.get("pwd").toString())
                                 .putString("profile_photo", userdata.get("profile_photo").toString())
                                 .putString("status","1")
                                 .apply();

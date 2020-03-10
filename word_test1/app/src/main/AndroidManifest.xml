@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!--msg-->
+    <!-- msg -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -57,7 +57,8 @@
             android:label="@string/title_activity_login" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".UpdatePwdActivity"></activity>
+        <activity android:name=".SMSVerificationActivity" />
+        <activity android:name=".EnterActivity"></activity>
     </application>
 
 </manifest>
