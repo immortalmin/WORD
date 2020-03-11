@@ -39,9 +39,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LoginFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
-    private EditText username,password;
+    private EditText login_username_edit,login_password_edit;
     private Button login_btn,reg_btn,forget_pwd;
-    private CircleImageView profile_photo;
+    private CircleImageView login_profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
@@ -82,24 +82,24 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        username = (EditText)getActivity().findViewById(R.id.username);
-        password = (EditText)getActivity().findViewById(R.id.password);
+        login_username_edit = (EditText)getActivity().findViewById(R.id.login_username_edit);
+        login_password_edit = (EditText)getActivity().findViewById(R.id.login_password_edit);
         login_btn = (Button)getActivity().findViewById(R.id.login_btn);
         reg_btn = (Button)getActivity().findViewById(R.id.reg_btn);
         forget_pwd = (Button)getActivity().findViewById(R.id.forget_pwd);
-        profile_photo = (CircleImageView)getActivity().findViewById(R.id.profile_photo);
+        login_profile_photo = (CircleImageView)getActivity().findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
-        profile_photo.setOnClickListener(this);
+        login_profile_photo.setOnClickListener(this);
         /**
          * 接受来自activity的数据
          */
         Bundle bundle = getArguments();
         userData = (UserData)bundle.getSerializable("userData");
 
-        username.setText(userData.getUsername());
-        password.setText(userData.getPassword());
+        login_username_edit.setText(userData.getUsername());
+        login_password_edit.setText(userData.getPassword());
         getImage(userData.getProfile_photo());
         login();
         init();
@@ -116,7 +116,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    profile_photo.setImageBitmap((Bitmap)message.obj);
+                    login_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
             }
             return false;
@@ -125,7 +125,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
 
     private void init() {
-        username.addTextChangedListener(new TextWatcher() {
+        login_username_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -159,7 +159,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 //                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
 //                LoginActivity.this.finish();
                 break;
-            case R.id.profile_photo:
+            case R.id.login_profile_photo:
 
                 break;
             case R.id.forget_pwd:
@@ -175,7 +175,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
      * 名字难取
      */
     private void login(){
-        String uname = username.getText().toString();
+        String uname = login_username_edit.getText().toString();
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("username",uname);
@@ -225,7 +225,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String pwd = password.getText().toString();
+                String pwd = login_password_edit.getText().toString();
                 Looper.prepare();
                 if(userdata.size()==0){
                     Toast.makeText(getActivity(),"用户不存在",Toast.LENGTH_SHORT).show();
@@ -247,6 +247,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             }
         }).start();
 
+    }
+
+    public void after_register(UserData data){
+        login_username_edit.setText(data.getUsername());
+        login_password_edit.setText(data.getPassword());
+        getImage(data.getProfile_photo());
     }
 
     private void setImage(String pic) {

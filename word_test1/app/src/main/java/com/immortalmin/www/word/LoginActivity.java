@@ -25,9 +25,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    EditText username,password;
+    EditText login_username_edit,login_password_edit;
     Button login_btn,reg_btn,forget_pwd;
-    private CircleImageView profile_photo;
+    private CircleImageView login_profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
@@ -37,28 +37,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        username = (EditText)findViewById(R.id.username);
-        password = (EditText)findViewById(R.id.password);
+        login_username_edit = (EditText)findViewById(R.id.login_username_edit);
+        login_password_edit = (EditText)findViewById(R.id.login_password_edit);
         login_btn = (Button)findViewById(R.id.login_btn);
         reg_btn = (Button)findViewById(R.id.reg_btn);
         forget_pwd = (Button)findViewById(R.id.forget_pwd);
-        profile_photo = (CircleImageView)findViewById(R.id.profile_photo);
+        login_profile_photo = (CircleImageView)findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
-        profile_photo.setOnClickListener(this);
+        login_profile_photo.setOnClickListener(this);
 
         //快速登录
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        username.setText(sp.getString("username", null));
-        password.setText(sp.getString("password", null));
+        login_username_edit.setText(sp.getString("username", null));
+        login_password_edit.setText(sp.getString("password", null));
         getImage(sp.getString("profile_photo",null));
         login();
         init();
     }
 
     private void init() {
-        username.addTextChangedListener(new TextWatcher() {
+        login_username_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
 //                LoginActivity.this.finish();
                 break;
-            case R.id.profile_photo:
+            case R.id.login_profile_photo:
 
                 break;
             case R.id.forget_pwd:
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 名字难取
      */
     private void login(){
-        String uname = username.getText().toString();
+        String uname = login_username_edit.getText().toString();
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("username",uname);
@@ -157,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String pwd = password.getText().toString();
+                String pwd = login_password_edit.getText().toString();
                 Looper.prepare();
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
@@ -212,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    profile_photo.setImageBitmap((Bitmap)message.obj);
+                    login_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
 
             }
@@ -225,8 +225,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 1) {
-            username.setText(data.getExtras().getString("username"));
-            password.setText("");
+            login_username_edit.setText(data.getExtras().getString("username"));
+            login_password_edit.setText("");
         }
     }
 }

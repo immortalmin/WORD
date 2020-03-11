@@ -251,6 +251,8 @@ public class HttpGetContext {
                         .addFormDataPart("username",jsonObject.getString("username"))
                         .addFormDataPart("pwd",jsonObject.getString("pwd"))
                         .addFormDataPart("img_flag","0")
+                        .addFormDataPart("telephone",jsonObject.getString("telephone"))
+                        .addFormDataPart("email",jsonObject.getString("email"))
                         .build();
             }else{
                 File file = new File(imgpath);

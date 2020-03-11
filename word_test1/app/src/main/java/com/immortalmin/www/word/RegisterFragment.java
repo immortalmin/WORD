@@ -38,10 +38,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RegisterFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
-    private Button reg_btn,return_btn;
-    private EditText username_et,pwd_et,confirm_pwd;
+    private Button register_reg_btn,return_btn;
+    private EditText register_username_edit,register_password_edit,confirm_pwd;
     private TextView user_warn,pwd_warn,confirm_warn;
-    private CircleImageView profile_photo;
+    private CircleImageView register_profile_photo;
     private JsonRe jsonRe;
     private Runnable toLogin;
     private String profilephotoPath="null";
@@ -81,18 +81,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        reg_btn = (Button)getActivity().findViewById(R.id.reg_btn);
+        register_reg_btn = (Button)getActivity().findViewById(R.id.register_reg_btn);
         return_btn = (Button)getActivity().findViewById(R.id.return_btn);
-        username_et = (EditText)getActivity().findViewById(R.id.username_et);
-        pwd_et = (EditText)getActivity().findViewById(R.id.pwd_et);
+        register_username_edit = (EditText)getActivity().findViewById(R.id.register_username_edit);
+        register_password_edit = (EditText)getActivity().findViewById(R.id.register_password_edit);
         confirm_pwd = (EditText)getActivity().findViewById(R.id.confirm_pwd);
         user_warn = (TextView) getActivity().findViewById(R.id.user_warn);
         pwd_warn = (TextView) getActivity().findViewById(R.id.pwd_warn);
         confirm_warn = (TextView) getActivity().findViewById(R.id.confirm_warn);
-        profile_photo = (CircleImageView) getActivity().findViewById(R.id.profile_photo);
-        reg_btn.setOnClickListener(this);
+        register_profile_photo = (CircleImageView) getActivity().findViewById(R.id.register_profile_photo);
+        register_reg_btn.setOnClickListener(this);
         return_btn.setOnClickListener(this);
-        profile_photo.setOnClickListener(this);
+        register_profile_photo.setOnClickListener(this);
 
         jsonRe = new JsonRe();
         init();
@@ -119,33 +119,33 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
             switch (message.what){
                 case 0:
                     user_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
+                    register_reg_btn.setClickable(true);
                     break;
                 case 1:
                     user_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
+                    register_reg_btn.setClickable(false);
                     break;
                 case 2:
 
                     break;
                 case 3:
                     pwd_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
+                    register_reg_btn.setClickable(true);
                     break;
                 case 4:
                     pwd_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
+                    register_reg_btn.setClickable(false);
                     break;
                 case 5:
                     confirm_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
+                    register_reg_btn.setClickable(true);
                     break;
                 case 6:
                     confirm_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
+                    register_reg_btn.setClickable(false);
                     break;
                 case 7:
-                    profile_photo.setImageBitmap((Bitmap)message.obj);
+                    register_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
             }
             return false;
@@ -160,6 +160,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         toLogin = new Runnable() {
             @Override
             public void run() {
+                send_to_activity(0);
                 /*
                 Intent intent = new Intent();
                 intent.putExtra("username",username.getText().toString());
@@ -169,7 +170,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
             }
         };
 
-        username_et.addTextChangedListener(new TextWatcher() {
+        register_username_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -183,7 +184,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
             @Override
             public void afterTextChanged(Editable editable) {
                 mHandler.obtainMessage(0).sendToTarget();
-                String uname = username_et.getText().toString();
+                String uname = register_username_edit.getText().toString();
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("username",uname);
@@ -194,7 +195,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        pwd_et.addTextChangedListener(new TextWatcher() {
+        register_password_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -207,7 +208,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String now_pwd = pwd_et.getText().toString();
+                String now_pwd = register_password_edit.getText().toString();
                 if(!isPassword(now_pwd)){
                     mHandler.obtainMessage(4).sendToTarget();
                 }else{
@@ -229,7 +230,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(confirm_pwd.getText().toString().equals(pwd_et.getText().toString())){
+                if(confirm_pwd.getText().toString().equals(register_password_edit.getText().toString())){
                     mHandler.obtainMessage(5).sendToTarget();
                 }else{
                     mHandler.obtainMessage(6).sendToTarget();
@@ -243,9 +244,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
      */
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.reg_btn:
-                String uname = username_et.getText().toString();
-                String password = pwd_et.getText().toString();
+            case R.id.register_reg_btn:
+                String uname = register_username_edit.getText().toString();
+                String password = register_password_edit.getText().toString();
                 Toast.makeText(getActivity(),"注册成功 即将跳转到主页",Toast.LENGTH_SHORT).show();
                 JSONObject jsonObject = new JSONObject();
                 try{
@@ -257,9 +258,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
                 }
                 register(jsonObject);
                 break;
-            case R.id.profile_photo:
+            case R.id.register_profile_photo:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
+//                startActivity(i);
                 break;
             case R.id.return_btn:
                 /*
@@ -285,7 +287,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
                 userdata = jsonRe.userData(wordjson);
-                Log.i("ccc",userdata.toString());
                 if(userdata.size()!=0){
                     mHandler.obtainMessage(1).sendToTarget();
                 }
@@ -303,6 +304,36 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 httpGetContext.userRegister(userdata);
+
+                /*
+                mHandler.postDelayed(toLogin,2000);
+                */
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("username",register_username_edit.getText().toString());
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                getuserdata(jsonObject);
+            }
+        }).start();
+
+    }
+
+    private void getuserdata(final JSONObject jsonObject) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
+                userdata = jsonRe.userData(wordjson);
+                userData.setUid(userdata.get("uid").toString());
+                userData.setUsername(userdata.get("username").toString());
+                userData.setPassword(userdata.get("pwd").toString());
+                userData.setProfile_photo(userdata.get("profile_photo").toString());
+                userData.setStatus("0");
+                userData.setRecite_num(20);
+                userData.setRecite_scope(10);
                 mHandler.postDelayed(toLogin,2000);
             }
         }).start();
@@ -357,6 +388,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         HashMap<String,Object> data = new HashMap<>();
         data.put("what",what);
         if (mListener != null) {
+            switch (what){
+                case 0:
+                    data.put("userData",userData);
+                    break;
+            }
             mListener.registerFragmentInteraction(data);
         }
     }

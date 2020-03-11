@@ -32,10 +32,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button reg_btn,return_btn;
-    private EditText username_et,pwd_et,confirm_pwd;
-    private TextView user_warn,pwd_warn,confirm_warn;
-    private CircleImageView profile_photo;
+    private Button register_reg_btn,return_btn;
+    private EditText register_username_edit,register_password_edit,confirm_pwd,telephone,email;
+    private TextView user_warn,pwd_warn,confirm_warn,telephone_warn,email_warn;
+    private CircleImageView register_profile_photo;
     private JsonRe jsonRe;
     private Runnable toLogin;
     private String profilephotoPath="null";
@@ -44,18 +44,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        reg_btn = (Button)findViewById(R.id.reg_btn);
+        register_reg_btn = (Button)findViewById(R.id.register_reg_btn);
         return_btn = (Button)findViewById(R.id.return_btn);
-        username_et = (EditText)findViewById(R.id.username_et);
-        pwd_et = (EditText)findViewById(R.id.pwd_et);
+        register_username_edit = (EditText)findViewById(R.id.register_username_edit);
+        register_password_edit = (EditText)findViewById(R.id.register_password_edit);
         confirm_pwd = (EditText)findViewById(R.id.confirm_pwd);
+        telephone = (EditText)findViewById(R.id.telephone);
+        email = (EditText)findViewById(R.id.email);
+
         user_warn = (TextView) findViewById(R.id.user_warn);
         pwd_warn = (TextView) findViewById(R.id.pwd_warn);
         confirm_warn = (TextView) findViewById(R.id.confirm_warn);
-        profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
-        reg_btn.setOnClickListener(this);
+        telephone_warn = (TextView) findViewById(R.id.telephone_warn);
+        email_warn = (TextView) findViewById(R.id.email_warn);
+        register_profile_photo = (CircleImageView) findViewById(R.id.register_profile_photo);
+        register_reg_btn.setOnClickListener(this);
         return_btn.setOnClickListener(this);
-        profile_photo.setOnClickListener(this);
+        register_profile_photo.setOnClickListener(this);
 
         jsonRe = new JsonRe();
         init();
@@ -64,6 +69,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void init() {
+        register_reg_btn.setEnabled(false);
         /**
          * 延迟跳转（等toast结束后跳转）
          */
@@ -71,14 +77,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void run() {
                 Intent intent = new Intent();
-                intent.putExtra("username",username_et.getText().toString());
+                intent.putExtra("username",register_username_edit.getText().toString());
                 setResult(1,intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         };
 
-        username_et.addTextChangedListener(new TextWatcher() {
+        register_username_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -92,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void afterTextChanged(Editable editable) {
                 mHandler.obtainMessage(0).sendToTarget();
-                String uname = username_et.getText().toString();
+                String uname = register_username_edit.getText().toString();
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("username",uname);
@@ -103,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        pwd_et.addTextChangedListener(new TextWatcher() {
+        register_password_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -116,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String now_pwd = pwd_et.getText().toString();
+                String now_pwd = register_password_edit.getText().toString();
                 if(!isPassword(now_pwd)){
                     mHandler.obtainMessage(4).sendToTarget();
                 }else{
@@ -138,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(confirm_pwd.getText().toString().equals(pwd_et.getText().toString())){
+                if(confirm_pwd.getText().toString().equals(register_password_edit.getText().toString())){
                     mHandler.obtainMessage(5).sendToTarget();
                 }else{
                     mHandler.obtainMessage(6).sendToTarget();
@@ -149,21 +155,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.reg_btn:
-                String uname = username_et.getText().toString();
-                String password = pwd_et.getText().toString();
+            case R.id.register_reg_btn:
+                String uname = register_username_edit.getText().toString();
+                String password = register_password_edit.getText().toString();
+                if(telephone.getText().toString().length()==0||email.getText().toString().length()==0){
+                    Toast.makeText(RegisterActivity.this,"请填写完整",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Toast.makeText(RegisterActivity.this,"注册成功 即将跳转到主页",Toast.LENGTH_SHORT).show();
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("username",uname);
                     jsonObject.put("pwd",password);
                     jsonObject.put("imgpath",profilephotoPath);
+                    jsonObject.put("telephone",telephone.getText().toString());
+                    jsonObject.put("email",email.getText().toString());
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
                 register(jsonObject);
                 break;
-            case R.id.profile_photo:
+            case R.id.register_profile_photo:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
                 break;
@@ -181,6 +193,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         boolean isMatch=m.matches();
         return isMatch;
     }
+
 
 
     private void query_user(final JSONObject jsonObject) {
@@ -202,33 +215,29 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             switch (message.what){
                 case 0:
                     user_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
                     break;
                 case 1:
                     user_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
                     break;
                 case 2:
 
                     break;
                 case 3:
                     pwd_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
                     break;
                 case 4:
                     pwd_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
                     break;
                 case 5:
                     confirm_warn.setVisibility(View.INVISIBLE);
-                    reg_btn.setClickable(true);
+                    register_reg_btn.setEnabled(true);
                     break;
                 case 6:
                     confirm_warn.setVisibility(View.VISIBLE);
-                    reg_btn.setClickable(false);
+                    register_reg_btn.setEnabled(false);
                     break;
                 case 7:
-                    profile_photo.setImageBitmap((Bitmap)message.obj);
+                    register_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
             }
             return false;

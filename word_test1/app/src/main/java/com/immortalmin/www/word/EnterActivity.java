@@ -63,7 +63,6 @@ public class EnterActivity extends AppCompatActivity
 
     @Override
     public void loginFragmentInteraction(HashMap<String,Object> data) {
-        Log.i("ccc",userData.toString());
         switch (Integer.valueOf(data.get("what").toString())){
             case 0:
                 userData = (UserData)data.get("userData");
@@ -97,5 +96,28 @@ public class EnterActivity extends AppCompatActivity
     @Override
     public void registerFragmentInteraction(HashMap<String,Object> data) {
         Log.i("ccc",data.toString());
+        switch (Integer.valueOf(data.get("what").toString())){
+            //注册成功，跳转到登录页面
+            case 0:
+                userData = (UserData)data.get("userData");
+                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putString("username", userData.getUsername())
+                        .putString("password", userData.getPassword())
+                        .putString("profile_photo", userData.getProfile_photo())
+                        .putString("status",userData.getStatus())
+                        .apply();
+                sp = getSharedPreferences("setting",Context.MODE_PRIVATE);
+                sp.edit().putString("uid",userData.getUid())
+                        .putInt("recite_num",userData.getRecite_num())
+                        .putInt("recite_scope",userData.getRecite_scope())
+                        .apply();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("userData",userData);
+                loginFragment.after_register(userData);
+                transaction = fragmentManager.beginTransaction();
+                transaction.hide(registerFragment).show(loginFragment);
+                transaction.commit();
+                break;
+        }
     }
 }
