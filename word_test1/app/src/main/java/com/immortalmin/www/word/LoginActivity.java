@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.forget_pwd:
                 intent = new Intent(LoginActivity.this, SMSVerificationActivity.class);
                 startActivity(intent);
+                finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }

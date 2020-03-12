@@ -7,7 +7,6 @@ import java.io.Serializable;
  */
 public class UserData implements Serializable{
     private String uid,username,password,profile_photo,status="0";
-
     private int recite_num,recite_scope;
 
 

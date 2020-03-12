@@ -16,6 +16,17 @@
         android:background="@drawable/return3"
         android:text="" />
 
+    <TextView
+        android:id="@+id/nav_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:textColor="#303133"
+        android:textStyle="bold"
+        android:text="注 册" />
+
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -52,7 +63,7 @@
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textSize="19dp"
-            android:hint="username" />
+            android:hint="username*" />
 
         <TextView
             android:id="@+id/user_warn"
@@ -84,7 +95,7 @@
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textSize="19dp"
-            android:hint="password" />
+            android:hint="password*" />
 
         <TextView
             android:id="@+id/pwd_warn"
@@ -116,7 +127,7 @@
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
-            android:hint="confirm password" />
+            android:hint="confirm password*" />
 
         <TextView
             android:id="@+id/confirm_warn"
@@ -147,7 +158,7 @@
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
-            android:hint="telephone" />
+            android:hint="telephone*" />
 
         <TextView
             android:id="@+id/telephone_warn"

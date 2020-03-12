@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Runnable toLogin;
     private String profilephotoPath="null";
     private HashMap<String,Object> userdata=null;
+    private boolean IsUsername=false,IsPassword=false,IsConfirm=false,IsTelephone=false,IsEmail=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +71,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void init() {
-        register_reg_btn.setEnabled(false);
         /**
          * 延迟跳转（等toast结束后跳转）
          */
@@ -124,8 +125,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void afterTextChanged(Editable editable) {
                 String now_pwd = register_password_edit.getText().toString();
                 if(!isPassword(now_pwd)){
+                    IsPassword = false;
                     mHandler.obtainMessage(4).sendToTarget();
                 }else{
+                    IsPassword = true;
                     mHandler.obtainMessage(3).sendToTarget();
                 }
             }
@@ -145,9 +148,56 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void afterTextChanged(Editable editable) {
                 if(confirm_pwd.getText().toString().equals(register_password_edit.getText().toString())){
+                    IsConfirm = true;
                     mHandler.obtainMessage(5).sendToTarget();
                 }else{
+                    IsConfirm = false;
                     mHandler.obtainMessage(6).sendToTarget();
+                }
+            }
+        });
+
+        telephone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(isChinaPhoneLegal(telephone.getText().toString())){
+                    IsTelephone = true;
+                    mHandler.obtainMessage(9).sendToTarget();
+                }else{
+                    IsTelephone = false;
+                    mHandler.obtainMessage(8).sendToTarget();
+                }
+            }
+        });
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(isEmail(email.getText().toString())){
+                    IsEmail = true;
+                    mHandler.obtainMessage(11).sendToTarget();
+                }else{
+                    IsEmail = false;
+                    mHandler.obtainMessage(10).sendToTarget();
                 }
             }
         });
@@ -158,8 +208,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.register_reg_btn:
                 String uname = register_username_edit.getText().toString();
                 String password = register_password_edit.getText().toString();
-                if(telephone.getText().toString().length()==0||email.getText().toString().length()==0){
-                    Toast.makeText(RegisterActivity.this,"请填写完整",Toast.LENGTH_SHORT).show();
+                if(!judge()){
                     break;
                 }
                 Toast.makeText(RegisterActivity.this,"注册成功 即将跳转到主页",Toast.LENGTH_SHORT).show();
@@ -186,6 +235,42 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    private boolean judge(){
+        if(register_username_edit.getText().toString().length()==0){
+            Toast.makeText(RegisterActivity.this,"用户名为空",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsUsername){
+            Toast.makeText(RegisterActivity.this,"用户名已存在",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(register_password_edit.getText().toString().length()==0){
+            Toast.makeText(RegisterActivity.this,"请输入密码",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsPassword){
+            Toast.makeText(RegisterActivity.this,"密码不合法",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsConfirm){
+            Toast.makeText(RegisterActivity.this,"密码不一致",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(telephone.getText().toString().length()==0){
+            Toast.makeText(RegisterActivity.this,"请输入手机号码",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!isChinaPhoneLegal(telephone.getText().toString())){
+            Toast.makeText(RegisterActivity.this,"手机号码不正确",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(email.getText().toString().length()!=0&&!isEmail(email.getText().toString())){
+            Toast.makeText(RegisterActivity.this,"邮箱格式错误",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     public boolean isPassword(String password){
         String regex="^(?![0-9])(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$";
         Pattern p= Pattern.compile(regex);
@@ -194,7 +279,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return isMatch;
     }
 
+    public static boolean isChinaPhoneLegal(String str) throws PatternSyntaxException {
+        String regExp = "^((13[0-9])|(15[^4])|(18[0-9])|(17[0-8])|(147,145))\\d{8}$";
+        Pattern p = Pattern.compile(regExp);
+        Matcher m = p.matcher(str);
+        return m.matches();
+    }
 
+    public static boolean isEmail(String email){
+        if (null==email || "".equals(email)) return false;
+        //Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}"); //简单匹配
+        Pattern p =  Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");//复杂匹配
+        Matcher m = p.matcher(email);
+        return m.matches();
+    }
 
     private void query_user(final JSONObject jsonObject) {
         new Thread(new Runnable() {
@@ -204,8 +302,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
                 userdata = jsonRe.userData(wordjson);
                 if(userdata.size()!=0){
+                    IsUsername = false;
                     mHandler.obtainMessage(1).sendToTarget();
+                }else{
+                    IsUsername = true;
                 }
+
             }
         }).start();
     }
@@ -230,14 +332,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     break;
                 case 5:
                     confirm_warn.setVisibility(View.INVISIBLE);
-                    register_reg_btn.setEnabled(true);
                     break;
                 case 6:
                     confirm_warn.setVisibility(View.VISIBLE);
-                    register_reg_btn.setEnabled(false);
                     break;
                 case 7:
                     register_profile_photo.setImageBitmap((Bitmap)message.obj);
+                    break;
+                case 8:
+                    telephone_warn.setVisibility(View.VISIBLE);
+                    break;
+                case 9:
+                    telephone_warn.setVisibility(View.INVISIBLE);
+                    break;
+                case 10:
+                    email_warn.setVisibility(View.VISIBLE);
+                    break;
+                case 11:
+                    email_warn.setVisibility(View.INVISIBLE);
                     break;
             }
             return false;

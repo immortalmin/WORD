@@ -29,11 +29,11 @@
         <EditText
             android:id="@+id/word_meaning"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:background="#00000000"
             android:inputType="textMultiLine"
             android:gravity="left|top"
-            android:minLines="2"
+            android:maxLines="2"
             android:hint="输入单词意思"
             android:text="" />
 
@@ -62,11 +62,11 @@
         <EditText
             android:id="@+id/E_sentence"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="wrap_content"
             android:background="#00000000"
             android:inputType="textMultiLine"
             android:gravity="left|top"
-            android:minLines="3"
+            android:maxLines="3"
             android:hint="输入英文例句"
             android:text="" />
 
@@ -95,11 +95,11 @@
         <EditText
             android:id="@+id/C_translate"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="wrap_content"
             android:background="#00000000"
             android:inputType="textMultiLine"
             android:gravity="left|top"
-            android:minLines="3"
+            android:maxLines="3"
             android:hint="输入中文翻译"
             android:text="" />
 
