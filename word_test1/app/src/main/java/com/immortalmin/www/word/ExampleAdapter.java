@@ -12,13 +12,14 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.Message;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ExampleAdapter extends BaseAdapter {
 
-    List<HashMap<String,Object>> mdata;
+    ArrayList<HashMap<String,Object>> mdata;
     private LayoutInflater mInflater;//布局装载器对象
     private onItemListener mOnItemListener;
     private int mode = 0;//0 view,1 edit
@@ -26,7 +27,7 @@ public class ExampleAdapter extends BaseAdapter {
     private Button del_btn,edit_btn;
     private String username;
 
-    public ExampleAdapter(Context context, List<HashMap<String,Object>> data,int mode,String username) {
+    public ExampleAdapter(Context context, ArrayList<HashMap<String,Object>> data,int mode,String username) {
         this.mdata = data;
         this.mode = mode;
         this.username = username;
@@ -49,15 +50,6 @@ public class ExampleAdapter extends BaseAdapter {
             del_btn.setVisibility(View.INVISIBLE);
             edit_btn.setVisibility(View.INVISIBLE);
         }
-//        if(mode==0){
-//            del_btn.setVisibility(View.INVISIBLE);
-//            edit_btn.setVisibility(View.INVISIBLE);
-//        }else if(mdata.get(position).get("source").toString().equals(username)){
-//            Log.i("ccc",mdata.get(position).get("source").toString());
-//            Log.i("ccc",username);
-//            del_btn.setVisibility(View.VISIBLE);
-//            edit_btn.setVisibility(View.VISIBLE);
-//        }
         word_meaning.setText(mdata.get(position).get("word_meaning").toString());
         E_sentence.setText(mdata.get(position).get("E_sentence").toString());
         C_translate.setText(mdata.get(position).get("C_translate").toString());

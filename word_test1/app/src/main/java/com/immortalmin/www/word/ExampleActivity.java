@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     private MediaPlayer mediaPlayer;
     private JSONObject jsonObject;
     HashMap<String,Object> word = null;
-    List<HashMap<String,Object>> examplelist = null;
+    ArrayList<HashMap<String,Object>> examplelist = null;
     String wid = "1";
     String current_word="error";
     private String TAG = "ccc";
@@ -262,29 +263,30 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
                     if(examplelist.size() == 0){
                         non_example.setVisibility(View.VISIBLE);
-                        example_list.setVisibility(View.GONE);
-                    }
-                    exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode,userData.getUsername());
-                    example_list.setAdapter(exampleAdapter);
-                    exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
-                        @Override
-                        public void onDeleteClick(int i) {
-                            jsonObject = new JSONObject();
-                            try{
-                                jsonObject.put("id",examplelist.get(i).get("eid").toString());
-                            }catch (JSONException e){
-                                e.printStackTrace();
+                        example_list.setVisibility(View.INVISIBLE);
+                    }else{
+                        non_example.setVisibility(View.INVISIBLE);
+                        example_list.setVisibility(View.VISIBLE);
+                        exampleAdapter = new ExampleAdapter(ExampleActivity.this,examplelist,mode,userData.getUsername());
+                        example_list.setAdapter(exampleAdapter);
+                        exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
+                            @Override
+                            public void onDeleteClick(int i) {
+                                jsonObject = new JSONObject();
+                                try{
+                                    jsonObject.put("id",examplelist.get(i).get("eid").toString());
+                                }catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                                del_id=2;
+                                del_warning();
                             }
-                            del_id=2;
-                            del_warning();
-                        }
-                        @Override
-                        public void onEditClick(int i) {
-                            updateExampleDialog(examplelist.get(i));
-//                        Toast.makeText(ExampleActivity.this,"点击了编辑按钮",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
+                            @Override
+                            public void onEditClick(int i) {
+                                updateExampleDialog(examplelist.get(i));
+                            }
+                        });
+                    }
                     break;
                 case 1:
                     source.setText("");
@@ -323,7 +325,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     break;
             }
-
             return false;
         }
     });

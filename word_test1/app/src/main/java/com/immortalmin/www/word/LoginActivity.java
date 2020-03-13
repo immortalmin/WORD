@@ -173,9 +173,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         get_setting();
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                        LoginActivity.this.finish();
+                        mHandler.obtainMessage(1).sendToTarget();
                     }else{
                         Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                     }
@@ -189,10 +187,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
-            Log.i("ccc","照片不存在");
+//            Log.i("ccc","照片不存在");
             getImage(pic);
         }else{
-            Log.i("ccc","照片存在");
+//            Log.i("ccc","照片存在");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }
@@ -215,7 +213,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 case 0:
                     login_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
-
+                case 1:
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    LoginActivity.this.finish();
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    break;
             }
             return false;
         }

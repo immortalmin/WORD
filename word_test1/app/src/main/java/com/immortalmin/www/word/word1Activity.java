@@ -41,7 +41,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     ListView listView;
     TextView all_num,finished_num;
     Button add_btn;
-    List<Map<String,Object>> word_list=null;
+    List<HashMap<String,Object>> word_list=null;
     private WordListAdapter wordListAdapter = null;
     private boolean add_flag=false;
     @Override
@@ -92,9 +92,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getwordlist.php",jsonObject);
-                List<HashMap<String,Object>> wordlist = null;
-                wordlist = jsonRe.allwordData(recitejson);
-                mHandler.obtainMessage(0,wordlist).sendToTarget();
+                List<HashMap<String,Object>> wlist =jsonRe.allwordData(recitejson);
+                mHandler.obtainMessage(0,wlist).sendToTarget();
             }
         }).start();
     }
@@ -123,7 +122,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_list = (List<Map<String,Object>>)message.obj;
+                    word_list = (List<HashMap<String,Object>>)message.obj;
                     wordListAdapter = new WordListAdapter(word1Activity.this,word_list);
                     listView.setAdapter(wordListAdapter);
                     if(add_flag){

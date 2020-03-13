@@ -83,7 +83,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage(pic);
         }else{
-            Log.i("ccc","照片存在");
+//            Log.i("ccc","照片存在");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }

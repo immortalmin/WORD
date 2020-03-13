@@ -74,8 +74,8 @@ public class JsonRe {
         return word;
     }
 
-    public List<HashMap<String,Object>> exampleData(String jsonStr){
-        List<HashMap<String,Object>> exampleList = new ArrayList<>();
+    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
+        ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             for(int i=0;i<jsonArray.length();i++){

@@ -17,10 +17,10 @@ import java.util.Map;
 
 public class WordListAdapter extends BaseAdapter {
 
-    List<Map<String,Object>> mdata;
+    List<HashMap<String,Object>> mdata;
     private LayoutInflater mInflater;//布局装载器对象
 
-    public WordListAdapter(Context context, List<Map<String,Object>> data) {
+    public WordListAdapter(Context context, List<HashMap<String,Object>> data) {
         this.mdata = data;
         mInflater = LayoutInflater.from(context);
     }
