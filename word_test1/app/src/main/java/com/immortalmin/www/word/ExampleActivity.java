@@ -301,8 +301,10 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         ban_icon.setVisibility(View.VISIBLE);
                     }
                     collect.setVisibility(View.INVISIBLE);
-                    exampleAdapter.setMode(1);
-                    exampleAdapter.notifyDataSetChanged();
+                    if(examplelist.size()>0){
+                        exampleAdapter.setMode(1);
+                        exampleAdapter.notifyDataSetChanged();
+                    }
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
                     break;
                 case 3:
@@ -310,8 +312,10 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     word_edit_btn.setVisibility(View.INVISIBLE);
                     ban_icon.setVisibility(View.INVISIBLE);
                     collect.setVisibility(View.VISIBLE);
-                    exampleAdapter.setMode(0);
-                    exampleAdapter.notifyDataSetChanged();
+                    if(examplelist.size()>0){
+                        exampleAdapter.setMode(0);
+                        exampleAdapter.notifyDataSetChanged();
+                    }
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
                     break;
                 case 4:

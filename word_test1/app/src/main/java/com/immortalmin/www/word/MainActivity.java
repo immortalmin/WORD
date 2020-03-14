@@ -19,13 +19,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BitmapTransformation;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * 主界面
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
     EditText editText;
     SearchView search_bar;
+    private RelativeLayout main_relative;
     WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_test = (Button)findViewById(R.id.btn_test);
         search_bar = (SearchView) findViewById(R.id.search_bar);
         profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
+        main_relative = (RelativeLayout)findViewById(R.id.main_relative);
         btn_wordlist.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_test.setOnClickListener(this);
@@ -64,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        search1.setOnClickListener(this);
         search_bar.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
+
+
+
 
         search_bar.setOnSearchClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         registerReceiver(closeReceiver, intentFilter);
 
         init();
+        //高斯模糊
+        mHandler.obtainMessage(1).sendToTarget();
     }
 
     private void init() {
@@ -124,6 +138,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (message.what){
                 case 0:
                     profile_photo.setImageBitmap((Bitmap)message.obj);
+                    break;
+                case 1:
+                    Glide.with(MainActivity.this).load(R.drawable.unload)
+                            .apply(bitmapTransform(new BlurTransformation(50)))
+                            .into(profile_photo);
                     break;
             }
             return false;

@@ -2,11 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="#1f2229"
+    android:background="@drawable/main_img"
     tools:context=".MainActivity">
     <!--#1f2229-->
 
@@ -33,7 +34,7 @@
         android:layout_marginRight="60dp"
         android:layout_marginLeft="60dp"
         android:queryHint="输入你要查询的词组"
-        android:background="@drawable/rounded_corners_gray"
+        android:background="@drawable/main_button"
         />
 
     <RelativeLayout
@@ -47,10 +48,10 @@
             android:id="@+id/btn_wordlist"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/hacker_01"
+            android:background="@drawable/main_button"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:text="" />
+            android:textColor="#f1e4e4"
+            android:text="单词\n列表" />
 
 
         <Button
@@ -58,36 +59,36 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_toRightOf="@+id/btn_wordlist"
-            android:background="@drawable/hacker_02"
+            android:background="@drawable/main_button"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:layout_marginLeft="5dp"
-            android:text="" />
+            android:textColor="#f1e4e4"
+            android:layout_marginLeft="10dp"
+            android:text="开始\n背诵" />
 
         <Button
             android:id="@+id/btn_spell"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/hacker_03"
+            android:background="@drawable/main_button"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="#f1e4e4"
             android:layout_below="@+id/btn_wordlist"
-            android:layout_marginTop="5dp"
-            android:text="" />
+            android:layout_marginTop="10dp"
+            android:text="TEST\nONE" />
 
         <Button
             android:id="@+id/btn_test"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/hacker_04"
+            android:background="@drawable/main_button"
             android:alpha="1"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:textColor="#f1e4e4"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/btn_recite"
             android:layout_toRightOf="@+id/btn_spell"
-            android:text="" />
+            android:text="TEST\nTWO" />
 
     </RelativeLayout>
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private JsonRe jsonRe = new JsonRe();
     private ImageUtils imageUtils = new ImageUtils();
     private Intent intent;
+    private Runnable toMain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +60,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void init() {
+        toMain = new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                LoginActivity.this.finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            }
+        };
         login_username_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -124,9 +134,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 userdata = jsonRe.userData(wordjson);
                 if(userdata.size()!=0){
                     setImage(userdata.get("profile_photo").toString());
+                }else{
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unload);
+                    mHandler.obtainMessage(0,bitmap).sendToTarget();
                 }
-
-//                mHandler.obtainMessage(0).sendToTarget();
             }
         }).start();
 
@@ -206,6 +217,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }).start();
     }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -214,9 +226,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     login_profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
                 case 1:
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    LoginActivity.this.finish();
-                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//                    LoginActivity.this.finish();
+//                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    mHandler.postDelayed(toMain,1000);
                     break;
             }
             return false;
