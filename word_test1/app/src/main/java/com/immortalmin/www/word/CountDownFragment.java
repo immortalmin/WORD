@@ -152,6 +152,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
+            Log.i("ccc",e.toString());
         }
     }
 
@@ -173,7 +174,14 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
      */
     public void onClick(View view){
         //judge whether button is clicking or music is playing
+//        if(!living_flag){
+//            return ;
+//        }
+//        if(mediaPlayer.isPlaying()){
+//            mediaPlayer.release();
+//        }
         if(!living_flag||mediaPlayer.isPlaying()){
+//            mediaPlayer.release();
             return;
         }
         living_flag = false;

@@ -327,7 +327,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
             mListener.selectonFragmentInteraction(res);
         }
     }
-    public void update_options(HashMap<String,Object>words){
+    public void update_options(HashMap<String,Object> words){
         living_flag = true;//激活按钮
         word_list = words;
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
