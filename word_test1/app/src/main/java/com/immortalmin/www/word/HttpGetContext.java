@@ -263,6 +263,8 @@ public class HttpGetContext {
                         .addFormDataPart("username",jsonObject.getString("username"))
                         .addFormDataPart("pwd",jsonObject.getString("pwd"))
                         .addFormDataPart("img_flag","1")
+                        .addFormDataPart("telephone",jsonObject.getString("telephone"))
+                        .addFormDataPart("email",jsonObject.getString("email"))
                         .build();
             }
             Request request = new Request.Builder()
