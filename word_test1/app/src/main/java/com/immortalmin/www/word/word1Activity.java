@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,9 +39,11 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         AddWordDialog.OnDialogInteractionListener {
 
     JsonRe  jsonRe;
+    private BlurImageView blurImageView = new BlurImageView();
     ListView listView;
     TextView all_num,finished_num;
     Button add_btn;
+    private RelativeLayout main_relative;
     List<HashMap<String,Object>> word_list=null;
     private WordListAdapter wordListAdapter = null;
     private boolean add_flag=false;
@@ -52,7 +55,9 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         all_num = (TextView)findViewById(R.id.all_num);
         finished_num = (TextView)findViewById(R.id.finished_num);
         add_btn = (Button)findViewById(R.id.add_btn);
+        main_relative = (RelativeLayout)findViewById(R.id.main_relative);
         add_btn.setOnClickListener(this);
+        finished_num.setOnClickListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -74,6 +79,9 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()){
             case R.id.add_btn:
                 showDialog();
+                break;
+            case R.id.finished_num:
+                mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
     }
@@ -135,16 +143,20 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     all_num.setText(count.get("sum").toString());
                     finished_num.setText(count.get("prof_count").toString());
                     break;
+                case 2:
+                    main_relative.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.addword_background));
+                    break;
             }
             return false;
         }
     });
 
     private void showDialog(){
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.alpha = 0.5f;
-        getWindow().setAttributes(lp);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//        WindowManager.LayoutParams lp = getWindow().getAttributes();
+//        lp.alpha = 0.5f;
+//        getWindow().setAttributes(lp);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
         AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
         addWordDialog.show();
         addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {

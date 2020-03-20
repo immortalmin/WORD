@@ -2,9 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
+    android:maxHeight="500dp"
     android:background="@drawable/worddialog_round_corners"
     android:orientation="vertical"
     >
+
 
     <TextView
         android:id="@+id/tv1"

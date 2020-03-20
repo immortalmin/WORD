@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -39,10 +41,12 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    JsonRe jsonRe;
+    private JsonRe jsonRe;
+    private BlurImageView blurImageView = new BlurImageView();
     private Context context;
     List<Map<String,Object>> word_list=null;
     Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
+    private ImageView imgview;
     EditText editText;
     SearchView search_bar;
     private RelativeLayout main_relative;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         search_bar = (SearchView) findViewById(R.id.search_bar);
         profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         main_relative = (RelativeLayout)findViewById(R.id.main_relative);
+        imgview = (ImageView)findViewById(R.id.imgview);
         btn_wordlist.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_test.setOnClickListener(this);
@@ -140,14 +145,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
                 case 1:
-                    Glide.with(MainActivity.this).load(R.drawable.unload)
-                            .apply(bitmapTransform(new BlurTransformation(50)))
-                            .into(profile_photo);
+//                    Glide.with(MainActivity.this).load(R.drawable.main_img)
+//                            .apply(bitmapTransform(new BlurTransformation(50)))
+//                            .into(imgview);
+                    main_relative.setBackground(blurImageView.BoxBlurFilter(MainActivity.this,R.drawable.main_img));
                     break;
             }
             return false;
         }
     });
+
+    /**
+     * 截屏
+     * @param activity
+     * @return
+     */
+    public static Bitmap capture(Activity activity) {
+        activity.getWindow().getDecorView().setDrawingCacheEnabled(true);
+        Bitmap bmp = activity.getWindow().getDecorView().getDrawingCache();
+        return bmp;
+    }
+
 
     /**
      * 实现Activity的广播接收

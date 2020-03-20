@@ -3,9 +3,12 @@ package com.immortalmin.www.word;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -17,11 +20,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +35,10 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class AddWordDialog extends Dialog implements View.OnClickListener{
 
@@ -78,6 +88,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         Arrays.fill(del_flag,true);
         add_view();
     }
+
 
     public interface OnDialogInteractionListener {
         // TODO: Update argument type and name
