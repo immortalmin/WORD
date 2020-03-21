@@ -211,7 +211,12 @@
             android:text="暂无例句" />
     </RelativeLayout>
 
-
+    <ImageView
+        android:id="@+id/backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:background="@drawable/example_background"/>
 
 
 

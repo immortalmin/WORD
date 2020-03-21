@@ -17,10 +17,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +39,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * 点击单词后进入单词例句
@@ -52,6 +58,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     ListView example_list;
     Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
     JsonRe  jsonRe;
+    private ImageView backdrop;
     private ExampleAdapter exampleAdapter;
     private MediaPlayer mediaPlayer;
     private JSONObject jsonObject;
@@ -84,6 +91,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         edit_btn = (Button)findViewById(R.id.edit_btn);
         collect = (Button)findViewById(R.id.collect);
         ban_icon = (Button)findViewById(R.id.ban_icon);
+        backdrop = (ImageView)findViewById(R.id.backdrop);
         btn1.setOnClickListener(this);
         word_del_btn.setOnClickListener(this);
         word_edit_btn.setOnClickListener(this);
@@ -92,6 +100,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         word_group.setOnClickListener(this);
         example.setOnClickListener(this);
         mHandler.obtainMessage(1).sendToTarget();
+        mHandler.obtainMessage(7).sendToTarget();
         jsonRe=new JsonRe();
         first_coming = true;
         Intent intent = getIntent();
@@ -156,6 +165,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 update_collect();
                 break;
             case R.id.example:
+                mHandler.obtainMessage(5).sendToTarget();
                 addExampleDialog();
                 break;
             case R.id.word_del_btn:
@@ -163,6 +173,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 del_warning();
                 break;
             case R.id.word_edit_btn:
+                mHandler.obtainMessage(5).sendToTarget();
                 updateWordDialog(word);
                 break;
             case R.id.edit_btn:
@@ -328,6 +339,17 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                         e.printStackTrace();
                     }
                     break;
+                case 5:
+//                    imgview.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.main_img));
+                    backdrop.setVisibility(View.VISIBLE);
+                    break;
+                case 6:
+                    backdrop.setVisibility(View.INVISIBLE);
+                    break;
+                case 7:
+                    Glide.with(ExampleActivity.this).load(R.drawable.example_background)
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
+                    break;
             }
             return false;
         }
@@ -344,16 +366,34 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }
         AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,jsonObject);
         addExampleDialog.show();
+        addExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mHandler.obtainMessage(6).sendToTarget();
+            }
+        });
     }
 
     private void updateWordDialog(HashMap<String,Object> data){
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
+        updateWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mHandler.obtainMessage(6).sendToTarget();
+            }
+        });
     }
 
     private void updateExampleDialog(HashMap<String,Object> data){
         UpdateExampleDialog updateExampleDialog = new UpdateExampleDialog(this,R.style.MyDialog,data);
         updateExampleDialog.show();
+        updateExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mHandler.obtainMessage(6).sendToTarget();
+            }
+        });
     }
 
     /**
@@ -387,6 +427,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 @Override
                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                     sweetAlertDialog.cancel();
+//                    mHandler.obtainMessage(6).sendToTarget();
                 }
             })
             .show();

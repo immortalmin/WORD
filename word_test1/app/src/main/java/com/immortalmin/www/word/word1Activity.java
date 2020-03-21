@@ -1,10 +1,12 @@
 package com.immortalmin.www.word;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -24,6 +26,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * 获取单词列表
@@ -41,6 +49,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     JsonRe  jsonRe;
     private BlurImageView blurImageView = new BlurImageView();
     ListView listView;
+    private ImageView imgview;
     TextView all_num,finished_num;
     Button add_btn;
     private RelativeLayout main_relative;
@@ -56,6 +65,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         finished_num = (TextView)findViewById(R.id.finished_num);
         add_btn = (Button)findViewById(R.id.add_btn);
         main_relative = (RelativeLayout)findViewById(R.id.main_relative);
+        imgview = (ImageView)findViewById(R.id.imgview);
         add_btn.setOnClickListener(this);
         finished_num.setOnClickListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,7 +82,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         getwordlist();
         get_amount();
         jsonRe=new JsonRe();
-
+        mHandler.obtainMessage(4).sendToTarget();
     }
 
     public void onClick(View view) {
@@ -81,10 +91,12 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 showDialog();
                 break;
             case R.id.finished_num:
+                Log.i("ccc","finished_num");
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
     }
+
 
     private void getwordlist()
     {
@@ -144,7 +156,15 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     finished_num.setText(count.get("prof_count").toString());
                     break;
                 case 2:
-                    main_relative.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.addword_background));
+//                    imgview.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.main_img));
+                    imgview.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    imgview.setVisibility(View.INVISIBLE);
+                    break;
+                case 4:
+                    Glide.with(word1Activity.this).load(R.drawable.addword_background)
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
                     break;
             }
             return false;
@@ -156,16 +176,17 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
 //        lp.alpha = 0.5f;
 //        getWindow().setAttributes(lp);
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
+        mHandler.obtainMessage(2).sendToTarget();
         AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
         addWordDialog.show();
         addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                WindowManager.LayoutParams lp = getWindow().getAttributes();
-                lp.alpha = 1.0f;
-                getWindow().setAttributes(lp);
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//                WindowManager.LayoutParams lp = getWindow().getAttributes();
+//                lp.alpha = 1.0f;
+//                getWindow().setAttributes(lp);
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                mHandler.obtainMessage(3).sendToTarget();
             }
         });
     }
@@ -196,6 +217,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void addWordInteraction(JSONObject jsonObject){
+
         add_flag=true;
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
         try{

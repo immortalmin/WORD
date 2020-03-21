@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
@@ -15,9 +17,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -107,7 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         init();
         //高斯模糊
-        mHandler.obtainMessage(1).sendToTarget();
+//        mHandler.obtainMessage(1).sendToTarget();
+//        mHandler.obtainMessage(2).sendToTarget();
     }
 
     private void init() {
@@ -148,23 +153,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    Glide.with(MainActivity.this).load(R.drawable.main_img)
 //                            .apply(bitmapTransform(new BlurTransformation(50)))
 //                            .into(imgview);
-                    main_relative.setBackground(blurImageView.BoxBlurFilter(MainActivity.this,R.drawable.main_img));
+//                    main_relative.setBackground(blurImageView.BoxBlurFilter(MainActivity.this,R.drawable.main_img));
+                    break;
+                case 2:
+
                     break;
             }
             return false;
         }
     });
 
-    /**
-     * 截屏
-     * @param activity
-     * @return
-     */
-    public static Bitmap capture(Activity activity) {
-        activity.getWindow().getDecorView().setDrawingCacheEnabled(true);
-        Bitmap bmp = activity.getWindow().getDecorView().getDrawingCache();
-        return bmp;
-    }
+
 
 
     /**
