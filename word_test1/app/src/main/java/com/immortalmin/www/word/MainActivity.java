@@ -12,7 +12,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -160,42 +163,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
-    /**
-     * 获取底部导航栏的高度
-     * @return
-     */
-    private int getNavigationBarHeight() {
-        Resources resources = MainActivity.this.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height","dimen", "android");
-        int height = resources.getDimensionPixelSize(resourceId);
-        Log.i("ccc", "Navi height:" + height);
-        return height;
-    }
-
-    //获取是否存在NavigationBar
-    public static boolean checkDeviceHasNavigationBar(Context context) {
-        boolean hasNavigationBar = false;
-        Resources rs = context.getResources();
-        int id = rs.getIdentifier("config_showNavigationBar", "bool", "android");
-        if (id > 0) {
-            hasNavigationBar = rs.getBoolean(id);
-        }
-        try {
-            Class systemPropertiesClass = Class.forName("android.os.SystemProperties");
-            Method m = systemPropertiesClass.getMethod("get", String.class);
-            String navBarOverride = (String) m.invoke(systemPropertiesClass, "qemu.hw.mainkeys");
-            if ("1".equals(navBarOverride)) {
-                hasNavigationBar = false;
-            } else if ("0".equals(navBarOverride)) {
-                hasNavigationBar = true;
-            }
-        } catch (Exception e) {
-
-        }
-        return hasNavigationBar;
-
-    }
-
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -204,21 +171,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
                 case 1:
-//                    ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
-//                    btn_wordlist.setBackground(new BitmapDrawable(bitmaps.get(0)));
-//                    btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
-//                    btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
-//                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(3)));
-                    ArrayList<Drawable> drawables = (ArrayList<Drawable>) message.obj;
-                    btn_wordlist.setBackground(drawables.get(0));
-                    btn_recite.setBackground(drawables.get(1));
-                    btn_spell.setBackground(drawables.get(2));
-                    btn_test.setBackground(drawables.get(3));
+                    ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
+                    btn_wordlist.setBackground(new BitmapDrawable(bitmaps.get(0)));
+                    btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
+                    btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
+                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(3)));
+//                    ArrayList<Drawable> drawables = (ArrayList<Drawable>) message.obj;
+//                    btn_wordlist.setBackground(drawables.get(0));
+//                    btn_recite.setBackground(drawables.get(1));
+//                    btn_spell.setBackground(drawables.get(2));
+//                    btn_test.setBackground(drawables.get(3));
                     break;
                 case 2:
                     Resources res = getResources();
                     Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.main_img);
                     cropBitmap(bmp);
+                    break;
+                case 3:
+                    Resources res2 = getResources();
+                    Bitmap bmp2 = BitmapFactory.decodeResource(res2, R.drawable.main_img);
+                    imgview.setImageBitmap(getRoundedCornerBitmap(bmp2,500));
                     break;
             }
             return false;
@@ -247,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-//                mHandler.obtainMessage(2).sendToTarget();
+                mHandler.obtainMessage(3).sendToTarget();
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);
@@ -284,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Double ratio = w/Double.valueOf(screen_width);
 //        int btn_h = btn_wordlist.getHeight();
 //        int btn_w = btn_wordlist.getWidth();
-        int btn_h = 200;
-        int btn_w = 200;
+        int btn_h = 220;
+        int btn_w = 220;
         //half margin
         int MarginAndBtn_h = (int)((btn_h+15)*ratio);
         int MarginAndBtn_w = (int)((btn_w+15)*ratio);
@@ -296,18 +268,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap bitmap2 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap4 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2+justMargin,justBtn_w, justBtn_h, null, false);
-//        ArrayList<Bitmap> bitmaps = new ArrayList<>();
-//        bitmaps.add(bitmap1);
-//        bitmaps.add(bitmap2);
-//        bitmaps.add(bitmap3);
-//        bitmaps.add(bitmap4);
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap1),80));
+        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap2),80));
+        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap3),80));
+        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap4),80));
 
-        ArrayList<Drawable> drawables = new ArrayList<>();
-        drawables.add(blurImageView.BoxBlurFilter(bitmap1));
-        drawables.add(blurImageView.BoxBlurFilter(bitmap2));
-        drawables.add(blurImageView.BoxBlurFilter(bitmap3));
-        drawables.add(blurImageView.BoxBlurFilter(bitmap4));
-        mHandler.obtainMessage(1,drawables).sendToTarget();
+//        ArrayList<Drawable> drawables = new ArrayList<>();
+//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap1,100)));
+//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap2,100)));
+//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap3,100)));
+//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap4,100)));
+        mHandler.obtainMessage(1,bitmaps).sendToTarget();
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap,float roundPx){
+
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 
     /**

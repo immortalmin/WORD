@@ -47,8 +47,8 @@
 
         <Button
             android:id="@+id/btn_wordlist"
-            android:layout_width="200px"
-            android:layout_height="200px"
+            android:layout_width="220px"
+            android:layout_height="220px"
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
@@ -57,8 +57,8 @@
 
         <Button
             android:id="@+id/btn_recite"
-            android:layout_width="200px"
-            android:layout_height="200px"
+            android:layout_width="220px"
+            android:layout_height="220px"
             android:layout_toRightOf="@+id/btn_wordlist"
             android:background="#000000"
             android:textStyle="bold"
@@ -68,8 +68,8 @@
 
         <Button
             android:id="@+id/btn_spell"
-            android:layout_width="200px"
-            android:layout_height="200px"
+            android:layout_width="220px"
+            android:layout_height="220px"
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
@@ -79,8 +79,8 @@
 
         <Button
             android:id="@+id/btn_test"
-            android:layout_width="200px"
-            android:layout_height="200px"
+            android:layout_width="220px"
+            android:layout_height="220px"
             android:background="#000000"
             android:alpha="1"
             android:textStyle="bold"

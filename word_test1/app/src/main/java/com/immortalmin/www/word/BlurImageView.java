@@ -20,7 +20,7 @@ public class BlurImageView {
      * @param bmp:bitmap参数
      * @return
      */
-    public static Drawable BoxBlurFilter(Bitmap bmp) {
+    public static Bitmap BoxBlurFilter(Bitmap bmp) {
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         int[] inPixels = new int[width * height];
@@ -34,8 +34,8 @@ public class BlurImageView {
         blurFractional(inPixels, outPixels, width, height, HRADIUS);
         blurFractional(outPixels, inPixels, height, width, VRADIUS);
         bitmap.setPixels(inPixels, 0, width, 0, 0, width, height);
-        Drawable drawable = new BitmapDrawable(bitmap);
-        return drawable;
+//        Drawable drawable = new BitmapDrawable(bitmap);
+        return bitmap;
     }
 
     /**
@@ -67,7 +67,7 @@ public class BlurImageView {
      * @param context:上下文
      * @param res:资源id
      */
-    public static Drawable BoxBlurFilter(Context context, int res) {
+    public static Bitmap BoxBlurFilter(Context context, int res) {
         Bitmap bmp= BitmapFactory.decodeResource(context.getResources(), res);
         return BoxBlurFilter(bmp);
     }
@@ -77,7 +77,7 @@ public class BlurImageView {
      * @param drawable
      * @return
      */
-    public static Drawable BoxBlurFilter(Drawable drawable) {
+    public static Bitmap BoxBlurFilter(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
         return BoxBlurFilter(bitmap);
     }
