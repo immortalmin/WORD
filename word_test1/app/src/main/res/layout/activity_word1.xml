@@ -115,6 +115,5 @@
         android:id="@+id/imgview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="@drawable/addword_background"/>
+        android:visibility="invisible"/>
 </RelativeLayout>

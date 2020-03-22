@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -100,7 +102,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         word_group.setOnClickListener(this);
         example.setOnClickListener(this);
         mHandler.obtainMessage(1).sendToTarget();
-        mHandler.obtainMessage(7).sendToTarget();
         jsonRe=new JsonRe();
         first_coming = true;
         Intent intent = getIntent();
@@ -165,7 +166,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 update_collect();
                 break;
             case R.id.example:
-                mHandler.obtainMessage(5).sendToTarget();
                 addExampleDialog();
                 break;
             case R.id.word_del_btn:
@@ -173,7 +173,6 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 del_warning();
                 break;
             case R.id.word_edit_btn:
-                mHandler.obtainMessage(5).sendToTarget();
                 updateWordDialog(word);
                 break;
             case R.id.edit_btn:
@@ -340,15 +339,15 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     break;
                 case 5:
-//                    imgview.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.main_img));
+                    Glide.with(ExampleActivity.this).load(getcapture())
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
                     backdrop.setVisibility(View.VISIBLE);
                     break;
                 case 6:
                     backdrop.setVisibility(View.INVISIBLE);
                     break;
                 case 7:
-                    Glide.with(ExampleActivity.this).load(R.drawable.example_background)
-                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
+
                     break;
             }
             return false;
@@ -357,6 +356,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void addExampleDialog(){
+        mHandler.obtainMessage(5).sendToTarget();
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",wid);
@@ -375,6 +375,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void updateWordDialog(HashMap<String,Object> data){
+        mHandler.obtainMessage(5).sendToTarget();
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
         updateWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -386,6 +387,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void updateExampleDialog(HashMap<String,Object> data){
+        mHandler.obtainMessage(5).sendToTarget();
         UpdateExampleDialog updateExampleDialog = new UpdateExampleDialog(this,R.style.MyDialog,data);
         updateExampleDialog.show();
         updateExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -400,6 +402,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
      * 删除警告
      */
     private void del_warning(){
+        mHandler.obtainMessage(5).sendToTarget();
         new SweetAlertDialog(ExampleActivity.this, SweetAlertDialog.WARNING_TYPE)
             .setTitleText("Really?")
             .setContentText("Data will be permanently deleted.")
@@ -427,7 +430,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 @Override
                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                     sweetAlertDialog.cancel();
-//                    mHandler.obtainMessage(6).sendToTarget();
+                    mHandler.obtainMessage(6).sendToTarget();
                 }
             })
             .show();
@@ -473,6 +476,31 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
             }
         }).start();
         getwordlist();
+    }
+
+    /**
+     * 截屏
+     * @return
+     */
+    private Bitmap getcapture(){
+        View view = getWindow().getDecorView();     // 获取DecorView
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ExampleActivity.this), getScreenHeight(ExampleActivity.this), null, false);
+        return bitmap;
+    }
+
+    //获取屏幕高度 不包含虚拟按键=
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
+    }
+
+    //获取屏幕宽度
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
     }
 
     @Override

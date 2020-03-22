@@ -43,7 +43,7 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class AddWordDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
-    private Button commit_btn,cancel_btn;
+    private Button commit_btn,cancel_btn,first_add_btn;
     private EditText word_group,C_meaning;
     private TextView tv2;
     private OnDialogInteractionListener listener;
@@ -55,6 +55,8 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private Button[] add_btn = new Button[100];
     private int index=0;
     private boolean[] del_flag = new boolean[100];
+    private int sum=0;//统计例句的数量
+
     public AddWordDialog(Context context) {
         super(context);
         this.context=context;
@@ -79,10 +81,13 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         C_meaning = (EditText)view.findViewById(R.id.C_meaning);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
+        first_add_btn = (Button)view.findViewById(R.id.first_add_btn);
         example_layout = (LinearLayout) view.findViewById(R.id.example_layout);
         tv2 = (TextView)view.findViewById(R.id.tv2);
+
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
+        first_add_btn.setOnClickListener(this);
         tv2.setOnClickListener(this);
         setContentView(view);
         Arrays.fill(del_flag,true);
@@ -108,13 +113,33 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             case R.id.tv2:
                 add_view();
                 break;
+            case R.id.first_add_btn:
+                add_view();
+                mHandler.obtainMessage(0).sendToTarget();
+                break;
             default:
                 dismiss();
         }
 
     }
 
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what) {
+                case 0:
+                    first_add_btn.setVisibility(View.INVISIBLE);
+                    break;
+                case 1:
+                    first_add_btn.setVisibility(View.VISIBLE);
+                    break;
+            }
+            return false;
+        }
+    });
+
     private void add_view(){
+        sum++;
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
         for(int i=0;i<3;i++){
             // 1.创建外围LinearLayout控件
@@ -145,21 +170,20 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             word_layout[index][i].addView(word[index][i]);
             example_layout.addView(word_layout[index][i]);
         }
+        //按钮
         btn_layout[index] = new RelativeLayout(context);
         LinearLayout.LayoutParams btn_layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         btn_layout[index].setLayoutParams(btn_layoutParams);
-
         del_btn[index] = new Button(context);
         RelativeLayout.LayoutParams del_btn_Params = new RelativeLayout.LayoutParams(
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())),
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())));
-//        add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0,
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, context.getResources().getDisplayMetrics())), 0);
-        del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics())), 0,
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0);
+        del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         del_btn[index].setLayoutParams(del_btn_Params);
         del_btn[index].setPadding(0,0,0,0);
         del_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
@@ -197,6 +221,10 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 example_layout.removeView(word_layout[ind][1]);
                 example_layout.removeView(word_layout[ind][2]);
                 example_layout.removeView(btn_layout[ind]);
+                sum--;
+                if(sum==0){
+                    mHandler.obtainMessage(1).sendToTarget();
+                }
             }
         });
         btn_layout[index].addView(add_btn[index]);

@@ -7,8 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
@@ -31,6 +40,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,12 +71,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DBAdapter dbAdapter;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
+    private int screen_width,screen_height;
     Intent intent;
     Boolean flag=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        screen_width = metric.widthPixels;     // 屏幕宽度（像素）
+        screen_height = metric.heightPixels;   // 屏幕高度（像素）
         context = this;
         btn_wordlist = (Button)findViewById(R.id.btn_wordlist);
         btn_recite = (Button)findViewById(R.id.btn_recite);
@@ -82,14 +98,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        search1.setOnClickListener(this);
         search_bar.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
-
-
-
-
         search_bar.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ccc","clicked");
                 intent = new Intent(MainActivity.this,SearchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
@@ -111,8 +122,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         init();
         //高斯模糊
-//        mHandler.obtainMessage(1).sendToTarget();
-//        mHandler.obtainMessage(2).sendToTarget();
+        mHandler.obtainMessage(2).sendToTarget();
+
+//        if(checkDeviceHasNavigationBar(this)){
+//            Log.i("ccc","exist");
+//            getNavigationBarHeight();
+//        }else{
+//            Log.i("ccc","not exist");
+//        }
+
     }
 
     private void init() {
@@ -142,6 +160,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+    /**
+     * 获取底部导航栏的高度
+     * @return
+     */
+    private int getNavigationBarHeight() {
+        Resources resources = MainActivity.this.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height","dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        Log.i("ccc", "Navi height:" + height);
+        return height;
+    }
+
+    //获取是否存在NavigationBar
+    public static boolean checkDeviceHasNavigationBar(Context context) {
+        boolean hasNavigationBar = false;
+        Resources rs = context.getResources();
+        int id = rs.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (id > 0) {
+            hasNavigationBar = rs.getBoolean(id);
+        }
+        try {
+            Class systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            Method m = systemPropertiesClass.getMethod("get", String.class);
+            String navBarOverride = (String) m.invoke(systemPropertiesClass, "qemu.hw.mainkeys");
+            if ("1".equals(navBarOverride)) {
+                hasNavigationBar = false;
+            } else if ("0".equals(navBarOverride)) {
+                hasNavigationBar = true;
+            }
+        } catch (Exception e) {
+
+        }
+        return hasNavigationBar;
+
+    }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -150,13 +204,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     profile_photo.setImageBitmap((Bitmap)message.obj);
                     break;
                 case 1:
-//                    Glide.with(MainActivity.this).load(R.drawable.main_img)
-//                            .apply(bitmapTransform(new BlurTransformation(50)))
-//                            .into(imgview);
-//                    main_relative.setBackground(blurImageView.BoxBlurFilter(MainActivity.this,R.drawable.main_img));
+//                    ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
+//                    btn_wordlist.setBackground(new BitmapDrawable(bitmaps.get(0)));
+//                    btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
+//                    btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
+//                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(3)));
+                    ArrayList<Drawable> drawables = (ArrayList<Drawable>) message.obj;
+                    btn_wordlist.setBackground(drawables.get(0));
+                    btn_recite.setBackground(drawables.get(1));
+                    btn_spell.setBackground(drawables.get(2));
+                    btn_test.setBackground(drawables.get(3));
                     break;
                 case 2:
-
+                    Resources res = getResources();
+                    Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.main_img);
+                    cropBitmap(bmp);
                     break;
             }
             return false;
@@ -185,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-
+//                mHandler.obtainMessage(2).sendToTarget();
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);
@@ -209,6 +271,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                 break;
         }
+    }
+
+    /**
+     * 图片裁剪
+     * @param bitmap
+     * @return
+     */
+    private void cropBitmap(Bitmap bitmap) {
+        int w = bitmap.getWidth(); // 得到图片的宽，高
+        int h = bitmap.getHeight();
+        Double ratio = w/Double.valueOf(screen_width);
+//        int btn_h = btn_wordlist.getHeight();
+//        int btn_w = btn_wordlist.getWidth();
+        int btn_h = 200;
+        int btn_w = 200;
+        //half margin
+        int MarginAndBtn_h = (int)((btn_h+15)*ratio);
+        int MarginAndBtn_w = (int)((btn_w+15)*ratio);
+        int justMargin = (int)(15*ratio);
+        int justBtn_h = (int)(btn_h*ratio);
+        int justBtn_w = (int)(btn_w*ratio);
+        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
+        Bitmap bitmap2 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
+        Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);
+        Bitmap bitmap4 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2+justMargin,justBtn_w, justBtn_h, null, false);
+//        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+//        bitmaps.add(bitmap1);
+//        bitmaps.add(bitmap2);
+//        bitmaps.add(bitmap3);
+//        bitmaps.add(bitmap4);
+
+        ArrayList<Drawable> drawables = new ArrayList<>();
+        drawables.add(blurImageView.BoxBlurFilter(bitmap1));
+        drawables.add(blurImageView.BoxBlurFilter(bitmap2));
+        drawables.add(blurImageView.BoxBlurFilter(bitmap3));
+        drawables.add(blurImageView.BoxBlurFilter(bitmap4));
+        mHandler.obtainMessage(1,drawables).sendToTarget();
+    }
+
+    /**
+     * 设置圆角
+     * @param source
+     * @return
+     */
+    public Bitmap transform(Bitmap source) {
+        int size = Math.min(source.getWidth(), source.getHeight());
+
+        int x = (source.getWidth() - size) / 2;
+        int y = (source.getHeight() - size) / 2;
+
+        Bitmap squaredBitmap = Bitmap.createBitmap(source, x, y, size, size);
+        if (squaredBitmap != source) {
+            source.recycle();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP , BitmapShader.TileMode.CLAMP ));
+        paint.setAntiAlias(true);
+//        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+//        paint.setShader(shader);
+//        paint.setAntiAlias(true);
+
+        float r = size/2f;
+        float r2 = size/1.8f;
+//        canvas.drawCircle(r, r, r, paint);
+        RectF rect = new RectF(0f, 0f, source.getWidth(), source.getHeight());
+        canvas.drawRoundRect(rect,100f,100f,paint);
+
+        squaredBitmap.recycle();
+        return bitmap;
     }
 
 

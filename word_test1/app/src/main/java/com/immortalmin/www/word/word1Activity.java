@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Handler;
@@ -12,7 +13,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +34,7 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +60,15 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     List<HashMap<String,Object>> word_list=null;
     private WordListAdapter wordListAdapter = null;
     private boolean add_flag=false;
+    private int screen_width,screen_height;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word1);
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        screen_width = metric.widthPixels;     // 屏幕宽度（像素）
+        screen_height = metric.heightPixels;   // 屏幕高度（像素）
         listView=(ListView)findViewById(R.id.ListView1);
         all_num = (TextView)findViewById(R.id.all_num);
         finished_num = (TextView)findViewById(R.id.finished_num);
@@ -78,11 +87,10 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         });
-
         getwordlist();
         get_amount();
         jsonRe=new JsonRe();
-        mHandler.obtainMessage(4).sendToTarget();
+
     }
 
     public void onClick(View view) {
@@ -156,20 +164,44 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     finished_num.setText(count.get("prof_count").toString());
                     break;
                 case 2:
-//                    imgview.setBackground(blurImageView.BoxBlurFilter(word1Activity.this,R.drawable.main_img));
+                    Glide.with(word1Activity.this).load(getcapture())
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
                     imgview.setVisibility(View.VISIBLE);
                     break;
                 case 3:
                     imgview.setVisibility(View.INVISIBLE);
                     break;
                 case 4:
-                    Glide.with(word1Activity.this).load(R.drawable.addword_background)
-                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
                     break;
             }
             return false;
         }
     });
+
+    /**
+     * 截屏
+     * @return
+     */
+    private Bitmap getcapture(){
+        View view = getWindow().getDecorView();     // 获取DecorView
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(word1Activity.this), getScreenHeight(word1Activity.this), null, false);
+        return bitmap;
+    }
+
+    //获取屏幕高度 不包含虚拟按键=
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
+    }
+
+    //获取屏幕宽度
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
+    }
 
     private void showDialog(){
 //        WindowManager.LayoutParams lp = getWindow().getAttributes();

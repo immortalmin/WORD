@@ -73,6 +73,10 @@
             android:textAllCaps="false"
             android:text="turn_model" />
     </RelativeLayout>
-
+    <ImageView
+        android:id="@+id/imgview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

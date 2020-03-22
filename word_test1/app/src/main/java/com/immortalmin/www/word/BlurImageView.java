@@ -9,9 +9,9 @@ import android.widget.ImageView;
 
 public class BlurImageView {
     /** 水平方向模糊度 */
-    public static float HRADIUS = 15;
+    public static float HRADIUS = 10;
     /** 竖直方向模糊度 */
-    public static float VRADIUS = 15;
+    public static float VRADIUS = 10;
     /** 模糊迭代度 */
     public static int ITERATIONS = 5;
 

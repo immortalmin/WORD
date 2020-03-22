@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -16,14 +17,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +44,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class ReciteWordActivity extends AppCompatActivity
         implements View.OnClickListener,
@@ -53,6 +61,7 @@ public class ReciteWordActivity extends AppCompatActivity
     CountDownFragment countDownFragment = new CountDownFragment();
     SpellFragment spellFragment = new SpellFragment();
     Button turn_mode,ret_btn;
+    private ImageView imgview;
     TextView total_times, word_times;
     JsonRe jsonRe;
     private UserData userData = new UserData();
@@ -72,7 +81,7 @@ public class ReciteWordActivity extends AppCompatActivity
     int finish_num = 0;//今天背完的单词数
     int today_finish = 0;//该单词今天背完的次数
     int pre_ind = 0;//上一个单词的id
-    Boolean pron_lock = false;
+    private Boolean pron_lock = false;
     HashMap<String, Object> recite_info = new HashMap<String, Object>();
     Map<String, Object> update_word = new HashMap<String, Object>();
     HashMap<String, Object> now_words = null;
@@ -86,6 +95,7 @@ public class ReciteWordActivity extends AppCompatActivity
         word_times = (TextView) findViewById(R.id.word_times);
         turn_mode = (Button) findViewById(R.id.turn_mode);
         ret_btn = (Button) findViewById(R.id.ret_btn);
+        imgview = (ImageView)findViewById(R.id.imgview);
         turn_mode.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
         total_progress = (ProgressBar) findViewById(R.id.total_progress);
@@ -189,6 +199,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 if(recite_list.size()<recite_num+recite_scope){
                     Log.i("ccc","单词数不足");
                     Looper.prepare();
+                    mHandler.obtainMessage(1).sendToTarget();
                     inadequateDialog.show();
                     Looper.loop();
                 }else{
@@ -302,24 +313,9 @@ public class ReciteWordActivity extends AppCompatActivity
                         overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     }
                 });
-        /**
-         * quit midway
-         */
-        interruptDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Are you sure?")
-                .setContentText("Won't be able to recover this file!")
-                .setConfirmText("fine")
-                .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
-                });
+
+        finishDialog.setCancelable(false);
+
         /**
          * shortage of words
          */
@@ -336,7 +332,37 @@ public class ReciteWordActivity extends AppCompatActivity
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     }
-                });;
+                });
+    }
+
+    /**
+     * 中途退出
+     */
+    private void interruptDialog(){
+        mHandler.obtainMessage(1).sendToTarget();
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Won't be able to recover this file!")
+                .setConfirmText("fine")
+                .setCancelText("nooo")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                        mHandler.obtainMessage(2).sendToTarget();
+                    }
+                })
+                .show();
     }
 
     private void init_user(){
@@ -401,7 +427,7 @@ public class ReciteWordActivity extends AppCompatActivity
 
                 break;
             case R.id.ret_btn:
-                interruptDialog.show();
+                interruptDialog();
 //                interrupt();
                 break;
         }
@@ -415,10 +441,43 @@ public class ReciteWordActivity extends AppCompatActivity
                     total_times.setText(String.valueOf(finish_num) + "/" + String.valueOf(recite_num));
                     word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
                     break;
+                case 1:
+                    Glide.with(ReciteWordActivity.this).load(getcapture())
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
+                    imgview.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    imgview.setVisibility(View.INVISIBLE);
+                    break;
             }
             return false;
         }
     });
+
+    /**
+     * 截屏
+     * @return
+     */
+    private Bitmap getcapture(){
+        View view = getWindow().getDecorView();     // 获取DecorView
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ReciteWordActivity.this), getScreenHeight(ReciteWordActivity.this), null, false);
+        return bitmap;
+    }
+
+    //获取屏幕高度 不包含虚拟按键=
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
+    }
+
+    //获取屏幕宽度
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
+    }
 
     /**
      * CountDownFragment的回调函数
@@ -611,6 +670,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 update_sql_data(i);
             }
         }
+        mHandler.obtainMessage(1).sendToTarget();
         finishDialog.show();
 //        return_main();
     }
@@ -655,8 +715,7 @@ public class ReciteWordActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            interruptDialog.show();
-//            interrupt();
+            interruptDialog();
             return false;
         } else {
             return super.onKeyDown(keyCode, event);
