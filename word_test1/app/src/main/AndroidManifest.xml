@@ -59,7 +59,8 @@
         <activity android:name=".SettingActivity" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".EnterActivity" />
-        <activity android:name=".UpdatePwdActivity"></activity>
+        <activity android:name=".UpdatePwdActivity" />
+        <activity android:name=".collectActivity"></activity>
     </application>
 
 </manifest>
