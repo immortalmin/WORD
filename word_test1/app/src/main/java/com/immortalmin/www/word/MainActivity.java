@@ -127,12 +127,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //高斯模糊
         mHandler.obtainMessage(2).sendToTarget();
 
-//        if(checkDeviceHasNavigationBar(this)){
-//            Log.i("ccc","exist");
-//            getNavigationBarHeight();
-//        }else{
-//            Log.i("ccc","not exist");
-//        }
 
     }
 

@@ -444,6 +444,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/delete_example.php",jsonObject);
             }
         }).start();
+        mHandler.obtainMessage(6).sendToTarget();
         getwordlist();
     }
 

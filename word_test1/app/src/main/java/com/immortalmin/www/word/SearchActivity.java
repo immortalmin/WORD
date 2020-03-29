@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.security.auth.Subject;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -74,10 +78,17 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public boolean onQueryTextChange(String s) {
             fuzzy_str = s;
-            fuzzyquery(s);
+            if(mHandler.hasMessages(1)){
+                mHandler.removeMessages(1);
+            }
+            Message msg = new Message();
+            msg.what=1;
+            msg.obj=s;
+            mHandler.sendMessageDelayed(msg,200);
             return false;
         }
     };
+
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
@@ -115,9 +126,14 @@ public class SearchActivity extends AppCompatActivity {
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
-            if(message.what == 0){
-                word_list = (List<HashMap<String,Object>>)message.obj;
-                listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
+            switch (message.what){
+                case 0:
+                    word_list = (List<HashMap<String,Object>>)message.obj;
+                    listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
+                    break;
+                case 1:
+                    fuzzyquery((String)message.obj);
+                    break;
             }
             return false;
         }

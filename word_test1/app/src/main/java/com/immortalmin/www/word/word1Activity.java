@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -60,15 +61,13 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     List<HashMap<String,Object>> word_list=null;
     private WordListAdapter wordListAdapter = null;
     private boolean add_flag=false;
-    private int screen_width,screen_height;
+    private int now_position=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word1);
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
-        screen_width = metric.widthPixels;     // 屏幕宽度（像素）
-        screen_height = metric.heightPixels;   // 屏幕高度（像素）
         listView=(ListView)findViewById(R.id.ListView1);
         all_num = (TextView)findViewById(R.id.all_num);
         finished_num = (TextView)findViewById(R.id.finished_num);
@@ -85,6 +84,17 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 intent.putExtra("id",id);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            }
+        });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                now_position = i;
             }
         });
         getwordlist();
@@ -124,6 +134,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 mHandler.obtainMessage(0,wlist).sendToTarget();
             }
         }).start();
+
     }
     private void get_amount()
     {
@@ -144,6 +155,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 mHandler.obtainMessage(1,count).sendToTarget();
             }
         }).start();
+
     }
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -156,7 +168,11 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     if(add_flag){
                         wordListAdapter.notifyDataSetChanged();
                         listView.setSelection(wordListAdapter.getCount()-1);
+                    }else{
+                        listView.setSelection(now_position);
+                        wordListAdapter.notifyDataSetChanged();
                     }
+
                     break;
                 case 1:
                     HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
@@ -172,6 +188,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     imgview.setVisibility(View.INVISIBLE);
                     break;
                 case 4:
+                    wordListAdapter.notifyDataSetChanged();
                     break;
             }
             return false;
@@ -266,6 +283,9 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         getwordlist();
         get_amount();
+//        mHandler.obtainMessage(4).sendToTarget();
+
+
 //        if (requestCode == 1 && resultCode == 2) {
 //            getwordlist();
 //            get_amount();
