@@ -134,7 +134,8 @@
                 android:layout_height="40dp"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:text="commit" />
+                android:textStyle="bold"
+                android:text="提交" />
 
             <Button
                 android:id="@+id/cancel_btn"
@@ -144,7 +145,8 @@
                 android:layout_marginLeft="20dp"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:text="cancel"/>
+                android:textStyle="bold"
+                android:text="双击取消"/>
 
         </LinearLayout>
     </RelativeLayout>

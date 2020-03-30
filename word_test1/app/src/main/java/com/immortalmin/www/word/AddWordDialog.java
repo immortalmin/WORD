@@ -56,6 +56,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private int index=0;
     private boolean[] del_flag = new boolean[100];
     private int sum=0;//统计例句的数量
+    private boolean cancel_flag = false;
 
     public AddWordDialog(Context context) {
         super(context);
@@ -108,7 +109,12 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 }
                 break;
             case R.id. cancel_btn:
-                dismiss();
+                if(!cancel_flag){
+                    cancel_flag = true;
+                    mHandler.sendEmptyMessageDelayed(2,500);
+                }else{
+                    dismiss();
+                }
                 break;
             case R.id.tv2:
                 add_view();
@@ -118,7 +124,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 mHandler.obtainMessage(0).sendToTarget();
                 break;
             default:
-                dismiss();
+//                dismiss();
         }
 
     }
@@ -132,6 +138,9 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                     break;
                 case 1:
                     first_add_btn.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    cancel_flag = false;
                     break;
             }
             return false;
@@ -258,13 +267,13 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("word_group",word_group.getText().toString());
+            jsonObject.put("word_group",word_group.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_meaning",C_meaning.getText().toString());
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<index;i++){
                 JSONObject translate = new JSONObject();
                 String wString = word[i][0].getText().toString();
-                String eString = word[i][1].getText().toString();
+                String eString = word[i][1].getText().toString().replaceAll("\"","\\\\\\\"");
                 String cString = word[i][2].getText().toString();
                 if(del_flag[i] && wString.length()!=0 && eString.length()!=0 && cString.length()!=0){
                     translate.put("word_meaning",wString+'\n');

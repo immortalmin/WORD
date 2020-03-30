@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
+    private MD5Utils md5Utils = new MD5Utils();
     private ImageUtils imageUtils = new ImageUtils();
     private Intent intent;
     private Runnable toMain;
@@ -169,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String pwd = login_password_edit.getText().toString();
+                String pwd =  md5Utils.getMD5Code(login_password_edit.getText().toString());
                 Looper.prepare();
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();

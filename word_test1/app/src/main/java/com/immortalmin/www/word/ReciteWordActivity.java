@@ -333,6 +333,7 @@ public class ReciteWordActivity extends AppCompatActivity
                         overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     }
                 });
+        inadequateDialog.setCancelable(false);
     }
 
     /**
@@ -340,8 +341,8 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     private void interruptDialog(){
         mHandler.obtainMessage(1).sendToTarget();
-        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Are you sure?")
+        SweetAlertDialog interrup_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        interrup_alert.setTitleText("Are you sure?")
                 .setContentText("Won't be able to recover this file!")
                 .setConfirmText("fine")
                 .setCancelText("nooo")
@@ -361,8 +362,32 @@ public class ReciteWordActivity extends AppCompatActivity
                         sweetAlertDialog.cancel();
                         mHandler.obtainMessage(2).sendToTarget();
                     }
-                })
-                .show();
+                });
+        interrup_alert.setCancelable(false);
+        interrup_alert.show();
+//        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+//                .setTitleText("Are you sure?")
+//                .setContentText("Won't be able to recover this file!")
+//                .setConfirmText("fine")
+//                .setCancelText("nooo")
+//                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                    @Override
+//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        Intent intent = new Intent();
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                    }
+//                })
+//                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                    @Override
+//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        sweetAlertDialog.cancel();
+//                        mHandler.obtainMessage(2).sendToTarget();
+//                    }
+//                })
+//                .show();
     }
 
     private void init_user(){

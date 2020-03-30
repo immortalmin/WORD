@@ -228,6 +228,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         mHandler.obtainMessage(2).sendToTarget();
         AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
         addWordDialog.show();
+        addWordDialog.setCancelable(false);
         addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {

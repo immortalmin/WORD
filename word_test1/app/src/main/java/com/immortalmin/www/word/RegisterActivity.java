@@ -37,7 +37,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText register_username_edit,register_password_edit,confirm_pwd,telephone,email;
     private TextView user_warn,pwd_warn,confirm_warn,telephone_warn,email_warn;
     private CircleImageView register_profile_photo;
-    private JsonRe jsonRe;
+    private JsonRe jsonRe = new JsonRe();
+    private MD5Utils md5Utils = new MD5Utils();
     private Runnable toLogin;
     private String profilephotoPath="null";
     private HashMap<String,Object> userdata=null;
@@ -64,7 +65,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return_btn.setOnClickListener(this);
         register_profile_photo.setOnClickListener(this);
 
-        jsonRe = new JsonRe();
         init();
 
 
@@ -179,6 +179,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
+
         email.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -215,7 +216,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("username",uname);
-                    jsonObject.put("pwd",password);
+                    jsonObject.put("pwd",md5Utils.getMD5Code(password));
                     jsonObject.put("imgpath",profilephotoPath);
                     jsonObject.put("telephone",telephone.getText().toString());
                     jsonObject.put("email",email.getText().toString());

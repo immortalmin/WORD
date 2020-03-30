@@ -152,7 +152,8 @@
                 android:layout_width="80dp"
                 android:layout_height="40dp"
                 android:background="@drawable/rounded_corners_green"
-                android:text="commit"
+                android:textStyle="bold"
+                android:text="提交"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />
 
@@ -162,7 +163,8 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:background="@drawable/rounded_corners_red"
-                android:text="cancel"
+                android:textStyle="bold"
+                android:text="双击取消"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />
 

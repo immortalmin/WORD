@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     private Button commit_btn,cancel_btn;
     private EditText word_meaning,E_sentence,C_translate;
     private OnDialogInteractionListener listener;
+    private boolean cancel_flag=false;
     public UpdateExampleDialog(Context context) {
         super(context);
         this.context=context;
@@ -55,15 +57,22 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         setContentView(view);
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-                word_meaning.setText(data.get("word_meaning").toString());
-                E_sentence.setText(data.get("E_sentence").toString());
-                C_translate.setText(data.get("C_translate").toString());
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
+                    word_meaning.setText(data.get("word_meaning").toString());
+                    E_sentence.setText(data.get("E_sentence").toString());
+                    C_translate.setText(data.get("C_translate").toString());
+                    break;
+                case 1:
+                    cancel_flag=false;
+                    break;
             }
+            return false;
         }
-    };
+    });
 
 
     public interface OnDialogInteractionListener {
@@ -79,11 +88,16 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
                 }
                 break;
             case R.id. cancel_btn:
-                dismiss();
+                if(!cancel_flag){
+                    cancel_flag = true;
+                    mHandler.sendEmptyMessageDelayed(1,500);
+                }else{
+                    dismiss();
+                }
                 break;
 
             default:
-                dismiss();
+//                dismiss();
         }
 
     }
@@ -102,12 +116,15 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         return true;
     }
 
+    /**
+     * pack date
+     */
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("id",data.get("eid").toString());
             jsonObject.put("word_meaning",word_meaning.getText().toString());
-            jsonObject.put("E_sentence",E_sentence.getText().toString());
+            jsonObject.put("E_sentence",E_sentence.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_translate",C_translate.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();

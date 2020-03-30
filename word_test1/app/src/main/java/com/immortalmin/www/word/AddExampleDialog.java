@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -41,6 +43,8 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
     private int index=0;
     private boolean[] del_flag = new boolean[100];
     private String uid="1",wid ="1";
+    private boolean cancel_flag=false;
+
     public AddExampleDialog(Context context) {
         super(context);
         this.context=context;
@@ -94,16 +98,32 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
                 }
                 break;
             case R.id. cancel_btn:
-                dismiss();
+                if(!cancel_flag){
+                    cancel_flag = true;
+                    mHandler.sendEmptyMessageDelayed(0,500);
+                }else{
+                    dismiss();
+                }
                 break;
             case R.id.tv2:
                 add_view();
                 break;
             default:
-                dismiss();
+//                dismiss();
         }
 
     }
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
+                    cancel_flag=false;
+                    break;
+            }
+            return false;
+        }
+    });
 
     private void add_view(){
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
@@ -148,9 +168,9 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())),
                 ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())));
 //        add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0,
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, context.getResources().getDisplayMetrics())), 0);
-        del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics())), 0,
+                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0);
+        del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         del_btn[index].setLayoutParams(del_btn_Params);
         del_btn[index].setPadding(0,0,0,0);
         del_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
@@ -230,7 +250,7 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
             for(int i=0;i<index;i++){
                 JSONObject translate = new JSONObject();
                 String wString = word[i][0].getText().toString();
-                String eString = word[i][1].getText().toString();
+                String eString = word[i][1].getText().toString().replaceAll("\"","\\\\\\\"");
                 String cString = word[i][2].getText().toString();
                 if(del_flag[i] && wString.length()!=0 && eString.length()!=0 && cString.length()!=0){
                     translate.put("word_meaning",wString+'\n');

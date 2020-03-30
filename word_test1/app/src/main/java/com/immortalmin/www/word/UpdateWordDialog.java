@@ -33,6 +33,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
     private Button commit_btn,cancel_btn;
     private EditText word_group,C_meaning;
     private OnDialogInteractionListener listener;
+    private boolean cancel_flag = false;
     public UpdateWordDialog(Context context) {
         super(context);
         this.context=context;
@@ -64,14 +65,21 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         setContentView(view);
     }
 
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == 0){
-                word_group.setText(data.get("word_group").toString());
-                C_meaning.setText(data.get("C_meaning").toString());
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
+                    word_group.setText(data.get("word_group").toString());
+                    C_meaning.setText(data.get("C_meaning").toString());
+                    break;
+                case 1:
+                    cancel_flag = true;
+                    break;
             }
+            return false;
         }
-    };
+    });
 
 
     public interface OnDialogInteractionListener {
@@ -87,11 +95,16 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
                 }
                 break;
             case R.id. cancel_btn:
-                dismiss();
+                if(!cancel_flag){
+                    cancel_flag = true;
+                    mHandler.sendEmptyMessageDelayed(1,500);
+                }else{
+                    dismiss();
+                }
                 break;
 
             default:
-                dismiss();
+//                dismiss();
         }
 
     }
@@ -113,7 +126,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",data.get("wid").toString());
-            jsonObject.put("word_group",word_group.getText().toString());
+            jsonObject.put("word_group",word_group.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_meaning",C_meaning.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();

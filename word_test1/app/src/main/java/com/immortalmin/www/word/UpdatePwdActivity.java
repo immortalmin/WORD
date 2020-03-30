@@ -28,6 +28,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
     private EditText new_pwd,confirm_pwd;
     private TextView pwd_warn,confirm_warn;
     private JsonRe jsonRe = new JsonRe();
+    private MD5Utils md5Utils = new MD5Utils();
     private String telephone = null;
     private Intent intent;
 //    private HashMap<String,Object> userdata=null;
@@ -138,7 +139,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("telephone",telephone);
-                    jsonObject.put("pwd",confirm_pwd.getText().toString());
+                    jsonObject.put("pwd",md5Utils.getMD5Code(confirm_pwd.getText().toString()));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -168,7 +169,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
     private void set_sp(HashMap<String,Object> userdata){
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         sp.edit().putString("username",userdata.get("username").toString())
-                .putString("password",userdata.get("pwd").toString())
+//                .putString("password",userdata.get("pwd").toString())
                 .putString("profile_photo",userdata.get("profile_photo").toString())
                 .putString("status","0")
                 .apply();

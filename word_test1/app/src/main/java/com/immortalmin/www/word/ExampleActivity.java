@@ -366,6 +366,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         }
         AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,jsonObject);
         addExampleDialog.show();
+        addExampleDialog.setCancelable(false);
         addExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -378,6 +379,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         mHandler.obtainMessage(5).sendToTarget();
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
+        updateWordDialog.setCancelable(false);
         updateWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -390,6 +392,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         mHandler.obtainMessage(5).sendToTarget();
         UpdateExampleDialog updateExampleDialog = new UpdateExampleDialog(this,R.style.MyDialog,data);
         updateExampleDialog.show();
+        updateExampleDialog.setCancelable(false);
         updateExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -403,37 +406,38 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void del_warning(){
         mHandler.obtainMessage(5).sendToTarget();
-        new SweetAlertDialog(ExampleActivity.this, SweetAlertDialog.WARNING_TYPE)
-            .setTitleText("Really?")
-            .setContentText("Data will be permanently deleted.")
-            .setConfirmText("OK")
-            .setCancelText("No,cancel del!")
-            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                @Override
-                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                    if(del_id==1){
-                        delete_word();
-                        Intent intent = new Intent();
-                        setResult(2,intent);
-                        finish();
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }else{
-                        delete_example(jsonObject);
-                    }
-                    Toast.makeText(ExampleActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
-                    sweetAlertDialog.cancel();
+        SweetAlertDialog del_alert = new SweetAlertDialog(ExampleActivity.this,SweetAlertDialog.WARNING_TYPE);
+        del_alert.setTitleText("Really?")
+                .setContentText("Data will be permanently deleted.")
+                .setConfirmText("OK")
+                .setCancelText("No,cancel del!")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        if(del_id==1){
+                            delete_word();
+                            Intent intent = new Intent();
+                            setResult(2,intent);
+                            finish();
+                            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                        }else{
+                            delete_example(jsonObject);
+                        }
+                        Toast.makeText(ExampleActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
+                        sweetAlertDialog.cancel();
 
-                }
-            })
-            .showCancelButton(true)
-            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                @Override
-                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                    sweetAlertDialog.cancel();
-                    mHandler.obtainMessage(6).sendToTarget();
-                }
-            })
-            .show();
+                    }
+                })
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                        mHandler.obtainMessage(6).sendToTarget();
+                    }
+                });
+        del_alert.setCancelable(false);
+        del_alert.show();
     }
 
     private void delete_example(final JSONObject jsonObject){
