@@ -37,6 +37,14 @@
         android:background="@drawable/main_button"
         />
 
+    <com.immortalmin.www.word.SignIn
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_below="@+id/search_bar"
+        android:layout_marginRight="135dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"/>
+
     <RelativeLayout
         android:id="@+id/btn_layout"
         android:layout_width="wrap_content"

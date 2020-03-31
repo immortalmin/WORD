@@ -48,19 +48,16 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 /**
  * 获取单词列表
  * */
-public class word1Activity extends AppCompatActivity implements View.OnClickListener,
-        AddWordDialog.OnDialogInteractionListener {
+public class word1Activity extends AppCompatActivity implements View.OnClickListener{
 
     JsonRe  jsonRe;
     private BlurImageView blurImageView = new BlurImageView();
     ListView listView;
     private ImageView imgview;
     TextView all_num,finished_num;
-    Button add_btn;
     private RelativeLayout main_relative;
     List<HashMap<String,Object>> word_list=null;
     private WordListAdapter wordListAdapter = null;
-    private boolean add_flag=false;
     private int now_position=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +68,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         listView=(ListView)findViewById(R.id.ListView1);
         all_num = (TextView)findViewById(R.id.all_num);
         finished_num = (TextView)findViewById(R.id.finished_num);
-        add_btn = (Button)findViewById(R.id.add_btn);
         main_relative = (RelativeLayout)findViewById(R.id.main_relative);
         imgview = (ImageView)findViewById(R.id.imgview);
-        add_btn.setOnClickListener(this);
         finished_num.setOnClickListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -105,9 +100,6 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
 
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.add_btn:
-                showDialog();
-                break;
             case R.id.finished_num:
                 Log.i("ccc","finished_num");
                 mHandler.obtainMessage(2).sendToTarget();
@@ -165,14 +157,8 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     word_list = (List<HashMap<String,Object>>)message.obj;
                     wordListAdapter = new WordListAdapter(word1Activity.this,word_list);
                     listView.setAdapter(wordListAdapter);
-                    if(add_flag){
-                        wordListAdapter.notifyDataSetChanged();
-                        listView.setSelection(wordListAdapter.getCount()-1);
-                    }else{
-                        listView.setSelection(now_position);
-                        wordListAdapter.notifyDataSetChanged();
-                    }
-
+                    listView.setSelection(now_position);
+                    wordListAdapter.notifyDataSetChanged();
                     break;
                 case 1:
                     HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
@@ -180,14 +166,6 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                     finished_num.setText(count.get("prof_count").toString());
                     break;
                 case 2:
-                    Glide.with(word1Activity.this).load(getcapture())
-                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
-                    imgview.setVisibility(View.VISIBLE);
-                    break;
-                case 3:
-                    imgview.setVisibility(View.INVISIBLE);
-                    break;
-                case 4:
                     wordListAdapter.notifyDataSetChanged();
                     break;
             }
@@ -220,39 +198,6 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         return dm.widthPixels;
     }
 
-    private void showDialog(){
-//        WindowManager.LayoutParams lp = getWindow().getAttributes();
-//        lp.alpha = 0.5f;
-//        getWindow().setAttributes(lp);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        mHandler.obtainMessage(2).sendToTarget();
-        AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
-        addWordDialog.show();
-        addWordDialog.setCancelable(false);
-        addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-//                WindowManager.LayoutParams lp = getWindow().getAttributes();
-//                lp.alpha = 1.0f;
-//                getWindow().setAttributes(lp);
-//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                mHandler.obtainMessage(3).sendToTarget();
-            }
-        });
-    }
-
-    private void add_wordandexample(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
-                getwordlist();
-                get_amount();
-            }
-        }).start();
-    }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -265,18 +210,6 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void addWordInteraction(JSONObject jsonObject){
-
-        add_flag=true;
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        try{
-            jsonObject.put("uid",sp.getString("uid",null));
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        add_wordandexample(jsonObject);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -285,8 +218,6 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
         getwordlist();
         get_amount();
 //        mHandler.obtainMessage(4).sendToTarget();
-
-
 //        if (requestCode == 1 && resultCode == 2) {
 //            getwordlist();
 //            get_amount();

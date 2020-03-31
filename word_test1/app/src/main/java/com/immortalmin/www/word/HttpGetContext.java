@@ -129,31 +129,6 @@ public class HttpGetContext {
         return res;
     }
 
-    public String httpclient_worddate(String url){
-        String result="";
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpPost httpPost = new HttpPost(url);
-            HttpResponse response = httpClient.execute(httpGet);
-            if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                // 使用utf-8参数保证从网页获取的内容中文能正常显示
-                result = EntityUtils.toString(entity, "utf-8");
-                //去除返回文本消息中的换行回车字符
-                result = result.replace("\r\n", "");
-                //  Log.i("HTTP", "GET:" + result);
-                //  mHandler.obtainMessage(1,result).sendToTarget();
-            } else {
-                // mHandler.sendEmptyMessage(2);//2表示服务器未响应
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
-        }
-        return result;
-    }
-
     /**
      * @param url
      * @param jsonParam

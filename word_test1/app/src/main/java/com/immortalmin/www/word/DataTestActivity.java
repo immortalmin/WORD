@@ -275,8 +275,8 @@ public class DataTestActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void showDialog(){
-        AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
-        addWordDialog.show();
+//        AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog);
+//        addWordDialog.show();
     }
 
     private void showExampleDialog(){

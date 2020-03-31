@@ -57,15 +57,17 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private boolean[] del_flag = new boolean[100];
     private int sum=0;//统计例句的数量
     private boolean cancel_flag = false;
+    private String word_text="";
 
     public AddWordDialog(Context context) {
         super(context);
         this.context=context;
     }
 
-    public AddWordDialog(Context context, int themeResId) {
+    public AddWordDialog(Context context, int themeResId, String word_text) {
         super(context, themeResId);
-        this.context=context;
+        this.context = context;
+        this.word_text = word_text;
     }
 
     protected AddWordDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
@@ -93,6 +95,20 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         setContentView(view);
         Arrays.fill(del_flag,true);
         add_view();
+        word_group.setText(word_text);
+        if(word_text.length()>0){
+            setfocus();
+        }
+    }
+
+    /**
+     * 为word_group自动获取焦点
+     */
+    private void setfocus() {
+        C_meaning.setFocusable(true);
+        C_meaning.setFocusableInTouchMode(true);
+        C_meaning.requestFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
 
