@@ -17,28 +17,15 @@
         app:shader_style="Center"
         app:smoothness="0.15"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/photo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="50dp"
-        android:layout_centerHorizontal="true"
-        app:civ_border_width="1dp"
-        app:civ_border_overlay="true"
-        app:civ_border_color="#8c8888"
-        app:civ_fill_color="#bab3b3"
-        android:src="@android:drawable/sym_def_app_icon"/>
-
     <TextView
-        android:id="@+id/nickname"
+        android:id="@+id/prof_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/photo"
-        android:textStyle="bold"
+        android:layout_marginTop="15dp"
         android:textSize="20dp"
-        android:text="immortalmin" />
+        android:textColor="#414040"
+        android:layout_centerHorizontal="true"
+        android:text="PROFILE" />
 
     <Button
         android:id="@+id/return_btn"
@@ -50,11 +37,75 @@
         android:background="@drawable/left_arrow"
         />
 
+    <RelativeLayout
+        android:id="@+id/intro_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/prof_tv"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/photo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
+            android:src="@android:drawable/sym_def_app_icon"/>
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/photo"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:text="immortalmin" />
+
+        <TextView
+            android:id="@+id/signature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/photo"
+            android:layout_below="@id/nickname"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="40dp"
+            android:textStyle="italic"
+            android:textSize="15dp"
+            android:text="Recite English as your mother tongue" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/sign_in_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/intro_layout"
+        android:layout_centerHorizontal="true">
+
+        <com.immortalmin.www.word.SignIn
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_below="@+id/search_bar"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+
+
     <ScrollView
         android:id="@+id/setting_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nickname">
+        android:layout_below="@+id/sign_in_layout">
 
         <LinearLayout
             android:layout_width="match_parent"

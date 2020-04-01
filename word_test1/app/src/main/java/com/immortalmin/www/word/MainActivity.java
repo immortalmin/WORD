@@ -223,8 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_test:
-                intent = new Intent(MainActivity.this,UpdatePwdActivity.class);
-                intent.putExtra("telephone","12345678912");
+                intent = new Intent(MainActivity.this,WordViewTestActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

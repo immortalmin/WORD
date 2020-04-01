@@ -17,18 +17,26 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
 public class WordViewTestActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ObjectAnimator objectAnimator;
     SeekBar seekBar;
     MainView mainView;
+    private TextView timetv;
+    private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_view_test);
         seekBar = (SeekBar)findViewById(R.id.seekBar);
         mainView = (MainView)findViewById(R.id.mainView);
-
+        timetv = (TextView)findViewById(R.id.timetv);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -47,13 +55,18 @@ public class WordViewTestActivity extends AppCompatActivity implements View.OnCl
             }
         });
         mainView.setOnClickListener(this);
-
+        timetv.setOnClickListener(this);
+        mUseTimeDataManager = UseTimeDataManager.getInstance(WordViewTestActivity.this);
+        mUseTimeDataManager.refreshData(0);
     }
 
     public void onClick(View view){
         switch (view.getId()){
             case R.id.mainView:
                 mHandler.obtainMessage(0).sendToTarget();
+                break;
+            case R.id.timetv:
+                mHandler.obtainMessage(1,getJsonObjectStr()).sendToTarget();
                 break;
         }
     }
@@ -71,8 +84,39 @@ public class WordViewTestActivity extends AppCompatActivity implements View.OnCl
                     objectAnimator.start();
 
                     break;
+                case 1:
+                    timetv.setText(message.obj.toString());
+                    break;
             }
             return false;
         }
     });
+
+    public String getJsonObjectStr() {
+        String jsonAppdeTails = "";
+        try {
+            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
+            JSONObject jsonObject2 = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < packageInfos.size(); i++) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonArray.put(i, jsonObject.accumulate("count", packageInfos.get(i).getmUsedCount()));
+                    jsonArray.put(i, jsonObject.accumulate("name", packageInfos.get(i).getmPackageName()));
+                    jsonArray.put(i, jsonObject.accumulate("time", packageInfos.get(i).getmUsedTime()));
+                    jsonArray.put(i, jsonObject.accumulate("appname", packageInfos.get(i).getmAppName()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return "";
+                }
+
+            }
+            jsonObject2.put("details", jsonArray);
+            jsonAppdeTails = jsonObject2.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return jsonAppdeTails;
+    }
 }
