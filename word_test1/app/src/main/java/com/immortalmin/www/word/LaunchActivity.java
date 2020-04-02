@@ -1,12 +1,16 @@
 package com.immortalmin.www.word;
 
 import android.Manifest;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,10 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -25,6 +35,7 @@ public class LaunchActivity extends AppCompatActivity {
     private HashMap<String,Object> userSetting=null;
     JsonRe jsonRe;
     private int permission_num=0;
+    private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +93,100 @@ public class LaunchActivity extends AppCompatActivity {
     private void init() {
         jsonRe = new JsonRe();
         judgePermission();
+
+        test();
+
+
+        inspect_usetime();
+    }
+
+    private void test() {
+        long test_time = 1585740654*1000;
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        sp.edit().putLong("lastday",test_time).apply();
+    }
+
+    private void inspect_usetime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+        //获取当前时间
+        long now_time_stamp = System.currentTimeMillis();
+        Date date = new Date(now_time_stamp);
+        String nowday = simpleDateFormat.format(date);
+
+        //获取上一次记录的时间
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        long last_time_stamp = sp.getLong("lastday",1585740654);
+        Date last_date = new Date(last_time_stamp);
+        String lastday = simpleDateFormat.format(last_date);
+        if(!nowday.equals(lastday)){
+            Log.i("ccc","不是同一天");
+            sp.edit().putLong("lastday",now_time_stamp).apply();
+            mUseTimeDataManager = UseTimeDataManager.getInstance(LaunchActivity.this);
+            mUseTimeDataManager.refreshData(last_time_stamp,now_time_stamp);
+            long use_time=0;
+            JSONObject jsonObject = new JSONObject();
+            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
+            for (int i = 0; i < packageInfos.size(); i++) {
+                if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
+                    try {
+                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
+                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
+                        jsonObject.put("time",packageInfos.get(i).getmUsedTime());
+                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
+                        use_time = packageInfos.get(i).getmUsedTime();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+
+            }
+            Log.i("ccc",jsonObject.toString());
+            Log.i("ccc",lastday+"  +  " +use_time);
+        }else{
+            Log.i("ccc","是同一天");
+        }
+
+
+
+
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        sp.edit().putString("username", userdata.get("username").toString())
+//                .putString("password", userdata.get("pwd").toString())
+//                .putString("profile_photo", userdata.get("profile_photo").toString())
+//                .putString("status","1")
+//                .apply();
+    }
+
+    public String getJsonObjectStr() {
+        String jsonAppdeTails = "";
+        try {
+            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
+            JSONObject jsonObject2 = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < packageInfos.size(); i++) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    if("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())){
+
+                    }
+                    jsonArray.put(i, jsonObject.accumulate("count", packageInfos.get(i).getmUsedCount()));
+                    jsonArray.put(i, jsonObject.accumulate("name", packageInfos.get(i).getmPackageName()));
+                    jsonArray.put(i, jsonObject.accumulate("time", packageInfos.get(i).getmUsedTime()));
+                    jsonArray.put(i, jsonObject.accumulate("appname", packageInfos.get(i).getmAppName()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return "";
+                }
+
+            }
+            jsonObject2.put("details", jsonArray);
+            jsonAppdeTails = jsonObject2.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return jsonAppdeTails;
     }
 
     private void getuserdata() {
@@ -185,6 +290,12 @@ public class LaunchActivity extends AppCompatActivity {
 
             }
 
+            //有权查看使用情况
+            if(isNoOption()&&!isNoSwitch()){
+                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                this.startActivity(intent);
+            }
+
 
         }else{
             //doSdCardResult();
@@ -192,6 +303,27 @@ public class LaunchActivity extends AppCompatActivity {
         //LocationClient.reStart();
 
 
+    }
+
+    private boolean isNoOption() {
+        PackageManager packageManager = getApplicationContext()
+                .getPackageManager();
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+
+    private boolean isNoSwitch() {
+        long ts = System.currentTimeMillis();
+        UsageStatsManager usageStatsManager = (UsageStatsManager) getApplicationContext()
+                .getSystemService(Context.USAGE_STATS_SERVICE);
+        List<UsageStats> queryUsageStats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_BEST, 0, ts);
+        if (queryUsageStats == null || queryUsageStats.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     @Override

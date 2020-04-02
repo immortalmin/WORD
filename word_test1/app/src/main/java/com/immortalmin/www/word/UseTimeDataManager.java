@@ -64,15 +64,22 @@ public class UseTimeDataManager {
     /**
      * 主要的数据获取函数
      *
-     * @param dayNumber 查询若干天前的数据
+     * @param startTime
+     * @param endTime
      * @return int        0 : event usage 均查询到了
      * 1 : event 未查询到 usage 查询到了
      * 2 : event usage 均未查询到
      */
-    public int refreshData(int dayNumber) {
+//    public int refreshData(int dayNumber) {
+    public int refreshData(long startTime,long endTime) {
+        /*
+        查询若干天前的数据
         mDayNum = dayNumber;
         mEventList = getEventList(dayNumber);
         mStatsList = getUsageList(dayNumber);
+        */
+        mEventList = EventUtils.getEventList(mContext, startTime, endTime);
+        mStatsList = EventUtils.getUsageList(mContext, startTime, endTime);
 
         if (mEventList == null || mEventList.size() == 0) {
             Log.i(TAG, " UseTimeDataManager-refreshData()   未查到events");

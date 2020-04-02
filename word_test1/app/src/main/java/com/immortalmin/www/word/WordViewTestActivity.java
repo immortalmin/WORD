@@ -57,7 +57,7 @@ public class WordViewTestActivity extends AppCompatActivity implements View.OnCl
         mainView.setOnClickListener(this);
         timetv.setOnClickListener(this);
         mUseTimeDataManager = UseTimeDataManager.getInstance(WordViewTestActivity.this);
-        mUseTimeDataManager.refreshData(0);
+//        mUseTimeDataManager.refreshData(0);
     }
 
     public void onClick(View view){
@@ -66,7 +66,9 @@ public class WordViewTestActivity extends AppCompatActivity implements View.OnCl
                 mHandler.obtainMessage(0).sendToTarget();
                 break;
             case R.id.timetv:
-                mHandler.obtainMessage(1,getJsonObjectStr()).sendToTarget();
+                Log.i("ccc",getJsonObjectStr());
+
+//                mHandler.obtainMessage(1,getJsonObjectStr()).sendToTarget();
                 break;
         }
     }

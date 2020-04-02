@@ -34,8 +34,12 @@ public class EventUtils {
         Log.i(TAG," EventUtils-getEventList()   Range start:" + dateFormat.format(startTime));
         Log.i(TAG," EventUtils-getEventList()   Range end:" + dateFormat.format(endTime));
 
-        UsageStatsManager mUsmManager = (UsageStatsManager) context.getSystemService("usagestats");
+//        UsageStatsManager mUsmManager = (UsageStatsManager) context.getSystemService("usagestats");
+//        UsageEvents events = mUsmManager.queryEvents(startTime, endTime);
+
+        UsageStatsManager mUsmManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
         UsageEvents events = mUsmManager.queryEvents(startTime, endTime);
+
 
         while (events.hasNextEvent()) {
             UsageEvents.Event e = new UsageEvents.Event();
@@ -45,7 +49,6 @@ public class EventUtils {
                 mEventList.add(e);
             }
         }
-
         return mEventList;
     }
 
