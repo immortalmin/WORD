@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class UserData implements Serializable{
     private String uid,username,password,profile_photo,status="0";
     private int recite_num,recite_scope;
+    private long last_login;
 
 
     public String getUid() {
@@ -66,6 +67,14 @@ public class UserData implements Serializable{
         this.status = status;
     }
 
+    public long getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(long last_login) {
+        this.last_login = last_login;
+    }
+
     @Override
     public String toString() {
         return "UserData{" +
@@ -76,6 +85,7 @@ public class UserData implements Serializable{
                 ", status='" + status + '\'' +
                 ", recite_num=" + recite_num +
                 ", recite_scope=" + recite_scope +
+                ", last_login=" + last_login +
                 '}';
     }
 }

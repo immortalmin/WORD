@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
@@ -33,7 +35,8 @@ public class LaunchActivity extends AppCompatActivity {
 
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
-    JsonRe jsonRe;
+    private JsonRe jsonRe = new JsonRe();
+    private UserData userData = new UserData();
     private int permission_num=0;
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     @Override
@@ -91,19 +94,32 @@ public class LaunchActivity extends AppCompatActivity {
 
 
     private void init() {
-        jsonRe = new JsonRe();
+        //检查权限
         judgePermission();
 
         test();
+        //读取文件中用户的信息
+        init_user();
 
-
+        //检查时间，判断是否需要上传使用数据
         inspect_usetime();
+
+    }
+
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
+        userData.setLast_login(sp.getLong("last_login",404L));
     }
 
     private void test() {
-        long test_time = 1585740654*1000;
+        long test_time = 1585130182000L;
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        sp.edit().putLong("lastday",test_time).apply();
+        sp.edit().putLong("last_login",test_time).apply();
     }
 
     private void inspect_usetime() {
@@ -114,26 +130,37 @@ public class LaunchActivity extends AppCompatActivity {
         String nowday = simpleDateFormat.format(date);
 
         //获取上一次记录的时间
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        long last_time_stamp = sp.getLong("lastday",1585740654);
-        Date last_date = new Date(last_time_stamp);
-        String lastday = simpleDateFormat.format(last_date);
-        if(!nowday.equals(lastday)){
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        long last_time_stamp = sp.getLong("lastday",404L);
+
+        //代表是第一次使用软件
+        if(userData.getLast_login()==404L){
+
+        }
+
+        date = new Date(userData.getLast_login());
+        String last_day = simpleDateFormat.format(date);
+        if(!nowday.equals(last_day)){
             Log.i("ccc","不是同一天");
-            sp.edit().putLong("lastday",now_time_stamp).apply();
+            //保存现在的日期
+            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putLong("last_login",now_time_stamp).apply();
+
+            //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(LaunchActivity.this);
-            mUseTimeDataManager.refreshData(last_time_stamp,now_time_stamp);
-            long use_time=0;
+            mUseTimeDataManager.refreshData(userData.getLast_login(),now_time_stamp);
             JSONObject jsonObject = new JSONObject();
             List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
             for (int i = 0; i < packageInfos.size(); i++) {
                 if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
                     try {
-                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
-                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
-                        jsonObject.put("time",packageInfos.get(i).getmUsedTime());
-                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
-                        use_time = packageInfos.get(i).getmUsedTime();
+//                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
+//                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
+//                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
+//                        use_time = packageInfos.get(i).getmUsedTime();
+                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("utime",packageInfos.get(i).getmUsedTime());
+                        jsonObject.put("udate",last_day);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -141,8 +168,28 @@ public class LaunchActivity extends AppCompatActivity {
                 }
 
             }
-            Log.i("ccc",jsonObject.toString());
-            Log.i("ccc",lastday+"  +  " +use_time);
+            //上传今天的数据
+            update_time(jsonObject);
+            //上传 上一次登录的日期 到 今天的日期 之间的 使用时间数据
+            Calendar calendar = Calendar.getInstance();
+            for(int i=0;i<100;i++){
+                calendar.add(Calendar.DAY_OF_MONTH,-1);
+                String pre_day = simpleDateFormat.format(calendar.getTime());
+                if(pre_day.equals(last_day)){
+                    break;
+                }else{
+                    Log.i("ccc",pre_day);
+                    jsonObject = new JSONObject();
+                    try{
+                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("utime",0);
+                        jsonObject.put("udate",pre_day);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    update_time(jsonObject);
+                }
+            }
         }else{
             Log.i("ccc","是同一天");
         }
@@ -156,6 +203,16 @@ public class LaunchActivity extends AppCompatActivity {
 //                .putString("profile_photo", userdata.get("profile_photo").toString())
 //                .putString("status","1")
 //                .apply();
+    }
+
+    private void update_time(final JSONObject jsonObject) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
+            }
+        }).start();
     }
 
     public String getJsonObjectStr() {
