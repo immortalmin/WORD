@@ -6,7 +6,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+
+import javax.xml.validation.Validator;
 
 public class SignIn extends View {
 
@@ -18,36 +28,42 @@ public class SignIn extends View {
             Color.parseColor("#50239a3b"),
             Color.parseColor("#50196127")
     };
-    private int[] sign_in_times = {
-            0,1,4,2,2,3,2,
-            1,4,1,0,2,3,2,
-            1,4,1,0,2,3,2,
-            1,1,0,2,3,2,1,
-            4,1,0,2,3,4,1,
-            0,2,3,2,1,2,1,
-            0,2,3,2,1,4,1,
-            0,2,3,2,1,4,1,
-            0,2,3,2,1,4,2,
-            1,0,2,3,4,1,0,
-            3,2,1,4,1,0,4,
-            3,2,1,4,1,0,2,
-            3,2,1,4,1,0,2,
-            3,0,2,1,4,1,0,
-            2,3,4,1,0,3,2,
-            1,4,1,0,4,3,2,
-            1,4,1,0,2,3,0,
-            4,1,0,2,3,0,1,
-            1,1,0,2,3,0,4,
-            1,1,2,3,0,4,0,
-            2,1,4,1,0,2,3,
-            4,1,0,3,2,4,1,
-            0,4,3,2,1,4,1,
-            0,2,3,2,1,4,1,
-            2,3,2,1,4,1,0,
-            0,2,3,2,1,4,1,
-            0,3,0,2,1,1,4,
-            2,3,0
-    };
+    private ArrayList<Integer> sign_in_times = new ArrayList<>();
+
+    private ArrayList<Integer> month_column_num = new ArrayList<>();
+    private ArrayList<Integer> month_column_str = new ArrayList<>();
+    private String[] toMonth = { "","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+
+//    private int[] sign_in_times = {
+//            0,1,4,2,2,3,2,
+//            1,4,1,0,2,3,2,
+//            1,4,1,0,2,3,2,
+//            1,1,0,2,3,2,1,
+//            4,1,0,2,3,4,1,
+//            0,2,3,2,1,2,1,
+//            0,2,3,2,1,4,1,
+//            0,2,3,2,1,4,1,
+//            0,2,3,2,1,4,2,
+//            1,0,2,3,4,1,0,
+//            3,2,1,4,1,0,4,
+//            3,2,1,4,1,0,2,
+//            3,2,1,4,1,0,2,
+//            3,0,2,1,4,1,0,
+//            2,3,4,1,0,3,2,
+//            1,4,1,0,4,3,2,
+//            1,4,1,0,2,3,0,
+//            4,1,0,2,3,0,1,
+//            1,1,0,2,3,0,4,
+//            1,1,2,3,0,4,0,
+//            2,1,4,1,0,2,3,
+//            4,1,0,3,2,4,1,
+//            0,4,3,2,1,4,1,
+//            0,2,3,2,1,4,1,
+//            2,3,2,1,4,1,0,
+//            0,2,3,2,1,4,1,
+//            0,3,0,2,1,1,4,
+//            2,3,0
+//    };//27个星期+
 
 //    private int[] sign_in_times = {0,1,4,2,2,3,2,1,4,1,0,0,2,3,4,2,3,2,4,0,
 //            1,4,2,2,3,2,1,4,1,0,0,2,3,4,2,3,2,4,0,1,4,2,2,3,2,1,4,1,0,0,2,3,
@@ -68,39 +84,139 @@ public class SignIn extends View {
 
     @Override
     protected void onDraw(Canvas canvas){
-        drawRect(canvas);
+        drawweek(canvas);
+        drawbody(canvas);
+        drawicon(canvas);
+        drawmonth(canvas);
+    }
+
+    /**
+     * 绘制月份
+     * @param canvas
+     */
+    private void drawmonth(Canvas canvas) {
+        canvas.translate(-980,-30);
+        for(int i=0;i<month_column_num.size();i++){
+            canvas.drawText(toMonth[month_column_str.get(i)],(month_column_num.get(i)-1)*35,25,mPaint);
+        }
 
     }
 
-    //绘制矩阵
-    private void drawRect(Canvas canvas){
+    /**
+     * 绘制右下角的图例
+     * @param canvas
+     */
+    private void drawicon(Canvas canvas) {
+        canvas.save();
+        mPaint.setStrokeWidth(1);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTextSize(20);
+        mPaint.setColor(Color.parseColor("#bddac3"));
+        canvas.translate(-250,250);
+        canvas.drawText("Less",0,30,mPaint);
+        canvas.translate(50,10);
+        for(int i=0;i<5;i++){
+            mPaint.setColor(color[i]);
+            canvas.drawRect(0,0,20,20,mPaint);
+            canvas.translate(25,0);
+        }
+        canvas.translate(5,-10);
+        mPaint.setColor(Color.parseColor("#bddac3"));
+        canvas.drawText("More",0,30,mPaint);
+        canvas.restore();
+    }
+
+    /**
+     * 绘制坐标的星期
+     * @param canvas
+     */
+    private void drawweek(Canvas canvas) {
+        //为月份腾出空间
+        canvas.translate(0,30);
+        mPaint.setStrokeWidth(1);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTextSize(20);
+        mPaint.setColor(Color.parseColor("#bddac3"));
+        canvas.drawText("Mon",0,55,mPaint);
+        canvas.drawText("Wed",0,125,mPaint);
+        canvas.drawText("Fri",0,195,mPaint);
+
+    }
+
+    /**
+     * 绘制主体
+     * @param canvas
+     */
+    private void drawbody(Canvas canvas){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-//        canvas.drawColor(Color.GRAY);
+        canvas.translate(50,0);
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
 
-        for(int i=0;i<sign_in_times.length;i++){
-            if(i%7==0){
+        //根据今天是星期几设置显示的数量
+        Calendar calendar = Calendar.getInstance();
+        int start_index = 7-calendar.get(Calendar.DAY_OF_WEEK);
+        int column = 0;//列数
+
+        calendar.add(Calendar.DAY_OF_MONTH,start_index-196);
+
+        for(int i=start_index,week=0;i<sign_in_times.size();i++,week++){
+            if(week%7==0){
                 canvas.save();
+                column++;
             }
-            mPaint.setColor(color[sign_in_times[i]]);
 
-            canvas.drawRect(10,10,40,40,mPaint);
+            //找出每个月一号的位置
+            calendar.add(Calendar.DAY_OF_MONTH,1);
+            if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+                month_column_num.add(column);
+                month_column_str.add(calendar.get(Calendar.MONTH)+1);
+            }
 
+            mPaint.setColor(color[timeTocolor(sign_in_times.get(i))]);
+            canvas.drawRect(0,0,30,30,mPaint);
             canvas.translate(0,35);
-            if(i%7==6){
+
+            if(week%7==6||i==sign_in_times.size()-1){
                 canvas.restore();
                 canvas.translate(35,0);
             }
         }
+//        Log.i("ccc",month_column_num.toString());
+//        Log.i("ccc",month_column_str.toString());
+    }
 
+    public ArrayList<Integer> getSign_in_times() {
+        return sign_in_times;
+    }
 
+    public void setSign_in_times(ArrayList<Integer> sign_in_times) {
+        this.sign_in_times = sign_in_times;
+        dispose_data();
+        invalidate();
+    }
 
+    private void dispose_data() {
+        //补满
+        while(sign_in_times.size()<196){
+            sign_in_times.add(0);
+        }
+        //反转list
+        Collections.reverse(sign_in_times);
+    }
 
-//        mPaint.setColor(color[2]);
-//        canvas.drawRect(10,10,40,40,mPaint);
-//        canvas.restore();
-
+    private int timeTocolor(int utime){
+        if(utime<=0){
+            return 0;
+        }else if(utime<10){
+            return 1;
+        }else if(utime<30){
+            return 2;
+        }else if(utime<60){
+            return 3;
+        }
+        return 4;
     }
 }

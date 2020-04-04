@@ -38,7 +38,7 @@ public class LaunchActivity extends AppCompatActivity {
     private JsonRe jsonRe = new JsonRe();
     private UserData userData = new UserData();
     private int permission_num=0;
-    private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,12 +97,12 @@ public class LaunchActivity extends AppCompatActivity {
         //检查权限
         judgePermission();
 
-        test();
+//        test();
         //读取文件中用户的信息
         init_user();
 
         //检查时间，判断是否需要上传使用数据
-        inspect_usetime();
+//        inspect_usetime();
 
     }
 
@@ -116,135 +116,7 @@ public class LaunchActivity extends AppCompatActivity {
         userData.setLast_login(sp.getLong("last_login",404L));
     }
 
-    private void test() {
-        long test_time = 1585130182000L;
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        sp.edit().putLong("last_login",test_time).apply();
-    }
 
-    private void inspect_usetime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-        //获取当前时间
-        long now_time_stamp = System.currentTimeMillis();
-        Date date = new Date(now_time_stamp);
-        String nowday = simpleDateFormat.format(date);
-
-        //获取上一次记录的时间
-//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        long last_time_stamp = sp.getLong("lastday",404L);
-
-        //代表是第一次使用软件
-        if(userData.getLast_login()==404L){
-
-        }
-
-        date = new Date(userData.getLast_login());
-        String last_day = simpleDateFormat.format(date);
-        if(!nowday.equals(last_day)){
-            Log.i("ccc","不是同一天");
-            //保存现在的日期
-            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putLong("last_login",now_time_stamp).apply();
-
-            //获取上一次使用到现在使用的数据
-            mUseTimeDataManager = UseTimeDataManager.getInstance(LaunchActivity.this);
-            mUseTimeDataManager.refreshData(userData.getLast_login(),now_time_stamp);
-            JSONObject jsonObject = new JSONObject();
-            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
-            for (int i = 0; i < packageInfos.size(); i++) {
-                if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
-                    try {
-//                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
-//                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
-//                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
-//                        use_time = packageInfos.get(i).getmUsedTime();
-                        jsonObject.put("uid",userData.getUid());
-                        jsonObject.put("utime",packageInfos.get(i).getmUsedTime());
-                        jsonObject.put("udate",last_day);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
-
-            }
-            //上传今天的数据
-            update_time(jsonObject);
-            //上传 上一次登录的日期 到 今天的日期 之间的 使用时间数据
-            Calendar calendar = Calendar.getInstance();
-            for(int i=0;i<100;i++){
-                calendar.add(Calendar.DAY_OF_MONTH,-1);
-                String pre_day = simpleDateFormat.format(calendar.getTime());
-                if(pre_day.equals(last_day)){
-                    break;
-                }else{
-                    Log.i("ccc",pre_day);
-                    jsonObject = new JSONObject();
-                    try{
-                        jsonObject.put("uid",userData.getUid());
-                        jsonObject.put("utime",0);
-                        jsonObject.put("udate",pre_day);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                    update_time(jsonObject);
-                }
-            }
-        }else{
-            Log.i("ccc","是同一天");
-        }
-
-
-
-
-//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        sp.edit().putString("username", userdata.get("username").toString())
-//                .putString("password", userdata.get("pwd").toString())
-//                .putString("profile_photo", userdata.get("profile_photo").toString())
-//                .putString("status","1")
-//                .apply();
-    }
-
-    private void update_time(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
-            }
-        }).start();
-    }
-
-    public String getJsonObjectStr() {
-        String jsonAppdeTails = "";
-        try {
-            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
-            JSONObject jsonObject2 = new JSONObject();
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < packageInfos.size(); i++) {
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    if("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())){
-
-                    }
-                    jsonArray.put(i, jsonObject.accumulate("count", packageInfos.get(i).getmUsedCount()));
-                    jsonArray.put(i, jsonObject.accumulate("name", packageInfos.get(i).getmPackageName()));
-                    jsonArray.put(i, jsonObject.accumulate("time", packageInfos.get(i).getmUsedTime()));
-                    jsonArray.put(i, jsonObject.accumulate("appname", packageInfos.get(i).getmAppName()));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return "";
-                }
-
-            }
-            jsonObject2.put("details", jsonArray);
-            jsonAppdeTails = jsonObject2.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "";
-        }
-        return jsonAppdeTails;
-    }
 
     private void getuserdata() {
         new Thread(new Runnable() {

@@ -86,13 +86,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         android:layout_below="@+id/intro_layout"
         android:layout_centerHorizontal="true">
 
         <com.immortalmin.www.word.SignIn
+            android:id="@+id/signIn"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:layout_below="@+id/search_bar"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"/>

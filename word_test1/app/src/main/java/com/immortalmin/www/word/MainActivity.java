@@ -43,8 +43,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +65,9 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private JsonRe jsonRe;
+    private JsonRe jsonRe = new JsonRe();
+    private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
+    private UserData userData = new UserData();
     private BlurImageView blurImageView = new BlurImageView();
     private Context context;
     List<Map<String,Object>> word_list=null;
@@ -111,12 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         dbAdapter = new DBAdapter(this);
         dbAdapter.open();
-        jsonRe=new JsonRe();
-        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-        sound_success = soundPool.load(this, R.raw.success, 1);
-        sound_fail = soundPool.load(this, R.raw.fail, 1);
-//        search1.setBackgroundColor(Color.TRANSPARENT); //背景透明
-//        search1.getBackground().setAlpha(150); //int 在0-255之间, 设置半透明
+
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
@@ -124,15 +127,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         registerReceiver(closeReceiver, intentFilter);
 
         init();
-        //高斯模糊
-        mHandler.obtainMessage(2).sendToTarget();
-
 
     }
 
     private void init() {
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         setImage(sp.getString("profile_photo",null));
+
+        //设置按钮高斯模糊
+        mHandler.obtainMessage(2).sendToTarget();
+        //获取用户信息
+        init_user();
+        //检查用户登录时间并更新数据
+        inspect_usetime();
+    }
+
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
+        userData.setLast_login(sp.getLong("last_login",404L));
     }
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
@@ -191,7 +208,95 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     });
 
+    /**
+     * 检查是否需要上传时间
+     */
+    private void inspect_usetime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+        //获取当前时间
+        long now_time_stamp = System.currentTimeMillis();
+        Date date = new Date(now_time_stamp);
+        String nowday = simpleDateFormat.format(date);
 
+        //代表是第一次登录
+        if(userData.getLast_login()==404L){
+            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putLong("last_login",now_time_stamp).apply();
+            return;
+        }
+
+        date = new Date(userData.getLast_login());
+        String last_day = simpleDateFormat.format(date);
+        if(!nowday.equals(last_day)){
+//            Log.i("ccc","不是同一天");
+            //保存现在的日期
+            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putLong("last_login",now_time_stamp).apply();
+
+            //获取上一次使用到现在使用的数据
+            mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
+            mUseTimeDataManager.refreshData(userData.getLast_login(),now_time_stamp);
+            JSONObject jsonObject = new JSONObject();
+            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
+            for (int i = 0; i < packageInfos.size(); i++) {
+                if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
+                    try {
+//                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
+//                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
+//                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
+//                        use_time = packageInfos.get(i).getmUsedTime();
+                        long minutes = packageInfos.get(i).getmUsedTime()/60000;
+                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("utime",(int)minutes);
+                        jsonObject.put("udate",last_day);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+
+            }
+            //上传今天的数据
+            update_time(jsonObject);
+            //上传 上一次登录的日期 到 今天的日期 之间的 使用时间数据
+            Calendar calendar = Calendar.getInstance();
+            for(int i=0;i<100;i++){
+                calendar.add(Calendar.DAY_OF_MONTH,-1);
+                String pre_day = simpleDateFormat.format(calendar.getTime());
+                if(pre_day.equals(last_day)){
+                    break;
+                }else{
+                    Log.i("ccc",pre_day);
+                    jsonObject = new JSONObject();
+                    try{
+                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("utime",0);
+                        jsonObject.put("udate",pre_day);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    update_time(jsonObject);
+                }
+            }
+        }else{
+//            Log.i("ccc","是同一天");
+        }
+
+    }
+
+    /**
+     * 上传使用时间
+     * @param jsonObject
+     */
+    private void update_time(final JSONObject jsonObject) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
+            }
+        }).start();
+    }
 
 
     /**
@@ -335,8 +440,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return bitmap;
     }
 
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (flag && (keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -346,7 +449,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return super.onKeyDown(keyCode, event);
         }
     }
-
 
 
     @Override

@@ -163,7 +163,19 @@ public class JsonRe {
         return word;
     }
 
-
+    public ArrayList<Integer> usetimeData(String jsonStr){
+        ArrayList<Integer> usetime = new ArrayList<Integer>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                usetime.add(Integer.valueOf(jsonObject.get("utime").toString()));
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return usetime;
+    }
 
 
     //将json转为需要的数据结构  old version
