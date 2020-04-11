@@ -42,6 +42,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Runnable music_delay,correct_action,wrong_action;
     private TextView cword,correct_word;//display C_meaning
     private EditText eword;//spell word_group
+    private Button finish_btn;
     private Boolean btn_flag = true;//avoid double click
     private Boolean once_flag=true;
     private int judge_flag=1;
@@ -85,6 +86,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         cword = (TextView)getActivity().findViewById(R.id.cword);
         correct_word = (TextView)getActivity().findViewById(R.id.correct_word);
         eword = (EditText) getActivity().findViewById(R.id.eword);
+        finish_btn = (Button) getActivity().findViewById(R.id.finish_btn);
         cword.setOnClickListener(this);
         eword.setOnEditorActionListener(ewordEd);
         /**
@@ -133,6 +135,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 mHandler.obtainMessage(1).sendToTarget();
             }
         };
+
+//        finish_btn.requestLayout();
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

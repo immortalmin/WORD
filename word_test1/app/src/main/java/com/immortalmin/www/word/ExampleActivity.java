@@ -496,7 +496,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         return bitmap;
     }
 
-    //获取屏幕高度 不包含虚拟按键=
+    //获取屏幕高度 不包含虚拟按键
     public static int getScreenHeight(Context context) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         return dm.heightPixels;

@@ -43,5 +43,14 @@
         android:textColor="#05f725"
         android:text="correct_word" />
 
+    <Button
+        android:id="@+id/finish_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:visibility="invisible"
+        android:text="Button" />
+
 
 </RelativeLayout>

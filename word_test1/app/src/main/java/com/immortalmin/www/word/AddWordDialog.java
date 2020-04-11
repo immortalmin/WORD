@@ -47,14 +47,15 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private EditText word_group,C_meaning;
     private TextView tv2;
     private OnDialogInteractionListener listener;
-    private EditText[][] word = new EditText[100][5];
-    private LinearLayout[][] word_layout = new LinearLayout[100][5];
-    private RelativeLayout[] btn_layout = new RelativeLayout[100];
+    private EditText[][] word = new EditText[10][5];
+    private RelativeLayout[][] word_layout = new RelativeLayout[10][5];
+    private RelativeLayout[] btn_layout = new RelativeLayout[10];
     private LinearLayout example_layout;
-    private Button[] del_btn = new Button[100];
-    private Button[] add_btn = new Button[100];
+    private Button[] del_btn = new Button[10];
+    private Button[] add_btn = new Button[10];
+    private Button[] paste_btn = new Button[10];
     private int index=0;
-    private boolean[] del_flag = new boolean[100];
+    private boolean[] del_flag = new boolean[10];
     private int sum=0;//统计例句的数量
     private boolean cancel_flag = false;
     private String word_text="";
@@ -164,37 +165,54 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     });
 
     private void add_view(){
+        final int ind=index;
         sum++;
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
         for(int i=0;i<3;i++){
             // 1.创建外围LinearLayout控件
-            word_layout[index][i] = new LinearLayout(context);
-            LinearLayout.LayoutParams eLayoutlayoutParams = new LinearLayout.LayoutParams(
+            word_layout[index][i] = new RelativeLayout(context);
+            RelativeLayout.LayoutParams eLayoutlayoutParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            eLayoutlayoutParams.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())),
-                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics())),
-                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0);
+            eLayoutlayoutParams.setMargins(conversion(18), conversion(5), conversion(18), 0);
             eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
             word_layout[index][i].setLayoutParams(eLayoutlayoutParams);
-            word_layout[index][i].setGravity(Gravity.CENTER);
+            word_layout[index][i].setGravity(Gravity.LEFT);
             Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.word_input, null);
             word_layout[index][i].setBackground(d);
-            word_layout[index][i].setPadding(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics())),0,
-                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics())),0);
-            word_layout[index][i].setOrientation(LinearLayout.HORIZONTAL);
+            word_layout[index][i].setPadding(conversion(10),0, conversion(10),0);
             //2.word_meaning
             word[index][i] = new EditText(context);
-            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, context.getResources().getDisplayMetrics())));
+            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, conversion(30));
             word[index][i].setPadding(0,0,0,0);
             word[index][i].setLayoutParams(word_meaning_Params);
             word[index][i].setBackgroundColor(Color.parseColor("#00000000"));
             word[index][i].setHint(hint[i]);
             word_layout[index][i].addView(word[index][i]);
+            if(i==0){
+                //粘贴按钮
+                paste_btn[index] = new Button(context);
+                RelativeLayout.LayoutParams paste_btn_Params = new RelativeLayout.LayoutParams(conversion(20), conversion(20));
+                paste_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                paste_btn_Params.addRule(RelativeLayout.CENTER_VERTICAL);
+                paste_btn[index].setLayoutParams(paste_btn_Params);
+                Drawable paste_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.paste, null);
+                paste_btn[index].setBackground(paste_icon);
+                paste_btn[index].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        word[ind][0].setText(C_meaning.getText());
+                    }
+                });
+                word_layout[index][i].addView(paste_btn[index]);
+            }
+
+
             example_layout.addView(word_layout[index][i]);
         }
+
+
+
         //按钮
         btn_layout[index] = new RelativeLayout(context);
         LinearLayout.LayoutParams btn_layoutParams = new LinearLayout.LayoutParams(
@@ -204,10 +222,9 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         btn_layout[index].setLayoutParams(btn_layoutParams);
         del_btn[index] = new Button(context);
         RelativeLayout.LayoutParams del_btn_Params = new RelativeLayout.LayoutParams(
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())),
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())));
-        del_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics())), 0,
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0);
+                conversion(25),
+                conversion(25));
+        del_btn_Params.setMargins(conversion(20), 0, conversion(18), 0);
         del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         del_btn[index].setLayoutParams(del_btn_Params);
         del_btn[index].setPadding(0,0,0,0);
@@ -218,11 +235,8 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         del_btn[index].setId(index);
 
         add_btn[index] = new Button(context);
-        RelativeLayout.LayoutParams add_btn_Params = new RelativeLayout.LayoutParams(
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())),
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics())));
-        add_btn_Params.setMargins(((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, context.getResources().getDisplayMetrics())), 0,
-                ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics())), 0);
+        RelativeLayout.LayoutParams add_btn_Params = new RelativeLayout.LayoutParams(conversion(25), conversion(25));
+        add_btn_Params.setMargins(conversion(18), 0, conversion(20), 0);
         add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         add_btn[index].setLayoutParams(add_btn_Params);
         add_btn[index].setPadding(0,0,0,0);
@@ -237,7 +251,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 add_view();
             }
         });
-        final int ind=index;
+
         del_btn[index].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -256,6 +270,10 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         btn_layout[index].addView(del_btn[index]);
         example_layout.addView(btn_layout[index]);
         index++;
+    }
+
+    private int conversion(int value){
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics());
     }
 
     private boolean judge(){
