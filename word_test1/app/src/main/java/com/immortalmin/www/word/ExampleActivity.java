@@ -361,6 +361,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         try{
             jsonObject.put("wid",wid);
             jsonObject.put("uid",userData.getUid());
+            jsonObject.put("C_meaning",C_meaning.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();
         }

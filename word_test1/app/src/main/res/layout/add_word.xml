@@ -101,29 +101,11 @@
             android:layout_width="match_parent"
             android:layout_height="140dp">
 
-
             <LinearLayout
                 android:id="@+id/example_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-
-                <!--<RelativeLayout-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content">-->
-
-                <!--<Button-->
-                <!--android:id="@+id/add_btn0"-->
-                <!--android:layout_width="25dp"-->
-                <!--android:layout_height="25dp"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_marginRight="20dp"-->
-                <!--android:background="#00000000"-->
-                <!--android:textColor="#ffffff"-->
-                <!--android:textSize="20dp"-->
-                <!--android:text="+" />-->
-                <!--</RelativeLayout>-->
 
             </LinearLayout>
 

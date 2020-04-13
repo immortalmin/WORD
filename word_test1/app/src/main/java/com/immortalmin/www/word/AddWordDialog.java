@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -53,7 +55,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
     private LinearLayout example_layout;
     private Button[] del_btn = new Button[10];
     private Button[] add_btn = new Button[10];
-    private Button[] paste_btn = new Button[10];
+    private Button[][] operate_btn = new Button[10][5];
     private int index=0;
     private boolean[] del_flag = new boolean[10];
     private int sum=0;//统计例句的数量
@@ -168,91 +170,133 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         final int ind=index;
         sum++;
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
+        Drawable paste_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.paste, null);
+        Drawable delete_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.del3, null);
         for(int i=0;i<3;i++){
+            final int now_i = i;
             // 1.创建外围LinearLayout控件
-            word_layout[index][i] = new RelativeLayout(context);
+            word_layout[ind][i] = new RelativeLayout(context);
             RelativeLayout.LayoutParams eLayoutlayoutParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             eLayoutlayoutParams.setMargins(conversion(18), conversion(5), conversion(18), 0);
-            eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
-            word_layout[index][i].setLayoutParams(eLayoutlayoutParams);
-            word_layout[index][i].setGravity(Gravity.LEFT);
+//            eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
+            word_layout[ind][i].setLayoutParams(eLayoutlayoutParams);
+            word_layout[ind][i].setGravity(Gravity.LEFT);
             Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.word_input, null);
-            word_layout[index][i].setBackground(d);
-            word_layout[index][i].setPadding(conversion(10),0, conversion(10),0);
+            word_layout[ind][i].setBackground(d);
+            word_layout[ind][i].setPadding(conversion(10),0, conversion(10),0);
             //2.word_meaning
-            word[index][i] = new EditText(context);
-            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, conversion(30));
-            word[index][i].setPadding(0,0,0,0);
-            word[index][i].setLayoutParams(word_meaning_Params);
-            word[index][i].setBackgroundColor(Color.parseColor("#00000000"));
-            word[index][i].setHint(hint[i]);
-            word_layout[index][i].addView(word[index][i]);
+            word[ind][i] = new EditText(context);
+            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            word[ind][i].setPadding(0,0,50,0);
+            word[ind][i].setMaxLines(3);
+            word[ind][i].setMinHeight(conversion(30));
+            word[ind][i].setLayoutParams(word_meaning_Params);
+            word[ind][i].setBackgroundColor(Color.parseColor("#00000000"));
+            word[ind][i].setHint(hint[i]);
+            word[ind][i].addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(now_i==0){
+                        if(word[ind][now_i].getText().toString().length()==0){
+                            operate_btn[ind][now_i].setBackground(paste_icon);
+                        }else{
+                            operate_btn[ind][now_i].setBackground(delete_icon);
+                        }
+                    }else{
+                        if(word[ind][now_i].getText().toString().length()==0){
+                            operate_btn[ind][now_i].setVisibility(View.INVISIBLE);
+                        }else{
+                            operate_btn[ind][now_i].setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
+            word_layout[ind][i].addView(word[ind][i]);
+
+            //操作按钮
+            operate_btn[ind][now_i] = new Button(context);
+            RelativeLayout.LayoutParams operate_btn_Params = new RelativeLayout.LayoutParams(conversion(20), conversion(20));
+            operate_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            operate_btn_Params.addRule(RelativeLayout.CENTER_VERTICAL);
+            operate_btn[ind][now_i].setLayoutParams(operate_btn_Params);
             if(i==0){
-                //粘贴按钮
-                paste_btn[index] = new Button(context);
-                RelativeLayout.LayoutParams paste_btn_Params = new RelativeLayout.LayoutParams(conversion(20), conversion(20));
-                paste_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                paste_btn_Params.addRule(RelativeLayout.CENTER_VERTICAL);
-                paste_btn[index].setLayoutParams(paste_btn_Params);
-                Drawable paste_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.paste, null);
-                paste_btn[index].setBackground(paste_icon);
-                paste_btn[index].setOnClickListener(new View.OnClickListener() {
+                operate_btn[ind][now_i].setBackground(paste_icon);
+                operate_btn[ind][now_i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        word[ind][0].setText(C_meaning.getText());
+                        if(word[ind][0].getText().toString().length()==0){
+                            word[ind][0].setText(C_meaning.getText());
+                        }else{
+                            word[ind][0].setText("");
+                        }
                     }
                 });
-                word_layout[index][i].addView(paste_btn[index]);
+            }else{
+                operate_btn[ind][now_i].setBackground(delete_icon);
+                operate_btn[ind][now_i].setVisibility(View.INVISIBLE);
+                operate_btn[ind][now_i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        word[ind][now_i].setText("");
+                    }
+                });
             }
-
-
-            example_layout.addView(word_layout[index][i]);
+            word_layout[ind][i].addView(operate_btn[ind][now_i]);
+            example_layout.addView(word_layout[ind][i]);
         }
 
-
-
         //按钮
-        btn_layout[index] = new RelativeLayout(context);
+        btn_layout[ind] = new RelativeLayout(context);
         LinearLayout.LayoutParams btn_layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        btn_layout[index].setLayoutParams(btn_layoutParams);
-        del_btn[index] = new Button(context);
+        btn_layout[ind].setLayoutParams(btn_layoutParams);
+        del_btn[ind] = new Button(context);
         RelativeLayout.LayoutParams del_btn_Params = new RelativeLayout.LayoutParams(
                 conversion(25),
                 conversion(25));
         del_btn_Params.setMargins(conversion(20), 0, conversion(18), 0);
         del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        del_btn[index].setLayoutParams(del_btn_Params);
-        del_btn[index].setPadding(0,0,0,0);
-        del_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
-        del_btn[index].setTextColor(Color.parseColor("#FFFFFF"));
-        del_btn[index].setTextSize(20);
-        del_btn[index].setText("-");
-        del_btn[index].setId(index);
+        del_btn[ind].setLayoutParams(del_btn_Params);
+        del_btn[ind].setPadding(0,0,0,0);
+        del_btn[ind].setBackgroundColor(Color.parseColor("#00000000"));
+        del_btn[ind].setTextColor(Color.parseColor("#FFFFFF"));
+        del_btn[ind].setTextSize(20);
+        del_btn[ind].setText("-");
+        del_btn[ind].setId(ind);
 
-        add_btn[index] = new Button(context);
+        add_btn[ind] = new Button(context);
         RelativeLayout.LayoutParams add_btn_Params = new RelativeLayout.LayoutParams(conversion(25), conversion(25));
         add_btn_Params.setMargins(conversion(18), 0, conversion(20), 0);
         add_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        add_btn[index].setLayoutParams(add_btn_Params);
-        add_btn[index].setPadding(0,0,0,0);
-        add_btn[index].setBackgroundColor(Color.parseColor("#00000000"));
-        add_btn[index].setTextColor(Color.parseColor("#FFFFFF"));
-        add_btn[index].setTextSize(20);
-        add_btn[index].setText("+");
-        add_btn[index].setId(index);
-        add_btn[index].setOnClickListener(new View.OnClickListener() {
+        add_btn[ind].setLayoutParams(add_btn_Params);
+        add_btn[ind].setPadding(0,0,0,0);
+        add_btn[ind].setBackgroundColor(Color.parseColor("#00000000"));
+        add_btn[ind].setTextColor(Color.parseColor("#FFFFFF"));
+        add_btn[ind].setTextSize(20);
+        add_btn[ind].setText("+");
+        add_btn[ind].setId(ind);
+        add_btn[ind].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 add_view();
             }
         });
 
-        del_btn[index].setOnClickListener(new View.OnClickListener() {
+        del_btn[ind].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 del_flag[ind]=false;
@@ -266,9 +310,9 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 }
             }
         });
-        btn_layout[index].addView(add_btn[index]);
-        btn_layout[index].addView(del_btn[index]);
-        example_layout.addView(btn_layout[index]);
+        btn_layout[ind].addView(add_btn[ind]);
+        btn_layout[ind].addView(del_btn[ind]);
+        example_layout.addView(btn_layout[ind]);
         index++;
     }
 

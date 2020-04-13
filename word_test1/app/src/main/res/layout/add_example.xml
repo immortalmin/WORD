@@ -16,38 +16,40 @@
         android:textColor="#ffffff"
         android:text="新增例句" />
 
-    <ScrollView
-        android:id="@+id/scrollView"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        >
+        android:layout_height="wrap_content">
 
-
-        <LinearLayout
-            android:id="@+id/example_layout"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/first_add_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:background="#00000000"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            android:textSize="40dp"
+            android:text="+" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            >
 
 
-            <!--<RelativeLayout-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content">-->
+            <LinearLayout
+                android:id="@+id/example_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+        </ScrollView>
 
-                <!--<Button-->
-                    <!--android:id="@+id/add_btn0"-->
-                    <!--android:layout_width="25dp"-->
-                    <!--android:layout_height="25dp"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:layout_marginRight="20dp"-->
-                    <!--android:background="#00000000"-->
-                    <!--android:textColor="#ffffff"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:text="+" />-->
-            <!--</RelativeLayout>-->
-        </LinearLayout>
-    </ScrollView>
-
+    </RelativeLayout>
 
 
 
