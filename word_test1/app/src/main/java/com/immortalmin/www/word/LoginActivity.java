@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,8 +28,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    EditText login_username_edit,login_password_edit;
-    Button login_btn,reg_btn,forget_pwd;
+    private EditText login_username_edit,login_password_edit;
+    private Button login_btn,reg_btn,forget_pwd,clean_btn1,clean_btn2;
     private CircleImageView login_profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
@@ -36,19 +38,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageUtils imageUtils = new ImageUtils();
     private Intent intent;
     private Runnable toMain;
+    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = this;
         login_username_edit = (EditText)findViewById(R.id.login_username_edit);
         login_password_edit = (EditText)findViewById(R.id.login_password_edit);
         login_btn = (Button)findViewById(R.id.login_btn);
         reg_btn = (Button)findViewById(R.id.reg_btn);
         forget_pwd = (Button)findViewById(R.id.forget_pwd);
+        clean_btn1 = (Button)findViewById(R.id.clean_btn1);
+        clean_btn2 = (Button)findViewById(R.id.clean_btn2);
         login_profile_photo = (CircleImageView)findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
+        clean_btn1.setOnClickListener(this);
+        clean_btn2.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
 
         //快速登录
@@ -83,6 +91,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void afterTextChanged(Editable editable) {
                 login();
+                if(login_username_edit.getText().toString().length()==0){
+                    clean_btn1.setVisibility(View.INVISIBLE);
+                }else{
+                    clean_btn1.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        login_password_edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(login_password_edit.getText().toString().length()==0){
+                    clean_btn2.setVisibility(View.INVISIBLE);
+                }else{
+                    clean_btn2.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -107,6 +140,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
+            case R.id.clean_btn1:
+                login_username_edit.setText("");
+                break;
+            case R.id.clean_btn2:
+                login_password_edit.setText("");
                 break;
         }
     }
@@ -178,7 +217,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if(pwd.equals(userdata.get("pwd"))){
                         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                         sp.edit().putString("username", userdata.get("username").toString())
-                                .putString("password", userdata.get("pwd").toString())
+                                .putString("password", login_password_edit.getText().toString())
                                 .putString("profile_photo", userdata.get("profile_photo").toString())
                                 .putString("status","1")
                                 .apply();

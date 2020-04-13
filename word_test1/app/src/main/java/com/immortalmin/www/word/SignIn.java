@@ -210,11 +210,11 @@ public class SignIn extends View {
     private int timeTocolor(int utime){
         if(utime<=0){
             return 0;
-        }else if(utime<10){
-            return 1;
         }else if(utime<30){
-            return 2;
+            return 1;
         }else if(utime<60){
+            return 2;
+        }else if(utime<100){
             return 3;
         }
         return 4;
