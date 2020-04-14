@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText login_username_edit,login_password_edit;
-    private Button login_btn,reg_btn,forget_pwd,clean_btn1,clean_btn2;
+    private Button login_btn,reg_btn,forget_pwd,clean_btn1,clean_btn2,switch_btn;
     private CircleImageView login_profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
@@ -39,6 +41,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Intent intent;
     private Runnable toMain;
     private Context context;
+    private boolean unseen_flag = true;
+    private Drawable d;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +55,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         forget_pwd = (Button)findViewById(R.id.forget_pwd);
         clean_btn1 = (Button)findViewById(R.id.clean_btn1);
         clean_btn2 = (Button)findViewById(R.id.clean_btn2);
+        switch_btn = (Button)findViewById(R.id.switch_btn);
         login_profile_photo = (CircleImageView)findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         clean_btn1.setOnClickListener(this);
         clean_btn2.setOnClickListener(this);
+        switch_btn.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
 
         //快速登录
@@ -92,9 +98,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void afterTextChanged(Editable editable) {
                 login();
                 if(login_username_edit.getText().toString().length()==0){
-                    clean_btn1.setVisibility(View.INVISIBLE);
+                    mHandler.obtainMessage(4,clean_btn1).sendToTarget();
                 }else{
-                    clean_btn1.setVisibility(View.VISIBLE);
+                    mHandler.obtainMessage(5,clean_btn1).sendToTarget();
                 }
             }
         });
@@ -112,9 +118,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void afterTextChanged(Editable s) {
                 if(login_password_edit.getText().toString().length()==0){
-                    clean_btn2.setVisibility(View.INVISIBLE);
+                    mHandler.obtainMessage(4,clean_btn2).sendToTarget();
+                    mHandler.obtainMessage(4,switch_btn).sendToTarget();
                 }else{
-                    clean_btn2.setVisibility(View.VISIBLE);
+                    mHandler.obtainMessage(5,clean_btn2).sendToTarget();
+                    mHandler.obtainMessage(5,switch_btn).sendToTarget();
                 }
             }
         });
@@ -146,6 +154,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.clean_btn2:
                 login_password_edit.setText("");
+                break;
+            case R.id.switch_btn:
+                if(unseen_flag){
+                    mHandler.obtainMessage(2).sendToTarget();
+                    login_password_edit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }else{
+                    mHandler.obtainMessage(3).sendToTarget();
+                    login_password_edit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
+                login_password_edit.setSelection(login_password_edit.getText().length());
+                unseen_flag = !unseen_flag;
                 break;
         }
     }
@@ -270,6 +289,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    LoginActivity.this.finish();
 //                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     mHandler.postDelayed(toMain,1000);
+                    break;
+                case 2:
+                    d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.unseen_icon, null);
+                    switch_btn.setBackground(d);
+                    break;
+                case 3:
+                    d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.seen_icon, null);
+                    switch_btn.setBackground(d);
+                    break;
+                case 4:
+                    View view = (View)message.obj;
+                    view.setVisibility(View.INVISIBLE);
+                    break;
+                case 5:
+                    view = (View)message.obj;
+                    view.setVisibility(View.VISIBLE);
                     break;
             }
             return false;
