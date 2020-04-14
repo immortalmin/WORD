@@ -22,10 +22,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -54,7 +54,6 @@
         <activity android:name=".ReciteWordActivity" />
         <activity android:name=".WordViewTestActivity" />
         <activity android:name=".DataTestActivity" />
-        <activity android:name=".EditActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
@@ -62,7 +61,8 @@
         <activity android:name=".SettingActivity" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
-        <activity android:name=".collectActivity"></activity>
+        <activity android:name=".collectActivity" />
+        <activity android:name=".edit_dialog"></activity>
     </application>
 
 </manifest>

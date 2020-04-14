@@ -55,19 +55,19 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         UpdateExampleDialog.OnDialogInteractionListener{
 
     private UserData userData = new UserData();
-    TextView word_meaning,E_sentence,C_translate,non_example,source,C_meaning,example;
-    WordView word_group;
-    ListView example_list;
-    Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
-    JsonRe  jsonRe;
+    private TextView word_meaning,E_sentence,C_translate,non_example,source,C_meaning,example;
+    private WordView word_group;
+    private ListView example_list;
+    private Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
+    private JsonRe  jsonRe;
     private ImageView backdrop;
     private ExampleAdapter exampleAdapter;
     private MediaPlayer mediaPlayer;
     private JSONObject jsonObject;
-    HashMap<String,Object> word = null;
-    ArrayList<HashMap<String,Object>> examplelist = null;
-    String wid = "1";
-    String current_word="error";
+    private HashMap<String,Object> word = null;
+    private ArrayList<HashMap<String,Object>> examplelist = null;
+    private String wid = "1";
+    private String current_word="error";
     private String TAG = "ccc";
     private boolean first_coming = true;
     int mode=0;//0 view,1 edit

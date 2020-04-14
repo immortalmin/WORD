@@ -6,12 +6,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -42,7 +44,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener{
+public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
+        EditDialog.OnDialogInteractionListener{
 
     private Button return_btn,logout_btn;
     private EditText recite_num,recite_scope;
@@ -68,6 +71,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         photo.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         logout_btn.setOnClickListener(this);
+        nickname.setOnClickListener(this);
         init();
     }
 
@@ -122,6 +126,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.photo:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
+                break;
+            case R.id.nickname:
+                show_edit_dialog();
                 break;
         }
     }
@@ -212,6 +219,26 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
     }
 
+    private void show_edit_dialog(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("title","修改用户名");
+            jsonObject.put("content",nickname.getText());
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        EditDialog editDialog = new EditDialog(this,R.style.MyDialog,jsonObject);
+        editDialog.show();
+        editDialog.setCancelable(false);
+        editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+
+            }
+        });
+    }
+
     private Handler mHandler = new Handler(new Handler.Callback(){
         @Override
         public boolean handleMessage(Message msg) {
@@ -241,6 +268,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             }
         }).start();
 
+    }
+
+    @Override
+    public void EditInteraction(String res){
+        Log.i("ccc",res);
     }
 
     @Override
