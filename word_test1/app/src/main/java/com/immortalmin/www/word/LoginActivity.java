@@ -236,9 +236,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if(pwd.equals(userdata.get("pwd"))){
                         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                         sp.edit().putString("username", userdata.get("username").toString())
-                                .putString("password", login_password_edit.getText().toString())
+                                .putString("password", userdata.get("password").toString())
                                 .putString("profile_photo", userdata.get("profile_photo").toString())
                                 .putString("status","1")
+                                .putString("email",userdata.get("email").toString())
+                                .putString("telephone",userdata.get("telephone").toString())
+                                .putString("motto",userdata.get("motto").toString())
+                                .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
                                 .apply();
 
                         get_setting();

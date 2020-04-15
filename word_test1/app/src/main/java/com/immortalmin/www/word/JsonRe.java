@@ -139,10 +139,12 @@ public class JsonRe {
             JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
             word.put("uid",jsonObject.getString("uid"));
             word.put("username",jsonObject.getString("username"));
-            word.put("pwd",jsonObject.getString("pwd"));
+            word.put("password",jsonObject.getString("pwd"));
             word.put("profile_photo",jsonObject.getString("profile_photo"));
             word.put("telephone",jsonObject.getString("telephone"));
             word.put("email",jsonObject.getString("email"));
+            word.put("motto",jsonObject.getString("motto"));
+            word.put("last_login",jsonObject.getLong("last_login"));
         }catch (JSONException e) {
             e.printStackTrace();
         }

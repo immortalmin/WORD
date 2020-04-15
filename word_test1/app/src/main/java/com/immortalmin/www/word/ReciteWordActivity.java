@@ -63,7 +63,8 @@ public class ReciteWordActivity extends AppCompatActivity
     Button turn_mode,ret_btn;
     private ImageView imgview;
     TextView total_times, word_times;
-    JsonRe jsonRe;
+    private JsonRe jsonRe = new JsonRe();
+    private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     ProgressBar total_progress;
     SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
@@ -284,7 +285,6 @@ public class ReciteWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
-        jsonRe = new JsonRe();
         init_user();
         dialog_init();
         setting.put("uid",userData.getUid());
@@ -467,7 +467,7 @@ public class ReciteWordActivity extends AppCompatActivity
                     word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
                     break;
                 case 1:
-                    Glide.with(ReciteWordActivity.this).load(getcapture())
+                    Glide.with(ReciteWordActivity.this).load(captureUtil.getcapture(ReciteWordActivity.this))
                             .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
                     imgview.setVisibility(View.VISIBLE);
                     break;
@@ -479,30 +479,30 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     });
 
-    /**
-     * 截屏
-     * @return
-     */
-    private Bitmap getcapture(){
-        View view = getWindow().getDecorView();     // 获取DecorView
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache();
-        Bitmap bitmap = view.getDrawingCache();
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ReciteWordActivity.this), getScreenHeight(ReciteWordActivity.this), null, false);
-        return bitmap;
-    }
-
-    //获取屏幕高度 不包含虚拟按键=
-    public static int getScreenHeight(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.heightPixels;
-    }
-
-    //获取屏幕宽度
-    public static int getScreenWidth(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.widthPixels;
-    }
+//    /**
+//     * 截屏
+//     * @return
+//     */
+//    private Bitmap getcapture(){
+//        View view = getWindow().getDecorView();     // 获取DecorView
+//        view.setDrawingCacheEnabled(true);
+//        view.buildDrawingCache();
+//        Bitmap bitmap = view.getDrawingCache();
+//        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ReciteWordActivity.this), getScreenHeight(ReciteWordActivity.this), null, false);
+//        return bitmap;
+//    }
+//
+//    //获取屏幕高度 不包含虚拟按键=
+//    public static int getScreenHeight(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.heightPixels;
+//    }
+//
+//    //获取屏幕宽度
+//    public static int getScreenWidth(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.widthPixels;
+//    }
 
     /**
      * CountDownFragment的回调函数

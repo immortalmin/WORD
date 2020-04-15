@@ -10,18 +10,15 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +31,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -60,6 +52,7 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
     private ListView example_list;
     private Button btn1,collect,word_del_btn,word_edit_btn,edit_btn,ban_icon;
     private JsonRe  jsonRe;
+    private CaptureUtil captureUtil = new CaptureUtil();
     private ImageView backdrop;
     private ExampleAdapter exampleAdapter;
     private MediaPlayer mediaPlayer;
@@ -339,7 +332,9 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     break;
                 case 5:
-                    Glide.with(ExampleActivity.this).load(getcapture())
+//                    Glide.with(ExampleActivity.this).load(getcapture())
+//                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
+                    Glide.with(ExampleActivity.this).load(captureUtil.getcapture(ExampleActivity.this))
                             .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
                     backdrop.setVisibility(View.VISIBLE);
                     break;
@@ -484,30 +479,32 @@ public class ExampleActivity extends AppCompatActivity implements View.OnClickLi
         getwordlist();
     }
 
-    /**
-     * 截屏
-     * @return
-     */
-    private Bitmap getcapture(){
-        View view = getWindow().getDecorView();     // 获取DecorView
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache();
-        Bitmap bitmap = view.getDrawingCache();
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ExampleActivity.this), getScreenHeight(ExampleActivity.this), null, false);
-        return bitmap;
-    }
+    //写成工具类了
+//    /**
+//     * 截屏
+//     * @return
+//     */
+//    private Bitmap getcapture(){
+//        View view = getWindow().getDecorView();     // 获取DecorView
+//        view.setDrawingCacheEnabled(true);
+//        view.buildDrawingCache();
+//        Bitmap bitmap = view.getDrawingCache();
+//        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ExampleActivity.this), getScreenHeight(ExampleActivity.this), null, false);
+//        return bitmap;
+//    }
+//
+//    //获取屏幕高度 不包含虚拟按键
+//    public static int getScreenHeight(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.heightPixels;
+//    }
+//
+//    //获取屏幕宽度
+//    public static int getScreenWidth(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.widthPixels;
+//    }
 
-    //获取屏幕高度 不包含虚拟按键
-    public static int getScreenHeight(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.heightPixels;
-    }
-
-    //获取屏幕宽度
-    public static int getScreenWidth(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.widthPixels;
-    }
 
     @Override
     public void addExampleInteraction(JSONObject jsonObject){

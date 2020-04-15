@@ -68,9 +68,9 @@ public class LaunchActivity extends AppCompatActivity {
     }
     private void jump_activity(){
         Handler handler = new Handler();
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        String status = sp.getString("status",null);
-        if("1".equals(status)){
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        String status = sp.getString("status",null);
+        if("1".equals(userData.getStatus())){
             getuserdata();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -97,12 +97,8 @@ public class LaunchActivity extends AppCompatActivity {
         //检查权限
         judgePermission();
 
-//        test();
         //读取文件中用户的信息
         init_user();
-
-        //检查时间，判断是否需要上传使用数据
-//        inspect_usetime();
 
     }
 
@@ -113,7 +109,13 @@ public class LaunchActivity extends AppCompatActivity {
         userData.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         userData.setUsername(sp.getString("username",null));
-        userData.setLast_login(sp.getLong("last_login",404L));
+        userData.setPassword(sp.getString("password",null));
+        userData.setProfile_photo(sp.getString("profile_photo",null));
+        userData.setStatus(sp.getString("status","0"));
+        userData.setLast_login(sp.getLong("last_login",946656000000L));
+        userData.setEmail(sp.getString("email",null));
+        userData.setTelephone(sp.getString("telephone",null));
+        userData.setMotto(sp.getString("motto",null));
     }
 
 
@@ -132,6 +134,17 @@ public class LaunchActivity extends AppCompatActivity {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
                 userdata = jsonRe.userData(wordjson);
+                //将用户数据保存到本地
+                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putString("username", userdata.get("username").toString())
+                        .putString("password", userdata.get("password").toString())
+                        .putString("profile_photo", userdata.get("profile_photo").toString())
+                        .putString("status","1")
+                        .putString("email",userdata.get("email").toString())
+                        .putString("telephone",userdata.get("telephone").toString())
+                        .putString("motto",userdata.get("motto").toString())
+                        .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
+                        .apply();
                 get_setting();
             }
         }).start();
@@ -141,7 +154,7 @@ public class LaunchActivity extends AppCompatActivity {
     private void get_setting(){
         new Thread(new Runnable() {
             @Override
-            public void run() {
+            public void run()  {
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("uid",userdata.get("uid").toString());

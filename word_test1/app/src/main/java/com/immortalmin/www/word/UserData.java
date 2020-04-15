@@ -6,7 +6,7 @@ import java.io.Serializable;
  * user information
  */
 public class UserData implements Serializable{
-    private String uid,username,password,profile_photo,status="0";
+    private String uid,username,password,profile_photo,status="0",motto,email,telephone;
     private int recite_num,recite_scope;
     private long last_login;
 
@@ -75,17 +75,27 @@ public class UserData implements Serializable{
         this.last_login = last_login;
     }
 
-    @Override
-    public String toString() {
-        return "UserData{" +
-                "uid='" + uid + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", profile_photo='" + profile_photo + '\'' +
-                ", status='" + status + '\'' +
-                ", recite_num=" + recite_num +
-                ", recite_scope=" + recite_scope +
-                ", last_login=" + last_login +
-                '}';
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 }

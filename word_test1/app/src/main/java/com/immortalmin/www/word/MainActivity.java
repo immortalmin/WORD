@@ -149,7 +149,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userData.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         userData.setUsername(sp.getString("username",null));
-        userData.setLast_login(sp.getLong("last_login",404L));
+        userData.setPassword(sp.getString("password",null));
+        userData.setProfile_photo(sp.getString("profile_photo",null));
+        userData.setStatus(sp.getString("status","0"));
+        userData.setLast_login(sp.getLong("last_login",946656000000L));
+        userData.setEmail(sp.getString("email",null));
+        userData.setTelephone(sp.getString("telephone",null));
+        userData.setMotto(sp.getString("motto",null));
     }
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
@@ -219,9 +225,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String nowday = simpleDateFormat.format(date);
 
         //代表是第一次登录
-        if(userData.getLast_login()==404L){
+        if(userData.getLast_login()==946656000000L){
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
+            userData.setLast_login(now_time_stamp);
             return;
         }
 
@@ -232,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //保存现在的日期
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
+            userData.setLast_login(now_time_stamp);
 
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
@@ -249,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         jsonObject.put("uid",userData.getUid());
                         jsonObject.put("utime",(int)minutes);
                         jsonObject.put("udate",last_day);
+                        jsonObject.put("utimestamp",now_time_stamp);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

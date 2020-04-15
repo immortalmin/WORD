@@ -35,6 +35,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,6 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
         EditDialog.OnDialogInteractionListener{
@@ -51,10 +56,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private EditText recite_num,recite_scope;
     private TextView nickname;
     private CircleImageView photo;
+    private ImageView backdrop;
     private SignIn signIn;
     private ImageUtils imageUtils = new ImageUtils();
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
+    private CaptureUtil captureUtil = new CaptureUtil();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
 
     @Override
@@ -68,6 +75,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         nickname = (TextView) findViewById(R.id.nickname);
         photo = (CircleImageView) findViewById(R.id.photo);
         signIn = (SignIn) findViewById(R.id.signIn);
+        backdrop = (ImageView)findViewById(R.id.backdrop);
         photo.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         logout_btn.setOnClickListener(this);
@@ -99,8 +107,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         userData.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         userData.setUsername(sp.getString("username",null));
-        userData.setLast_login(sp.getLong("last_login",404L));
+        userData.setPassword(sp.getString("password",null));
         userData.setProfile_photo(sp.getString("profile_photo",null));
+        userData.setStatus(sp.getString("status","0"));
+        userData.setLast_login(sp.getLong("last_login",946656000000L));
+        userData.setEmail(sp.getString("email",null));
+        userData.setTelephone(sp.getString("telephone",null));
+        userData.setMotto(sp.getString("motto",null));
     }
 
     public void onClick(View view){
@@ -129,6 +142,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.nickname:
                 show_edit_dialog();
+                mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
     }
@@ -145,10 +159,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String res = httpGetContext.getData("http://47.98.239.237/word/php_file2/getusetime.php",jsonObject);
-                ArrayList<Integer> usetime = jsonRe.usetimeData(res);
-                //加入今天的数据
-                usetime.add(0,get_today_usetime());
-                signIn.setSign_in_times(usetime);
+                if(res!=null){
+                    ArrayList<Integer> usetime = jsonRe.usetimeData(res);
+                    //加入今天的数据
+                    usetime.add(0,get_today_usetime());
+                    signIn.setSign_in_times(usetime);
+                }
             }
         }).start();
     }
@@ -234,7 +250,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-
+                mHandler.obtainMessage(3).sendToTarget();
             }
         });
     }
@@ -252,7 +268,14 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     nickname.setText(userData.getUsername());
                     setImage(userData.getProfile_photo());
                     break;
-
+                case 2:
+                    Glide.with(SettingActivity.this).load(captureUtil.getcapture(SettingActivity.this))
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
+                    backdrop.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    backdrop.setVisibility(View.INVISIBLE);
+                    break;
             }
             return false;
         }

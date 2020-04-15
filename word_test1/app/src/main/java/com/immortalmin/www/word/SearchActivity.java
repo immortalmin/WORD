@@ -55,6 +55,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
+    private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private String fuzzy_str;
     @Override
@@ -187,7 +188,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     fuzzyquery((String)message.obj);
                     break;
                 case 2:
-                    Glide.with(SearchActivity.this).load(getcapture())
+                    Glide.with(SearchActivity.this).load(captureUtil.getcapture(SearchActivity.this))
                             .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
                     imgview.setVisibility(View.VISIBLE);
                     break;
@@ -199,30 +200,30 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
     });
 
-    /**
-     * 截屏
-     * @return
-     */
-    private Bitmap getcapture(){
-        View view = getWindow().getDecorView();     // 获取DecorView
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache();
-        Bitmap bitmap = view.getDrawingCache();
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(SearchActivity.this), getScreenHeight(SearchActivity.this), null, false);
-        return bitmap;
-    }
-
-    //获取屏幕高度 不包含虚拟按键=
-    public static int getScreenHeight(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.heightPixels;
-    }
-
-    //获取屏幕宽度
-    public static int getScreenWidth(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.widthPixels;
-    }
+//    /**
+//     * 截屏
+//     * @return
+//     */
+//    private Bitmap getcapture(){
+//        View view = getWindow().getDecorView();     // 获取DecorView
+//        view.setDrawingCacheEnabled(true);
+//        view.buildDrawingCache();
+//        Bitmap bitmap = view.getDrawingCache();
+//        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(SearchActivity.this), getScreenHeight(SearchActivity.this), null, false);
+//        return bitmap;
+//    }
+//
+//    //获取屏幕高度 不包含虚拟按键=
+//    public static int getScreenHeight(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.heightPixels;
+//    }
+//
+//    //获取屏幕宽度
+//    public static int getScreenWidth(Context context) {
+//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//        return dm.widthPixels;
+//    }
 
     /**
      * 跳转到例句页面
