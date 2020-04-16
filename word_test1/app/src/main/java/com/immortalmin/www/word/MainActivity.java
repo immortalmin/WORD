@@ -229,18 +229,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
             userData.setLast_login(now_time_stamp);
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("uid",userData.getUid());
+                jsonObject.put("last_login",userData.getLast_login());
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            update_last_login(jsonObject);
             return;
         }
-
         date = new Date(userData.getLast_login());
         String last_day = simpleDateFormat.format(date);
         if(!nowday.equals(last_day)){
 //            Log.i("ccc","不是同一天");
-            //保存现在的日期
-            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putLong("last_login",now_time_stamp).apply();
-            userData.setLast_login(now_time_stamp);
-
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
             mUseTimeDataManager.refreshData(userData.getLast_login(),now_time_stamp);
@@ -287,6 +289,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     update_time(jsonObject);
                 }
             }
+            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putLong("last_login",now_time_stamp).apply();
+            userData.setLast_login(now_time_stamp);
         }else{
 //            Log.i("ccc","是同一天");
         }
@@ -303,6 +308,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
+            }
+        }).start();
+    }
+
+    private void update_last_login(final JSONObject jsonObject) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
             }
         }).start();
     }

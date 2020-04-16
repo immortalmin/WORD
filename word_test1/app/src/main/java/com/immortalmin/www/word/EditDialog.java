@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class EditDialog extends Dialog implements View.OnClickListener {
 
@@ -25,7 +26,7 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     private TextView edit_title;
     private EditText edit_et;
     private Button confirm_btn,cancel_btn;
-    private JSONObject data;
+    private HashMap<String,Object> data;
 
 
     public EditDialog(Context context) {
@@ -33,7 +34,7 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         this.context=context;
     }
 
-    public EditDialog(Context context, int themeResId,JSONObject data) {
+    public EditDialog(Context context, int themeResId,HashMap<String,Object> data) {
         super(context, themeResId);
         this.context = context;
         this.data = data;
@@ -86,7 +87,9 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     }
 
     private void judge() {
-        listener.EditInteraction(edit_et.getText().toString());
+        data.put("content",edit_et.getText().toString());
+        dismiss();
+        listener.EditInteraction(data);
     }
 
 
@@ -95,12 +98,8 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    try{
-                        edit_title.setText(data.getString("title"));
-                        edit_et.setText(data.getString("content"));
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
+                    edit_title.setText(data.get("title").toString());
+                    edit_et.setText(data.get("content").toString());
                     break;
             }
             return false;
@@ -109,7 +108,7 @@ public class EditDialog extends Dialog implements View.OnClickListener {
 
     public interface OnDialogInteractionListener {
         // TODO: Update argument type and name
-        void EditInteraction(String res);
+        void EditInteraction(HashMap<String,Object> res);
     }
 
 }

@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -61,6 +62,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private ImageUtils imageUtils = new ImageUtils();
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
+    private DataUtil dataUtil = new DataUtil(SettingActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
 
@@ -84,7 +86,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        init_user();
+//        init_user();
+        userData = dataUtil.getdata();
+        Log.i("ccc",userData.toString());
         mHandler.obtainMessage(1).sendToTarget();
 
         //获取使用时间并显示
@@ -145,6 +149,28 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
+    }
+
+    private void update_userdata(JSONObject jsonObject){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//                sp.edit().putInt("recite_num",Integer.valueOf(recite_num.getText().toString()))
+//                        .putInt("recite_scope",Integer.valueOf(recite_scope.getText().toString()))
+//                        .apply();
+//                JSONObject jsonObject = new JSONObject();
+//                try{
+//                    jsonObject.put("uid",userData.getUid());
+//                    jsonObject.put("recite_num",recite_num.getText().toString());
+//                    jsonObject.put("recite_scope",recite_scope.getText().toString());
+//                }catch (JSONException e){
+//                    e.printStackTrace();
+//                }
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
+            }
+        }).start();
     }
 
     private void getusetime(){
@@ -236,15 +262,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void show_edit_dialog(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("title","修改用户名");
-            jsonObject.put("content",nickname.getText());
-
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        EditDialog editDialog = new EditDialog(this,R.style.MyDialog,jsonObject);
+        HashMap<String,Object> edit_data = new HashMap<>();
+        edit_data.put("attr","username");
+        edit_data.put("title","修改用户名");
+        edit_data.put("content",nickname.getText());
+        EditDialog editDialog = new EditDialog(this,R.style.MyDialog,edit_data);
         editDialog.show();
         editDialog.setCancelable(false);
         editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -294,8 +316,15 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void EditInteraction(String res){
-        Log.i("ccc",res);
+    public void EditInteraction(HashMap<String,Object> res){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put(res.get("attr").toString(),res.get("content").toString());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        update_userdata(jsonObject);
     }
 
     @Override

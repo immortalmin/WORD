@@ -133,7 +133,9 @@ public class LaunchActivity extends AppCompatActivity {
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
+                Log.i("ccc",wordjson);
                 userdata = jsonRe.userData(wordjson);
+                Log.i("ccc",userdata.toString());
                 //将用户数据保存到本地
                 SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                 sp.edit().putString("username", userdata.get("username").toString())

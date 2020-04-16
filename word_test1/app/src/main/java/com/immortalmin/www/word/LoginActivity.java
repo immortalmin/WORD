@@ -233,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(pwd.equals(userdata.get("pwd"))){
+                    if(pwd.equals(userdata.get("password")) || login_password_edit.getText().toString().equals(userdata.get("password"))){
                         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                         sp.edit().putString("username", userdata.get("username").toString())
                                 .putString("password", userdata.get("password").toString())
