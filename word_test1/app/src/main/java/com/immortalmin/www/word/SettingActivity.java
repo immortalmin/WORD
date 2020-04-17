@@ -88,7 +88,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private void init() {
 //        init_user();
         userData = dataUtil.getdata();
-        Log.i("ccc",userData.toString());
         mHandler.obtainMessage(1).sendToTarget();
 
         //获取使用时间并显示
@@ -324,7 +323,30 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }catch (JSONException e){
             e.printStackTrace();
         }
+        //更新用户数据
         update_userdata(jsonObject);
+
+
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+
+        //如果修改了数据，显示toast
+        if(!sp.getString(res.get("attr").toString(),"none").equals(res.get("content").toString())){
+            Toast.makeText(SettingActivity.this,"修改成功",Toast.LENGTH_SHORT).show();
+        }
+
+        //修改本地用户数据
+        sp.edit().putString(res.get("attr").toString(),res.get("content").toString()).apply();
+        switch (res.get("attr").toString()){
+            case "username":
+                userData.setUsername(res.get("content").toString());
+                break;
+            case "motto":
+                userData.setMotto(res.get("content").toString());
+                break;
+        }
+
+        //刷新界面的数据
+        mHandler.obtainMessage(1).sendToTarget();
     }
 
     @Override

@@ -98,4 +98,21 @@ public class UserData implements Serializable{
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "uid='" + uid + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", profile_photo='" + profile_photo + '\'' +
+                ", status='" + status + '\'' +
+                ", motto='" + motto + '\'' +
+                ", email='" + email + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", recite_num=" + recite_num +
+                ", recite_scope=" + recite_scope +
+                ", last_login=" + last_login +
+                '}';
+    }
 }
