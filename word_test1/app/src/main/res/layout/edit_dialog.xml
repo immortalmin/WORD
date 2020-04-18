@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dp"
-    android:layout_height="200dp"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/edit_background">
 
 
@@ -14,23 +14,48 @@
         android:textSize="18dp"
         android:text="修改昵称" />
 
-    <EditText
-        android:id="@+id/edit_et"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_below="@+id/edit_title"
-        android:layout_centerHorizontal="true"
+    <RelativeLayout
+        android:id="@+id/edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:background="#00000000"
-        android:textSize="20dp"
-        android:text="immortalmin" />
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:padding="5dp"
+        android:layout_below="@+id/edit_title"
+        android:background="@drawable/edit_background_withstroke">
+
+        <EditText
+            android:id="@+id/edit_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:maxLength="50"
+            android:background="#00000000"
+            android:textSize="15dp"
+            android:text="immortalmin" />
+
+        <TextView
+            android:id="@+id/stat_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_et"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="0/50" />
+    </RelativeLayout>
+
+
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_et"
-        android:padding="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_below="@+id/edit_layout"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:paddingLeft="55dp"
+        android:paddingRight="55dp"
         android:layout_centerHorizontal="true">
 
         <Button

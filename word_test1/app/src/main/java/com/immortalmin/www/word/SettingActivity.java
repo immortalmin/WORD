@@ -53,9 +53,9 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
         EditDialog.OnDialogInteractionListener{
 
-    private Button return_btn,logout_btn;
+    private Button return_btn,logout_btn,motto_edit_btn;
     private EditText recite_num,recite_scope;
-    private TextView nickname;
+    private TextView nickname,motto;
     private CircleImageView photo;
     private ImageView backdrop;
     private SignIn signIn;
@@ -65,6 +65,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private DataUtil dataUtil = new DataUtil(SettingActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
+    private HashMap<String,Object> edit_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +73,20 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_setting);
         return_btn = (Button)findViewById(R.id.return_btn);
         logout_btn = (Button)findViewById(R.id.logout_btn);
+        motto_edit_btn = (Button)findViewById(R.id.motto_edit_btn);
         recite_num = (EditText)findViewById(R.id.recite_num);
         recite_scope = (EditText)findViewById(R.id.recite_scope);
         nickname = (TextView) findViewById(R.id.nickname);
+        motto = (TextView) findViewById(R.id.motto);
         photo = (CircleImageView) findViewById(R.id.photo);
         signIn = (SignIn) findViewById(R.id.signIn);
         backdrop = (ImageView)findViewById(R.id.backdrop);
         photo.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         logout_btn.setOnClickListener(this);
+        motto_edit_btn.setOnClickListener(this);
         nickname.setOnClickListener(this);
+        motto.setOnClickListener(this);
         init();
     }
 
@@ -144,7 +149,27 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(i,0);
                 break;
             case R.id.nickname:
-                show_edit_dialog();
+                edit_data = new HashMap<>();
+                edit_data.put("attr","username");
+                edit_data.put("title","修改用户名");
+                edit_data.put("content",nickname.getText());
+                show_edit_dialog(edit_data);
+                mHandler.obtainMessage(2).sendToTarget();
+                break;
+            case R.id.motto_edit_btn:
+                edit_data = new HashMap<>();
+                edit_data.put("attr","motto");
+                edit_data.put("title","修改个性签名");
+                edit_data.put("content",motto.getText());
+                show_edit_dialog(edit_data);
+                mHandler.obtainMessage(2).sendToTarget();
+                break;
+            case R.id.motto:
+                edit_data = new HashMap<>();
+                edit_data.put("attr","motto");
+                edit_data.put("title","修改个性签名");
+                edit_data.put("content",motto.getText());
+                show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
@@ -154,18 +179,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//                sp.edit().putInt("recite_num",Integer.valueOf(recite_num.getText().toString()))
-//                        .putInt("recite_scope",Integer.valueOf(recite_scope.getText().toString()))
-//                        .apply();
-//                JSONObject jsonObject = new JSONObject();
-//                try{
-//                    jsonObject.put("uid",userData.getUid());
-//                    jsonObject.put("recite_num",recite_num.getText().toString());
-//                    jsonObject.put("recite_scope",recite_scope.getText().toString());
-//                }catch (JSONException e){
-//                    e.printStackTrace();
-//                }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
             }
@@ -260,12 +273,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }).start();
     }
 
-    private void show_edit_dialog(){
-        HashMap<String,Object> edit_data = new HashMap<>();
-        edit_data.put("attr","username");
-        edit_data.put("title","修改用户名");
-        edit_data.put("content",nickname.getText());
-        EditDialog editDialog = new EditDialog(this,R.style.MyDialog,edit_data);
+    private void show_edit_dialog(HashMap<String,Object> data){
+        EditDialog editDialog = new EditDialog(this,R.style.MyDialog,data);
         editDialog.show();
         editDialog.setCancelable(false);
         editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -287,6 +296,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     recite_num.setText(String.valueOf(userData.getRecite_num()));
                     recite_scope.setText(String.valueOf(userData.getRecite_scope()));
                     nickname.setText(userData.getUsername());
+                    motto.setText(userData.getMotto());
                     setImage(userData.getProfile_photo());
                     break;
                 case 2:
