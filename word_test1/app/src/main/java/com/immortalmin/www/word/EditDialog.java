@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,9 +29,9 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     private EditDialog.OnDialogInteractionListener listener;
     private TextView edit_title,stat_tv;
     private EditText edit_et;
-    private Button confirm_btn,cancel_btn;
+    private Button confirm_btn,cancel_btn,clean_btn;
     private HashMap<String,Object> data;
-    private int maxlength = 50;
+    private int max_length = 50;
 
 
     public EditDialog(Context context) {
@@ -58,9 +60,12 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         edit_et = (EditText)view.findViewById(R.id.edit_et);
         confirm_btn = (Button)view.findViewById(R.id.confirm_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
+        clean_btn = (Button)view.findViewById(R.id.clean_btn);
 
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
+        clean_btn.setOnClickListener(this);
+
         edit_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -74,7 +79,8 @@ public class EditDialog extends Dialog implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable s) {
-                stat_tv.setText(edit_et.getText().length()+"/"+maxlength);
+                String text = (int)getTextLength(edit_et.getText().toString())+"/"+max_length;
+                stat_tv.setText(text);
             }
         });
 
@@ -105,6 +111,9 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             case R.id.cancel_btn:
                 dismiss();
                 break;
+            case R.id.clean_btn:
+                edit_et.setText("");
+                break;
         }
     }
 
@@ -120,6 +129,19 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
+                    max_length = Integer.valueOf(data.get("max_length").toString());
+                    edit_et.setFilters(new InputFilter[]{new InputFilter() {
+                        // 这个方法，返回空字符串，就代表匹配不成功，返回null代表匹配成功
+                        @Override
+                        public CharSequence filter(CharSequence source, int start, int end,
+                                                   Spanned dest, int dstart, int dend) {
+                            // 获取字符个数(一个中文算2个字符)
+                            if (getTextLength(dest.toString()) + getTextLength(source.toString()) > max_length) {
+                                return "";
+                            }
+                            return null;
+                        }
+                    }});
                     edit_title.setText(data.get("title").toString());
                     edit_et.setText(data.get("content").toString());
                     edit_et.setSelection(edit_et.getText().length());
@@ -128,6 +150,25 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             return false;
         }
     });
+
+    /**
+     * 获取字符数量 汉字占2个，英文占一个
+     *
+     * @param text
+     * @return
+     */
+    public static double getTextLength(String text) {
+        double length = 0;
+        for (int i = 0; i < text.length(); i++) {
+            // text.charAt(i)获取当前字符是的chart值跟具ASCII对应关系255以前的都是英文或者符号之等而中文并不在这里面所以此方法可行</span>
+            if (text.charAt(i) > 255) {
+                length += 2;
+            } else {
+                length++;
+            }
+        }
+        return length;
+    }
 
     public interface OnDialogInteractionListener {
         // TODO: Update argument type and name

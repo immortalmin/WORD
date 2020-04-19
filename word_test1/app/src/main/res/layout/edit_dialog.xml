@@ -32,6 +32,7 @@
             android:inputType="textMultiLine"
             android:maxLines="3"
             android:maxLength="50"
+            android:layout_marginEnd="20dp"
             android:background="#00000000"
             android:textSize="15dp"
             android:text="immortalmin" />
@@ -44,6 +45,14 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:text="0/50" />
+
+        <Button
+            android:id="@+id/clean_btn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/del3"
+            />
     </RelativeLayout>
 
 

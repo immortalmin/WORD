@@ -66,28 +66,30 @@
             android:textSize="20dp"
             android:text="immortalmin" />
 
+        <Button
+            android:id="@+id/motto_edit_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_toEndOf="@+id/photo"
+            android:layout_below="@id/nickname"
+            android:layout_marginStart="15dp"
+            android:background="@drawable/edit1" />
+
         <TextView
             android:id="@+id/motto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/photo"
-            android:layout_below="@id/nickname"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="40dp"
+            android:layout_toEndOf="@+id/motto_edit_btn"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignTop="@+id/motto_edit_btn"
             android:ellipsize="end"
             android:maxLines="2"
             android:textStyle="italic"
             android:textSize="15dp"
             android:text="Recite English as your mother tongue" />
 
-        <Button
-            android:id="@+id/motto_edit_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_toRightOf="@+id/motto"
-            android:layout_alignBottom="@+id/motto"
-            android:layout_marginLeft="-40dp"
-            android:background="@drawable/edit1" />
+
 
     </RelativeLayout>
 

@@ -152,6 +152,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 edit_data = new HashMap<>();
                 edit_data.put("attr","username");
                 edit_data.put("title","修改用户名");
+                edit_data.put("max_length",15);
                 edit_data.put("content",nickname.getText());
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
@@ -160,6 +161,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 edit_data = new HashMap<>();
                 edit_data.put("attr","motto");
                 edit_data.put("title","修改个性签名");
+                edit_data.put("max_length",50);
                 edit_data.put("content",motto.getText());
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
@@ -168,6 +170,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 edit_data = new HashMap<>();
                 edit_data.put("attr","motto");
                 edit_data.put("title","修改个性签名");
+                edit_data.put("max_length",50);
                 edit_data.put("content",motto.getText());
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
@@ -275,7 +278,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private void show_edit_dialog(HashMap<String,Object> data){
         EditDialog editDialog = new EditDialog(this,R.style.MyDialog,data);
-        editDialog.show();
         editDialog.setCancelable(false);
         editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -283,6 +285,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 mHandler.obtainMessage(3).sendToTarget();
             }
         });
+        editDialog.show();
     }
 
     private Handler mHandler = new Handler(new Handler.Callback(){
