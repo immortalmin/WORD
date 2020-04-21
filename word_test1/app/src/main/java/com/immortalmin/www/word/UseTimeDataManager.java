@@ -124,7 +124,7 @@ public class UseTimeDataManager {
 
     //按照使用时间的长短进行排序，获取应用使用情况列表
     public ArrayList<PackageInfo> getmPackageInfoListOrderByTime() {
-        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByTime()   排序前：mPackageInfoList.size()" + mPackageInfoList.size());
+//        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByTime()   排序前：mPackageInfoList.size()" + mPackageInfoList.size());
 
         for (int n = 0; n < mPackageInfoList.size(); n++) {
             for (int m = n + 1; m < mPackageInfoList.size(); m++) {
@@ -136,13 +136,13 @@ public class UseTimeDataManager {
             }
         }
 
-        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByTime()   排序后：mPackageInfoList.size()" + mPackageInfoList.size());
+//        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByTime()   排序后：mPackageInfoList.size()" + mPackageInfoList.size());
         return mPackageInfoList;
     }
 
     //按照使用次数的多少进行排序，获取应用使用情况列表
     public ArrayList<PackageInfo> getmPackageInfoListOrderByCount() {
-        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByCount()   排序前：mPackageInfoList.size()" + mPackageInfoList.size());
+//        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByCount()   排序前：mPackageInfoList.size()" + mPackageInfoList.size());
 
         for (int n = 0; n < mPackageInfoList.size(); n++) {
             for (int m = n + 1; m < mPackageInfoList.size(); m++) {
@@ -154,7 +154,7 @@ public class UseTimeDataManager {
             }
         }
 
-        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByCount()   排序后：mPackageInfoList.size()" + mPackageInfoList.size());
+//        Log.i(TAG, " UseTimeDataManager-getmPackageInfoListOrderByCount()   排序后：mPackageInfoList.size()" + mPackageInfoList.size());
         return mPackageInfoList;
     }
 
@@ -245,10 +245,10 @@ public class UseTimeDataManager {
     //每次从0开始，将原本的 mOneTimeDetailList 清除一次,然后开始分类
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void refreshOneTimeDetailList(int startIndex) {
-        Log.i(TAG, "  refreshOneTimeDetailList()     startIndex : " + startIndex);
+//        Log.i(TAG, "  refreshOneTimeDetailList()     startIndex : " + startIndex);
 
         if (startIndex == 0) {
-            Log.i(TAG, "  refreshOneTimeDetailList()     每次从0开始，将原本的 mOneTimeDetailList 清除一次,然后开始分类 ");
+//            Log.i(TAG, "  refreshOneTimeDetailList()     每次从0开始，将原本的 mOneTimeDetailList 清除一次,然后开始分类 ");
             if (mOneTimeDetailList != null) {
                 mOneTimeDetailList.clear();
             }
@@ -258,10 +258,11 @@ public class UseTimeDataManager {
         int usedIndex = 0;
         String pkg = null;
         ArrayList<UsageEvents.Event> list = new ArrayList();
+//        Log.i("ccc","size()="+mEventListChecked.size());
         for (int i = startIndex; i < mEventListChecked.size(); i++) {
             if (i == startIndex) {
                 if (mEventListChecked.get(i).getEventType() == 2) {
-                    Log.i(TAG, "  refreshOneTimeDetailList()     warning : 每次打开一个app  第一个activity的类型是 2     ");
+//                    Log.i(TAG, "  refreshOneTimeDetailList()     warning : 每次打开一个app  第一个activity的类型是 2     ");
                 }
                 pkg = mEventListChecked.get(i).getPackageName();
                 list.add(mEventListChecked.get(i));
@@ -280,12 +281,14 @@ public class UseTimeDataManager {
             }
         }
 
-        Log.i(TAG, "   mEventListChecked 分类:   before  check :   list.size() = " + list.size());
+//        Log.i(TAG, "   mEventListChecked 分类:   before  check :   list.size() = " + list.size());
         checkEventList(list);
-        Log.i(TAG, "   mEventListChecked 分类:   after  check :   list.size() = " + list.size());
+//        Log.i(TAG, "   mEventListChecked 分类:   after  check :   list.size() = " + list.size());
+
 //        startTime = list.get(0).getTimeStamp();
 //        endTime   = list.get( list.size() - 1 ).getTimeStamp();
-        Log.i(TAG, "   mEventListChecked 分类:  本次启动的包名：" + list.get(0).getPackageName() + "   时间：" + DateUtils.formatSameDayTime(list.get(0).getTimeStamp(), System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
+
+//        Log.i(TAG, "   mEventListChecked 分类:  本次启动的包名：" + list.get(0).getPackageName() + "   时间：" + DateUtils.formatSameDayTime(list.get(0).getTimeStamp(), System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
         for (int i = 1; i < list.size(); i += 2) {
             if (list.get(i).getEventType() == 2 && list.get(i - 1).getEventType() == 1) {
                 totalTime += (list.get(i).getTimeStamp() - list.get(i - 1).getTimeStamp());
@@ -297,7 +300,7 @@ public class UseTimeDataManager {
         if (usedIndex < mEventListChecked.size() - 1) {
             refreshOneTimeDetailList(usedIndex);
         } else {
-            Log.i(TAG, "  refreshOneTimeDetailList()     已经将  mEventListChecked 分类完毕   ");
+//            Log.i(TAG, "  refreshOneTimeDetailList()     已经将  mEventListChecked 分类完毕   ");
         }
 
     }
@@ -346,6 +349,7 @@ public class UseTimeDataManager {
                 break;
             }
         }
+        //如果出错是否重新检查
         if (isCheckAgain) {
             checkEventList(list);
         }
@@ -405,7 +409,7 @@ public class UseTimeDataManager {
                 useTime += mOneTimeDetailList.get(i).getUseTime();
             }
         }
-        Log.i(TAG, "  calculateUseTime : " + useTime);
+//        Log.i(TAG, "  calculateUseTime : " + useTime);
         return useTime;
     }
     // =======================================
