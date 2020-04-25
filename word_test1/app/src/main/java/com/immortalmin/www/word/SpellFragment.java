@@ -36,7 +36,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private String word_group,C_meaning,mode,user_ans;
     private CountDownProgressBar cpb_countdown;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer=new MediaPlayer();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private Runnable music_delay,correct_action,wrong_action;
@@ -92,24 +92,23 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         /**
          * 接受来自activity的数据
          */
-        Bundle bundle = getArguments();
-//        mode = bundle.getString("mode");
-        word_group = bundle.getString("word_group");
-        C_meaning = bundle.getString("C_meaning");
-        once_flag = bundle.getBoolean("once_flag");
-        mHandler.obtainMessage(2).sendToTarget();
-        showInput(eword);
+//        Bundle bundle = getArguments();
+//        word_group = bundle.getString("word_group");
+//        C_meaning = bundle.getString("C_meaning");
+//        once_flag = bundle.getBoolean("once_flag");
+//        mHandler.obtainMessage(2).sendToTarget();
+//        showInput(eword);
         //music
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(getActivity(), R.raw.success, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaPlayer.release();
-            }
-        });
+//        mediaPlayer = new MediaPlayer();
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+//                mediaPlayer.release();
+//            }
+//        });
 
         music_delay = new Runnable() {
             @Override
@@ -153,8 +152,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 btn_flag = false;
                 eword.setEnabled(false);
-                mediaPlayer = new MediaPlayer();
-                initMediaPlayer(word_group,0);//音频初始化
+//                mediaPlayer = new MediaPlayer();
+//                initMediaPlayer(word_group,0);//音频初始化
                 mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
                 String co_word = word_group.replaceAll(" ","");
@@ -175,24 +174,24 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         }
     };
 
-    /**
-     * 音频播放
-     * @param word
-     * @param what
-     */
-    private void initMediaPlayer(String word,int what) {
-        try {
-            if(what == 0){
-                //modify type to change pronunciation between US and UK
-                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
-            }else if(what == 1){
-                mediaPlayer.setDataSource(word);
-            }
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * 音频播放
+//     * @param word
+//     * @param what
+//     */
+//    private void initMediaPlayer(String word,int what) {
+//        try {
+//            if(what == 0){
+//                //modify type to change pronunciation between US and UK
+//                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+//            }else if(what == 1){
+//                mediaPlayer.setDataSource(word);
+//            }
+//            mediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -228,11 +227,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view){
         switch(view.getId()){
             case R.id.cword:
-                if(!mediaPlayer.isPlaying()){
-                    mediaPlayer = new MediaPlayer();
-                    initMediaPlayer(word_group,0);//音频初始化
-                    mediaPlayer.start();
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
                 }
+                mediaPlayer.start();
                 break;
 
         }
@@ -265,7 +264,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         word_group = words.get("word_group").toString();
         C_meaning = words.get("C_meaning").toString();
         once_flag = Boolean.valueOf(words.get("once_flag").toString());
-//        Log.i("once_flag",once_flag.toString());
+        this.mediaPlayer = (MediaPlayer)words.get("media_player");
         mHandler.obtainMessage(2).sendToTarget();
         showInput(eword);
     }

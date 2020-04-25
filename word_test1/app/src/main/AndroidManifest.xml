@@ -25,10 +25,8 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -41,8 +39,6 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".word1Activity" />
         <activity android:name=".ExampleActivity" />
-        <!-- <activity android:name=".ReciteActivity" /> -->
-        <!-- <activity android:name=".spell_reciteActivity" /> -->
         <activity android:name=".TestActivity" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
@@ -52,9 +48,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <!-- <activity android:name=".CountDownActivity" /> -->
-        <!-- <activity android:name=".ViewTestActivity" /> -->
-        <!-- <activity android:name=".FragmentTestActivity" /> -->
         <activity android:name=".ReciteWordActivity" />
         <activity android:name=".WordViewTestActivity" />
         <activity android:name=".DataTestActivity" />
@@ -66,7 +59,7 @@
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
         <activity android:name=".collectActivity" />
-        <activity android:name=".edit_dialog"></activity>
+        <activity android:name=".MusicTestActivity"></activity>
     </application>
 
 </manifest>

@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     Runnable resetColor;
@@ -125,29 +125,21 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         /**
          * 接收来自activity的数据(first time)
          */
-        Bundle bundle = getArguments();
-        word_list.put("wordview",bundle.getString("wordview"));
-        word_list.put("sel1",bundle.getString("sel1"));
-        word_list.put("sel2",bundle.getString("sel2"));
-        word_list.put("sel3",bundle.getString("sel3"));
-        word_list.put("sel4",bundle.getString("sel4"));
-        word_list.put("today_correct_times",bundle.getString("today_correct_times"));
-        word_list.put("c_times",bundle.getString("c_times"));
-        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
-
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaPlayer.release();
-            }
-        });
-
-        mediaPlayer = new MediaPlayer();
-        initMediaPlayer(bundle.getString("wordview"),0);//音频初始化
-        mediaPlayer.start();
-
-        mHandler.obtainMessage(0).sendToTarget();
+//        Bundle bundle = getArguments();
+//        word_list.put("wordview",bundle.getString("wordview"));
+//        word_list.put("sel1",bundle.getString("sel1"));
+//        word_list.put("sel2",bundle.getString("sel2"));
+//        word_list.put("sel3",bundle.getString("sel3"));
+//        word_list.put("sel4",bundle.getString("sel4"));
+//        word_list.put("today_correct_times",bundle.getString("today_correct_times"));
+//        word_list.put("c_times",bundle.getString("c_times"));
+//        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
+//
+//        mediaPlayer = new MediaPlayer();
+//        initMediaPlayer(bundle.getString("wordview"),0);//音频初始化
+//        mediaPlayer.start();
+//
+//        mHandler.obtainMessage(0).sendToTarget();
 
 
     }
@@ -221,6 +213,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.wordview:
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                }
                 mediaPlayer.start();
                 break;
         }
@@ -329,10 +325,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     }
     public void update_options(HashMap<String,Object> words){
         living_flag = true;//激活按钮
-        word_list = words;
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
-        mediaPlayer = new MediaPlayer();
-        initMediaPlayer(word_list.get("wordview").toString(),0);//音频初始化
+        this.word_list = words;
+        this.mediaPlayer = (MediaPlayer)words.get("media_player");
         mediaPlayer.start();
         mHandler.obtainMessage(0).sendToTarget();
     }

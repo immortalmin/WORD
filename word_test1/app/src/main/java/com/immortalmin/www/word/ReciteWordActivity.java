@@ -33,6 +33,8 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +71,7 @@ public class ReciteWordActivity extends AppCompatActivity
     ProgressBar total_progress;
     SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     List<HashMap<String, Object>> recite_list = null;//the list of word
     int recite_num = 1;//the number of word today
     int recite_scope = 5;//additional number of word
@@ -116,6 +118,8 @@ public class ReciteWordActivity extends AppCompatActivity
         today_finish = Integer.valueOf(recite_list.get(correct_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
+        //初始化单词音频
+        resetMediaPlayer(recite_list.get(correct_ind).get("word_group").toString());
 //        Log.i("ccc", recite_list.get(correct_ind).get("id").toString());
         int mode = 1;
         switch (today_finish) {//according to today_finish
@@ -130,6 +134,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 recite_info.put("sel4", recite_list.get(select[3]).get("C_meaning").toString());
                 recite_info.put("correct_sel", correct_sel);
                 recite_info.put("c_times", String.valueOf(c_times));
+                recite_info.put("media_player",mediaPlayer);
                 start_select_mode(recite_info);
                 break;
             case 1://countdown
@@ -139,6 +144,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_group", recite_list.get(correct_ind).get("word_group").toString());
                 now_words.put("C_meaning", recite_list.get(correct_ind).get("C_meaning").toString());
+                now_words.put("media_player",mediaPlayer);
                 start_countdown_mode(now_words);
                 break;
             case 2://spell
@@ -146,6 +152,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_group", recite_list.get(correct_ind).get("word_group").toString());
                 now_words.put("C_meaning", recite_list.get(correct_ind).get("C_meaning").toString());
+                now_words.put("media_player",mediaPlayer);
                 start_spell_mode(now_words);
                 break;
         }
@@ -210,75 +217,49 @@ public class ReciteWordActivity extends AppCompatActivity
         }).start();
     }
 
+    private Boolean resetMediaPlayer(String word){
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+        }
+        try{
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            mediaPlayer.prepare();
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * start countdown mode
      */
     private void start_countdown_mode(HashMap<String, Object> words) {
-        if (countDownFragment.isAdded()) {
-            transaction = fragmentManager.beginTransaction();
-            transaction.hide(selectFragment).hide(spellFragment).show(countDownFragment);
-            transaction.commit();
-            countDownFragment.update_options(words);//update data
-        } else {
-            Bundle sendBundle = new Bundle();
-            sendBundle.putString("mode", words.get("mode").toString());
-            sendBundle.putString("word_group", words.get("word_group").toString());
-            sendBundle.putString("C_meaning", words.get("C_meaning").toString());
-            countDownFragment.setArguments(sendBundle);
-            transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.recite_model, countDownFragment);
-            transaction.hide(selectFragment).hide(spellFragment).show(countDownFragment);
-            transaction.commit();
-        }
+        transaction = fragmentManager.beginTransaction();
+        transaction.hide(selectFragment).hide(spellFragment).show(countDownFragment);
+        transaction.commit();
+        countDownFragment.update_options(words);//update data
     }
 
     /**
      * start select mode
      */
     private void start_select_mode(HashMap<String, Object> words) {
-        if (selectFragment.isAdded()) {
-            transaction = fragmentManager.beginTransaction();
-            transaction.hide(countDownFragment).hide(spellFragment).show(selectFragment);
-            transaction.commit();
-            selectFragment.update_options(words);//update data
-        } else {
-            Bundle sendBundle = new Bundle();
-            sendBundle.putString("wordview", words.get("wordview").toString());
-            sendBundle.putString("sel1", words.get("sel1").toString());
-            sendBundle.putString("sel2", words.get("sel2").toString());
-            sendBundle.putString("sel3", words.get("sel3").toString());
-            sendBundle.putString("sel4", words.get("sel4").toString());
-            sendBundle.putString("correct_sel", words.get("correct_sel").toString());
-            sendBundle.putString("today_correct_times", words.get("today_correct_times").toString());
-            sendBundle.putString("c_times", String.valueOf(c_times));
-            selectFragment.setArguments(sendBundle);
-            transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.recite_model, selectFragment);
-            transaction.hide(countDownFragment).hide(spellFragment).show(selectFragment);
-            transaction.commit();
-        }
+        transaction = fragmentManager.beginTransaction();
+        transaction.hide(countDownFragment).hide(spellFragment).show(selectFragment);
+        transaction.commit();
+        selectFragment.update_options(words);//update data
     }
 
     /**
      * start spell mode
      */
     private void start_spell_mode(HashMap<String, Object> words) {
-        if (spellFragment.isAdded()) {
-            transaction = fragmentManager.beginTransaction();
-            transaction.hide(countDownFragment).hide(selectFragment).show(spellFragment);
-            transaction.commit();
-            spellFragment.update_options(words);//update data
-        } else {
-            Bundle sendBundle = new Bundle();
-            sendBundle.putBoolean("once_flag", true);
-            sendBundle.putString("word_group", words.get("word_group").toString());
-            sendBundle.putString("C_meaning", words.get("C_meaning").toString());
-            spellFragment.setArguments(sendBundle);
-            transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.recite_model, spellFragment);
-            transaction.hide(countDownFragment).hide(selectFragment).show(spellFragment);
-            transaction.commit();
-        }
+        transaction = fragmentManager.beginTransaction();
+        transaction.hide(countDownFragment).hide(selectFragment).show(spellFragment);
+        transaction.commit();
+        spellFragment.update_options(words);//update data
     }
 
     /**
@@ -286,6 +267,7 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void initialize() {
         init_user();
+        init_fragment();
         dialog_init();
         setting.put("uid",userData.getUid());
         recite_num = userData.getRecite_num();
@@ -293,6 +275,19 @@ public class ReciteWordActivity extends AppCompatActivity
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getrecitelist();//get the list of word
+
+    }
+
+    /**
+     * 加载所有的fragment
+     */
+    private void init_fragment() {
+        transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.recite_model, countDownFragment);
+        transaction.add(R.id.recite_model, selectFragment);
+        transaction.add(R.id.recite_model, spellFragment);
+        transaction.hide(countDownFragment).hide(spellFragment);
+        transaction.commit();
     }
 
     private void dialog_init(){
@@ -365,29 +360,6 @@ public class ReciteWordActivity extends AppCompatActivity
                 });
         interrup_alert.setCancelable(false);
         interrup_alert.show();
-//        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-//                .setTitleText("Are you sure?")
-//                .setContentText("Won't be able to recover this file!")
-//                .setConfirmText("fine")
-//                .setCancelText("nooo")
-//                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                    @Override
-//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                        Intent intent = new Intent();
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-//                        startActivity(intent);
-//                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-//                    }
-//                })
-//                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                    @Override
-//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                        sweetAlertDialog.cancel();
-//                        mHandler.obtainMessage(2).sendToTarget();
-//                    }
-//                })
-//                .show();
     }
 
     private void init_user(){
@@ -478,31 +450,6 @@ public class ReciteWordActivity extends AppCompatActivity
             return false;
         }
     });
-
-//    /**
-//     * 截屏
-//     * @return
-//     */
-//    private Bitmap getcapture(){
-//        View view = getWindow().getDecorView();     // 获取DecorView
-//        view.setDrawingCacheEnabled(true);
-//        view.buildDrawingCache();
-//        Bitmap bitmap = view.getDrawingCache();
-//        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(ReciteWordActivity.this), getScreenHeight(ReciteWordActivity.this), null, false);
-//        return bitmap;
-//    }
-//
-//    //获取屏幕高度 不包含虚拟按键=
-//    public static int getScreenHeight(Context context) {
-//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//        return dm.heightPixels;
-//    }
-//
-//    //获取屏幕宽度
-//    public static int getScreenWidth(Context context) {
-//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//        return dm.widthPixels;
-//    }
 
     /**
      * CountDownFragment的回调函数

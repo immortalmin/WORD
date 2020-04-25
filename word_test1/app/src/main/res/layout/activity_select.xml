@@ -14,7 +14,7 @@
         android:layout_marginTop="100dp"
         android:textSize="80px"
         android:textColor="#000000"
-        android:text="accuse of" />
+        android:text="" />
 
     <ProgressBar
         android:id="@+id/word_times_pro"
@@ -25,7 +25,7 @@
         android:layout_marginTop="110dp"
         android:layout_marginLeft="10dp"
         android:max="10"
-        android:progress="3"
+        android:progress="0"
         android:progressDrawable="@drawable/progress_bar_drawable"/>
 
 
@@ -42,7 +42,7 @@
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
             android:textAllCaps="false"
-            android:text="指责；指控.....,指责；指控指责；指控,指责；指控指责；指控" />
+            android:text="" />
 
         <Button
             android:id="@+id/sel2"
@@ -52,7 +52,7 @@
             android:layout_marginTop="10dp"
             android:textAllCaps="false"
             android:layout_below="@+id/sel1"
-            android:text="对...起作用（有功效）" />
+            android:text="" />
 
         <Button
             android:id="@+id/sel3"
@@ -62,7 +62,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel2"
             android:textAllCaps="false"
-            android:text="变得习惯于...；使适应于" />
+            android:text="" />
 
         <Button
             android:id="@+id/sel4"
@@ -72,7 +72,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel3"
             android:textAllCaps="false"
-            android:text="增加，加强" />
+            android:text="" />
 
         <Button
             android:id="@+id/sel5"
