@@ -102,13 +102,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(getActivity(), R.raw.success, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
-//        mediaPlayer = new MediaPlayer();
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//                mediaPlayer.release();
-//            }
-//        });
 
         music_delay = new Runnable() {
             @Override
@@ -173,25 +166,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             return false;
         }
     };
-
-//    /**
-//     * 音频播放
-//     * @param word
-//     * @param what
-//     */
-//    private void initMediaPlayer(String word,int what) {
-//        try {
-//            if(what == 0){
-//                //modify type to change pronunciation between US and UK
-//                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
-//            }else if(what == 1){
-//                mediaPlayer.setDataSource(word);
-//            }
-//            mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
