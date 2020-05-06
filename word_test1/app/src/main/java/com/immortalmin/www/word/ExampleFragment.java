@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,16 +32,17 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 
-public class ExampleFragment extends Fragment implements UpdateExampleDialog.OnDialogInteractionListener{
+public class ExampleFragment extends Fragment implements View.OnClickListener{
 
 
     private OnFragmentInteractionListener mListener;
     private ListView example_list;
     private TextView non_example;
     private ImageView backdrop;
+    private Button edit_btn;
     private ExampleAdapter exampleAdapter;
     private ArrayList<HashMap<String,Object>> examplelist = null;
-    private int mode=1,wid=1;
+    private int mode=0,wid=1;
     private UserData userData = new UserData();
     private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
@@ -68,6 +71,8 @@ public class ExampleFragment extends Fragment implements UpdateExampleDialog.OnD
         super.onActivityCreated(savedInstanceState);
         example_list = (ListView)getActivity().findViewById(R.id.example_list);
         non_example = (TextView)getActivity().findViewById(R.id.non_example);
+        edit_btn = (Button)getActivity().findViewById(R.id.edit_btn);
+        edit_btn.setOnClickListener(this);
     }
 
     public interface OnFragmentInteractionListener {
@@ -109,13 +114,43 @@ public class ExampleFragment extends Fragment implements UpdateExampleDialog.OnD
                             @Override
                             public void onEditClick(int i) {
                                 updateExampleDialog(examplelist.get(i));
+
                             }
                         });
                     }
                     break;
+                case 1:
+
+                    break;
+                case 2:
+//                    if(userData.getUsername().equals(word.get("source").toString())){
+//                        word_del_btn.setVisibility(View.VISIBLE);
+//                        word_edit_btn.setVisibility(View.VISIBLE);
+//                    }else{
+//                        ban_icon.setVisibility(View.VISIBLE);
+//                    }
+//                    collect.setVisibility(View.INVISIBLE);
+                    if(examplelist.size()>0){
+                        exampleAdapter.setMode(1);
+                        exampleAdapter.notifyDataSetChanged();
+                    }
+                    edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
+                    break;
+                case 3:
+//                    word_del_btn.setVisibility(View.INVISIBLE);
+//                    word_edit_btn.setVisibility(View.INVISIBLE);
+//                    ban_icon.setVisibility(View.INVISIBLE);
+//                    collect.setVisibility(View.VISIBLE);
+                    if(examplelist.size()>0){
+                        exampleAdapter.setMode(0);
+                        exampleAdapter.notifyDataSetChanged();
+                    }
+                    edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
+                    break;
+                case 4:
+
+                    break;
                 case 5:
-//                    Glide.with(ExampleActivity.this).load(getcapture())
-//                            .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
                     Glide.with(getActivity()).load(captureUtil.getcapture(getActivity()))
                             .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
                     backdrop.setVisibility(View.VISIBLE);
@@ -127,6 +162,20 @@ public class ExampleFragment extends Fragment implements UpdateExampleDialog.OnD
             return false;
         }
     });
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.edit_btn:
+                if(mode==0){
+                    mHandler.obtainMessage(2).sendToTarget();
+                    mode=1;
+                }else{
+                    mHandler.obtainMessage(3).sendToTarget();
+                    mode=0;
+                }
+                break;
+        }
+    }
 
     private void getwordlist() {
         new Thread(new Runnable() {
@@ -205,20 +254,5 @@ public class ExampleFragment extends Fragment implements UpdateExampleDialog.OnD
         });
     }
 
-    private void update_example(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_example.php",jsonObject);
-            }
-        }).start();
-        getwordlist();
-    }
 
-    @Override
-    public void updateExampleInteraction(JSONObject jsonObject){
-        update_example(jsonObject);
-
-    }
 }

@@ -44,7 +44,9 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.update_example,null);
+//        Log.i("ccc",context.getClass().getName());
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
+//        Log.i("ccc","after context");
         word_meaning = (EditText)view.findViewById(R.id.word_meaning);
         E_sentence = (EditText)view.findViewById(R.id.E_sentence);
         C_translate = (EditText)view.findViewById(R.id.C_translate);
