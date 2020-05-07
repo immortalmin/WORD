@@ -5,15 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ExampleFragment">
 
-    <Button
-        android:id="@+id/edit_btn"
-        android:layout_width="23dp"
-        android:layout_height="23dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/edit1"
-        android:text="" />
+
 
     <ListView
         android:id="@+id/example_list"

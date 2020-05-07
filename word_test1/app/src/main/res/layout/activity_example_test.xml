@@ -45,6 +45,16 @@
             android:textStyle="bold"
             android:text="单词详情" />
 
+
+        <Button
+            android:id="@+id/edit_btn"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/edit1"
+            android:text="" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -111,8 +121,8 @@
             android:layout_height="18dp"
             android:background="@drawable/star_off"
             android:padding="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
             android:layout_centerVertical="true"
             android:text="" />
 
@@ -129,6 +139,17 @@
             android:paddingLeft="10dp"
             android:paddingBottom="5dp"
             android:text="指责" />
+
+        <TextView
+            android:id="@+id/source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:layout_marginTop="25dp"
+            android:layout_below="@+id/collect"
+            android:layout_alignRight="@+id/collect"
+            android:textColor="#f9f9fa"
+            android:text="单词来源:chen" />
 
     </RelativeLayout>
 

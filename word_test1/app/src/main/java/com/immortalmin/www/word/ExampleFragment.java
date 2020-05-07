@@ -39,7 +39,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private ListView example_list;
     private TextView non_example;
     private ImageView backdrop;
-    private Button edit_btn;
     private ExampleAdapter exampleAdapter;
     private ArrayList<HashMap<String,Object>> examplelist = null;
     private int mode=0,wid=1;
@@ -71,8 +70,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         super.onActivityCreated(savedInstanceState);
         example_list = (ListView)getActivity().findViewById(R.id.example_list);
         non_example = (TextView)getActivity().findViewById(R.id.non_example);
-        edit_btn = (Button)getActivity().findViewById(R.id.edit_btn);
-        edit_btn.setOnClickListener(this);
     }
 
     public interface OnFragmentInteractionListener {
@@ -123,29 +120,8 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
 
                     break;
                 case 2:
-//                    if(userData.getUsername().equals(word.get("source").toString())){
-//                        word_del_btn.setVisibility(View.VISIBLE);
-//                        word_edit_btn.setVisibility(View.VISIBLE);
-//                    }else{
-//                        ban_icon.setVisibility(View.VISIBLE);
-//                    }
-//                    collect.setVisibility(View.INVISIBLE);
-                    if(examplelist.size()>0){
-                        exampleAdapter.setMode(1);
-                        exampleAdapter.notifyDataSetChanged();
-                    }
-                    edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
                     break;
                 case 3:
-//                    word_del_btn.setVisibility(View.INVISIBLE);
-//                    word_edit_btn.setVisibility(View.INVISIBLE);
-//                    ban_icon.setVisibility(View.INVISIBLE);
-//                    collect.setVisibility(View.VISIBLE);
-                    if(examplelist.size()>0){
-                        exampleAdapter.setMode(0);
-                        exampleAdapter.notifyDataSetChanged();
-                    }
-                    edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
                     break;
                 case 4:
 
@@ -165,16 +141,16 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.edit_btn:
-                if(mode==0){
-                    mHandler.obtainMessage(2).sendToTarget();
-                    mode=1;
-                }else{
-                    mHandler.obtainMessage(3).sendToTarget();
-                    mode=0;
-                }
-                break;
+
         }
+    }
+
+    public void change_mode(int mode){
+        if(examplelist.size()>0){
+            exampleAdapter.setMode(mode);
+            exampleAdapter.notifyDataSetChanged();
+        }
+        this.mode = mode;
     }
 
     private void getwordlist() {
