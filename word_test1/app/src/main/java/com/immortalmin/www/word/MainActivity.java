@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-                intent = new Intent(MainActivity.this,collectActivity.class);
+                intent = new Intent(MainActivity.this,asyncTestActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_test:
                 intent = new Intent(MainActivity.this,ExampleTestActivity.class);
-                intent.putExtra("wid","937");
+                intent.putExtra("wid","939");
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

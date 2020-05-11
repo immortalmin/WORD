@@ -60,7 +60,8 @@
         <activity android:name=".UpdatePwdActivity" />
         <activity android:name=".collectActivity" />
         <activity android:name=".MusicTestActivity" />
-        <activity android:name=".ExampleTestActivity"></activity>
+        <activity android:name=".ExampleTestActivity" />
+        <activity android:name=".asyncTestActivity"></activity>
     </application>
 
 </manifest>

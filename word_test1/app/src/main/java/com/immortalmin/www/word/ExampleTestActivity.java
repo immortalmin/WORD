@@ -15,6 +15,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,9 +46,10 @@ public class ExampleTestActivity extends AppCompatActivity implements
         KelinsiFragment.OnFragmentInteractionListener,
         UpdateExampleDialog.OnDialogInteractionListener,
         UpdateWordDialog.OnDialogInteractionListener,
+        AddExampleDialog.OnDialogInteractionListener,
         View.OnClickListener{
 
-    private Button example_btn,kelinsi_btn,edit_btn,word_del_btn,word_edit_btn,ban_icon,collect;
+    private Button example_btn,kelinsi_btn,edit_btn,word_del_btn,word_edit_btn,ban_icon,collect,return_btn;
     private ImageView backdrop;
     private WordView word_group;
     private TextView C_meaning,source;
@@ -62,6 +64,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private JsonRe jsonRe = new JsonRe();
     private CaptureUtil captureUtil = new CaptureUtil();
     private int mode=0;
+    private int fragment_mode=0;//0:example  1:kelinsi
     private String current_word="error",wid = "100";
     private boolean first_coming = true;
     private int collect_flag = 0, del_id = 1;
@@ -78,6 +81,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
         word_edit_btn = (Button)findViewById(R.id.word_edit_btn);
         ban_icon = (Button)findViewById(R.id.ban_icon);
         collect = (Button)findViewById(R.id.collect);
+        return_btn = (Button)findViewById(R.id.return_btn);
         backdrop = (ImageView)findViewById(R.id.backdrop);
         word_group = (WordView)findViewById(R.id.word_group);
         C_meaning = (TextView) findViewById(R.id.C_meaning);
@@ -87,6 +91,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
         edit_btn.setOnClickListener(this);
         word_del_btn.setOnClickListener(this);
         word_edit_btn.setOnClickListener(this);
+        return_btn.setOnClickListener(this);
         collect.setOnClickListener(this);
         word_group.setOnClickListener(this);
         Intent intent = getIntent();
@@ -125,19 +130,27 @@ public class ExampleTestActivity extends AppCompatActivity implements
     public void onClick(View view){
         switch (view.getId()){
             case R.id.example_btn:
-                transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_to_right);
-                transaction.hide(kelinsiFragment).show(exampleFragment);
-//                FragmentTransaction
-                transaction.commit();
-                mHandler.obtainMessage(0).sendToTarget();
+                if(fragment_mode==0){
+                    if(mode==1){
+                        addExampleDialog();
+                    }
+                }else{
+                    transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_to_right);
+                    transaction.hide(kelinsiFragment).show(exampleFragment);
+                    transaction.commit();
+                    mHandler.obtainMessage(0).sendToTarget();
+                    fragment_mode=0;
+                }
                 break;
             case R.id.kelinsi_btn:
+                if(fragment_mode==1) return;
                 transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_right_in,R.anim.slide_to_left);
                 transaction.hide(exampleFragment).show(kelinsiFragment);
                 transaction.commit();
                 mHandler.obtainMessage(1).sendToTarget();
+                fragment_mode=1;
                 break;
             case R.id.edit_btn:
                 if(mode==0){
@@ -174,6 +187,12 @@ public class ExampleTestActivity extends AppCompatActivity implements
             case R.id.word_edit_btn:
                 updateWordDialog(word);
                 break;
+            case R.id.return_btn:
+                Intent intent = new Intent();
+                setResult(1,intent);
+                finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
         }
     }
 
@@ -199,6 +218,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
                     collect.setVisibility(View.INVISIBLE);
                     exampleFragment.change_mode(1);
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.view1));
+                    example_btn.setText("例句+");
                     break;
                 case 3:
                     word_del_btn.setVisibility(View.INVISIBLE);
@@ -207,6 +227,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
                     collect.setVisibility(View.VISIBLE);
                     exampleFragment.change_mode(0);
                     edit_btn.setBackground(getResources().getDrawable(R.drawable.edit1));
+                    example_btn.setText("例句");
                     break;
                 case 4:
                     source.setText("来源："+word.get("source").toString());
@@ -258,6 +279,27 @@ public class ExampleTestActivity extends AppCompatActivity implements
         updateWordDialog.show();
         updateWordDialog.setCancelable(false);
         updateWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mHandler.obtainMessage(6).sendToTarget();
+            }
+        });
+    }
+
+    private void addExampleDialog(){
+        mHandler.obtainMessage(5).sendToTarget();
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("wid",wid);
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("C_meaning",C_meaning.getText().toString());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,jsonObject);
+        addExampleDialog.show();
+        addExampleDialog.setCancelable(false);
+        addExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 mHandler.obtainMessage(6).sendToTarget();
@@ -373,7 +415,19 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/update_example.php",jsonObject);
             }
         }).start();
-        getwordlist();
+//        getwordlist();
+    }
+
+    private void add_example(final JSONObject jsonObject){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                String jsonstr = httpGetContext.getData("http://47.98.239.237/word/php_file2/addexample.php",jsonObject);
+                ArrayList<Integer> id_list = jsonRe.return_id(jsonstr);
+            }
+        }).start();
+//        getwordlist();
     }
 
     private Boolean resetMediaPlayer(String word){
@@ -404,7 +458,23 @@ public class ExampleTestActivity extends AppCompatActivity implements
     @Override
     public void updateExampleInteraction(JSONObject jsonObject){
         update_example(jsonObject);
+        try{
+            jsonObject.put("source",userData.getUsername());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        exampleFragment.update_data(1,jsonObject);
+    }
 
+    @Override
+    public void addExampleInteraction(JSONObject jsonObject){
+        add_example(jsonObject);
+        try{
+            jsonObject.put("source",userData.getUsername());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        exampleFragment.update_data(0,jsonObject);
     }
 
     @Override
@@ -420,19 +490,25 @@ public class ExampleTestActivity extends AppCompatActivity implements
         update_word(jsonObject);
         mHandler.obtainMessage(4,jsonObject).sendToTarget();
 
+    }
 
-//        getwordlist();
-        /**
-         * 音频修改
-         */
-//        try{
-//            current_word = jsonObject.getString("word_group");
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        resetMediaPlayer(current_word);//音频初始化
-        //有时数据库同步太慢了，只能先直接把用户改过后的数据拿来显示
-//        mHandler.obtainMessage(7,jsonObject).sendToTarget();
-//        getwordlist();
+    /**
+     * 回车键事件
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+//            Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
+            Intent intent = new Intent();
+            setResult(1,intent);
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            return false;
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }

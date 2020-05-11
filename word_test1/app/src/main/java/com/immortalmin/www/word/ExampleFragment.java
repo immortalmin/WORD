@@ -20,10 +20,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -40,8 +42,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private TextView non_example;
     private ImageView backdrop;
     private ExampleAdapter exampleAdapter;
-    private ArrayList<HashMap<String,Object>> examplelist = null;
-    private int mode=0,wid=1;
+    private ArrayList<HashMap<String,Object>> examplelist = new ArrayList<>();
+    private ArrayList<HashMap<String,Object>> temp = new ArrayList<>();
+    private int mode=0,wid=1,edit_index,del_index;
     private UserData userData = new UserData();
     private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
@@ -81,7 +84,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         this.wid = wid;
         this.userData = userData;
         this.backdrop = backdrop;
-        getwordlist();
+        getwordlist(true);
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -106,10 +109,12 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                                 }catch (JSONException e){
                                     e.printStackTrace();
                                 }
+                                del_index = i;
                                 del_warning();
                             }
                             @Override
                             public void onEditClick(int i) {
+                                edit_index = i;
                                 updateExampleDialog(examplelist.get(i));
 
                             }
@@ -153,7 +158,58 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         this.mode = mode;
     }
 
-    private void getwordlist() {
+    public void update_data(int what,JSONObject data){
+        try{
+            switch (what){
+                case 0://新增例句
+                    //有时间把translate换成sentences
+                    JSONArray jsonArray = (JSONArray)data.get("translate");
+                    HashMap<String,Object> sentence = new HashMap<>();
+                    for(int i=0;i<jsonArray.length();i++){
+                        sentence = new HashMap<>();
+                        JSONObject sentence_json = (JSONObject)jsonArray.opt(i);
+                        String word_meaning = sentence_json.getString("word_meaning").replaceAll("\\\\n","\\\n");
+                        String E_sentence = sentence_json.getString("E_sentence").replaceAll("\\\\n","\\\n");
+                        String C_translate = sentence_json.getString("C_translate").replaceAll("\\\\n","\\\n");
+                        if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
+                            word_meaning = word_meaning.substring(0,word_meaning.length()-1);
+                        }
+                        if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
+                            E_sentence = E_sentence.substring(0,E_sentence.length()-1);
+                        }
+                        if(C_translate.charAt(C_translate.length()-1) == '\n'){
+                            C_translate = C_translate.substring(0,C_translate.length()-1);
+                        }
+                        sentence.put("word_meaning",word_meaning);
+                        sentence.put("E_sentence",E_sentence);
+                        sentence.put("C_translate",C_translate);
+                        sentence.put("source",data.getString("source"));
+
+                    }
+                    examplelist.add(sentence);
+                    exampleAdapter.notifyDataSetChanged();
+                    Log.i("ccc","add_example:"+examplelist.toString());
+                    example_list.setSelection(examplelist.size()-1);
+                    getwordlist(false);
+                    break;
+                case 1://修改例句
+                    sentence = examplelist.get(edit_index);
+                    sentence.put("word_meaning",data.getString("word_meaning"));
+                    sentence.put("E_sentence",data.getString("E_sentence"));
+                    sentence.put("C_translate",data.getString("C_translate"));
+                    examplelist.set(edit_index,sentence);
+                    exampleAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    //examplelist将改变
+    //是否需要更新UI
+    private void getwordlist(boolean isupdateUI) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -165,11 +221,14 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     e.printStackTrace();
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
-//                String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getworddata.php",jsonObject);
-//                word = jsonRe.wordData(wordjson);
                 String examplejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getexampledata.php",jsonObject);
-                examplelist = jsonRe.exampleData(examplejson);
-                mHandler.obtainMessage(0).sendToTarget();
+//                examplelist = jsonRe.exampleData(examplejson);
+                temp = jsonRe.exampleData(examplejson);
+                examplelist.clear();
+                examplelist.addAll(temp);
+                if(isupdateUI){
+                    mHandler.obtainMessage(0).sendToTarget();
+                }
             }
         }).start();
 
@@ -190,6 +249,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         delete_example(jsonObject);
                         Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
+                        mHandler.obtainMessage(6).sendToTarget();
                         sweetAlertDialog.cancel();
                     }
                 })
@@ -213,8 +273,15 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/delete_example.php",jsonObject);
             }
         }).start();
-        mHandler.obtainMessage(6).sendToTarget();
-        getwordlist();
+        examplelist.remove(del_index);
+        exampleAdapter.notifyDataSetChanged();
+        if(examplelist.size()==0){
+            non_example.setVisibility(View.VISIBLE);
+            example_list.setVisibility(View.INVISIBLE);
+        }else{
+            non_example.setVisibility(View.INVISIBLE);
+            example_list.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateExampleDialog(HashMap<String,Object> data){

@@ -25,7 +25,7 @@
         android:layout_marginTop="5dp"
         >
         <Button
-            android:id="@+id/btn1"
+            android:id="@+id/return_btn"
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:layout_marginTop="20dp"

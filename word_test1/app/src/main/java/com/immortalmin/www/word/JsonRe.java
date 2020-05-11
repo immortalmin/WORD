@@ -179,6 +179,19 @@ public class JsonRe {
         return usetime;
     }
 
+    public ArrayList<Integer> return_id(String jsonstr){
+        ArrayList<Integer> id_list = new ArrayList<>();
+        try{
+            JSONArray jsonArray = new JSONArray(jsonstr);
+            for(int i=0;i<jsonArray.length();i++){
+                id_list.add(Integer.valueOf(jsonArray.opt(i).toString()));
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return id_list;
+    }
+
 
     //将json转为需要的数据结构  old version
     public List<Map<String, Object>>  getWordList(String jsonStr) {
