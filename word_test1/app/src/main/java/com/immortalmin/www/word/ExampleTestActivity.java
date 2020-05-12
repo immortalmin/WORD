@@ -62,6 +62,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
+    private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
     private int mode=0;
     private int fragment_mode=0;//0:example  1:kelinsi
@@ -107,7 +108,8 @@ public class ExampleTestActivity extends AppCompatActivity implements
         transaction.hide(kelinsiFragment);
         transaction.commit();
         init_user();
-        getwordlist();
+        getWordData();
+//        getwordlist();
         exampleFragment.setData(Integer.valueOf(wid),userData,backdrop);//设置例句fragment的数据
     }
 
@@ -320,12 +322,13 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        delete_word();
-                        Intent intent = new Intent();
-                        setResult(2,intent);
-                        finish();
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                        Toast.makeText(ExampleTestActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
+                        deleteWord();
+//                        delete_word();
+//                        Intent intent = new Intent();
+//                        setResult(2,intent);
+//                        finish();
+//                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                        Toast.makeText(ExampleTestActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
                         sweetAlertDialog.cancel();
                     }
                 })
@@ -341,6 +344,9 @@ public class ExampleTestActivity extends AppCompatActivity implements
         del_alert.show();
     }
 
+    /**
+     * discontinue from 5/12/2020
+     */
     private void delete_word(){
         new Thread(new Runnable() {
             @Override
@@ -355,6 +361,25 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/delete_word.php",jsonObject);
             }
         }).start();
+    }
+
+    private void deleteWord(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("id",word.get("wid"));
+            jsonObject.put("what",3);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            Intent intent = new Intent();
+            setResult(2,intent);
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            Toast.makeText(ExampleTestActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private void update_collect(){
@@ -375,6 +400,10 @@ public class ExampleTestActivity extends AppCompatActivity implements
         }).start();
     }
 
+
+    /**
+     * discontinue from 5/12/2020
+     */
     private void getwordlist() {
         new Thread(new Runnable() {
             @Override
@@ -396,6 +425,27 @@ public class ExampleTestActivity extends AppCompatActivity implements
 //        Log.i("ccc",word.toString());
     }
 
+    public void getWordData(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",6);
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("wid",Integer.valueOf(wid));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            word = jsonRe.wordData(result);
+            mHandler.obtainMessage(4).sendToTarget();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+    /**
+     * discontinue from 5/12/2020
+     * @param jsonObject
+     */
     private void update_word(final JSONObject jsonObject){
         new Thread(new Runnable() {
             @Override
@@ -404,9 +454,27 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/update_word.php",jsonObject);
             }
         }).start();
-
     }
 
+    public void updateWord(JSONObject jsonObject){
+        try{
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("what",24);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            word = jsonRe.wordData(result);
+            mHandler.obtainMessage(4).sendToTarget();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+
+    /**
+     * discontinue from 5/12/2020
+     */
     private void update_example(final JSONObject jsonObject){
         new Thread(new Runnable() {
             @Override
@@ -418,6 +486,24 @@ public class ExampleTestActivity extends AppCompatActivity implements
 //        getwordlist();
     }
 
+    private void updateExample(JSONObject jsonObject){
+        try{
+            jsonObject.put("what",18);
+            jsonObject.put("wid",wid);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            examplelist = jsonRe.exampleData(result);
+            exampleFragment.setExamplelist(examplelist,false);
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+    /**
+     * discontinue from 5/12/2020
+     */
     private void add_example(final JSONObject jsonObject){
         new Thread(new Runnable() {
             @Override
@@ -428,6 +514,20 @@ public class ExampleTestActivity extends AppCompatActivity implements
             }
         }).start();
 //        getwordlist();
+    }
+
+    private void addExample(JSONObject jsonObject){
+        try{
+            jsonObject.put("what",0);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            examplelist = jsonRe.exampleData(result);
+            exampleFragment.setExamplelist(examplelist,true);
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private Boolean resetMediaPlayer(String word){
@@ -457,38 +557,41 @@ public class ExampleTestActivity extends AppCompatActivity implements
 
     @Override
     public void updateExampleInteraction(JSONObject jsonObject){
-        update_example(jsonObject);
-        try{
-            jsonObject.put("source",userData.getUsername());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        exampleFragment.update_data(1,jsonObject);
+//        update_example(jsonObject);
+        updateExample(jsonObject);
+//        try{
+//            jsonObject.put("source",userData.getUsername());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        exampleFragment.update_data(1,jsonObject);
     }
 
     @Override
     public void addExampleInteraction(JSONObject jsonObject){
-        add_example(jsonObject);
-        try{
-            jsonObject.put("source",userData.getUsername());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        exampleFragment.update_data(0,jsonObject);
+        addExample(jsonObject);
+//        add_example(jsonObject);
+//        try{
+//            jsonObject.put("source",userData.getUsername());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        exampleFragment.update_data(0,jsonObject);
     }
 
     @Override
     public void updateWordInteraction(JSONObject jsonObject){
-        try{
-            jsonObject.put("uid",userData.getUid());
-
-            word.put("word_group",jsonObject.getString("word_group"));
-            word.put("C_meaning",jsonObject.getString("C_meaning"));
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        update_word(jsonObject);
-        mHandler.obtainMessage(4,jsonObject).sendToTarget();
+//        try{
+////            jsonObject.put("uid",userData.getUid());
+////
+////            word.put("word_group",jsonObject.getString("word_group"));
+////            word.put("C_meaning",jsonObject.getString("C_meaning"));
+////        }catch (JSONException e){
+////            e.printStackTrace();
+////        }
+//        update_word(jsonObject);
+        updateWord(jsonObject);
+//        mHandler.obtainMessage(4,jsonObject).sendToTarget();
 
     }
 

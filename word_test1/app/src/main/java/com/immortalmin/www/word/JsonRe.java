@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +73,52 @@ public class JsonRe {
             e.printStackTrace();
         }
         return word;
+    }
+
+    public HashMap<String,Object> kelinsiwordData(String jsonStr){
+        HashMap<String,Object> kelinsiword = new HashMap<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONArray json_items = new JSONArray(jsonObject.getString("en_tip"));
+            ArrayList<HashMap<String,Object>> items = new ArrayList<>();
+            for(int i=0;i<json_items.length();i++){
+                HashMap<String,Object> item = new HashMap<>();
+                JSONObject json_item = (JSONObject)json_items.opt(i);
+                item.put("explanation",json_item.getString("explanation"));
+                item.put("gram",json_item.getString("gram"));
+                item.put("iid",json_item.getString("iid"));
+                item.put("label",json_item.getString("label"));
+                item.put("number",json_item.getString("number"));
+                item.put("word_ch",json_item.getString("word_ch"));
+                ArrayList<String> en_tips = new ArrayList<>();
+                JSONArray json_en_tips = new JSONArray(json_item.getString("en_tip"));
+                for(int j=0;j<json_en_tips.length();j++){
+                    en_tips.add(json_en_tips.getString(j));
+                }
+                item.put("en_tips",en_tips);
+                ArrayList<HashMap<String,Object>> sentences = new ArrayList<>();
+                JSONArray json_sentences = new JSONArray(json_item.getString("sentences"));
+                for(int j=0;j<json_sentences.length();j++){
+                    HashMap<String,Object> sentence = new HashMap<>();
+                    JSONObject json_sentence = (JSONObject)json_sentences.opt(j);
+                    sentence.put("sentence_ch",json_sentence.getString("sentence_ch"));
+                    sentence.put("sentence_en",json_sentence.getString("sentence_en"));
+                    sentence.put("sid",json_sentence.getString("sid"));
+                    sentences.add(sentence);
+                }
+                item.put("sentences",sentences);
+                items.add(item);
+            }
+
+            kelinsiword.put("items",items);
+            kelinsiword.put("star",jsonObject.getString("star"));
+            kelinsiword.put("wid",jsonObject.getString("wid"));
+            kelinsiword.put("word_en",jsonObject.getString("word_en"));
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return kelinsiword;
     }
 
     public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){

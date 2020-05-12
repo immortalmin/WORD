@@ -49,6 +49,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
     private CaptureUtil captureUtil = new CaptureUtil();
+    private MyAsyncTask myAsyncTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +85,17 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         this.wid = wid;
         this.userData = userData;
         this.backdrop = backdrop;
-        getwordlist(true);
+        getExampleData();
+//        getwordlist(true);
+    }
+
+    public void setExamplelist(ArrayList<HashMap<String,Object>> data,boolean isTobottom){
+        examplelist.clear();
+        examplelist.addAll(data);
+        exampleAdapter.notifyDataSetChanged();
+        if(isTobottom){
+            example_list.setSelection(examplelist.size()-1);
+        }
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -103,14 +114,16 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                         exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                             @Override
                             public void onDeleteClick(int i) {
-                                jsonObject = new JSONObject();
-                                try{
-                                    jsonObject.put("id",examplelist.get(i).get("eid").toString());
-                                }catch (JSONException e){
-                                    e.printStackTrace();
-                                }
-                                del_index = i;
-                                del_warning();
+//                                jsonObject = new JSONObject();
+//                                try{
+//                                    jsonObject.put("id",examplelist.get(i).get("eid").toString());
+//                                }catch (JSONException e){
+//                                    e.printStackTrace();
+//                                }
+//                                del_index = i;
+//                                del_warning();
+
+                                del_warning(examplelist.get(i).get("eid").toString());
                             }
                             @Override
                             public void onEditClick(int i) {
@@ -234,10 +247,28 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private void getExampleData(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",8);
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("wid",Integer.valueOf(wid));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            examplelist.clear();
+            examplelist.addAll(jsonRe.exampleData(result));
+            mHandler.obtainMessage(0).sendToTarget();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
     /**
      * 删除警告
      */
-    private void del_warning(){
+    private void del_warning(String eid){
         mHandler.obtainMessage(5).sendToTarget();
         SweetAlertDialog del_alert = new SweetAlertDialog(getActivity(),SweetAlertDialog.WARNING_TYPE);
         del_alert.setTitleText("Really?")
@@ -247,9 +278,10 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        delete_example(jsonObject);
-                        Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
-                        mHandler.obtainMessage(6).sendToTarget();
+                        deleteExample(eid);
+//                        delete_example(jsonObject);
+//                        Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
+//                        mHandler.obtainMessage(6).sendToTarget();
                         sweetAlertDialog.cancel();
                     }
                 })
@@ -265,6 +297,10 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         del_alert.show();
     }
 
+
+    /**
+     * discontinue from 5/12/2020
+     */
     private void delete_example(final JSONObject jsonObject){
         new Thread(new Runnable() {
             @Override
@@ -282,6 +318,26 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
             non_example.setVisibility(View.INVISIBLE);
             example_list.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void deleteExample(String eid){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",2);
+            jsonObject.put("id",eid);//记得改成eid
+            jsonObject.put("wid",wid);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            examplelist.clear();
+            examplelist.addAll(jsonRe.exampleData(result));
+            exampleAdapter.notifyDataSetChanged();
+            Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
+            mHandler.obtainMessage(6).sendToTarget();
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private void updateExampleDialog(HashMap<String,Object> data){

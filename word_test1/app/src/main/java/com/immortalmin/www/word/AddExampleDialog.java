@@ -307,9 +307,6 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-//            jsonObject.put("word_group",word_group.getText().toString());
-//            jsonObject.put("C_meaning",C_meaning.getText().toString());
-//            jsonObject.put("page",page.getText().toString());
             jsonObject.put("wid",wid);
             jsonObject.put("uid",uid);
             JSONArray jsonArray = new JSONArray();

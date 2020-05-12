@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_test:
                 intent = new Intent(MainActivity.this,ExampleTestActivity.class);
-                intent.putExtra("wid","939");
+                intent.putExtra("wid","942");
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
