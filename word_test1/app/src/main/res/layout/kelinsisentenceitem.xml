@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical"
+    android:background="#40f4ad08"
+    >
+
+
+    <TextView
+        android:id="@+id/sentence_en"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#635f5f"
+        android:text="Either measure the temperature with a bath thermometer or test the water with your wrist..." />
+
+    <TextView
+        android:id="@+id/sentence_ch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#635f5f"
+        android:text="要么用浴用温度计测量水温，要么用手腕试一下。" />
+
+</LinearLayout>

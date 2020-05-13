@@ -79,7 +79,7 @@ public class JsonRe {
         HashMap<String,Object> kelinsiword = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
-            JSONArray json_items = new JSONArray(jsonObject.getString("en_tip"));
+            JSONArray json_items = new JSONArray(jsonObject.getString("items"));
             ArrayList<HashMap<String,Object>> items = new ArrayList<>();
             for(int i=0;i<json_items.length();i++){
                 HashMap<String,Object> item = new HashMap<>();
