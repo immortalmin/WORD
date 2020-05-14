@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:layout_toRightOf="@+id/number"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
         android:text="[VERB 动词]" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:layout_toRightOf="@+id/label"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
         android:text="检验;试验;测试；" />
 
     <TextView
@@ -41,6 +41,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:layout_toRightOf="@+id/word_ch"
+        android:textColor="#dad6d6"
         android:text="[V n]" />
 
     <TextView
@@ -49,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/number"
         android:padding="2dp"
-        android:textColor="#bf0001"
+        android:textColor="#9ea49a"
         android:text="When you test something, you try it, for example by touching it or using it for a short time, in order to find out what it is, what condition it is in, or how well it works. " />
 
     <com.immortalmin.www.word.MyListView

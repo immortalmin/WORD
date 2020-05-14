@@ -5,7 +5,7 @@
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:orientation="vertical"
-    android:background="#40f4ad08"
+    android:background="#203ce7df"
     >
 
 
@@ -13,14 +13,14 @@
         android:id="@+id/sentence_en"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#635f5f"
+        android:textColor="#d2d9d7"
         android:text="Either measure the temperature with a bath thermometer or test the water with your wrist..." />
 
     <TextView
         android:id="@+id/sentence_ch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#635f5f"
+        android:textColor="#bfd6ce"
         android:text="要么用浴用温度计测量水温，要么用手腕试一下。" />
 
 </LinearLayout>
