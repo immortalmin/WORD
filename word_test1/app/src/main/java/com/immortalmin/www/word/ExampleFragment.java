@@ -45,6 +45,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private ArrayList<HashMap<String,Object>> examplelist = new ArrayList<>();
     private ArrayList<HashMap<String,Object>> temp = new ArrayList<>();
     private int mode=0,wid=1,edit_index,del_index;
+    private String dict_source="0";
     private UserData userData = new UserData();
     private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
@@ -81,10 +82,11 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         void exampleFragmentInteraction(String res);
     }
 
-    public void setData(int wid,UserData userData,ImageView backdrop){
+    public void setData(int wid,UserData userData,ImageView backdrop,String dict_source){
         this.wid = wid;
         this.userData = userData;
         this.backdrop = backdrop;
+        this.dict_source = dict_source;
         getExampleData();
 //        getwordlist(true);
     }
@@ -250,16 +252,20 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private void getExampleData(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("what",8);
+//            jsonObject.put("what",8);//getexampledata
+            jsonObject.put("what",27);//getexampledata2
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
+            //new
+            jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist.clear();
-            examplelist.addAll(jsonRe.exampleData(result));
+//            examplelist.addAll(jsonRe.exampleData(result));
+            examplelist.addAll(jsonRe.exampleData2(result));
             mHandler.obtainMessage(0).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);

@@ -32,6 +32,7 @@ public class KelinsiFragment extends Fragment {
     private TextView word_en,star;
     private MyListView items_listview;
     private KelinsiAdapter kelinsiAdapter;
+    private int wid=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +67,10 @@ public class KelinsiFragment extends Fragment {
         void kelinsiFragmentInteraction(String res);
     }
 
+    public void setWid(int wid){
+        this.wid = wid;
+    }
+
     //mHandler.obtainMessage(0).sendToTarget();
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -86,7 +91,8 @@ public class KelinsiFragment extends Fragment {
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",9);
-            jsonObject.put("wid",30595);
+//            jsonObject.put("wid",30595);
+            jsonObject.put("wid",wid);
         }catch (JSONException e){
             e.printStackTrace();
         }

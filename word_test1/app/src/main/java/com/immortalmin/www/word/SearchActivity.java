@@ -80,8 +80,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     ListView.OnItemClickListener listlistener1 = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            String id = word_list.get(position).get("wid").toString();
-            jump_to_example(id);
+            String wid = word_list.get(position).get("wid").toString();
+            String dict_source = word_list.get(position).get("dict_source").toString();
+            jump_to_example(wid,dict_source);
         }
     };
 
@@ -143,8 +144,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     e.printStackTrace();
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
-                word_list = jsonRe.allwordData(recitejson);
+//                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
+//                word_list = jsonRe.allwordData(recitejson);
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist2.php",jsonObject);
+                word_list = jsonRe.getSearchData(recitejson);
                 mHandler.obtainMessage(0,word_list).sendToTarget();
             }
         }).start();
@@ -227,11 +230,14 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     /**
      * 跳转到例句页面
-     * @param id
+     * @param wid
      */
-    public void jump_to_example(String id){
-        Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
-        intent.putExtra("id",id);
+    public void jump_to_example(String wid,String dict_source){
+//        Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
+        Intent intent = new Intent(SearchActivity.this, ExampleTestActivity.class);
+//        intent.putExtra("id",id);
+        intent.putExtra("wid",wid);
+        intent.putExtra("dict_source",dict_source);
         startActivityForResult(intent,1);
         overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
     }

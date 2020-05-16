@@ -67,6 +67,10 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  24:update_word     更新单词
      *
      *  25:upload_picture  上传用户头像
+     *
+     *  new
+     *  26:getworddata2     新获取单词数据
+     *  27:getexampledata2  获取该单词的例句数据
      * @param params
      * @return
      */
@@ -79,7 +83,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
                 "getrecitelist","getreviewlist","getsearchlist","getsetting","getuserdata",
                 "getusetime","register","update_collect","update_example","update_password",
                 "update_recite","update_setting","update_time","update_userdata","update_word",
-                "upload_picture"
+                "upload_picture","getworddata2","getexampledata2"
         };
         try{
             what = Integer.valueOf(params[0].get("what").toString());

@@ -56,7 +56,8 @@ public class ExampleAdapter extends BaseAdapter {
             Log.i("ccc",mdata.toString());
         }
 
-        word_meaning.setText(mdata.get(position).get("word_meaning").toString());
+//        word_meaning.setText(mdata.get(position).get("word_meaning").toString());
+        word_meaning.setText(mdata.get(position).get("word_en").toString());
         E_sentence.setText(mdata.get(position).get("E_sentence").toString());
         C_translate.setText(mdata.get(position).get("C_translate").toString());
         source.setText("——由"+mdata.get(position).get("source").toString()+"添加");

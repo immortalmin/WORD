@@ -6,7 +6,7 @@
 
 
     <com.immortalmin.www.word.WordView
-        android:id="@+id/word_group"
+        android:id="@+id/word_en"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         app:mTextSize="19dp"
@@ -29,12 +29,12 @@
         <!--android:textColor="#FFFFFF"-->
         <!--android:text="TextView" />-->
     <TextView
-        android:id="@+id/C_meaning"
+        android:id="@+id/word_ch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="13dp"
         android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/word_group"
+        android:layout_toRightOf="@+id/word_en"
         android:textColor="#d2cccc"
         android:layout_centerVertical="true"
         android:singleLine="true"

@@ -51,8 +51,8 @@ public class ExampleTestActivity extends AppCompatActivity implements
 
     private Button example_btn,kelinsi_btn,edit_btn,word_del_btn,word_edit_btn,ban_icon,collect,return_btn;
     private ImageView backdrop;
-    private WordView word_group;
-    private TextView C_meaning,source;
+    private WordView word_en;
+    private TextView word_ch,source;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private ExampleFragment exampleFragment = new ExampleFragment();
@@ -66,7 +66,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private CaptureUtil captureUtil = new CaptureUtil();
     private int mode=0;
     private int fragment_mode=0;//0:example  1:kelinsi
-    private String current_word="error",wid = "100";
+    private String current_word="error",wid = "100",dict_source="0";
     private boolean first_coming = true;
     private int collect_flag = 0, del_id = 1;
 
@@ -84,8 +84,8 @@ public class ExampleTestActivity extends AppCompatActivity implements
         collect = (Button)findViewById(R.id.collect);
         return_btn = (Button)findViewById(R.id.return_btn);
         backdrop = (ImageView)findViewById(R.id.backdrop);
-        word_group = (WordView)findViewById(R.id.word_group);
-        C_meaning = (TextView) findViewById(R.id.C_meaning);
+        word_en = (WordView)findViewById(R.id.word_en);
+        word_ch = (TextView) findViewById(R.id.word_ch);
         source = (TextView) findViewById(R.id.source);
         example_btn.setOnClickListener(this);
         kelinsi_btn.setOnClickListener(this);
@@ -94,23 +94,42 @@ public class ExampleTestActivity extends AppCompatActivity implements
         word_edit_btn.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         collect.setOnClickListener(this);
-        word_group.setOnClickListener(this);
+        word_en.setOnClickListener(this);
         Intent intent = getIntent();
         wid = intent.getStringExtra("wid");
+        dict_source = intent.getStringExtra("dict_source");
         init();
     }
 
     private void init() {
         first_coming = true;
-        transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.framelayout,exampleFragment);
-        transaction.add(R.id.framelayout,kelinsiFragment);
-        transaction.hide(kelinsiFragment);
-        transaction.commit();
         init_user();
         getWordData();
-//        getwordlist();
-        exampleFragment.setData(Integer.valueOf(wid),userData,backdrop);//设置例句fragment的数据
+        if("0".equals(dict_source)){//有例句，没有柯林斯
+            fragment_mode=0;
+            transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.framelayout,exampleFragment);
+            transaction.commit();
+            exampleFragment.setData(Integer.valueOf(wid),userData,backdrop,dict_source);//设置例句fragment的数据
+            mHandler.obtainMessage(8,0).sendToTarget();
+        }else{//有柯林斯，可能有例句
+            fragment_mode=1;
+            transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.framelayout,exampleFragment);
+            transaction.add(R.id.framelayout,kelinsiFragment);
+            transaction.hide(exampleFragment);
+            transaction.commit();
+            exampleFragment.setData(Integer.valueOf(wid),userData,backdrop,dict_source);//设置例句fragment的数据
+            kelinsiFragment.setWid(Integer.valueOf(wid));
+            mHandler.obtainMessage(8,1).sendToTarget();
+        }
+//        transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.framelayout,exampleFragment);
+//        transaction.add(R.id.framelayout,kelinsiFragment);
+//        transaction.hide(kelinsiFragment);
+//        transaction.commit();
+//        exampleFragment.setData(Integer.valueOf(wid),userData,backdrop,dict_source);//设置例句fragment的数据
+//        kelinsiFragment.setWid(Integer.valueOf(wid));
     }
 
     private void init_user(){
@@ -164,16 +183,18 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 }
                 break;
             case R.id.collect:
+                collect.setClickable(false);
                 if(collect_flag==1){
                     Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
                     collect.setBackground(drawable);
                     collect_flag=0;
+                    updateCollect(0);
                 }else{
                     Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
                     collect.setBackground(drawable);
                     collect_flag=1;
+                    updateCollect(1);
                 }
-                update_collect();
                 break;
             case R.id.word_group:
                 if(mediaPlayer.isPlaying()){
@@ -198,6 +219,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
         }
     }
 
+    //mHandler.obtainMessage(0).sendToTarget();
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -232,25 +254,42 @@ public class ExampleTestActivity extends AppCompatActivity implements
                     example_btn.setText("例句");
                     break;
                 case 4:
-                    source.setText("来源："+word.get("source").toString());
-                    word_group.setmText(word.get("word_group").toString());
-                    word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
-                    C_meaning.setText(word.get("C_meaning").toString());
+//                    source.setText("来源："+word.get("source").toString());
+//                    word_group.setmText(word.get("word_group").toString());
+//                    word_group.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
+//                    C_meaning.setText(word.get("C_meaning").toString());
+
+                    //new
+                    word_en.setmText(word.get("word_en").toString());
+                    word_en.setAccount(0);
+                    word_ch.setText(word.get("word_ch").toString());
+                    source.setText(word.get("source").toString());
+                    if(!"null".equals(word.get("cid"))){//是收藏的单词
+                        word_en.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
+                        collect_flag=1;
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
+                        collect.setBackground(drawable);
+                    }else{
+                        Log.i("ccc","not collect");
+                    }
+
                     //set music of word
-                    current_word = word.get("word_group").toString();
-                    collect_flag = Integer.valueOf(word.get("collect").toString());
+//                    current_word = word.get("word_group").toString();
+                    current_word = word.get("word_en").toString();
                     resetMediaPlayer(current_word);
                     if(first_coming){
                         mediaPlayer.start();
                         first_coming = false;
                     }
-                    if(collect_flag==1){
-                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
-                        collect.setBackground(drawable);
-                    }else{
-                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
-                        collect.setBackground(drawable);
-                    }
+                    //collect
+//                    collect_flag = Integer.valueOf(word.get("collect").toString());
+//                    if(collect_flag==1){
+//                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
+//                        collect.setBackground(drawable);
+//                    }else{
+//                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
+//                        collect.setBackground(drawable);
+//                    }
                     break;
                 case 5:
                     Glide.with(ExampleTestActivity.this).load(captureUtil.getcapture(ExampleTestActivity.this))
@@ -263,11 +302,23 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 case 7:
                     JSONObject jsonObject = (JSONObject)message.obj;
                     try{
-                        word_group.setmText(jsonObject.getString("word_group"));
-                        C_meaning.setText(jsonObject.getString("C_meaning"));
+                        word_en.setmText(jsonObject.getString("word_group"));
+                        word_ch.setText(jsonObject.getString("C_meaning"));
                         source.setText(jsonObject.getString("source"));
                     }catch (JSONException e){
                         e.printStackTrace();
+                    }
+                    break;
+                case 8:
+                    switch (message.obj.toString()){
+                        case "0":
+                            kelinsi_btn.setClickable(false);
+                            kelinsi_btn.setVisibility(View.INVISIBLE);
+                            break;
+                        case "1":
+                            example_btn.setBackgroundColor(Color.parseColor("#10000000"));
+                            kelinsi_btn.setBackgroundColor(Color.parseColor("#30000000"));
+                            break;
                     }
                     break;
             }
@@ -294,7 +345,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
         try{
             jsonObject.put("wid",wid);
             jsonObject.put("uid",userData.getUid());
-            jsonObject.put("C_meaning",C_meaning.getText().toString());
+            jsonObject.put("C_meaning",word_ch.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -382,22 +433,63 @@ public class ExampleTestActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-    private void update_collect(){
+    /**
+     * discontinue from 5/16/2020
+     * 0:取消收藏；1:添加收藏
+     * @param collect
+     */
+    private void update_collect(int collect){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("uid",userData.getUid());
-                    jsonObject.put("wid",word.get("wid"));
-                    jsonObject.put("collect",collect_flag);
+                    if(collect==0){
+                        jsonObject.put("rid",word.get("rid"));
+                        jsonObject.put("collect",0);
+                    }else{
+                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("wid",word.get("wid"));
+                        jsonObject.put("collect",1);
+                        jsonObject.put("dict_source",dict_source);
+                    }
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_collect.php",jsonObject);
+                String jsonstr = httpGetContext.getData("http://47.98.239.237/word/php_file2/update_collect.php",jsonObject);
+
             }
         }).start();
+    }
+
+    /**
+     * 0:取消收藏；1:添加收藏
+     * @param sel
+     */
+    private void updateCollect(int sel){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",17);
+            jsonObject.put("collect",sel);
+            if(sel==0){
+                jsonObject.put("cid",word.get("cid"));
+            }else{
+                jsonObject.put("uid",userData.getUid());
+                jsonObject.put("wid",word.get("wid"));
+                jsonObject.put("dict_source",dict_source);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            if(sel==1){
+                word = jsonRe.wordData2(result);
+            }
+            collect.setClickable(true);
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
 
@@ -428,15 +520,19 @@ public class ExampleTestActivity extends AppCompatActivity implements
     public void getWordData(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("what",6);
+//            jsonObject.put("what",6);
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
+            //new
+            jsonObject.put("what",26);
+            jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            word = jsonRe.wordData(result);
+//            word = jsonRe.wordData(result);
+            word = jsonRe.wordData2(result);
             mHandler.obtainMessage(4).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
