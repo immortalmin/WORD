@@ -76,7 +76,7 @@
             app:mTextFirstColor="#0ced08"
             app:mTextSecondColor="#fdfdfd"
             app:mTextSize="28dp"
-            app:mText="accuse of"
+            app:mText=""
             />
 
         <Button
@@ -138,7 +138,7 @@
             android:layout_marginEnd="70dp"
             android:paddingLeft="10dp"
             android:paddingBottom="5dp"
-            android:text="指责" />
+            android:text="" />
 
         <TextView
             android:id="@+id/source"
@@ -149,7 +149,7 @@
             android:layout_below="@+id/collect"
             android:layout_alignRight="@+id/collect"
             android:textColor="#f9f9fa"
-            android:text="单词来源:chen" />
+            android:text="" />
 
     </RelativeLayout>
 

@@ -70,8 +70,8 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_group.setText(data.get("word_group").toString());
-                    C_meaning.setText(data.get("C_meaning").toString());
+                    word_group.setText(data.get("word_en").toString());
+                    C_meaning.setText(data.get("word_ch").toString());
                     break;
                 case 1:
                     cancel_flag = true;

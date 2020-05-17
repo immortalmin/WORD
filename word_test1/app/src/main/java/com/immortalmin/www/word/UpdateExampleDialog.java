@@ -64,7 +64,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_meaning.setText(data.get("word_meaning").toString());
+                    word_meaning.setText(data.get("word_en").toString());
                     E_sentence.setText(data.get("E_sentence").toString());
                     C_translate.setText(data.get("C_translate").toString());
                     break;
@@ -124,7 +124,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("id",data.get("eid").toString());
+            jsonObject.put("eid",data.get("eid").toString());
             jsonObject.put("word_meaning",word_meaning.getText().toString());
             jsonObject.put("E_sentence",E_sentence.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_translate",C_translate.getText().toString());

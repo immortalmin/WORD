@@ -144,9 +144,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     e.printStackTrace();
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
-//                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
 //                word_list = jsonRe.allwordData(recitejson);
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist2.php",jsonObject);
+                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
                 word_list = jsonRe.getSearchData(recitejson);
                 mHandler.obtainMessage(0,word_list).sendToTarget();
             }

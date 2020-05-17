@@ -92,12 +92,22 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     }
 
     public void setExamplelist(ArrayList<HashMap<String,Object>> data,boolean isTobottom){
+        //如果原本是没有例句的话，添加后要把“暂无例句”去除
+        if(examplelist.size()==0){
+            mHandler.obtainMessage(6,1).sendToTarget();
+        }
         examplelist.clear();
         examplelist.addAll(data);
-        exampleAdapter.notifyDataSetChanged();
+        if(exampleAdapter==null){
+            mHandler.obtainMessage(0).sendToTarget();
+        }else{
+            exampleAdapter.notifyDataSetChanged();
+        }
+
         if(isTobottom){
             example_list.setSelection(examplelist.size()-1);
         }
+
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -116,15 +126,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                         exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                             @Override
                             public void onDeleteClick(int i) {
-//                                jsonObject = new JSONObject();
-//                                try{
-//                                    jsonObject.put("id",examplelist.get(i).get("eid").toString());
-//                                }catch (JSONException e){
-//                                    e.printStackTrace();
-//                                }
-//                                del_index = i;
-//                                del_warning();
-
                                 del_warning(examplelist.get(i).get("eid").toString());
                             }
                             @Override
@@ -153,6 +154,13 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     break;
                 case 6:
                     backdrop.setVisibility(View.INVISIBLE);
+                    if("1".equals(message.obj.toString())){//显示例句
+                        non_example.setVisibility(View.INVISIBLE);
+                        example_list.setVisibility(View.VISIBLE);
+                    }else if("2".equals(message.obj.toString())){//显示“暂无例句”
+                        non_example.setVisibility(View.VISIBLE);
+                        example_list.setVisibility(View.INVISIBLE);
+                    }
                     break;
             }
             return false;
@@ -252,11 +260,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private void getExampleData(){
         JSONObject jsonObject = new JSONObject();
         try{
-//            jsonObject.put("what",8);//getexampledata
-            jsonObject.put("what",27);//getexampledata2
+            jsonObject.put("what",8);//getexampledata
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
-            //new
             jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
@@ -264,8 +270,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist.clear();
-//            examplelist.addAll(jsonRe.exampleData(result));
-            examplelist.addAll(jsonRe.exampleData2(result));
+            examplelist.addAll(jsonRe.exampleData(result));
             mHandler.obtainMessage(0).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
@@ -285,9 +290,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         deleteExample(eid);
-//                        delete_example(jsonObject);
-//                        Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
-//                        mHandler.obtainMessage(6).sendToTarget();
                         sweetAlertDialog.cancel();
                     }
                 })
@@ -296,7 +298,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.cancel();
-                        mHandler.obtainMessage(6).sendToTarget();
+                        mHandler.obtainMessage(6,0).sendToTarget();
                     }
                 });
         del_alert.setCancelable(false);
@@ -330,8 +332,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",2);
-            jsonObject.put("id",eid);//记得改成eid
+            jsonObject.put("eid",eid);//记得改成eid
             jsonObject.put("wid",wid);
+            jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -341,7 +344,12 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
             examplelist.addAll(jsonRe.exampleData(result));
             exampleAdapter.notifyDataSetChanged();
             Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
-            mHandler.obtainMessage(6).sendToTarget();
+            if(examplelist.size()==0){
+                mHandler.obtainMessage(6,2).sendToTarget();
+            }else{
+                mHandler.obtainMessage(6,0).sendToTarget();
+            }
+
         });
         myAsyncTask.execute(jsonObject);
     }
@@ -354,7 +362,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         updateExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(6).sendToTarget();
+                mHandler.obtainMessage(6,0).sendToTarget();
             }
         });
     }

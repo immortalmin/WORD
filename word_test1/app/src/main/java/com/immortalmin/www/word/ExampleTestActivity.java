@@ -263,7 +263,8 @@ public class ExampleTestActivity extends AppCompatActivity implements
                     word_en.setmText(word.get("word_en").toString());
                     word_en.setAccount(0);
                     word_ch.setText(word.get("word_ch").toString());
-                    source.setText(word.get("source").toString());
+                    //暂时不显示
+//                    source.setText(word.get("source").toString());
                     if(!"null".equals(word.get("cid"))){//是收藏的单词
                         word_en.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
                         collect_flag=1;
@@ -417,7 +418,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private void deleteWord(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("id",word.get("wid"));
+            jsonObject.put("wid",word.get("wid"));
             jsonObject.put("what",3);
         }catch (JSONException e){
             e.printStackTrace();
@@ -520,11 +521,9 @@ public class ExampleTestActivity extends AppCompatActivity implements
     public void getWordData(){
         JSONObject jsonObject = new JSONObject();
         try{
-//            jsonObject.put("what",6);
+            jsonObject.put("what",6);
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
-            //new
-            jsonObject.put("what",26);
             jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
@@ -561,7 +560,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            word = jsonRe.wordData(result);
+            word = jsonRe.wordData2(result);
             mHandler.obtainMessage(4).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
@@ -586,12 +585,14 @@ public class ExampleTestActivity extends AppCompatActivity implements
         try{
             jsonObject.put("what",18);
             jsonObject.put("wid",wid);
+            jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist = jsonRe.exampleData(result);
+            Log.i("ccc",examplelist.toString());
             exampleFragment.setExamplelist(examplelist,false);
         });
         myAsyncTask.execute(jsonObject);
@@ -615,6 +616,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private void addExample(JSONObject jsonObject){
         try{
             jsonObject.put("what",0);
+            jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }

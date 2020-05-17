@@ -161,40 +161,40 @@ public class JsonRe {
         return kelinsiword;
     }
 
-    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
-        ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> example = new HashMap<>();
-                example.put("eid",jsonObject.getString("eid"));
-                String word_meaning,E_sentence,C_translate;
-                word_meaning = jsonObject.getString("word_meaning").replaceAll("\\\\n","\\\n");
-                E_sentence = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
-                C_translate = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
-                if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
-                    word_meaning = word_meaning.substring(0,word_meaning.length()-1);
-                }
-                if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
-                    E_sentence = E_sentence.substring(0,E_sentence.length()-1);
-                }
-                if(C_translate.charAt(C_translate.length()-1) == '\n'){
-                    C_translate = C_translate.substring(0,C_translate.length()-1);
-                }
-                example.put("word_meaning",word_meaning);
-                example.put("E_sentence",E_sentence);
-                example.put("C_translate",C_translate);
-                example.put("source",jsonObject.getString("source"));
-                exampleList.add(example);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return exampleList;
-    }
+//    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
+//        ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            for(int i=0;i<jsonArray.length();i++){
+//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+//                HashMap<String,Object> example = new HashMap<>();
+//                example.put("eid",jsonObject.getString("eid"));
+//                String word_en,E_sentence,C_translate;
+//                word_en = jsonObject.getString("word_en").replaceAll("\\\\n","\\\n");
+//                E_sentence = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
+//                C_translate = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
+//                if(word_en.charAt(word_en.length()-1) == '\n'){
+//                    word_en = word_en.substring(0,word_en.length()-1);
+//                }
+//                if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
+//                    E_sentence = E_sentence.substring(0,E_sentence.length()-1);
+//                }
+//                if(C_translate.charAt(C_translate.length()-1) == '\n'){
+//                    C_translate = C_translate.substring(0,C_translate.length()-1);
+//                }
+//                example.put("word_en",word_en);
+//                example.put("E_sentence",E_sentence);
+//                example.put("C_translate",C_translate);
+//                example.put("source",jsonObject.getString("source"));
+//                exampleList.add(example);
+//            }
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return exampleList;
+//    }
 
-    public ArrayList<HashMap<String,Object>> exampleData2(String jsonStr){
+    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
         ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
