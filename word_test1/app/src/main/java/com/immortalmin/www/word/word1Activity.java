@@ -50,13 +50,16 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
  * */
 public class word1Activity extends AppCompatActivity implements View.OnClickListener{
 
-    JsonRe  jsonRe;
+    private JsonRe  jsonRe = new JsonRe();
+    private UserData userData = new UserData();
+    private MyAsyncTask myAsyncTask = null;
     private BlurImageView blurImageView = new BlurImageView();
-    ListView listView;
+    private ListView listView;
     private ImageView imgview;
-    TextView all_num,finished_num;
+    private TextView all_num,finished_num;
     private RelativeLayout main_relative;
-    List<HashMap<String,Object>> word_list=null;
+    private List<HashMap<String,Object>> word_list=null;
+    private List<HashMap<String,Object>> collect_list=null;
     private WordListAdapter wordListAdapter = null;
     private int now_position=0;
     @Override
@@ -92,10 +95,33 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
                 now_position = i;
             }
         });
-        getwordlist();
-        get_amount();
-        jsonRe=new JsonRe();
+        init();
 
+
+    }
+
+    private void init() {
+//        getwordlist();
+        init_user();
+        getCollect();
+        get_amount();
+
+    }
+
+    private void init_user(){
+        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        userData.setUid(sp.getString("uid",null));
+        userData.setRecite_num(sp.getInt("recite_num",20));
+        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        userData.setUsername(sp.getString("username",null));
+        userData.setPassword(sp.getString("password",null));
+        userData.setProfile_photo(sp.getString("profile_photo",null));
+        userData.setStatus(sp.getString("status","0"));
+        userData.setLast_login(sp.getLong("last_login",946656000000L));
+        userData.setEmail(sp.getString("email",null));
+        userData.setTelephone(sp.getString("telephone",null));
+        userData.setMotto(sp.getString("motto",null));
     }
 
     public void onClick(View view) {
@@ -108,8 +134,7 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private void getwordlist()
-    {
+    private void getwordlist() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -127,6 +152,22 @@ public class word1Activity extends AppCompatActivity implements View.OnClickList
             }
         }).start();
 
+    }
+
+    private void getCollect(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",4);
+            jsonObject.put("uid",userData.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            collect_list = jsonRe.collectData(result);
+//            mHandler.obtainMessage(0).sendToTarget();
+        });
+        myAsyncTask.execute(jsonObject);
     }
     private void get_amount()
     {

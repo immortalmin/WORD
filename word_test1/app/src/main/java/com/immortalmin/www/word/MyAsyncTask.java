@@ -42,7 +42,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  2:delete_example  删除例句
      *  3:delete_word     删除单词
      *
-     *  4:getcollect      获取是否收藏
+     *  4:getcollect      获取收藏的单词
      *  5:get_count       获取单词统计数据
      *  6:getworddata     获取单个单词的数据
      *  7:getwordlist     获取所有的单词

@@ -54,6 +54,31 @@ public class JsonRe {
         return wordList;
     }
 
+    public ArrayList<HashMap<String,Object>> collectData(String jsonStr){
+        ArrayList<HashMap<String,Object>> words = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                HashMap<String,Object> word = new HashMap<>();
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                word.put("cid",jsonObject.getString("cid"));
+                word.put("uid",jsonObject.getString("uid"));
+                word.put("gid",jsonObject.getString("gid"));
+                word.put("wid",jsonObject.getString("wid"));
+                word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
+                word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
+                word.put("correct_times",jsonObject.getString("correct_times"));
+                word.put("error_times",jsonObject.getString("error_times"));
+                word.put("last_date",jsonObject.getString("last_date"));
+                word.put("dict_source",jsonObject.getString("dict_source"));
+                words.add(word);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return words;
+    }
+
     public List<HashMap<String,Object>> getSearchData(String jsonStr){
         List<HashMap<String,Object>> wordList = new ArrayList<>();
         try {
@@ -161,38 +186,6 @@ public class JsonRe {
         return kelinsiword;
     }
 
-//    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
-//        ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
-//        try {
-//            JSONArray jsonArray = new JSONArray(jsonStr);
-//            for(int i=0;i<jsonArray.length();i++){
-//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-//                HashMap<String,Object> example = new HashMap<>();
-//                example.put("eid",jsonObject.getString("eid"));
-//                String word_en,E_sentence,C_translate;
-//                word_en = jsonObject.getString("word_en").replaceAll("\\\\n","\\\n");
-//                E_sentence = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
-//                C_translate = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
-//                if(word_en.charAt(word_en.length()-1) == '\n'){
-//                    word_en = word_en.substring(0,word_en.length()-1);
-//                }
-//                if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
-//                    E_sentence = E_sentence.substring(0,E_sentence.length()-1);
-//                }
-//                if(C_translate.charAt(C_translate.length()-1) == '\n'){
-//                    C_translate = C_translate.substring(0,C_translate.length()-1);
-//                }
-//                example.put("word_en",word_en);
-//                example.put("E_sentence",E_sentence);
-//                example.put("C_translate",C_translate);
-//                example.put("source",jsonObject.getString("source"));
-//                exampleList.add(example);
-//            }
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return exampleList;
-//    }
 
     public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
         ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
