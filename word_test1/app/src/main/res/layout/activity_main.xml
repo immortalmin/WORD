@@ -53,20 +53,20 @@
         >
 
         <Button
-            android:id="@+id/btn_wordlist"
+            android:id="@+id/btn_collect"
             android:layout_width="220px"
             android:layout_height="220px"
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
-            android:text="单词\n列表" />
+            android:text="收藏\n列表" />
 
 
         <Button
             android:id="@+id/btn_recite"
             android:layout_width="220px"
             android:layout_height="220px"
-            android:layout_toRightOf="@+id/btn_wordlist"
+            android:layout_toRightOf="@+id/btn_collect"
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
@@ -80,7 +80,7 @@
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
-            android:layout_below="@+id/btn_wordlist"
+            android:layout_below="@+id/btn_collect"
             android:layout_marginTop="30px"
             android:text="TEST\nONE" />
 

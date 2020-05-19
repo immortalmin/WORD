@@ -29,14 +29,12 @@ public class WordListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.worditem,null);
 
-        WordView word_group = (WordView)v.findViewById(R.id.word_group);
-        TextView C_meaning = (TextView)v.findViewById(R.id.C_meaning);
+        WordView word_en = (WordView)v.findViewById(R.id.word_en);
+        TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
 
-        word_group.setmText(mdata.get(position).get("word_group").toString());
-        word_group.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
-//        word_group.setRank(Integer.valueOf(mdata.get(position).get("correct_times").toString()));
-        C_meaning.setText(mdata.get(position).get("C_meaning").toString());
-
+        word_en.setmText(mdata.get(position).get("word_en").toString());
+        word_en.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
+        word_ch.setText(mdata.get(position).get("word_ch").toString());
         return v;
     }
 

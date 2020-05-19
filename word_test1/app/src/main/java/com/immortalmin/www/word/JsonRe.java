@@ -245,6 +245,30 @@ public class JsonRe {
         return reciteList;
     }
 
+    public List<HashMap<String,Object>> reciteData2(String jsonStr){
+        List<HashMap<String,Object>> reciteList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                HashMap<String,Object> word = new HashMap<>();
+                word.put("cid",jsonObject.getString("cid"));
+                word.put("wid",jsonObject.getString("wid"));
+                word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
+                word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
+                word.put("correct_times",jsonObject.getString("correct_times"));
+                word.put("error_times",jsonObject.getString("error_times"));
+                word.put("last_date",jsonObject.getString("last_date"));
+                word.put("dict_source",jsonObject.getString("dict_source"));
+                word.put("today_correct_times",0);
+                reciteList.add(word);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return reciteList;
+    }
+
     public HashMap<String,Object> userData(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {

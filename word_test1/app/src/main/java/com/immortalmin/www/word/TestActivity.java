@@ -11,7 +11,6 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -448,7 +447,7 @@ public class TestActivity extends Activity implements View.OnClickListener{
             update_word.put("correct_times",recite_list.get(i).get("correct_times").toString());
             update_word.put("error_times",recite_list.get(i).get("error_times").toString());
             update_word.put("prof_flag",recite_list.get(i).get("prof_flag").toString());
-            sendIdToServer sendIdToserver = new sendIdToServer();
+            UpdateServer sendIdToserver = new UpdateServer();
             sendIdToserver.sendMap(update_word);
             sendIdToserver.run();
         }

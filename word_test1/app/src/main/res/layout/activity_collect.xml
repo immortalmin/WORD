@@ -19,13 +19,83 @@
         app:shader_style="Center"
         app:smoothness="0.25"/>
 
+    <RelativeLayout
+        android:id="@+id/linear1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <!--android:background="@drawable/num_bk"-->
+
+
+
+        <LinearLayout
+            android:id="@+id/total_show"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:orientation="vertical">
+            <!--android:background="#60444444"-->
+
+            <TextView
+                android:id="@+id/all_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="TOTAL"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#000000"
+                android:textSize="15dp" />
+            <TextView
+                android:id="@+id/all_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#16a5de"
+                android:textSize="15dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/finish_show"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignBaseline="@+id/total_show"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/rounded_corners_gray"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/finished_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/all_view"
+                android:layout_gravity="center_horizontal"
+                android:text="FINISHED"
+                android:textColor="#000000"
+                android:textSize="15dp"
+                />
+            <TextView
+                android:id="@+id/finished_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/all_view"
+                android:layout_gravity="center_horizontal"
+                android:text="0"
+                android:textColor="#de380f"
+                android:textSize="15dp"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <ListView
         android:id="@+id/ListView1"
+        android:layout_below="@+id/linear1"
         android:dividerHeight="0dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="30dp">
+        android:layout_height="match_parent" >
 
 
     </ListView>

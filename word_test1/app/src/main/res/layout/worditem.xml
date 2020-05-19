@@ -11,7 +11,7 @@
         android:layout_marginRight="10dp"
         >
         <com.immortalmin.www.word.WordView
-            android:id="@+id/word_group"
+            android:id="@+id/word_en"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             app:mText="accuse of"
@@ -19,12 +19,12 @@
             app:mTextFirstColor="#0ced08"
             app:mTextSecondColor="#FFFFFF" />
         <TextView
-            android:id="@+id/C_meaning"
+            android:id="@+id/word_ch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/word_group"
+            android:layout_below="@+id/word_en"
             android:paddingBottom="5dp"
-            android:textColor="#FFFFFF"
+            android:textColor="#dcdedb"
             android:textSize="13dp"
             android:text="指责；指控"
             />

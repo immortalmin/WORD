@@ -1,7 +1,5 @@
 package com.immortalmin.www.word;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,16 +10,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
@@ -33,7 +27,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,12 +34,9 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,10 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.wasabeef.glide.transformations.BitmapTransformation;
-import jp.wasabeef.glide.transformations.BlurTransformation;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * 主界面
@@ -71,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BlurImageView blurImageView = new BlurImageView();
     private Context context;
     List<Map<String,Object>> word_list=null;
-    Button btn_wordlist,btn_recite,btn_test,btn_spell,search1;
+    Button btn_collect,btn_recite,btn_test,btn_spell,search1;
     private ImageView imgview;
     EditText editText;
     SearchView search_bar;
@@ -94,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         screen_width = metric.widthPixels;     // 屏幕宽度（像素）
         screen_height = metric.heightPixels;   // 屏幕高度（像素）
         context = this;
-        btn_wordlist = (Button)findViewById(R.id.btn_wordlist);
+        btn_collect = (Button)findViewById(R.id.btn_collect);
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
         btn_test = (Button)findViewById(R.id.btn_test);
@@ -102,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         main_relative = (RelativeLayout)findViewById(R.id.main_relative);
         imgview = (ImageView)findViewById(R.id.imgview);
-        btn_wordlist.setOnClickListener(this);
+        btn_collect.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_test.setOnClickListener(this);
         btn_spell.setOnClickListener(this);
@@ -189,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 1:
                     ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
-                    btn_wordlist.setBackground(new BitmapDrawable(bitmaps.get(0)));
+                    btn_collect.setBackground(new BitmapDrawable(bitmaps.get(0)));
                     btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
                     btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
                     btn_test.setBackground(new BitmapDrawable(bitmaps.get(3)));
@@ -336,8 +322,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_wordlist:
-                intent = new Intent(MainActivity.this,word1Activity.class);
+            case R.id.btn_collect:
+                intent = new Intent(MainActivity.this,collectActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class CountDownFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
-    private String word_group,C_meaning,mode;
+    private String word_en,word_ch,mode;
     private Button acquaint,vague,strange;
     private CountDownProgressBar cpb_countdown;
     private Boolean isCountdownfinish=false,pron_flag=true,living_flag=true;//pron_flag:是否播放音频,living_flag:按钮是否激活
@@ -201,8 +201,8 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         pron_flag=true;
         living_flag = true;
         mode = words.get("mode").toString();
-        word_group = words.get("word_group").toString();
-        C_meaning = words.get("C_meaning").toString();
+        word_en = words.get("word_en").toString();
+        word_ch = words.get("word_ch").toString();
         this.mediaPlayer = (MediaPlayer)words.get("media_player");
         countdown_mode();
     }
@@ -210,7 +210,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void countdown_mode(){
         switch (mode){
             case "1"://play music
-                cpb_countdown.setDuration(3000,"Guess who I am",word_group, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(3000,"Guess who I am",word_en, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -218,16 +218,16 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 });
                 mediaPlayer.start();
                 break;
-            case "2"://show C_meaning
-                cpb_countdown.setDuration(3000,C_meaning,word_group, new CountDownProgressBar.OnFinishListener() {
+            case "2"://show word_ch
+                cpb_countdown.setDuration(3000,word_ch,word_en, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
                     }
                 });
                 break;
-            case "3"://show word_group
-                cpb_countdown.setDuration(3000,word_group,C_meaning, new CountDownProgressBar.OnFinishListener() {
+            case "3"://show word_en
+                cpb_countdown.setDuration(3000,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();

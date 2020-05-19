@@ -39,7 +39,7 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * 点击单词后进入单词例句
- * 跳转到这个界面需要传id的值
+ * 跳转到这个界面需要传入wid与dict_source
  */
 public class ExampleTestActivity extends AppCompatActivity implements
         ExampleFragment.OnFragmentInteractionListener,
@@ -69,6 +69,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     private String current_word="error",wid = "100",dict_source="0";
     private boolean first_coming = true;
     private int collect_flag = 0, del_id = 1;
+    private boolean isChanged = false;
 
 
     @Override
@@ -212,7 +213,11 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 break;
             case R.id.return_btn:
                 Intent intent = new Intent();
-                setResult(1,intent);
+                if(isChanged){
+                    setResult(1,intent);
+                }else{
+                    setResult(2,intent);
+                }
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -270,9 +275,10 @@ public class ExampleTestActivity extends AppCompatActivity implements
                         collect_flag=1;
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
                         collect.setBackground(drawable);
-                    }else{
-                        Log.i("ccc","not collect");
                     }
+//                    else{
+//                        Log.i("ccc","not collect");
+//                    }
 
                     //set music of word
 //                    current_word = word.get("word_group").toString();
@@ -416,6 +422,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     }
 
     private void deleteWord(){
+        isChanged = true;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",word.get("wid"));
@@ -469,6 +476,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
      * @param sel
      */
     private void updateCollect(int sel){
+        isChanged = true;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",17);
@@ -552,6 +560,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
     }
 
     public void updateWord(JSONObject jsonObject){
+        isChanged = true;
         try{
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("what",24);
@@ -704,7 +713,11 @@ public class ExampleTestActivity extends AppCompatActivity implements
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
 //            Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
             Intent intent = new Intent();
-            setResult(1,intent);
+            if(isChanged){
+                setResult(1,intent);
+            }else{
+                setResult(2,intent);
+            }
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             return false;

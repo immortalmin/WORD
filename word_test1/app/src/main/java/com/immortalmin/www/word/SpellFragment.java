@@ -34,14 +34,14 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
     private OnFragmentInteractionListener mListener;
-    private String word_group,C_meaning,mode,user_ans;
+    private String word_en,word_ch,mode,user_ans;
     private CountDownProgressBar cpb_countdown;
     private MediaPlayer mediaPlayer=new MediaPlayer();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private Runnable music_delay,correct_action,wrong_action;
-    private TextView cword,correct_word;//display C_meaning
-    private EditText eword;//spell word_group
+    private TextView cword,correct_word;//display word_ch
+    private EditText eword;//spell word_en
     private Button finish_btn;
     private Boolean btn_flag = true;//avoid double click
     private Boolean once_flag=true;
@@ -93,8 +93,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
          * 接受来自activity的数据
          */
 //        Bundle bundle = getArguments();
-//        word_group = bundle.getString("word_group");
-//        C_meaning = bundle.getString("C_meaning");
+//        word_en = bundle.getString("word_en");
+//        word_ch = bundle.getString("word_ch");
 //        once_flag = bundle.getBoolean("once_flag");
 //        mHandler.obtainMessage(2).sendToTarget();
 //        showInput(eword);
@@ -146,10 +146,10 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 btn_flag = false;
                 eword.setEnabled(false);
 //                mediaPlayer = new MediaPlayer();
-//                initMediaPlayer(word_group,0);//音频初始化
+//                initMediaPlayer(word_en,0);//音频初始化
                 mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
-                String co_word = word_group.replaceAll(" ","");
+                String co_word = word_en.replaceAll(" ","");
                 if(co_word.equals(user_ans)){
                     judge_flag = 1;
                     soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
@@ -176,11 +176,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     break;
                 case 1://wrong
                     eword.setTextColor(Color.parseColor("#ed0707"));
-                    correct_word.setText(word_group);
+                    correct_word.setText(word_en);
                     correct_word.setVisibility(View.VISIBLE);
                     break;
                 case 2://set c_word
-                    cword.setText(C_meaning);
+                    cword.setText(word_ch);
                     break;
                 case 3://go back to recite_word_activity
                     send_to_activity(judge_flag);
@@ -235,8 +235,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         btn_flag = true;
         eword.setEnabled(true);
 //        mode = words.get("mode").toString();
-        word_group = words.get("word_group").toString();
-        C_meaning = words.get("C_meaning").toString();
+        word_en = words.get("word_en").toString();
+        word_ch = words.get("word_ch").toString();
         once_flag = Boolean.valueOf(words.get("once_flag").toString());
         this.mediaPlayer = (MediaPlayer)words.get("media_player");
         mHandler.obtainMessage(2).sendToTarget();
