@@ -7,15 +7,15 @@
     android:background="#4a82c7"
     tools:context=".ExampleTestActivity">
 
-    <com.ocnyang.contourview.ContourView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:contour_style="Sand"
-        app:shader_endcolor="#4f68c6"
-        app:shader_mode="RadialGradient"
-        app:shader_startcolor="#61a8d4"
-        app:shader_style="Center"
-        app:smoothness="0.15"/>
+    <!--<com.ocnyang.contourview.ContourView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:contour_style="Sand"-->
+        <!--app:shader_endcolor="#4f68c6"-->
+        <!--app:shader_mode="RadialGradient"-->
+        <!--app:shader_startcolor="#61a8d4"-->
+        <!--app:shader_style="Center"-->
+        <!--app:smoothness="0.15"/>-->
 
 
     <RelativeLayout

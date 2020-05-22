@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<declare-styleable name="TextView">-->
 
-    <!--</declare-styleable>-->
     <declare-styleable name="CountDownProgressBar">
         <attr name="lctyText" format="string"></attr>
         <attr name="lctyColor" format="color"></attr>
@@ -17,4 +15,7 @@
         <attr name="countDown_isShowGradient" format="boolean" />
     </declare-styleable>
 
+
 </resources>
+
+
