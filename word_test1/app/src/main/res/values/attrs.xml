@@ -15,6 +15,9 @@
         <attr name="countDown_isShowGradient" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MyEditText">
+        <attr name="isShowPaste" format="boolean"/>
+    </declare-styleable>
 
 </resources>
 
