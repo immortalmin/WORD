@@ -2,18 +2,24 @@ package com.immortalmin.www.word;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.nio.channels.NonReadableChannelException;
 
 
 /**
@@ -22,11 +28,18 @@ import android.widget.EditText;
 public class MyEditText extends android.support.v7.widget.AppCompatEditText {
 
     private Context context;
+    private Canvas canvas;
     private Paint mPaint = new Paint();
-    private Button clear_btn;
-    private Drawable clear_img,paste_img;
-    private int btn_width = 50;
-    private boolean isShowPaste = false;
+    private Bitmap visible_bitmap,invisible_bitmap,clear_bitmap,paste_bitmap;
+    private Drawable clear_img,paste_img,seen_img,unseen_img;
+    private int btn_length = 50,btn_padding=10;
+    private boolean isVisible = true;
+    /**
+     * 0:普通输入框，带删除按钮
+     * 1:带删除按钮和粘贴按钮
+     * 2:密码输入框
+     */
+    private int TextType = 0;
 
 
     public MyEditText(Context context) {
@@ -47,9 +60,22 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int xDown = (int) event.getX();
-        if (event.getAction() == MotionEvent.ACTION_DOWN && xDown >= (getWidth() - btn_width*1.5) && xDown < getWidth()) {
-            // 清除按钮的点击范围 按钮自身大小 +-padding
-            setText("");
+        if (event.getAction() == MotionEvent.ACTION_DOWN && xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding) {
+            if(getText().length()>0){
+                setText("");
+                Log.i("ccc","delete");
+            }else if(TextType==1){
+                Log.i("ccc","paste");
+            }
+            return false;
+        }else if(TextType==2 && event.getAction() == MotionEvent.ACTION_DOWN && xDown >= getWidth()-btn_length*2-btn_padding*2 && xDown < getWidth()-btn_length-btn_padding*2){
+            if(isVisible){
+                setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+            }else{
+                setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+            setSelection(getText().length());
+            isVisible = !isVisible;
             return false;
         }
         super.onTouchEvent(event);
@@ -57,16 +83,18 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     }
 
     private void init(Context context, AttributeSet attrs) {
+
         if (attrs != null) {
             TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MyEditText);
-            //是否显示粘贴按钮
-            isShowPaste = array.getBoolean(R.styleable.MyEditText_isShowPaste,false);
+            //输入框类型
+            TextType = array.getInteger(R.styleable.MyEditText_TextType,0);
             array.recycle();
         }
-        clear_img = getResources().getDrawable(R.drawable.del3);
-        paste_img = getResources().getDrawable(R.drawable.paste);
-        clear_img.setBounds(0,0,btn_width,btn_width);
-        paste_img.setBounds(0,0,btn_width,btn_width);
+        //获取图标资源
+        visible_bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.seen_icon);
+        invisible_bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unseen_icon);
+        clear_bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.del3);
+        paste_bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.paste);
         setTextColor(Color.BLACK);
         setBackground(getResources().getDrawable(R.drawable.word_input));
 
@@ -75,57 +103,62 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        mPaint.setStyle(Paint.Style.STROKE);
-//        mPaint.setAntiAlias(true);
-//        mPaint.setColor(Color.GREEN);
-//
-//        if(isFocused()){
-//            mPaint.setStrokeWidth(20);
-//        }else{
-//            mPaint.setStrokeWidth(10);
-//        }
-//        drawBorder(canvas);
+        this.canvas = canvas;
+        switch (TextType){
+            case 0:
+                if(isFocused()&&getText().length()>0){
+                    drawClearButton(canvas);
+                }
+                break;
+            case 1:
+                if(isFocused()){
+                    if(getText().length()>0){
+                        drawClearButton(canvas);
+                    }else{
+                        drawPasteButton(canvas);
+                    }
+                }
+                break;
+            case 2:
+                if(isFocused()){
+                    if(getText().length()>0){
+                        drawVisibleButton(canvas);
+                        drawClearButton(canvas);
+                    }
+                }
+                break;
+        }
     }
 
-    private void drawBorder(Canvas canvas) {
+    private void drawVisibleButton(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        canvas.drawRoundRect(0,0,width,height,30,30,mPaint);
-//        setTextColor(Color.parseColor("#000000"));
-//        canvas.drawRect(0, 0, width, height, mPaint);
+        Rect rect = new Rect(width-btn_length*2-btn_padding*2,height-btn_padding-btn_length,width-btn_length-btn_padding*2,height-btn_padding);
+        if(!isVisible){
+            canvas.drawBitmap(visible_bitmap,null,rect,mPaint);
+        }else{
+            canvas.drawBitmap(invisible_bitmap,null,rect,mPaint);
+        }
+    }
+
+    private void drawClearButton(Canvas canvas) {
+        int width = getWidth();
+        int height = getHeight();
+        Rect rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
+        canvas.drawBitmap(clear_bitmap,null,rect,mPaint);
+    }
+
+    private void drawPasteButton(Canvas canvas) {
+        int width = getWidth();
+        int height = getHeight();
+        Rect rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
+        canvas.drawBitmap(paste_bitmap,null,rect,mPaint);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         //设置右内边距, 防止清除按钮和文字重叠
-        setPadding(20, 20, 10, 20);
-    }
-
-    @Override
-    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter);
-        if(text.length()>0&&isFocused()){
-            setCompoundDrawables(null,null,clear_img,null);
-        }else{
-            if(isShowPaste){
-                setCompoundDrawables(null,null,paste_img,null);
-            }else{
-                setCompoundDrawables(null,null,null,null);
-            }
-        }
-    }
-
-    @Override
-    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        if(focused&&getText().toString().length()>0){
-            setCompoundDrawables(null,null,clear_img,null);
-        }else if(focused&&getText().toString().length()==0&&isShowPaste){
-            setCompoundDrawables(null,null,paste_img,null);
-        }else{
-            setCompoundDrawables(null,null,null,null);
-        }
+        setPadding(20, 20, 20, btn_length+btn_padding);
     }
 }

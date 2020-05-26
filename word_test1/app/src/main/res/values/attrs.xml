@@ -16,7 +16,8 @@
     </declare-styleable>
 
     <declare-styleable name="MyEditText">
-        <attr name="isShowPaste" format="boolean"/>
+        <attr name="TextType" format="integer"/>
+        <attr name="PasteId" format="reference"/>
     </declare-styleable>
 
 </resources>

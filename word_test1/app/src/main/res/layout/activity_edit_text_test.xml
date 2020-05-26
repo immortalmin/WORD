@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#50000000"
+    android:id="@+id/editRelative"
     tools:context=".EditTextTest">
 
     <com.immortalmin.www.word.MyEditText
@@ -12,17 +13,38 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:textCursorDrawable="@drawable/cursor"
-        app:isShowPaste="true"
+        app:TextType = "0"
         android:visibility="visible"/>
+
+    <EditText
+        android:id="@+id/et1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/myEditText"
+        android:text="hahaha"/>
 
     <com.immortalmin.www.word.MyEditText
         android:id="@+id/myEditText2"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:isShowPaste="false"
+        app:TextType = "1"
+        app:PasteId="@+id/et1"
         android:textCursorDrawable="@drawable/cursor"
-        android:layout_below="@+id/myEditText"
-        android:layout_marginTop="20dp"/>
+        android:layout_below="@+id/et1"
+
+        />
+
+
+
+    <com.immortalmin.www.word.MyEditText
+        android:id="@+id/myEditText3"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:TextType = "2"
+        android:textCursorDrawable="@drawable/cursor"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/myEditText2"/>
 
 </RelativeLayout>
