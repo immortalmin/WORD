@@ -18,6 +18,7 @@
     <declare-styleable name="MyEditText">
         <attr name="TextType" format="integer"/>
         <attr name="PasteId" format="reference"/>
+        <attr name="DisplayStyle" format="integer"/>
     </declare-styleable>
 
 </resources>

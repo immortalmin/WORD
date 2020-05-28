@@ -30,6 +30,7 @@
         android:visibility="visible"
         app:TextType = "1"
         app:PasteId="@+id/et1"
+        android:textSize="20dp"
         android:textCursorDrawable="@drawable/cursor"
         android:layout_below="@+id/et1"
 
@@ -43,6 +44,7 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:TextType = "2"
+        app:DisplayStyle="1"
         android:textCursorDrawable="@drawable/cursor"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/myEditText2"/>
