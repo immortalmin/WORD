@@ -78,6 +78,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         }else if(TextType==2 && event.getAction() == MotionEvent.ACTION_DOWN && xDown >= getWidth()-btn_length*2-btn_padding*2 && xDown < getWidth()-btn_length-btn_padding*2){
             if(isVisible){
                 setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+
             }else{
                 setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             }
@@ -144,7 +145,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private void drawVisibleButton(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        Rect rect = new Rect(width-btn_length*2-btn_padding*2,height-btn_padding-btn_length,width-btn_length-btn_padding*2,height-btn_padding);
+        Rect rect = new Rect(width-btn_length*2-btn_padding*2,btn_padding,width-btn_length-btn_padding*2,btn_length+btn_padding);
         if(!isVisible){
             canvas.drawBitmap(visible_bitmap,null,rect,mPaint);
         }else{
@@ -155,17 +156,17 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private void drawClearButton(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        int textWidth = getTextWidth(getText().toString(),mPaint);
-        Log.i("ccc","width:"+width+" textWidth:"+textWidth);
-        Rect rect;
-        if(DisplayStyle==0&&textWidth>width-20-20-btn_length){//文本较长
-            Log.i("ccc","文本较长");
-            width = 20+textWidth+btn_length+20;
-            rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
-        }else{
-            rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
-        }
-
+//        int textWidth = getTextWidth(getText().toString(),mPaint);
+//        Log.i("ccc","width:"+width+" textWidth:"+textWidth);
+//        Rect rect;
+//        if(DisplayStyle==0&&textWidth>width-20-20-btn_length){//文本较长
+//            Log.i("ccc","文本较长");
+//            width = 20+textWidth+btn_length+20;
+//            rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
+//        }else{
+//            rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
+//        }
+        Rect rect = new Rect(width-btn_length-btn_padding,btn_padding,width-btn_padding,btn_padding+btn_length);
         canvas.drawBitmap(clear_bitmap,null,rect,mPaint);
     }
 
@@ -187,7 +188,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private void drawPasteButton(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        Rect rect = new Rect(width-btn_length-btn_padding,height-btn_padding-btn_length,width-btn_padding,height-btn_padding);
+        Rect rect = new Rect(width-btn_length-btn_padding,btn_padding,width-btn_padding,btn_length+btn_padding);
         canvas.drawBitmap(paste_bitmap,null,rect,mPaint);
     }
 
@@ -201,11 +202,11 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //设置右内边距, 防止清除按钮和文字重叠
-        if(DisplayStyle==0){
-            setPadding(20, 20, 10+btn_padding+btn_length, 20);
-        }else{
-            setPadding(20, 20, 20, btn_length+btn_padding);
-        }
-
+//        if(DisplayStyle==0){
+//            setPadding(20, 20, 10+btn_padding+btn_length, 20);
+//        }else{
+//            setPadding(20, 20, 20, btn_length+btn_padding);
+//        }
+        setPadding(20, btn_length+btn_padding, 20, 20);
     }
 }

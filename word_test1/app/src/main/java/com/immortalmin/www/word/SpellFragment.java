@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.AUDIO_SERVICE;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class SpellFragment extends Fragment implements View.OnClickListener{
@@ -37,6 +38,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private String word_en,word_ch,mode,user_ans;
     private CountDownProgressBar cpb_countdown;
     private MediaPlayer mediaPlayer=new MediaPlayer();
+    private AudioManager audioManager;//音量调整器
+    private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private Runnable music_delay,correct_action,wrong_action;
@@ -99,6 +102,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
 //        mHandler.obtainMessage(2).sendToTarget();
 //        showInput(eword);
         //music
+        audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_success = soundPool.load(getActivity(), R.raw.success, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
@@ -143,10 +147,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+                resetVolume();
                 btn_flag = false;
                 eword.setEnabled(false);
-//                mediaPlayer = new MediaPlayer();
-//                initMediaPlayer(word_en,0);//音频初始化
                 mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
                 String co_word = word_en.replaceAll(" ","");
@@ -160,7 +163,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
                     mHandler.obtainMessage(1).sendToTarget();
                 }
-                scheduledThreadPool.schedule(music_delay,1500, TimeUnit.MILLISECONDS);
+                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
                 return true;
             }
             return false;
@@ -199,16 +202,29 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      * @param view
      */
     public void onClick(View view){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+        }
         switch(view.getId()){
             case R.id.cword:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
+                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                changed_volume++;
                 mediaPlayer.start();
                 break;
 
         }
+    }
+
+    /**
+     * 重置音量
+     */
+    private void resetVolume(){
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);//得到听筒模式的当前值
+        //当前音量-通过点击单词调整的音量
+        //不减去用户手动调整的音量
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume-changed_volume, AudioManager.FLAG_PLAY_SOUND);
+        changed_volume=0;
     }
 
     /**
@@ -232,6 +248,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     }
     //String new_word
     public void update_options(HashMap<String,Object> words){
+        changed_volume = 0;
         btn_flag = true;
         eword.setEnabled(true);
 //        mode = words.get("mode").toString();

@@ -197,7 +197,7 @@ public class ExampleTestActivity extends AppCompatActivity implements
                     updateCollect(1);
                 }
                 break;
-            case R.id.word_group:
+            case R.id.word_en:
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.pause();
                     mediaPlayer.seekTo(0);
@@ -212,6 +212,10 @@ public class ExampleTestActivity extends AppCompatActivity implements
                 updateWordDialog(word);
                 break;
             case R.id.return_btn:
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                }
                 Intent intent = new Intent();
                 if(isChanged){
                     setResult(1,intent);
@@ -712,6 +716,10 @@ public class ExampleTestActivity extends AppCompatActivity implements
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
 //            Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                mediaPlayer.seekTo(0);
+            }
             Intent intent = new Intent();
             if(isChanged){
                 setResult(1,intent);

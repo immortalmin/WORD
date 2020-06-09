@@ -29,10 +29,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.AUDIO_SERVICE;
+
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
     private MediaPlayer mediaPlayer = new MediaPlayer();
+    private AudioManager audioManager;//音量调整器
+    private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     Runnable resetColor;
@@ -46,6 +50,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private int correct_sel = 0;//正确答案的下标
     private int user_sel;
+    private float word_volume = 10f;//音频音量
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -96,6 +101,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         sel5.setOnClickListener(this);
         wordview.setOnClickListener(this);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
         sound_success = soundPool.load(getActivity(), R.raw.success, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
         resetColor = new Runnable(){
@@ -156,6 +162,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         if(!living_flag){
             return ;
         }
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+        }
         switch(view.getId()){
             case R.id.sel1:
                 living_flag = false;
@@ -213,16 +223,15 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.wordview:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
+                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                changed_volume++;
                 mediaPlayer.start();
                 break;
         }
     }
 
     public void judge_ring(){
+        resetVolume();
         if(user_sel==correct_sel){
             word_times_pro.post(new Runnable() {
                 @Override
@@ -254,6 +263,18 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         }
 
     }
+
+    /**
+     * 重置音量
+     */
+    private void resetVolume(){
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);//得到听筒模式的当前值
+        //当前音量-通过点击单词调整的音量
+        //不减去用户手动调整的音量
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume-changed_volume, AudioManager.FLAG_PLAY_SOUND);
+        changed_volume=0;
+    }
+
 
     /**
      * 音频播放
@@ -321,9 +342,11 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 res.put("wrong_sel",ans);
             }
             mListener.selectonFragmentInteraction(res);
+
         }
     }
     public void update_options(HashMap<String,Object> words){
+        changed_volume = 0;
         living_flag = true;//激活按钮
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
         this.word_list = words;
@@ -331,5 +354,4 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         mediaPlayer.start();
         mHandler.obtainMessage(0).sendToTarget();
     }
-
 }

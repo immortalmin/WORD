@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.AUDIO_SERVICE;
+
 public class CountDownFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
@@ -34,11 +36,14 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private CountDownProgressBar cpb_countdown;
     private Boolean isCountdownfinish=false,pron_flag=true,living_flag=true;//pron_flag:是否播放音频,living_flag:按钮是否激活
     private MediaPlayer mediaPlayer = new MediaPlayer();
+    private AudioManager audioManager;//音量调整器
+    private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
     private int sound_acquaint,sound_vague,sound_unknown;
     private Runnable music_delay;
     private int user_sel;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
+    private int duration = 3000;//倒计时的时间
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -85,6 +90,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         strange.setOnClickListener(this);
         cpb_countdown.setCenterTextColor(Color.BLACK);
         //music
+        audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         sound_acquaint = soundPool.load(getActivity(), R.raw.bubble1, 1);
         sound_vague = soundPool.load(getActivity(), R.raw.bubble2, 1);
@@ -138,6 +144,8 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         switch(view.getId()){
             case R.id.cpb_countdown:
                 if(isCountdownfinish){
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                    changed_volume++;
                     mediaPlayer.start();
                 }else{
                     cpb_countdown.finishProgressBar();
@@ -145,14 +153,16 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 living_flag = true;
                 break;
             case R.id.acquaint:
+                resetVolume();
                 if(!isCountdownfinish){
                     cpb_countdown.finishProgressBar();
                 }
                 soundPool.play(sound_acquaint, 0.3f, 0.3f, 0, 0, 1.0f);
                 user_sel = 1;
-                scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
+                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
                 break;
             case R.id.vague:
+                resetVolume();
                 if(!isCountdownfinish){
                     pron_flag=false;
                     cpb_countdown.finishProgressBar();
@@ -162,6 +172,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
                 break;
             case R.id.strange:
+                resetVolume();
                 if(!isCountdownfinish){
                     pron_flag=false;
                     cpb_countdown.finishProgressBar();
@@ -172,6 +183,17 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 break;
         }
 //        send_to_activity(res);
+    }
+
+    /**
+     * 重置音量
+     */
+    private void resetVolume(){
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);//得到听筒模式的当前值
+        //当前音量-通过点击单词调整的音量
+        //不减去用户手动调整的音量
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume-changed_volume, AudioManager.FLAG_PLAY_SOUND);
+        changed_volume=0;
     }
 
     /**
@@ -197,6 +219,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     }
     //String new_word
     public void update_options(HashMap<String,Object> words){
+        changed_volume = 0;
         isCountdownfinish = false;
         pron_flag=true;
         living_flag = true;
@@ -210,7 +233,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void countdown_mode(){
         switch (mode){
             case "1"://play music
-                cpb_countdown.setDuration(3000,"Guess who I am",word_en, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),"Guess who I am",word_en, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -219,7 +242,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 mediaPlayer.start();
                 break;
             case "2"://show word_ch
-                cpb_countdown.setDuration(3000,word_ch,word_en, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_ch,word_en, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -227,7 +250,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 });
                 break;
             case "3"://show word_en
-                cpb_countdown.setDuration(3000,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
