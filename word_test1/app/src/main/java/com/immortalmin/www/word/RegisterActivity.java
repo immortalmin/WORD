@@ -34,7 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Button register_reg_btn,return_btn;
-    private EditText register_username_edit,register_password_edit,confirm_pwd,telephone,email;
+    private MyEditText register_username_edit,register_password_edit,confirm_pwd,telephone,email;
     private TextView user_warn,pwd_warn,confirm_warn,telephone_warn,email_warn;
     private CircleImageView register_profile_photo;
     private JsonRe jsonRe = new JsonRe();
@@ -49,11 +49,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_register);
         register_reg_btn = (Button)findViewById(R.id.register_reg_btn);
         return_btn = (Button)findViewById(R.id.return_btn);
-        register_username_edit = (EditText)findViewById(R.id.register_username_edit);
-        register_password_edit = (EditText)findViewById(R.id.register_password_edit);
-        confirm_pwd = (EditText)findViewById(R.id.confirm_pwd);
-        telephone = (EditText)findViewById(R.id.telephone);
-        email = (EditText)findViewById(R.id.email);
+        register_username_edit = (MyEditText)findViewById(R.id.register_username_edit);
+        register_password_edit = (MyEditText)findViewById(R.id.register_password_edit);
+        confirm_pwd = (MyEditText)findViewById(R.id.confirm_pwd);
+        telephone = (MyEditText)findViewById(R.id.telephone);
+        email = (MyEditText)findViewById(R.id.email);
 
         user_warn = (TextView) findViewById(R.id.user_warn);
         pwd_warn = (TextView) findViewById(R.id.pwd_warn);

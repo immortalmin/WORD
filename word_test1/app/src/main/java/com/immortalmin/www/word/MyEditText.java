@@ -1,7 +1,5 @@
 package com.immortalmin.www.word;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -23,12 +21,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.w3c.dom.Text;
+
 import java.nio.channels.NonReadableChannelException;
 import java.util.Locale;
 
 
 /**
  * 参考博客：https://www.jianshu.com/p/7717cda9eb2a
+ * 未实现动画特效
+ * 选中框样式
  */
 public class MyEditText extends android.support.v7.widget.AppCompatEditText {
 
@@ -39,19 +41,14 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private int padding = 20;
     private boolean isVisible = true;//是否是可见文本
     private String pasteString = "";//粘贴文本
-
-    private int mAnimatorProgress = 0;
-    private ObjectAnimator mAnimator;
-    //出现和消失动画
-    private ValueAnimator show_animator;
-    private ValueAnimator dismiss_animator;
-    private static final int ANIMATOR_TIME = 200;//动画时间
     /**
      * 显示风格
      * 0:按钮与文本显示在同一行,单行文本
      * 1:按钮显示在文本的右上角，多行文本
      */
-    private int DisplayStyle;
+    private int DisplayStyle=0;
+
+
     /**
      * 0:普通输入框，带删除按钮
      * 1:带删除按钮和粘贴按钮  需要setPasteString
@@ -123,31 +120,15 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         setBackground(getResources().getDrawable(R.drawable.word_input));
         if(DisplayStyle==0){
             setSingleLine();
+        }else{
+            setSingleLine(false);
         }
-        show_animator = ValueAnimator.ofFloat(1f, 0f).setDuration(ANIMATOR_TIME);
-        dismiss_animator = ValueAnimator.ofFloat(0f, 1f).setDuration(ANIMATOR_TIME);
-    }
-    private static final Property<MyEditText, Integer> BORDER_PROGRESS
-            = new Property<MyEditText, Integer>(Integer.class, "borderProgress") {
-        @Override
-        public Integer get(MyEditText myEditText) {
-            return myEditText.getBorderProgress();
+        if(TextType==2){
+            isVisible=false;
+            setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
         }
-
-        @Override
-        public void set(MyEditText myEditText, Integer value) {
-            myEditText.setBorderProgress(value);
-        }
-    };
-
-    protected void setBorderProgress(int borderProgress) {
-        mAnimatorProgress = borderProgress;
-        postInvalidate();
     }
 
-    protected int getBorderProgress() {
-        return mAnimatorProgress;
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -199,18 +180,6 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         canvas.drawBitmap(clear_bitmap,null,rect,mPaint);
     }
 
-    private void drawClearButton(float scale, Canvas canvas) {
-        //按钮间隔
-        int visible_res_padding = 10;
-        //按钮宽度
-        int visible_res_width = 50;
-        int right = (int) (getWidth() + getScrollX() - visible_res_padding - visible_res_width * (1f - scale) / 2f);
-        int left = (int) (getWidth() + getScrollX() - visible_res_padding - visible_res_width * (scale + (1f - scale) / 2f));
-        int top = (int) ((getHeight() - visible_res_width * scale) / 2);
-        int bottom = (int) (top + visible_res_width * scale);
-        Rect rect = new Rect(left, top, right, bottom);
-        canvas.drawBitmap(clear_bitmap, null, rect, mPaint);
-    }
 
 
     private void drawPasteButton(Canvas canvas) {
@@ -220,10 +189,26 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         canvas.drawBitmap(paste_bitmap,null,rect,mPaint);
     }
 
+    public void setDisplayStyle(int displayStyle) {
+        DisplayStyle = displayStyle;
+        if(DisplayStyle==0){
+            setSingleLine();
+        }else{
+            setSingleLine(false);
+        }
+    }
 
+    public void setTextType(int textType) {
+        this.TextType = textType;
+        if(TextType==2){
+            isVisible=false;
+            setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+        }
+    }
 
     public void setPasteString(String pasteString) {
         this.pasteString = pasteString;
+        invalidate();
     }
 
     @Override

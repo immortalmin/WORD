@@ -30,8 +30,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText login_username_edit,login_password_edit;
-    private Button login_btn,reg_btn,forget_pwd,clean_btn1,clean_btn2,switch_btn;
+    private MyEditText username_et,password_et;
+    private Button login_btn,reg_btn,forget_pwd;
     private CircleImageView login_profile_photo;
     private HashMap<String,Object> userdata=null;
     private HashMap<String,Object> userSetting=null;
@@ -48,27 +48,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = this;
-        login_username_edit = (EditText)findViewById(R.id.login_username_edit);
-        login_password_edit = (EditText)findViewById(R.id.login_password_edit);
+        username_et = (MyEditText) findViewById(R.id.username_et);
+        password_et = (MyEditText)findViewById(R.id.password_et);
         login_btn = (Button)findViewById(R.id.login_btn);
         reg_btn = (Button)findViewById(R.id.reg_btn);
         forget_pwd = (Button)findViewById(R.id.forget_pwd);
-        clean_btn1 = (Button)findViewById(R.id.clean_btn1);
-        clean_btn2 = (Button)findViewById(R.id.clean_btn2);
-        switch_btn = (Button)findViewById(R.id.switch_btn);
         login_profile_photo = (CircleImageView)findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
-        clean_btn1.setOnClickListener(this);
-        clean_btn2.setOnClickListener(this);
-        switch_btn.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
 
         //快速登录
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        login_username_edit.setText(sp.getString("username", null));
-        login_password_edit.setText(sp.getString("password", null));
+        username_et.setText(sp.getString("username", null));
+        password_et.setText(sp.getString("password", null));
         getImage(sp.getString("profile_photo",null));
         login();
         init();
@@ -83,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         };
-        login_username_edit.addTextChangedListener(new TextWatcher() {
+        username_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -97,33 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void afterTextChanged(Editable editable) {
                 login();
-                if(login_username_edit.getText().toString().length()==0){
-                    mHandler.obtainMessage(4,clean_btn1).sendToTarget();
-                }else{
-                    mHandler.obtainMessage(5,clean_btn1).sendToTarget();
-                }
-            }
-        });
-        login_password_edit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(login_password_edit.getText().toString().length()==0){
-                    mHandler.obtainMessage(4,clean_btn2).sendToTarget();
-                    mHandler.obtainMessage(4,switch_btn).sendToTarget();
-                }else{
-                    mHandler.obtainMessage(5,clean_btn2).sendToTarget();
-                    mHandler.obtainMessage(5,switch_btn).sendToTarget();
-                }
             }
         });
     }
@@ -149,23 +116,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
-            case R.id.clean_btn1:
-                login_username_edit.setText("");
-                break;
-            case R.id.clean_btn2:
-                login_password_edit.setText("");
-                break;
-            case R.id.switch_btn:
-                if(unseen_flag){
-                    mHandler.obtainMessage(2).sendToTarget();
-                    login_password_edit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                }else{
-                    mHandler.obtainMessage(3).sendToTarget();
-                    login_password_edit.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                }
-                login_password_edit.setSelection(login_password_edit.getText().length());
-                unseen_flag = !unseen_flag;
-                break;
         }
     }
 
@@ -174,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 名字难取
      */
     private void login(){
-        String uname = login_username_edit.getText().toString();
+        String uname = username_et.getText().toString();
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("username",uname);
@@ -228,12 +178,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String pwd =  md5Utils.getMD5Code(login_password_edit.getText().toString());
+                String pwd =  md5Utils.getMD5Code(password_et.getText().toString());
                 Looper.prepare();
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(pwd.equals(userdata.get("password")) || login_password_edit.getText().toString().equals(userdata.get("password"))){
+                    if(pwd.equals(userdata.get("password")) || password_et.getText().toString().equals(userdata.get("password"))){
                         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                         sp.edit().putString("username", userdata.get("username").toString())
                                 .putString("password", userdata.get("password").toString())
@@ -294,22 +244,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     mHandler.postDelayed(toMain,1000);
                     break;
-                case 2:
-                    d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.unseen_icon, null);
-                    switch_btn.setBackground(d);
-                    break;
-                case 3:
-                    d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.seen_icon, null);
-                    switch_btn.setBackground(d);
-                    break;
-                case 4:
-                    View view = (View)message.obj;
-                    view.setVisibility(View.INVISIBLE);
-                    break;
-                case 5:
-                    view = (View)message.obj;
-                    view.setVisibility(View.VISIBLE);
-                    break;
             }
             return false;
         }
@@ -320,8 +254,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 1) {
-            login_username_edit.setText(data.getExtras().getString("username"));
-            login_password_edit.setText("");
+            username_et.setText(data.getExtras().getString("username"));
+            password_et.setText("");
         }
     }
 }

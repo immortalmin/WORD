@@ -46,7 +46,7 @@
             app:civ_fill_color="#bab3b3"
             android:src="@drawable/unload"/>
 
-        <EditText
+        <com.immortalmin.www.word.MyEditText
             android:id="@+id/register_username_edit"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -54,16 +54,12 @@
             android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:textCursorDrawable="@drawable/cursor"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
-            android:textSize="19dp"
-            android:hint="username*" />
+            android:textSize="19sp"
+            android:hint="username*"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
 
         <TextView
             android:id="@+id/user_warn"
@@ -77,25 +73,21 @@
             android:textColor="#f70606"
             />
 
-        <EditText
+        <com.immortalmin.www.word.MyEditText
             android:id="@+id/register_password_edit"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/register_username_edit"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
             android:inputType="textPassword"
-            android:textCursorDrawable="@drawable/cursor"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
-            android:textSize="19dp"
-            android:hint="password*" />
+            android:textSize="19sp"
+            android:hint="password*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
 
         <TextView
             android:id="@+id/pwd_warn"
@@ -109,25 +101,21 @@
             android:textColor="#f70606"
             />
 
-        <EditText
+        <com.immortalmin.www.word.MyEditText
             android:id="@+id/confirm_pwd"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/register_password_edit"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
             android:inputType="textPassword"
-            android:textSize="19dp"
+            android:textSize="19sp"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
-            android:textCursorDrawable="@drawable/cursor"
-            android:hint="confirm password*" />
+            android:hint="confirm password*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
 
         <TextView
             android:id="@+id/confirm_warn"
@@ -140,25 +128,21 @@
             android:text="密码不一致"
             android:textColor="#f70606"
             />
-        <EditText
+        <com.immortalmin.www.word.MyEditText
             android:id="@+id/telephone"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/confirm_pwd"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
             android:inputType="phone"
-            android:textSize="19dp"
+            android:textSize="19sp"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
-            android:textCursorDrawable="@drawable/cursor"
-            android:hint="telephone*" />
+            android:hint="telephone*"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
 
         <TextView
             android:id="@+id/telephone_warn"
@@ -172,25 +156,21 @@
             android:textColor="#f70606"
             />
 
-        <EditText
+        <com.immortalmin.www.word.MyEditText
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/telephone"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
             android:inputType="textEmailAddress"
-            android:textSize="19dp"
+            android:textSize="19sp"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
-            android:textCursorDrawable="@drawable/cursor"
-            android:hint="email" />
+            android:hint="email"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
 
         <TextView
             android:id="@+id/email_warn"
