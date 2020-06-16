@@ -59,7 +59,6 @@
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
         <activity android:name=".ExampleTestActivity" />
-        <activity android:name=".EditTextTest"></activity>
     </application>
 
 </manifest>

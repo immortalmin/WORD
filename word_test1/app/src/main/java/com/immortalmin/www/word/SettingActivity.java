@@ -140,6 +140,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 intent.setAction("com.immortalmin.www.MainActivity");
                 sendBroadcast(intent);
                 intent = new Intent(SettingActivity.this,LoginActivity.class);
+                intent.putExtra("source","setting");
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 finish();

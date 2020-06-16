@@ -39,8 +39,14 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private Bitmap visible_bitmap,invisible_bitmap,clear_bitmap,paste_bitmap;
     private int btn_length = 50,btn_padding=10;//按钮边长、按钮边距
     private int padding = 20;
+    private int hindTextSize = 40;
+    private Paint.FontMetrics fontMetrics;
     private boolean isVisible = true;//是否是可见文本
+    private boolean isFold = true;//是否折叠
     private String pasteString = "";//粘贴文本
+    private String hindString = "";//提示文本
+    private OnVisibleActionListener mVisible = null;
+
     /**
      * 显示风格
      * 0:按钮与文本显示在同一行,单行文本
@@ -48,14 +54,12 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
      */
     private int DisplayStyle=0;
 
-
     /**
      * 0:普通输入框，带删除按钮
      * 1:带删除按钮和粘贴按钮  需要setPasteString
      * 2:密码输入框
      */
     private int TextType = 0;
-
 
     public MyEditText(Context context) {
         super(context);
@@ -76,26 +80,49 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     public boolean onTouchEvent(MotionEvent event) {
         int xDown = (int) event.getX();
         int yDown = (int) event.getY();
-        if (event.getAction() == MotionEvent.ACTION_DOWN && xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding) {
-            if((TextType==0||TextType==2)&&getText().length()>0){
-                setText("");
-            }else if(TextType==1 && yDown>=0 && yDown<=btn_length+btn_padding){
-                if(getText().length()>0){
-                    setText("");
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if(DisplayStyle==0){//单行情况下
+                if(TextType==0){
+                    if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding){
+                        setText("");
+                    }
                 }else if(TextType==1){
-                    setText(pasteString);
+                    if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding){
+                        if(getText().length()==0){
+                            setText(pasteString);
+                        }else{
+                            setText("");
+                        }
+                    }
+                }else{
+                    if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding){
+                        setText("");
+                    }else if(xDown >= getWidth()-btn_length*2-btn_padding*2 && xDown < getWidth()-btn_length-btn_padding*2){
+                        if(isVisible){
+                            setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+                        }else{
+                            setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        }
+                        setSelection(getText().length());
+                        isVisible = !isVisible;
+                        mVisible.OnVisible();
+                    }
+                }
+            }else{//多行情况下
+                if(TextType==0){
+                    if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding&& yDown>=0 && yDown<=btn_length+btn_padding){
+                        setText("");
+                    }
+                }else if(TextType==1){
+                    if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding&& yDown>=0 && yDown<=btn_length+btn_padding){
+                        if(getText().length()==0){
+                            setText(pasteString);
+                        }else{
+                            setText("");
+                        }
+                    }
                 }
             }
-            return false;
-        }else if(TextType==2 && event.getAction() == MotionEvent.ACTION_DOWN && xDown >= getWidth()-btn_length*2-btn_padding*2 && xDown < getWidth()-btn_length-btn_padding*2){
-            if(isVisible){
-                setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
-            }else{
-                setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            }
-            setSelection(getText().length());
-            isVisible = !isVisible;
-            return false;
         }
         super.onTouchEvent(event);
         return true;
@@ -118,6 +145,9 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         paste_bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.paste);
         setTextColor(Color.BLACK);
         setBackground(getResources().getDrawable(R.drawable.word_input));
+        if(getHint()!=null){
+            hindString = getHint().toString();
+        }
         if(DisplayStyle==0){
             setSingleLine();
         }else{
@@ -127,8 +157,8 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
             isVisible=false;
             setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
         }
-    }
 
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -143,7 +173,6 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
                 if(isFocused()){
                     if(getText().length()>0){
                         drawClearButton(canvas);
-//                        drawClearButton(1,canvas);
                     }else{
                         drawPasteButton(canvas);
                     }
@@ -158,9 +187,21 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
                 }
                 break;
         }
+        if("".equals(hindString)){
+            hindString = getHint().toString();
+        }
+        if(DisplayStyle==1){
+            if(!isFold){
+                drawText(canvas);
+            }else if(!"".equals(hindString)){
+                setHint(hindString);
+            }
+
+        }
+
     }
 
-
+    //可见/不可见按钮
     private void drawVisibleButton(Canvas canvas) {
         Rect rect = new Rect(getWidth()+getScrollX()-btn_length*2-btn_padding*2,(getHeight()-btn_length)/2,getWidth()+getScrollX()-btn_length-btn_padding*2,getHeight()-(getHeight()-btn_length)/2);
         if(!isVisible){
@@ -170,24 +211,33 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         }
     }
 
+    //清除按钮
     private void drawClearButton(Canvas canvas) {
         Rect rect;
         if(DisplayStyle==0){
-            rect = new Rect(getWidth()+getScrollX()-btn_length-btn_padding,(getHeight()-btn_length)/2,getWidth()+getScrollX()-btn_padding,getHeight()-(getHeight()-btn_length)/2);
+            rect = new Rect(getWidth()+getScrollX()-btn_length-btn_padding,getScrollY()+(getHeight()-btn_length)/2,getWidth()+getScrollX()-btn_padding,getScrollY()+getHeight()-(getHeight()-btn_length)/2);
         }else{
-            rect = new Rect(getWidth()+getScrollX()-btn_length-btn_padding,btn_padding,getWidth()+getScrollX()-btn_padding,btn_padding+btn_length);
+            rect = new Rect(getWidth()+getScrollX()-btn_length-btn_padding,getScrollY()+btn_padding,getWidth()+getScrollX()-btn_padding,getScrollY()+btn_padding+btn_length);
         }
         canvas.drawBitmap(clear_bitmap,null,rect,mPaint);
     }
 
-
-
+    //复制按钮
     private void drawPasteButton(Canvas canvas) {
-        int width = getWidth();
-        int height = getHeight();
-        Rect rect = new Rect(width-btn_length-btn_padding,btn_padding,width-btn_padding,btn_length+btn_padding);
+        Rect rect = new Rect(getWidth()+getScrollX()-btn_length-btn_padding,getScrollY()+btn_padding,getWidth()+getScrollX()-btn_padding,getScrollY()+btn_length+btn_padding);
         canvas.drawBitmap(paste_bitmap,null,rect,mPaint);
     }
+
+    //绘制文字
+    private void drawText(Canvas canvas){
+        mPaint.setTextSize(hindTextSize);
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(Color.parseColor("#b1b1b1"));
+        fontMetrics = mPaint.getFontMetrics();
+        canvas.drawText(hindString,10,getScrollY()+(int)(fontMetrics.descent-fontMetrics.ascent),mPaint);
+        setHint("");
+    }
+
 
     public void setDisplayStyle(int displayStyle) {
         DisplayStyle = displayStyle;
@@ -211,6 +261,22 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         invalidate();
     }
 
+    public void setOnVisibleActionListener(OnVisibleActionListener visible){
+        mVisible = visible;
+    }
+
+
+    public interface OnVisibleActionListener{
+        public void OnVisible();
+    }
+
+
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+        changeFold(!focused);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -221,8 +287,19 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
             }else if(TextType==2){
                 setPadding(20, 20, 10+2*(btn_padding+btn_length), 20);
             }
+        }else if(isFold){
+            setPadding(20, 20, 20,20 );
+        }
+    }
+
+    //多行文本下，折叠或者展开
+    private void changeFold(boolean foldFlag){
+        isFold = foldFlag;
+        if(foldFlag){
+            setPadding(20, 20, 20,20 );
         }else{
             setPadding(20, btn_length+btn_padding, 20,20 );
         }
+        invalidate();
     }
 }

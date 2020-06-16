@@ -11,17 +11,19 @@
         android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="#80ddea"
         android:textStyle="bold"
-        android:textSize="15dp"
+        android:textSize="18sp"
         android:text="1" />
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="5dp"
         android:layout_toRightOf="@+id/number"
         android:textColor="#FFFFFF"
         android:text="[VERB 动词]" />
@@ -30,8 +32,8 @@
         android:id="@+id/word_ch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:layout_toRightOf="@+id/label"
+        android:layout_toEndOf="@+id/label"
+        android:layout_alignBaseline="@+id/label"
         android:textColor="#FFFFFF"
         android:text="检验;试验;测试；" />
 
@@ -39,8 +41,9 @@
         android:id="@+id/gram"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:layout_toRightOf="@+id/word_ch"
+        android:layout_below="@+id/label"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/number"
         android:textColor="#dad6d6"
         android:text="[V n]" />
 
@@ -48,7 +51,7 @@
         android:id="@+id/explanation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/number"
+        android:layout_below="@+id/gram"
         android:padding="2dp"
         android:textColor="#9ea49a"
         android:text="When you test something, you try it, for example by touching it or using it for a short time, in order to find out what it is, what condition it is in, or how well it works. " />

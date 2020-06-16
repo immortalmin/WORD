@@ -43,6 +43,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Context context;
     private boolean unseen_flag = true;
     private Drawable d;
+    private int action_mode = 0;
+    /**
+     * isVisible:如果是退出登录的，将无法显示密码
+     * isChanged:密码是否发生变化
+     */
+    private boolean isVisible = true,isChanged = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +65,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
-
-        //快速登录
+        try{
+            Intent intent = getIntent();
+            if(intent.getStringExtra("source").equals("setting")){
+                isVisible = false;
+            }
+        }catch (NullPointerException e){
+            isVisible = true;
+        }
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         username_et.setText(sp.getString("username", null));
-        password_et.setText(sp.getString("password", null));
+        if(isVisible){
+            password_et.setText(sp.getString("password", null));
+        }else{
+            password_et.setText("********");
+        }
         getImage(sp.getString("profile_photo",null));
         login();
         init();
@@ -91,6 +108,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void afterTextChanged(Editable editable) {
                 login();
+            }
+        });
+        password_et.setOnVisibleActionListener(new MyEditText.OnVisibleActionListener() {
+            @Override
+            public void OnVisible() {
+                if(!isVisible){
+                    password_et.setText("");
+                }
+            }
+        });
+        password_et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                isChanged = true;
             }
         });
     }
@@ -183,24 +224,46 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(pwd.equals(userdata.get("password")) || password_et.getText().toString().equals(userdata.get("password"))){
-                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                        sp.edit().putString("username", userdata.get("username").toString())
-                                .putString("password", userdata.get("password").toString())
-                                .putString("profile_photo", userdata.get("profile_photo").toString())
-                                .putString("status","1")
-                                .putString("email",userdata.get("email").toString())
-                                .putString("telephone",userdata.get("telephone").toString())
-                                .putString("motto",userdata.get("motto").toString())
-                                .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
-                                .apply();
-
-                        get_setting();
+                    if(pwd.equals(userdata.get("password"))||(!isVisible&&!isChanged)){
+                        //退出登录的话，不会执行下面的操作
+                        if(isVisible){
+                            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                            sp.edit().putString("username", userdata.get("username").toString())
+                                    .putString("password", password_et.getText().toString())
+                                    .putString("profile_photo", userdata.get("profile_photo").toString())
+                                    .putString("status","1")
+                                    .putString("email",userdata.get("email").toString())
+                                    .putString("telephone",userdata.get("telephone").toString())
+                                    .putString("motto",userdata.get("motto").toString())
+                                    .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
+                                    .apply();
+                            get_setting();
+                        }
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         mHandler.obtainMessage(1).sendToTarget();
                     }else{
                         Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                     }
+
+                    //old
+//                    if(pwd.equals(userdata.get("password")) || password_et.getText().toString().equals(userdata.get("password"))){
+//                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//                        sp.edit().putString("username", userdata.get("username").toString())
+//                                .putString("password", userdata.get("password").toString())
+//                                .putString("profile_photo", userdata.get("profile_photo").toString())
+//                                .putString("status","1")
+//                                .putString("email",userdata.get("email").toString())
+//                                .putString("telephone",userdata.get("telephone").toString())
+//                                .putString("motto",userdata.get("motto").toString())
+//                                .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
+//                                .apply();
+//
+//                        get_setting();
+//                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+//                        mHandler.obtainMessage(1).sendToTarget();
+//                    }else{
+//                        Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+//                    }
                 }
                 Looper.loop();
             }

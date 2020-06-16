@@ -339,8 +339,6 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
             word[ind][i] = new MyEditText(context);
             LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             word_meaning_Params.setMargins(conversion(18), conversion(5), conversion(18), 0);
-//            word[ind][i].setMaxLines(3);
-//            word[ind][i].setMinHeight(conversion(30));
             word[ind][i].setLayoutParams(word_meaning_Params);
             word[ind][i].setHint(hint[i]);
             if(i==0){
@@ -350,7 +348,8 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
                 word[ind][i].setTextType(0);
             }
             word[ind][i].setDisplayStyle(1);
-
+            word[ind][i].setMaxLines(3);
+            word[ind][i].setMinHeight(conversion(30));
 //            word_layout[ind][i].addView(word[ind][i]);
             //
             //操作按钮
