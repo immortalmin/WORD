@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.profile_photo:
-                intent = new Intent(MainActivity.this,SettingActivity.class);
+                intent = new Intent(MainActivity.this,ProfileActivity.class);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                 break;

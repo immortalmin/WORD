@@ -55,10 +55,11 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".SettingActivity" />
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
         <activity android:name=".ExampleTestActivity" />
+        <activity android:name=".SettingActivity"></activity>
     </application>
 
 </manifest>

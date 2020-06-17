@@ -65,20 +65,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
-        try{
-            Intent intent = getIntent();
-            if(intent.getStringExtra("source").equals("setting")){
-                isVisible = false;
-            }
-        }catch (NullPointerException e){
-            isVisible = true;
-        }
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         username_et.setText(sp.getString("username", null));
-        if(isVisible){
-            password_et.setText(sp.getString("password", null));
-        }else{
+        if(sp.getString("password", null)!=null){
             password_et.setText("********");
+            isVisible = false;
+        }else{
+            password_et.setText("");
+            isVisible = true;
         }
         getImage(sp.getString("profile_photo",null));
         login();
