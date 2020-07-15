@@ -19,7 +19,7 @@
             android:layout_marginRight="50dp"
             android:text="指责"
             android:textSize="15dp"
-            android:textColor="#77ea2a"
+            android:textColor="#9ef963"
         />
         <TextView
             android:id="@+id/E_sentence"
@@ -28,7 +28,7 @@
             android:layout_below="@+id/word_meaning"
             android:layout_marginTop="10dp"
             android:singleLine="false"
-            android:textColor="#f8f8f9"
+            android:textColor="#b6daf2"
             android:textSize="14dp"
             android:text="The newly described languages were often so strikingly different from the well studied languages of Europe and Southeast Asia that some scholars even accused Boas and Sapir of fabricating their data."
             />
@@ -41,7 +41,7 @@
             android:layout_marginTop="10dp"
             android:singleLine="false"
             android:textSize="13dp"
-            android:textColor="#f1f1fa"
+            android:textColor="#cad8e9"
             android:text="相比经过充分研究的欧洲及东南亚语言,这些新近被描述的语言通常表现出明显差异,使得有些学者甚至指责博厄斯和沙比尔伪造数据。"
             />
 

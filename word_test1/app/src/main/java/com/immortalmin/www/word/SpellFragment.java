@@ -104,8 +104,10 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         //music
         audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
-        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
+//        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
+//        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
+        sound_success = soundPool.load(getActivity(), R.raw.bubble, 1);
+        sound_fail = soundPool.load(getActivity(), R.raw.drums, 1);
 
         music_delay = new Runnable() {
             @Override
@@ -155,12 +157,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 String co_word = word_en.replaceAll(" ","");
                 if(co_word.equals(user_ans)){
                     judge_flag = 1;
-                    soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
+                    soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(0).sendToTarget();
                 }else{
                     once_flag = false;
                     judge_flag = 2;
-                    soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
+                    soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(1).sendToTarget();
                 }
                 scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);

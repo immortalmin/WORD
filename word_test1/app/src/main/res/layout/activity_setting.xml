@@ -1,16 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#4a82c7"
     tools:context=".SettingActivity">
 
 
+    <com.ocnyang.contourview.ContourView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:contour_style="Sand"
+        app:shader_endcolor="#4f68c6"
+        app:shader_mode="RadialGradient"
+        app:shader_startcolor="#61a8d4"
+        app:shader_style="Center"
+        app:smoothness="0.15"/>
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/prof_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Setting" />
-</LinearLayout>
+        android:layout_marginTop="15dp"
+        android:textSize="20dp"
+        android:textColor="#414040"
+        android:layout_centerHorizontal="true"
+        android:text="SETTINGS" />
+
+    <Button
+        android:id="@+id/return_btn"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/left_arrow"
+        />
+
+    <ScrollView
+        android:id="@+id/setting_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/prof_tv">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="每组要完成背诵的数量"
+                    android:textSize="15dp"
+                    android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/recite_num"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:background="#00000000"
+                    android:paddingRight="5dp"
+                    android:textSize="18dp"
+                    android:maxLength="3"
+                    android:inputType="number"
+                    android:textAlignment="textEnd"
+                    android:text="20"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="每组额外加入的数量"
+                    android:textSize="15dp"
+                    android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/recite_scope"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:background="#00000000"
+                    android:paddingRight="5dp"
+                    android:textSize="18dp"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:textAlignment="textEnd"
+                    android:text="10"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

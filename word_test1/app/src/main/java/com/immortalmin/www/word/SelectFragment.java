@@ -102,8 +102,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         wordview.setOnClickListener(this);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
-        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
-        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
+//        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
+//        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
+        sound_success = soundPool.load(getActivity(), R.raw.bubble, 1);
+        sound_fail = soundPool.load(getActivity(), R.raw.drums, 1);
         resetColor = new Runnable(){
             public void run(){
                 mHandler.obtainMessage(1).sendToTarget();
@@ -240,9 +242,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                     word_times_pro.setProgress(pro_num);
                 }
             });
-            soundPool.play(sound_success, 0.3f, 0.3f, 0, 0, 1.0f);
+            soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
         }else{
-            soundPool.play(sound_fail, 0.3f, 0.3f, 0, 0, 1.0f);
+            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
         }
 
     }
