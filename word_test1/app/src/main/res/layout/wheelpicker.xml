@@ -6,14 +6,28 @@
     android:layout_height="wrap_content"
     android:background="@drawable/worddialog_round_corners">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="设置"
+        android:textSize="18sp"/>
+
     <com.immortalmin.www.word.WheelPicker
         android:id="@+id/wheelpicker"
         android:layout_width="100dp"
         android:layout_height="200dp"
-        android:layout_below="@+id/setting_scroll"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:background="#d9e0e4"
         app:wheelCyclic="true"
+        app:wheelCurtainColor="#bac4ca"
+        app:itemTextColor="#af9292"
+        app:selectedTextColor="#232222"
+        app:indicatorTextColor="#605e5e"
+        app:wheelCurtainBorderColor="#ffffff"
         >
 
     </com.immortalmin.www.word.WheelPicker>
@@ -24,22 +38,26 @@
         android:layout_below="@+id/wheelpicker"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
-        android:padding="10dp"
+        android:padding="20dp"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/confirm_btn"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:background="@drawable/rounded_corners_green"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
             android:text="OK"/>
 
         <Button
             android:id="@+id/cancel_btn"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="10dp"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
             android:background="@drawable/rounded_corners_red"
             android:text="cancel"/>
     </LinearLayout>

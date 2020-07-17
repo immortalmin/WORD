@@ -40,7 +40,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.prof_tv:
-                pickerDialog = new PickerDialog(this,R.style.MyDialog);
+                List<Integer> list = Arrays.asList(4,3,5,2,6,2);
+                ArrayList<Object> arrayList = new ArrayList<>();
+                arrayList.addAll(list);
+                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList);
                 pickerDialog.show();
 //                addWordDialog = new AddWordDialog(this,R.style.MyDialog,"lalala");
 //                addWordDialog.show();
@@ -50,7 +53,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
 
     @Override
-    public void PickerInteraction(int ret){
+    public void PickerInteraction(Object ret){
         Log.i("ccc",""+ret);
     }
 

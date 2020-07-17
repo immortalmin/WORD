@@ -19,20 +19,24 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
     private PickerDialog.OnDialogInteractionListener listener;
     private WheelPicker wheelpicker;
     private Button confirm_btn,cancel_btn;
+    private ArrayList<Object> data;
 
-    public PickerDialog(Context context) {
+    public PickerDialog(Context context,ArrayList<Object> data) {
         super(context);
         this.context = context;
+        this.data = data;
     }
 
-    public PickerDialog(Context context, int themeResId) {
+    public PickerDialog(Context context, int themeResId,ArrayList<Object> data) {
         super(context, themeResId);
         this.context = context;
+        this.data = data;
     }
 
-    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
+    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener,ArrayList<Object> data) {
         super(context, cancelable, cancelListener);
         this.context = context;
+        this.data = data;
     }
 
     @Override
@@ -45,29 +49,24 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
-        init();
+        wheelpicker.setDataList(data);
         setContentView(view);
     }
 
-    private void init() {
-        List<Integer> list = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
-        ArrayList<Object> data = new ArrayList<>();
-        data.addAll(list);
-        wheelpicker.setDataList(data);
-    }
 
     public interface OnDialogInteractionListener {
         // TODO: Update argument type and name
-        void PickerInteraction(int ret);
+        void PickerInteraction(Object ret);
     }
 
     public void onClick(View view){
         switch (view.getId()){
             case R.id.confirm_btn:
-                listener.PickerInteraction(1);
+                listener.PickerInteraction(data.get(wheelpicker.getCurrentPosition()));
+                dismiss();
                 break;
             case R.id.cancel_btn:
-                listener.PickerInteraction(2);
+                dismiss();
                 break;
         }
     }
