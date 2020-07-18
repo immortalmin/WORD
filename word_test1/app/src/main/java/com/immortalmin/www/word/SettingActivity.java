@@ -1,6 +1,7 @@
 package com.immortalmin.www.word;
 
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -16,12 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
-        PickerDialog.OnDialogInteractionListener,AddWordDialog.OnDialogInteractionListener{
+        PickerDialog.OnDialogInteractionListener{
 
     private Button return_btn;
     private TextView prof_tv;
     private PickerDialog pickerDialog;
-    private AddWordDialog addWordDialog;
+    private MyAsyncTask myAsyncTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.prof_tv:
-                List<Integer> list = Arrays.asList(4,3,5,2,6,2);
+                List<String> list = Arrays.asList("apple","banana","orange","watermelon","芒果");
                 ArrayList<Object> arrayList = new ArrayList<>();
                 arrayList.addAll(list);
                 pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList);
@@ -51,16 +53,26 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void UpdateSettings(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",21);
+//            jsonObject.put("uid",userData.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+
+        });
+        myAsyncTask.execute(jsonObject);
+    }
 
     @Override
     public void PickerInteraction(Object ret){
         Log.i("ccc",""+ret);
     }
 
-    @Override
-    public void addWordInteraction(JSONObject jsonObject){
-        Log.i("ccc","addWordInteraction");
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
