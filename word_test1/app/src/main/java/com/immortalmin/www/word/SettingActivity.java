@@ -1,13 +1,19 @@
 package com.immortalmin.www.word;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -21,17 +27,30 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         PickerDialog.OnDialogInteractionListener{
 
     private Button return_btn;
-    private TextView prof_tv;
+    private TextView prof_tv,recite_num,recite_scope;
+    private LinearLayout finish_num_layout,scope_num_layout;
     private PickerDialog pickerDialog;
     private MyAsyncTask myAsyncTask;
+    private String[] settingStr = {"recite_num","recite_scope"};
+    private UserData userData = new UserData();
+    private DataUtil dataUtil = new DataUtil(SettingActivity.this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         return_btn = (Button)findViewById(R.id.return_btn);
         prof_tv = (TextView)findViewById(R.id.prof_tv);
+        recite_num = (TextView)findViewById(R.id.recite_num);
+        recite_scope = (TextView)findViewById(R.id.recite_scope);
+        finish_num_layout = (LinearLayout)findViewById(R.id.finish_num_layout);
+        scope_num_layout = (LinearLayout)findViewById(R.id.scope_num_layout);
         return_btn.setOnClickListener(this);
         prof_tv.setOnClickListener(this);
+        finish_num_layout.setOnClickListener(this);
+        scope_num_layout.setOnClickListener(this);
+        userData = dataUtil.getdata();
+        mHandler.sendEmptyMessage(0);
     }
 
 
@@ -42,35 +61,59 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.prof_tv:
-                List<String> list = Arrays.asList("apple","banana","orange","watermelon","芒果");
-                ArrayList<Object> arrayList = new ArrayList<>();
-                arrayList.addAll(list);
-                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList);
+//                List<String> list = Arrays.asList("apple","banana","orange","watermelon","芒果");
+//                ArrayList<Object> arrayList = new ArrayList<>();
+//                arrayList.addAll(list);
+//                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList);
+//                pickerDialog.show();
+                break;
+            case R.id.finish_num_layout:
+                ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(5,10,20,30,50));
+                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,0);
                 pickerDialog.show();
-//                addWordDialog = new AddWordDialog(this,R.style.MyDialog,"lalala");
-//                addWordDialog.show();
+                break;
+            case R.id.scope_num_layout:
+                arrayList = new ArrayList<>(Arrays.asList(5,10,15,20,25));
+                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,1);
+                pickerDialog.show();
                 break;
         }
     }
 
-    private void UpdateSettings(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",21);
-//            jsonObject.put("uid",userData.getUid());
-        }catch (JSONException e){
-            e.printStackTrace();
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    recite_num.setText(String.valueOf(userData.getRecite_num()));
+                    recite_scope.setText(String.valueOf(userData.getRecite_scope()));
+                    break;
+            }
+            return false;
         }
+    });
+
+    private void UpdateSettings(JSONObject jsonObject){
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-
+            userData = dataUtil.getdata();//将用户数据保存在本地，以及userData中
+            Log.i("ccc",userData.toString());
+            mHandler.sendEmptyMessage(0);
         });
         myAsyncTask.execute(jsonObject);
     }
 
     @Override
-    public void PickerInteraction(Object ret){
-        Log.i("ccc",""+ret);
+    public void PickerInteraction(JSONObject ret){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",21);
+            jsonObject.put(settingStr[Integer.valueOf(ret.get("what").toString())],ret.get("value"));
+            jsonObject.put("uid",userData.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        UpdateSettings(jsonObject);
     }
 
 

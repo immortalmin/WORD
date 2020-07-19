@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,23 +21,27 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
     private WheelPicker wheelpicker;
     private Button confirm_btn,cancel_btn;
     private ArrayList<Object> data;
+    private int what;//编号
 
-    public PickerDialog(Context context,ArrayList<Object> data) {
+    public PickerDialog(Context context,ArrayList<Object> data,int what) {
         super(context);
         this.context = context;
         this.data = data;
+        this.what = what;
     }
 
-    public PickerDialog(Context context, int themeResId,ArrayList<Object> data) {
+    public PickerDialog(Context context, int themeResId,ArrayList<Object> data,int what) {
         super(context, themeResId);
         this.context = context;
         this.data = data;
+        this.what = what;
     }
 
-    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener,ArrayList<Object> data) {
+    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener,ArrayList<Object> data,int what) {
         super(context, cancelable, cancelListener);
         this.context = context;
         this.data = data;
+        this.what = what;
     }
 
     @Override
@@ -56,13 +61,20 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
 
     public interface OnDialogInteractionListener {
         // TODO: Update argument type and name
-        void PickerInteraction(Object ret);
+        void PickerInteraction(JSONObject ret);
     }
 
     public void onClick(View view){
         switch (view.getId()){
             case R.id.confirm_btn:
-                listener.PickerInteraction(data.get(wheelpicker.getCurrentPosition()));
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("what",what);
+                    jsonObject.put("value",data.get(wheelpicker.getCurrentPosition()));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                listener.PickerInteraction(jsonObject);
                 dismiss();
                 break;
             case R.id.cancel_btn:

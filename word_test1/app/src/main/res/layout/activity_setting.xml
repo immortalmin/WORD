@@ -53,6 +53,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/finish_num_layout"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:orientation="horizontal"
@@ -65,16 +66,12 @@
                     android:text="每组要完成背诵的数量"
                     android:textSize="15dp"
                     android:layout_weight="1"/>
-                <EditText
+                <TextView
                     android:id="@+id/recite_num"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:background="#00000000"
-                    android:paddingRight="5dp"
-                    android:textSize="18dp"
-                    android:maxLength="3"
-                    android:inputType="number"
-                    android:textAlignment="textEnd"
+                    android:paddingEnd="5dp"
+                    android:textSize="18sp"
                     android:text="20"/>
             </LinearLayout>
             <View
@@ -85,6 +82,7 @@
                 android:layout_marginTop="6dp"
                 />
             <LinearLayout
+                android:id="@+id/scope_num_layout"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginTop="10dp"
@@ -98,16 +96,12 @@
                     android:text="每组额外加入的数量"
                     android:textSize="15dp"
                     android:layout_weight="1"/>
-                <EditText
+                <TextView
                     android:id="@+id/recite_scope"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:background="#00000000"
-                    android:paddingRight="5dp"
-                    android:textSize="18dp"
-                    android:inputType="number"
-                    android:maxLength="3"
-                    android:textAlignment="textEnd"
+                    android:paddingEnd="5dp"
+                    android:textSize="18sp"
                     android:text="10"/>
             </LinearLayout>
             <View
