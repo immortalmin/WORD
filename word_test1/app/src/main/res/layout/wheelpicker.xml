@@ -13,7 +13,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:text="设置"
-        android:textSize="18sp"/>
+        android:textColor="#e6e3e3"
+        android:textSize="20sp"/>
 
     <com.immortalmin.www.word.WheelPicker
         android:id="@+id/wheelpicker"
@@ -21,13 +22,13 @@
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:background="#d9e0e4"
+        android:background="#00000000"
         app:wheelCyclic="true"
-        app:wheelCurtainColor="#bac4ca"
         app:itemTextColor="#af9292"
-        app:selectedTextColor="#232222"
-        app:indicatorTextColor="#605e5e"
-        app:wheelCurtainBorderColor="#ffffff"
+        app:selectedTextColor="#ffffff"
+        app:indicatorTextColor="#c9c3c3"
+        app:wheelCurtainBorderColor="#70000000"
+        app:wheelCurtainColor="#50dcd7d7"
         >
 
     </com.immortalmin.www.word.WheelPicker>

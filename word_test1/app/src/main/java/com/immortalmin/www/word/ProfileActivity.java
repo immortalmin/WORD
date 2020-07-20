@@ -79,20 +79,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void init() {
 //        init_user();
-        userData = dataUtil.getdata();
-        mHandler.obtainMessage(1).sendToTarget();
+        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+            @Override
+            public void onFinish(UserData userdata) {
+                userData = userdata;
+                mHandler.obtainMessage(1).sendToTarget();
+                //获取使用时间并显示
+                getusetime();
+            }
 
-        //获取使用时间并显示
-        getusetime();
-//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//        uid = sp.getString("uid",null);
-//        recite_num.setText(String.valueOf(sp.getInt("recite_num",20)));
-//        recite_scope.setText(String.valueOf(sp.getInt("recite_scope",10)));
-//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        nickname.setText(sp.getString("username",null));
-//        profile_photo = sp.getString("profile_photo",null);
-//        setImage(profile_photo);
+            @Override
+            public void onError(Exception e) {
 
+            }
+        });
     }
 
     private void init_user(){
@@ -114,7 +114,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view){
         switch (view.getId()){
             case R.id.return_btn:
-                update_setting();
                 Intent intent = new Intent();
                 setResult(1,intent);
                 finish();
@@ -221,28 +220,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         return minutes;
     }
 
-    private void update_setting(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                sp.edit().putInt("recite_num",Integer.valueOf(recite_num.getText().toString()))
-                        .putInt("recite_scope",Integer.valueOf(recite_scope.getText().toString()))
-                        .apply();
-                JSONObject jsonObject = new JSONObject();
-                try{
-
-                    jsonObject.put("uid",userData.getUid());
-                    jsonObject.put("recite_num",recite_num.getText().toString());
-                    jsonObject.put("recite_scope",recite_scope.getText().toString());
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_setting.php",jsonObject);
-            }
-        }).start();
-    }
 
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
@@ -396,7 +373,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            update_setting();
             Intent intent = new Intent();
             setResult(1,intent);
             finish();

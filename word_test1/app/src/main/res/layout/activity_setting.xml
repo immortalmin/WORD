@@ -111,6 +111,66 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
+            <LinearLayout
+                android:id="@+id/PronInChineseHint_layout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="在中文提示下是否可以点击单词发音"
+                    android:textSize="15dp"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/PronInChineseHint_opt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:paddingEnd="5dp"
+                    android:textSize="18sp"
+                    android:text="是"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
+            <LinearLayout
+                android:id="@+id/PronMode_layout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发音类型"
+                    android:textSize="15dp"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/PronMode_opt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:paddingEnd="5dp"
+                    android:textSize="18sp"
+                    android:text="美"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
         </LinearLayout>
     </ScrollView>
 

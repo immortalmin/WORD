@@ -22,26 +22,30 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
     private Button confirm_btn,cancel_btn;
     private ArrayList<Object> data;
     private int what;//编号
+    private int position;//初始位置
 
-    public PickerDialog(Context context,ArrayList<Object> data,int what) {
+    public PickerDialog(Context context,ArrayList<Object> data,int what,int position) {
         super(context);
         this.context = context;
         this.data = data;
         this.what = what;
+        this.position = position;
     }
 
-    public PickerDialog(Context context, int themeResId,ArrayList<Object> data,int what) {
+    public PickerDialog(Context context, int themeResId,ArrayList<Object> data,int what,int position) {
         super(context, themeResId);
         this.context = context;
         this.data = data;
         this.what = what;
+        this.position = position;
     }
 
-    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener,ArrayList<Object> data,int what) {
+    protected PickerDialog(Context context, boolean cancelable, OnCancelListener cancelListener,ArrayList<Object> data,int what,int position) {
         super(context, cancelable, cancelListener);
         this.context = context;
         this.data = data;
         this.what = what;
+        this.position = position;
     }
 
     @Override
@@ -55,6 +59,7 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
         wheelpicker.setDataList(data);
+        wheelpicker.setCurrentPosition(position,true);
         setContentView(view);
     }
 

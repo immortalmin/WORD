@@ -49,8 +49,18 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         prof_tv.setOnClickListener(this);
         finish_num_layout.setOnClickListener(this);
         scope_num_layout.setOnClickListener(this);
-        userData = dataUtil.getdata();
-        mHandler.sendEmptyMessage(0);
+        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+            @Override
+            public void onFinish(UserData userdata) {
+                userData = userdata;
+                mHandler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
 
 
@@ -69,12 +79,26 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.finish_num_layout:
                 ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(5,10,20,30,50));
-                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,0);
+                int position = 0;
+                for(int i=0;i<arrayList.size();i++){
+                    if(arrayList.get(i).equals(userData.getRecite_num())){
+                        position = i;
+                        break;
+                    }
+                }
+                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,0,position);
                 pickerDialog.show();
                 break;
             case R.id.scope_num_layout:
                 arrayList = new ArrayList<>(Arrays.asList(5,10,15,20,25));
-                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,1);
+                position = 0;
+                for(int i=0;i<arrayList.size();i++){
+                    if(arrayList.get(i).equals(userData.getRecite_scope())){
+                        position = i;
+                        break;
+                    }
+                }
+                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList,1,position);
                 pickerDialog.show();
                 break;
         }
@@ -96,9 +120,19 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private void UpdateSettings(JSONObject jsonObject){
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            userData = dataUtil.getdata();//将用户数据保存在本地，以及userData中
-            Log.i("ccc",userData.toString());
-            mHandler.sendEmptyMessage(0);
+            dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+                @Override
+                public void onFinish(UserData userdata) {
+                    userData = userdata;
+                    mHandler.sendEmptyMessage(0);
+                }
+
+                @Override
+                public void onError(Exception e) {
+
+                }
+            });//将用户数据保存在本地，以及userData中
+
         });
         myAsyncTask.execute(jsonObject);
     }

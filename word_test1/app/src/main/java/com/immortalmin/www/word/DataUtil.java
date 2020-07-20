@@ -21,17 +21,21 @@ public class DataUtil {
         this.context = context;
     }
 
+    public interface HttpCallbackStringListener{
+        void onFinish(UserData userdata);
+        void onError(Exception e);
+    }
+
     /**
-     * q:似乎还是会出现网络请求还未完成，就已经在获取本地数据返回给调用者了
      * ********************************
      * ***** 根据username获取数据 *****
      * ********************************
      * 从服务器获取用户数据
      * 保存在本地
-     * 再返回UserData
+     * 在回调函数中返回UserData
      * @return
      */
-    public UserData getdata() {
+    public void getdata(final HttpCallbackStringListener listener) {
         JSONObject jsonObject = new JSONObject();
         try {
             SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
@@ -53,7 +57,7 @@ public class DataUtil {
                     .putString("motto",userdata.get("motto").toString())
                     .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
                     .apply();
-            getSetting();
+            getSetting(listener);
         });
         myAsyncTask.execute(jsonObject);
 //        new Thread(new Runnable() {
@@ -85,10 +89,10 @@ public class DataUtil {
 //                        .apply();
 //            }
 //        }).start();
-        return set_user();
+        return ;
     }
 
-    private void getSetting(){
+    private void getSetting(final HttpCallbackStringListener listener){
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("uid",userdata.get("uid").toString());
@@ -104,6 +108,7 @@ public class DataUtil {
                     .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
                     .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
                     .apply();
+            listener.onFinish(set_user());
         });
         myAsyncTask.execute(jsonObject);
     }
