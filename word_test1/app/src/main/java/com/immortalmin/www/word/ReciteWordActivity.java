@@ -221,7 +221,7 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            recite_list =jsonRe.reciteData2(result);
+            recite_list =jsonRe.reciteData(result);
             if(recite_list.size()<recite_num+recite_scope){
                 Looper.prepare();
                 mHandler.obtainMessage(1).sendToTarget();

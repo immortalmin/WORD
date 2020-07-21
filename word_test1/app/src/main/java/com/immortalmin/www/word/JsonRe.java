@@ -220,32 +220,37 @@ public class JsonRe {
         return exampleList;
     }
 
-    public List<HashMap<String,Object>> reciteData(String jsonStr){
-        List<HashMap<String,Object>> reciteList = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> word = new HashMap<>();
-                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-                word.put("collect",jsonObject.getString("collect"));
-                word.put("correct_times",jsonObject.getString("correct_times"));
-                word.put("error_times",jsonObject.getString("error_times"));
-                word.put("last_date",jsonObject.getString("last_date"));
-                word.put("source",jsonObject.getString("source"));
-                word.put("prof_flag",jsonObject.getString("prof_flag"));
-                word.put("wid",jsonObject.getString("wid"));
-                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
-                word.put("today_correct_times",0);
-                reciteList.add(word);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return reciteList;
-    }
+    /**
+     * 2020/7/21 stopped using
+     * @param jsonStr
+     * @return
+     */
+//    public List<HashMap<String,Object>> reciteData(String jsonStr){
+//        List<HashMap<String,Object>> reciteList = new ArrayList<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            for(int i=0;i<jsonArray.length();i++){
+//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+//                HashMap<String,Object> word = new HashMap<>();
+//                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
+//                word.put("collect",jsonObject.getString("collect"));
+//                word.put("correct_times",jsonObject.getString("correct_times"));
+//                word.put("error_times",jsonObject.getString("error_times"));
+//                word.put("last_date",jsonObject.getString("last_date"));
+//                word.put("source",jsonObject.getString("source"));
+//                word.put("prof_flag",jsonObject.getString("prof_flag"));
+//                word.put("wid",jsonObject.getString("wid"));
+//                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
+//                word.put("today_correct_times",0);
+//                reciteList.add(word);
+//            }
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return reciteList;
+//    }
 
-    public List<HashMap<String,Object>> reciteData2(String jsonStr){
+    public List<HashMap<String,Object>> reciteData(String jsonStr){
         List<HashMap<String,Object>> reciteList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
