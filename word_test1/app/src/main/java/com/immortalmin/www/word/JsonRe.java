@@ -264,6 +264,7 @@ public class JsonRe {
                 word.put("correct_times",jsonObject.getString("correct_times"));
                 word.put("error_times",jsonObject.getString("error_times"));
                 word.put("last_date",jsonObject.getString("last_date"));
+                word.put("review_date",jsonObject.getString("review_date"));
                 word.put("dict_source",jsonObject.getString("dict_source"));
                 word.put("today_correct_times",0);
                 reciteList.add(word);
@@ -335,6 +336,7 @@ public class JsonRe {
     }
 
 
+    //2020/7/24 stopped using
     //将json转为需要的数据结构  old version
     public List<Map<String, Object>>  getWordList(String jsonStr) {
         wordInfoList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象

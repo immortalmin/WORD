@@ -506,7 +506,7 @@ public class ReciteWordActivity extends AppCompatActivity
 //                        now_word.put("prof_flag", 1);
 //                    }
                     recite_list.set(correct_ind, now_word);
-                    update_sql_data(correct_ind);
+                    update_sql_data(correct_ind,1);
                 } else {
                     recite_list.set(correct_ind, now_word);
                 }
@@ -560,7 +560,7 @@ public class ReciteWordActivity extends AppCompatActivity
 //                        correct_word.put("prof_flag", 1);
 //                    }
                     recite_list.set(correct_ind, correct_word);
-                    update_sql_data(correct_ind);
+                    update_sql_data(correct_ind,1);
                 } else {
                     recite_list.set(correct_ind, correct_word);
                 }
@@ -619,7 +619,7 @@ public class ReciteWordActivity extends AppCompatActivity
 //                    correct_word.put("prof_flag", 1);
 //                }
                 recite_list.set(correct_ind, correct_word);
-                update_sql_data(correct_ind);
+                update_sql_data(correct_ind,1);
             } else {//不是一次就过，下回重新拼写
                 correct_word.put("error_times", er_times + 1);
                 correct_word.put("today_correct_times", 0);
@@ -644,16 +644,14 @@ public class ReciteWordActivity extends AppCompatActivity
      * 传入词组在recite_list中的下标
      * @param i
      */
-    public void update_sql_data(int i) {
+    public void update_sql_data(int i,int what) {
         update_word  = new HashMap<>();
-        update_word.put("cid",recite_list.get(i).get("cid").toString());
-//        update_word.put("uid",setting.get("uid"));
-//        update_word.put("wid", recite_list.get(i).get("wid").toString());
-        update_word.put("correct_times", recite_list.get(i).get("correct_times").toString());
-        update_word.put("error_times", recite_list.get(i).get("error_times").toString());
-//        update_word.put("prof_flag", recite_list.get(i).get("prof_flag").toString());
+//        update_word.put("cid",recite_list.get(i).get("cid").toString());
+//        update_word.put("correct_times", recite_list.get(i).get("correct_times").toString());
+//        update_word.put("error_times", recite_list.get(i).get("error_times").toString());
         UpdateServer updateServer = new UpdateServer();
-        updateServer.sendMap(update_word);
+//        updateServer.sendMap(update_word);
+        updateServer.sendMap(recite_list.get(i),what);
         scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
     }
 
@@ -663,7 +661,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private void update_all(){
         for(int i=0;i<recite_num+recite_scope;i++){
             if(finish_ind[i]==0){
-                update_sql_data(i);
+                update_sql_data(i,0);
             }
         }
         mHandler.obtainMessage(1).sendToTarget();
