@@ -448,7 +448,7 @@ public class TestActivity extends Activity implements View.OnClickListener{
             update_word.put("error_times",recite_list.get(i).get("error_times").toString());
             update_word.put("prof_flag",recite_list.get(i).get("prof_flag").toString());
             UpdateServer sendIdToserver = new UpdateServer();
-            sendIdToserver.sendMap(update_word);
+            sendIdToserver.sendMap(update_word,0);
             sendIdToserver.run();
         }
         Log.i("update","更新数据库完成");
