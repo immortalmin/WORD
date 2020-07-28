@@ -85,7 +85,7 @@
             android:text="TEST\nONE" />
 
         <Button
-            android:id="@+id/btn_test"
+            android:id="@+id/btn_review"
             android:layout_width="220px"
             android:layout_height="220px"
             android:background="#000000"
@@ -96,7 +96,7 @@
             android:layout_marginTop="30px"
             android:layout_below="@+id/btn_recite"
             android:layout_toRightOf="@+id/btn_spell"
-            android:text="TEST\nTWO" />
+            android:text="复习\n99" />
 
     </RelativeLayout>
 

@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,22 +56,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private UserData userData = new UserData();
     private BlurImageView blurImageView = new BlurImageView();
+    private MyAsyncTask myAsyncTask;
     private Context context;
-    List<Map<String,Object>> word_list=null;
-    Button btn_collect,btn_recite,btn_test,btn_spell,search1;
+    private List<Map<String,Object>> word_list=null;
+    private Button btn_collect,btn_recite,btn_review,btn_spell,search1;
     private ImageView imgview;
-    EditText editText;
-    SearchView search_bar;
+    private EditText editText;
+    private SearchView search_bar;
     private RelativeLayout main_relative;
-    WordDAO wordDAO = new WordDAO();
+    private WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     private DBAdapter dbAdapter;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
     private int screen_width,screen_height;
-    Intent intent;
-    Boolean flag=false;
+    private Intent intent;
+    private Boolean flag=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,14 +85,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_collect = (Button)findViewById(R.id.btn_collect);
         btn_recite = (Button)findViewById(R.id.btn_recite);
         btn_spell = (Button)findViewById(R.id.btn_spell);
-        btn_test = (Button)findViewById(R.id.btn_test);
+        btn_review = (Button)findViewById(R.id.btn_review);
         search_bar = (SearchView) findViewById(R.id.search_bar);
         profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
         main_relative = (RelativeLayout)findViewById(R.id.main_relative);
         imgview = (ImageView)findViewById(R.id.imgview);
         btn_collect.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
-        btn_test.setOnClickListener(this);
+        btn_review.setOnClickListener(this);
         btn_spell.setOnClickListener(this);
 //        search1.setOnClickListener(this);
         search_bar.setOnClickListener(this);
@@ -126,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         init_user();
         //检查用户登录时间并更新数据
         inspect_usetime();
+
+        //更新单词复习数量
+        getReviewList();
     }
 
     private void init_user(){
@@ -178,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_collect.setBackground(new BitmapDrawable(bitmaps.get(0)));
                     btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
                     btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
-                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(3)));
+                    btn_review.setBackground(new BitmapDrawable(bitmaps.get(3)));
 //                    ArrayList<Drawable> drawables = (ArrayList<Drawable>) message.obj;
 //                    btn_wordlist.setBackground(drawables.get(0));
 //                    btn_recite.setBackground(drawables.get(1));
@@ -308,6 +313,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+    /**
+     * 获取单词复习列表
+     */
+    private void getReviewList(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",11);
+            jsonObject.put("uid",4);
+            //获取当前时间
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
+//            jsonObject.put("review_date","2020-07-01");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            List<HashMap<String, Object>> review_list = null;//the list of word
+            review_list =jsonRe.reciteData(result);
+            int review_num = review_list.size();
+            btn_review.setText("复习\n"+review_num);
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
 
     /**
      * 实现Activity的广播接收
@@ -337,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
-            case R.id.btn_test:
+            case R.id.btn_review:
                 intent = new Intent(MainActivity.this,ReviewWordActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);

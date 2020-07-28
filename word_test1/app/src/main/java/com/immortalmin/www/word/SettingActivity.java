@@ -71,11 +71,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.prof_tv:
-//                List<String> list = Arrays.asList("apple","banana","orange","watermelon","芒果");
-//                ArrayList<Object> arrayList = new ArrayList<>();
-//                arrayList.addAll(list);
-//                pickerDialog = new PickerDialog(this,R.style.MyDialog,arrayList);
-//                pickerDialog.show();
+
                 break;
             case R.id.finish_num_layout:
                 ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(5,10,20,30,50));

@@ -28,7 +28,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +67,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private List<HashMap<String, Object>> review_list = null;//the list of word
     private int review_num = 1;//the number of word today
-    private int c_times = 1;//每个单词变成今天背完需要的次数
+    private int c_times = 2;//每个单词变成今天背完需要的次数
     private int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     private int finish_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
@@ -90,10 +92,42 @@ public class ReviewWordActivity extends AppCompatActivity
     }
 
     /**
-     * 先回忆，选择模糊或者不认识的留到最后再过一遍
+     * 获取单词复习列表
      */
-    private void startCountdownReview(){
+    private void getReviewList(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",11);
+            jsonObject.put("uid",4);
+            //获取当前时间
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
+//            jsonObject.put("review_date","2020-07-01");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            review_list =jsonRe.reciteData(result);
+            review_num = review_list.size();
+            if(review_num>0){
+                startReview();
+            }else{
+                mHandler.obtainMessage(1).sendToTarget();
+                inadequateDialog.show();
+            }
+
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+    /**
+     * 开始背诵
+     * 按顺序背诵，背错的之后重背
+     */
+    private void startReview(){
         current_ind++;
+        if(current_ind==review_list.size()) current_ind=0;
         while(finish_ind[current_ind]==1){
             current_ind++;
             if(current_ind==review_list.size()) current_ind=0;
@@ -103,53 +137,27 @@ public class ReviewWordActivity extends AppCompatActivity
         //初始化单词音频
         resetMediaPlayer(review_list.get(current_ind).get("word_en").toString());
         hideInput();
-        int countdown_mode = (int) (Math.random() * 3) + 1;
-        now_words = new HashMap<>();
-        now_words.put("mode", countdown_mode);
-        now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
-        now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-        now_words.put("media_player",mediaPlayer);
-        start_countdown_mode(now_words);
+        switch(today_finish){
+            case 0:
+                int countdown_mode = (int) (Math.random() * 3) + 1;
+                now_words = new HashMap<>();
+                now_words.put("mode", countdown_mode);
+                now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
+                now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
+                now_words.put("media_player",mediaPlayer);
+                start_countdown_mode(now_words);
+                break;
+            case 1:
+                now_words = new HashMap<>();
+                now_words.put("once_flag", true);
+                now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
+                now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
+                now_words.put("media_player",mediaPlayer);
+                start_spell_mode(now_words);
+                break;
+        }
     }
 
-    /**
-     * 后拼写，拼错的最后再拼一次
-     */
-    private void startSpellReview(){
-        current_ind++;
-        while(finish_ind[current_ind]==1){
-            current_ind++;
-            if(current_ind==review_list.size()) current_ind=0;
-        }
-        today_finish = Integer.valueOf(review_list.get(current_ind).get("today_correct_times").toString());
-        mHandler.obtainMessage(0).sendToTarget();
-        //初始化单词音频
-        resetMediaPlayer(review_list.get(current_ind).get("word_en").toString());
-        now_words = new HashMap<>();
-        now_words.put("once_flag", true);
-        now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
-        now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-        now_words.put("media_player",mediaPlayer);
-        start_spell_mode(now_words);
-    }
-
-    private void getReviewList(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",11);
-            jsonObject.put("uid",4);
-            jsonObject.put("review_date","2020-7-20");
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            review_list =jsonRe.reciteData(result);
-            review_num = review_list.size();
-            startCountdownReview();
-        });
-        myAsyncTask.execute(jsonObject);
-    }
 
     private Boolean resetMediaPlayer(String word){
         if(mediaPlayer!=null){
@@ -300,48 +308,6 @@ public class ReviewWordActivity extends AppCompatActivity
     }
 
     /**
-     * 返回主页
-     */
-    private void return_main(){
-        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText("Good job!")
-                .setContentText("return to main page.")
-                .setConfirmText("fine")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .show();
-    }
-
-    /**
-     * 中途退出
-     */
-    private void interrupt(){
-        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Are you sure?")
-                .setContentText("Won't be able to recover this file!")
-                .setConfirmText("fine")
-                .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
-                })
-                .show();
-    }
-
-    /**
      * 选项按钮点击事件
      *
      * @param view
@@ -353,7 +319,6 @@ public class ReviewWordActivity extends AppCompatActivity
                 break;
             case R.id.ret_btn:
                 interruptDialog();
-//                interrupt();
                 break;
         }
     }
@@ -391,29 +356,10 @@ public class ReviewWordActivity extends AppCompatActivity
         now_word = review_list.get(current_ind);
         int to_co_times = Integer.valueOf(now_word.get("today_correct_times").toString());
         int er_times = Integer.valueOf(now_word.get("error_times").toString());
-        int co_times = Integer.valueOf(now_word.get("correct_times").toString());
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
                 now_word.put("today_correct_times", to_co_times + 1);
-                if (to_co_times + 1 >= c_times) {
-                    finish_ind[current_ind] = 1;
-                    finish_num++;
-                    total_progress.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int pro_num = finish_num * 100 / review_num;
-                            total_progress.setProgress(pro_num);
-                        }
-                    });
-                    now_word.put("correct_times", co_times + 1);
-//                    if (co_times + 1 >= prof_times) {
-//                        now_word.put("prof_flag", 1);
-//                    }
-                    review_list.set(current_ind, now_word);
-                    update_sql_data(current_ind,1);
-                } else {
-                    review_list.set(current_ind, now_word);
-                }
+                review_list.set(current_ind, now_word);
                 break;
             case 2://vague
                 now_word.put("today_correct_times", 0);
@@ -431,15 +377,7 @@ public class ReviewWordActivity extends AppCompatActivity
         }
         mHandler.obtainMessage(0).sendToTarget();
         if (!pron_lock) {
-            if(finish_num>=review_list.size()){
-                Arrays.fill(finish_ind, 0);
-                mode = 1;
-                current_ind = -1;
-                finish_num=0;
-                startSpellReview();
-            }else{
-                startCountdownReview();
-            }
+            startReview();
         }
     }
 
@@ -466,13 +404,9 @@ public class ReviewWordActivity extends AppCompatActivity
                     }
                 });
                 correct_word.put("correct_times", co_times + 1);
-//                if (co_times + 1 >= prof_times) {
-//                    correct_word.put("prof_flag", 1);
-//                }
                 review_list.set(current_ind, correct_word);
                 update_sql_data(current_ind,1);
             } else {//不是一次就过，下回重新拼写
-                correct_word.put("error_times", er_times + 1);
                 correct_word.put("today_correct_times", 0);
                 review_list.set(current_ind, correct_word);
             }
@@ -480,8 +414,7 @@ public class ReviewWordActivity extends AppCompatActivity
             if (finish_num >= review_num) {
                 update_all();
             }else{
-                startSpellReview();
-//                start_recite();
+                startReview();
             }
         } else {//回答错误，重新拼写
             correct_word.put("error_times", er_times + 1);
@@ -514,7 +447,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
         mHandler.obtainMessage(1).sendToTarget();
         finishDialog.show();
-//        return_main();
     }
 
     /**
@@ -543,8 +475,9 @@ public class ReviewWordActivity extends AppCompatActivity
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1) {
             pron_lock = false;
-            if(mode==0) startCountdownReview();
-            else startSpellReview();
+            startReview();
+//            if(mode==0) startCountdownReview();
+//            else startSpellReview();
         }
     }
 

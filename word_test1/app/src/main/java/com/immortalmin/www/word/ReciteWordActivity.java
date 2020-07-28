@@ -223,6 +223,7 @@ public class ReciteWordActivity extends AppCompatActivity
         myAsyncTask.setLoadDataComplete((result)->{
             recite_list =jsonRe.reciteData(result);
             if(recite_list.size()<recite_num+recite_scope){
+                //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
                 Looper.prepare();
                 mHandler.obtainMessage(1).sendToTarget();
                 inadequateDialog.show();
