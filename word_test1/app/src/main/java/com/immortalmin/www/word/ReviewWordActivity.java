@@ -61,7 +61,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private ProgressBar total_progress;
-    private SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
+    private SweetAlertDialog interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private Map<String, Object> update_word = null;
     private MediaPlayer mediaPlayer = new MediaPlayer();
@@ -75,6 +75,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private int mode = 0;
     private Boolean pron_lock = false;
     private HashMap<String, Object> now_words = null;
+    private static int group_num = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class ReviewWordActivity extends AppCompatActivity
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             review_list =jsonRe.reciteData(result);
-            review_num = review_list.size();
+            review_num = Math.min(review_list.size(),group_num);
             if(review_num>0){
                 startReview();
             }else{
@@ -127,10 +128,10 @@ public class ReviewWordActivity extends AppCompatActivity
      */
     private void startReview(){
         current_ind++;
-        if(current_ind==review_list.size()) current_ind=0;
+        if(current_ind==review_num) current_ind=0;
         while(finish_ind[current_ind]==1){
             current_ind++;
-            if(current_ind==review_list.size()) current_ind=0;
+            if(current_ind==review_num) current_ind=0;
         }
         today_finish = Integer.valueOf(review_list.get(current_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
@@ -158,7 +159,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
-
     private Boolean resetMediaPlayer(String word){
         if(mediaPlayer!=null){
             mediaPlayer.stop();
@@ -183,7 +183,6 @@ public class ReviewWordActivity extends AppCompatActivity
         transaction.commit();
         countDownFragment.update_options(words);//update data
     }
-
 
     /**
      * start spell mode
@@ -221,26 +220,6 @@ public class ReviewWordActivity extends AppCompatActivity
 
     private void dialog_init(){
         /**
-         * finish recite
-         */
-        finishDialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText("Good job!")
-                .setContentText("return to main page.")
-                .setConfirmText("fine")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
-                });
-
-        finishDialog.setCancelable(false);
-
-        /**
          * shortage of words
          */
         inadequateDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
@@ -258,6 +237,74 @@ public class ReviewWordActivity extends AppCompatActivity
                     }
                 });
         inadequateDialog.setCancelable(false);
+    }
+
+    /**
+     * finish a group of recite
+     */
+    private void finishAGroupDialog(){
+        mHandler.obtainMessage(1).sendToTarget();
+        SweetAlertDialog finish_alert = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                .setTitleText("Good job!")
+                .setContentText("Continue to recite?")
+                .setConfirmText("fine")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        current_ind = -1;
+                        Arrays.fill(finish_ind, 0);
+                        finish_num = 0;
+                        total_progress.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                total_progress.setProgress(0);
+                            }
+                        });
+                        for(int i=0;i<review_num;i++) review_list.remove(0);
+                        review_num = Math.min(review_list.size(),group_num);
+                        startReview();
+                        mHandler.obtainMessage(2).sendToTarget();
+                        sweetAlertDialog.cancel();
+                    }
+                })
+                .setCancelText("later")
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                });
+
+        finish_alert.setCancelable(false);
+        finish_alert.show();
+    }
+
+    /**
+     * finish all words
+     */
+    private void finishDialog(){
+        mHandler.obtainMessage(1).sendToTarget();
+        SweetAlertDialog finish_alert = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                .setTitleText("Good job!")
+                .setContentText("Return to main page.")
+                .setConfirmText("fine")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                    }
+                });
+
+        finish_alert.setCancelable(false);
+        finish_alert.show();
     }
 
     /**
@@ -412,7 +459,9 @@ public class ReviewWordActivity extends AppCompatActivity
             }
             mHandler.obtainMessage(0).sendToTarget();
             if (finish_num >= review_num) {
-                update_all();
+                if(review_num == review_list.size()) finishDialog();
+                else finishAGroupDialog();
+//                update_all();
             }else{
                 startReview();
             }
@@ -439,15 +488,14 @@ public class ReviewWordActivity extends AppCompatActivity
     /**
      * update rest of word list
      */
-    private void update_all(){
-        for(int i=0;i<review_num;i++){
-            if(finish_ind[i]==0){
-                update_sql_data(i,0);
-            }
-        }
-        mHandler.obtainMessage(1).sendToTarget();
-        finishDialog.show();
-    }
+//    private void update_all(){
+//        for(int i=0;i<review_num;i++){
+//            if(finish_ind[i]==0){
+//                update_sql_data(i,0);
+//            }
+//        }
+//        finishDialog();
+//    }
 
     /**
      * 跳转到例句页面
