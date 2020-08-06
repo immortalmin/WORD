@@ -75,7 +75,7 @@ public class ExampleActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example_test);
+        setContentView(R.layout.activity_example);
         example_btn = (Button)findViewById(R.id.example_btn);
         kelinsi_btn = (Button)findViewById(R.id.kelinsi_btn);
         edit_btn = (Button)findViewById(R.id.edit_btn);

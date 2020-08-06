@@ -69,7 +69,7 @@ public class ExampleOldVersionActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_example);
+        setContentView(R.layout.activity_example_oldversion);
         word_meaning = (TextView)findViewById(R.id.word_meaning);
         E_sentence = (TextView)findViewById(R.id.E_sentence);
         C_translate = (TextView)findViewById(R.id.C_translate);

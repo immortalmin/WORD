@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#4a82c7"
-    tools:context=".ExampleOldVersionActivity">
+    tools:context=".ExampleActivity">
 
-    <com.ocnyang.contourview.ContourView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:contour_style="Sand"
-        app:shader_endcolor="#4f68c6"
-        app:shader_mode="RadialGradient"
-        app:shader_startcolor="#61a8d4"
-        app:shader_style="Center"
-        app:smoothness="0.15"/>
+    <!--<com.ocnyang.contourview.ContourView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:contour_style="Sand"-->
+        <!--app:shader_endcolor="#4f68c6"-->
+        <!--app:shader_mode="RadialGradient"-->
+        <!--app:shader_startcolor="#61a8d4"-->
+        <!--app:shader_style="Center"-->
+        <!--app:smoothness="0.15"/>-->
 
 
     <RelativeLayout
@@ -25,7 +25,7 @@
         android:layout_marginTop="5dp"
         >
         <Button
-            android:id="@+id/btn1"
+            android:id="@+id/return_btn"
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:layout_marginTop="20dp"
@@ -45,30 +45,30 @@
             android:textStyle="bold"
             android:text="单词详情" />
 
+
         <Button
             android:id="@+id/edit_btn"
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="24dp"
+            android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:background="@drawable/edit1"
-            android:layout_centerVertical="true"
             android:text="" />
-
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/head"
         android:layout_below="@+id/nav_bar"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:background="@drawable/example_round_corners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
         <com.immortalmin.www.word.WordView
-            android:id="@+id/word_group"
+            android:id="@+id/word_en"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
@@ -76,7 +76,7 @@
             app:mTextFirstColor="#0ced08"
             app:mTextSecondColor="#fdfdfd"
             app:mTextSize="28dp"
-            app:mText="accuse of"
+            app:mText=""
             />
 
         <Button
@@ -121,103 +121,94 @@
             android:layout_height="18dp"
             android:background="@drawable/star_off"
             android:padding="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
             android:layout_centerVertical="true"
             android:text="" />
 
         <TextView
-            android:id="@+id/C_meaning"
+            android:id="@+id/word_ch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13dp"
             android:textColor="#fbfbfc"
-            android:layout_below="@+id/word_group"
+            android:layout_below="@+id/word_en"
             android:maxLines="2"
             android:ellipsize="end"
             android:layout_marginEnd="70dp"
             android:paddingLeft="10dp"
             android:paddingBottom="5dp"
-            android:text="指责" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="450dp"
-        android:layout_below="@+id/head"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/example_round_corners">
-        <!---->
-
-
-        <TextView
-            android:id="@+id/example"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fdfdfd"
-            android:padding="10dp"
-            android:textSize="16dp"
-            android:layout_marginLeft="10dp"
-            android:textStyle="bold"
-            android:text="例句 +" />
+            android:text="" />
 
         <TextView
             android:id="@+id/source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12dp"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:layout_below="@+id/collect"
+            android:layout_alignRight="@+id/collect"
             android:textColor="#f9f9fa"
-            android:text="单词来源:chen" />
+            android:text="" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/head"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/example_round_corners">
+
+        <Button
+            android:id="@+id/example_btn"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:background="#30000000"
+            android:textColor="#FFFFFF"
+            android:text="例句" />
+
+        <Button
+            android:id="@+id/kelinsi_btn"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_alignBottom="@+id/example_btn"
+            android:background="#10000000"
+            android:textColor="#FFFFFF"
+            android:layout_toRightOf="@+id/example_btn"
+            android:text="柯林斯" />
 
         <View
             android:id="@+id/view"
-            android:layout_below="@+id/example"
+            android:layout_below="@+id/example_btn"
             android:layout_width="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="#DCDDDF"
             android:layout_height="5px" />
 
-        <ListView
-            android:id="@+id/example_list"
-            android:layout_below="@+id/view"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
-            android:padding="0dp"
+        <FrameLayout
+            android:id="@+id/framelayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/example_btn"
+            android:minHeight="450dp">
 
-        <TextView
-            android:id="@+id/non_example"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:padding="0dp"
-            android:layout_below="@+id/view"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center_vertical"
-            android:visibility="invisible"
-            android:textSize="16dp"
-            android:textColor="#f6f7f9"
-            android:text="暂无例句" />
+        </FrameLayout>
+
     </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"/>
-
-
-
-
 </RelativeLayout>

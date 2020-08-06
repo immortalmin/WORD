@@ -46,9 +46,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private TextView cword,correct_word;//display word_ch
     private EditText eword;//spell word_en
     private Button finish_btn;
-    private Boolean btn_flag = true;//avoid double click
     private Boolean once_flag=true;
     private int judge_flag=1;
+    private Boolean suspend_flag = false;//拼写错误的话，显示正确结果，等用户再次回车，再清除。true代表正在显示正确结果
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
     /**
@@ -113,6 +113,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             @Override
             public void run() {
                 mHandler.obtainMessage(3).sendToTarget();
+//                send_to_activity(judge_flag);
             }
         };
         /**
@@ -148,10 +149,13 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            if (btn_flag && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+            if(suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+                suspend_flag = false;
+                mHandler.obtainMessage(3).sendToTarget();
+                return true;
+            }
+            if (keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 resetVolume();
-                btn_flag = false;
-                eword.setEnabled(false);
                 mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
                 String co_word = word_en.replaceAll(" ","");
@@ -159,13 +163,15 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     judge_flag = 1;
                     soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(0).sendToTarget();
+                    suspend_flag = false;
+                    scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
                 }else{
                     once_flag = false;
                     judge_flag = 2;
                     soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(1).sendToTarget();
+                    suspend_flag = true;
                 }
-                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
                 return true;
             }
             return false;
@@ -186,6 +192,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     break;
                 case 2://set c_word
                     cword.setText(word_ch);
+                    eword.setText("");
+                    eword.setTextColor(Color.parseColor("#000000"));
+                    correct_word.setVisibility(View.INVISIBLE);
                     break;
                 case 3://go back to recite_word_activity
                     send_to_activity(judge_flag);
@@ -234,7 +243,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      */
     public void send_to_activity(int res){
         if (mListener != null) {
-            mHandler.obtainMessage(4).sendToTarget();
+//            mHandler.obtainMessage(4).sendToTarget();
             HashMap<String,Object> s = new HashMap<String,Object>();
             switch (res){
                 case 1://correct
@@ -251,9 +260,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     //String new_word
     public void update_options(HashMap<String,Object> words){
         changed_volume = 0;
-        btn_flag = true;
-        eword.setEnabled(true);
-//        mode = words.get("mode").toString();
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
         once_flag = Boolean.valueOf(words.get("once_flag").toString());

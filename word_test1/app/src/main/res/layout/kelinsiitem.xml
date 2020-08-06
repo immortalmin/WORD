@@ -24,8 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginStart="5dp"
+        android:maxWidth="180dp"
         android:layout_toRightOf="@+id/number"
-        android:textColor="#FFFFFF"
+        android:textColor="#dfdede"
         android:text="[VERB 动词]" />
 
     <TextView
@@ -34,6 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/label"
         android:layout_alignBaseline="@+id/label"
+        android:layout_marginStart="10dp"
+        android:maxWidth="180dp"
         android:textColor="#FFFFFF"
         android:text="检验;试验;测试；" />
 
@@ -44,6 +47,7 @@
         android:layout_below="@+id/label"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/number"
+        android:maxWidth="180dp"
         android:textColor="#dad6d6"
         android:text="[V n]" />
 
