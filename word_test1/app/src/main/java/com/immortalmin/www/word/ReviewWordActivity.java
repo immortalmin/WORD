@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -411,8 +409,6 @@ public class ReviewWordActivity extends AppCompatActivity
             case 2://vague
                 now_word.put("today_correct_times", 0);
                 review_list.set(current_ind, now_word);
-                pron_lock = true;
-                jump_to_example(current_ind);
                 break;
             case 3://unknown
                 now_word.put("today_correct_times", 0);
@@ -503,7 +499,7 @@ public class ReviewWordActivity extends AppCompatActivity
      * @param id
      */
     public void jump_to_example(int id) {
-        Intent intent = new Intent(ReviewWordActivity.this, ExampleTestActivity.class);
+        Intent intent = new Intent(ReviewWordActivity.this, ExampleActivity.class);
         intent.putExtra("wid", review_list.get(id).get("wid").toString());
         intent.putExtra("dict_source", review_list.get(id).get("dict_source").toString());
         startActivityForResult(intent, 1);

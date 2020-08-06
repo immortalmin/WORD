@@ -58,7 +58,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(collectActivity.this, ExampleTestActivity.class);
+                Intent intent = new Intent(collectActivity.this, ExampleActivity.class);
 //                String wid = word_list.get(position).get("wid").toString();
                 intent.putExtra("wid",collect_list.get(position).get("wid").toString());
                 intent.putExtra("dict_source",collect_list.get(position).get("dict_source").toString());

@@ -492,31 +492,11 @@ public class ReciteWordActivity extends AppCompatActivity
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
                 now_word.put("today_correct_times", to_co_times + 1);
-                if (to_co_times + 1 >= c_times) {
-                    finish_ind[select[correct_sel]] = 1;
-                    finish_num++;
-                    total_progress.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int pro_num = finish_num * 100 / recite_num;
-                            total_progress.setProgress(pro_num);
-                        }
-                    });
-                    now_word.put("correct_times", co_times + 1);
-//                    if (co_times + 1 >= prof_times) {
-//                        now_word.put("prof_flag", 1);
-//                    }
-                    recite_list.set(correct_ind, now_word);
-                    update_sql_data(correct_ind,1);
-                } else {
-                    recite_list.set(correct_ind, now_word);
-                }
+                recite_list.set(correct_ind, now_word);
                 break;
             case 2://vague
                 now_word.put("today_correct_times", 0);
                 recite_list.set(correct_ind, now_word);
-                pron_lock = true;
-                jump_to_example(correct_ind);
                 break;
             case 3://unknown
                 now_word.put("today_correct_times", 0);
@@ -676,7 +656,7 @@ public class ReciteWordActivity extends AppCompatActivity
      * @param id
      */
     public void jump_to_example(int id) {
-        Intent intent = new Intent(ReciteWordActivity.this, ExampleTestActivity.class);
+        Intent intent = new Intent(ReciteWordActivity.this, ExampleActivity.class);
         intent.putExtra("wid", recite_list.get(id).get("wid").toString());
         intent.putExtra("dict_source", recite_list.get(id).get("dict_source").toString());
 //        startActivity(intent);

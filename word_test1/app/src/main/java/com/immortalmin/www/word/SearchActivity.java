@@ -1,29 +1,22 @@
 package com.immortalmin.www.word;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -31,15 +24,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.security.auth.Subject;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -233,7 +220,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      */
     public void jump_to_example(String wid,String dict_source){
 //        Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
-        Intent intent = new Intent(SearchActivity.this, ExampleTestActivity.class);
+        Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
 //        intent.putExtra("id",id);
         intent.putExtra("wid",wid);
         intent.putExtra("dict_source",dict_source);

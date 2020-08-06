@@ -38,7 +38,7 @@
         tools:replace="android:icon,android:theme,android:allowBackup">
         <activity android:name=".MainActivity" />
         <activity android:name=".collectActivity" />
-        <activity android:name=".ExampleActivity" />
+        <activity android:name=".ExampleOldVersionActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
@@ -58,7 +58,7 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
-        <activity android:name=".ExampleTestActivity" />
+        <activity android:name=".ExampleActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".ReviewWordActivity"></activity>
     </application>

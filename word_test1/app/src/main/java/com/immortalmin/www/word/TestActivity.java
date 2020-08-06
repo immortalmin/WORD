@@ -417,7 +417,7 @@ public class TestActivity extends Activity implements View.OnClickListener{
      * @param id
      */
     public void jump_to_example(int id){
-        Intent intent = new Intent(TestActivity.this, ExampleActivity.class);
+        Intent intent = new Intent(TestActivity.this, ExampleOldVersionActivity.class);
         intent.putExtra("id",recite_list.get(id).get("id").toString());
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
