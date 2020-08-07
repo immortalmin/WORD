@@ -333,7 +333,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             List<HashMap<String, Object>> review_list = null;//the list of word
             review_list =jsonRe.reciteData(result);
             int review_num = review_list.size();
-            btn_review.setText("复习\n"+review_num);
+            if(review_num == 0){
+                btn_review.setText("复习\n完成");
+            }else{
+                btn_review.setText("待复习\n"+review_num);
+            }
+
         });
         myAsyncTask.execute(jsonObject);
     }

@@ -73,7 +73,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private int mode = 0;
     private Boolean pron_lock = false;
     private HashMap<String, Object> now_words = null;
-    private static int group_num = 1;
+    private static int group_num = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

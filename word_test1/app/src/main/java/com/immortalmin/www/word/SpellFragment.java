@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -92,6 +94,33 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         finish_btn = (Button) getActivity().findViewById(R.id.finish_btn);
         cword.setOnClickListener(this);
         eword.setOnEditorActionListener(ewordEd);
+
+
+        // XXX:让其合并到OnEditorActionListener中
+        /**
+         * 在拼写错误并显示答案后，键盘有输入就清除单词
+         * 现在这样会先打出字，再清除，不美观
+         * 暂时没有想到好一点的办法
+         */
+        eword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(suspend_flag){
+                    suspend_flag = false;
+                    mHandler.obtainMessage(3).sendToTarget();
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         /**
          * 接受来自activity的数据
          */
@@ -109,11 +138,13 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         sound_success = soundPool.load(getActivity(), R.raw.bubble, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.drums, 1);
 
+        /**
+         * 让其播放完音频再进行后面的处理
+         */
         music_delay = new Runnable() {
             @Override
             public void run() {
                 mHandler.obtainMessage(3).sendToTarget();
-//                send_to_activity(judge_flag);
             }
         };
         /**
@@ -138,7 +169,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
 //        finish_btn.requestLayout();
     }
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void spellFragmentInteraction(HashMap<String, Object> res);
     }
 
