@@ -573,50 +573,87 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     }
 
+//    /**
+//     * spellfragment的回调函数
+//     *
+//     * @param WrongTimes
+//     */
+//    @Override
+//    public void spellFragmentInteraction(int WrongTimes) {
+//        HashMap<String, Object> correct_word = new HashMap<String, Object>();
+//        correct_word = recite_list.get(correct_ind);
+//        int er_times = Integer.valueOf(correct_word.get("error_times").toString());
+//        int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
+//        if ("1".equals(res.get("judge").toString())) {
+//            if (Boolean.valueOf(res.get("once_flag").toString())) {//一次就过
+//                finish_ind[correct_ind] = 1;
+//                finish_num++;
+//                total_progress.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        int pro_num = finish_num * 100 / recite_num;
+//                        total_progress.setProgress(pro_num);
+//                    }
+//                });
+//                correct_word.put("correct_times", co_times + 1);
+////                if (co_times + 1 >= prof_times) {
+////                    correct_word.put("prof_flag", 1);
+////                }
+//                recite_list.set(correct_ind, correct_word);
+//                update_sql_data(correct_ind,1);
+//            } else {//不是一次就过，下回重新拼写
+//                correct_word.put("error_times", er_times + 1);
+//                correct_word.put("today_correct_times", 0);
+//                recite_list.set(correct_ind, correct_word);
+//            }
+//            mHandler.obtainMessage(0).sendToTarget();
+//            if (finish_num >= recite_num) {
+//                update_all();
+//            }else{
+//                start_recite();
+//            }
+//        } else {//回答错误，重新拼写
+//            correct_word.put("error_times", er_times + 1);
+//            recite_list.set(correct_ind, correct_word);
+//            now_words.put("once_flag", false);
+//            start_spell_mode(now_words);
+//        }
+//    }
+
     /**
      * spellfragment的回调函数
      *
-     * @param res
+     * @param WrongTimes
      */
     @Override
-    public void spellFragmentInteraction(HashMap<String, Object> res) {
+    public void spellFragmentInteraction(int WrongTimes) {
         HashMap<String, Object> correct_word = new HashMap<String, Object>();
         correct_word = recite_list.get(correct_ind);
         int er_times = Integer.valueOf(correct_word.get("error_times").toString());
         int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
-        if ("1".equals(res.get("judge").toString())) {
-            if (Boolean.valueOf(res.get("once_flag").toString())) {//一次就过
-                finish_ind[correct_ind] = 1;
-                finish_num++;
-                total_progress.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        int pro_num = finish_num * 100 / recite_num;
-                        total_progress.setProgress(pro_num);
-                    }
-                });
-                correct_word.put("correct_times", co_times + 1);
-//                if (co_times + 1 >= prof_times) {
-//                    correct_word.put("prof_flag", 1);
-//                }
-                recite_list.set(correct_ind, correct_word);
-                update_sql_data(correct_ind,1);
-            } else {//不是一次就过，下回重新拼写
-                correct_word.put("error_times", er_times + 1);
-                correct_word.put("today_correct_times", 0);
-                recite_list.set(correct_ind, correct_word);
-            }
-            mHandler.obtainMessage(0).sendToTarget();
-            if (finish_num >= recite_num) {
-                update_all();
-            }else{
-                start_recite();
-            }
-        } else {//回答错误，重新拼写
-            correct_word.put("error_times", er_times + 1);
+        if (WrongTimes == 0) {//一次就过
+            finish_ind[correct_ind] = 1;
+            finish_num++;
+            total_progress.post(new Runnable() {
+                @Override
+                public void run() {
+                    int pro_num = finish_num * 100 / recite_num;
+                    total_progress.setProgress(pro_num);
+                }
+            });
+            correct_word.put("correct_times", co_times + 1);
             recite_list.set(correct_ind, correct_word);
-            now_words.put("once_flag", false);
-            start_spell_mode(now_words);
+            update_sql_data(correct_ind,1);
+        } else {//不是一次就过，下回重新拼写
+            correct_word.put("error_times", er_times + WrongTimes);
+            correct_word.put("today_correct_times", 0);
+            recite_list.set(correct_ind, correct_word);
+        }
+        mHandler.obtainMessage(0).sendToTarget();
+        if (finish_num >= recite_num) {
+            update_all();
+        }else{
+            start_recite();
         }
     }
 
