@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import static android.content.Context.AUDIO_SERVICE;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
+//XXX:如果回答正确，并且下一轮也是拼写，不要关闭键盘
 public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
     private OnFragmentInteractionListener mListener;
@@ -50,6 +51,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Button finish_btn;
     private int WrongTimes=0;//拼写错误的次数
     private Boolean suspend_flag = false;//拼写错误的话，显示正确结果，等用户再次回车或输入，再清除。true代表正在显示正确结果
+    private Boolean btn_lock = false;//用来禁止连续的回车。true表示开启，等新一轮开启时，再关闭
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
     /**
@@ -172,12 +174,14 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            if(suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+            if(btn_lock) return true;
+            if(!btn_lock && suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
                 suspend_flag = false;
+                btn_lock = true;
                 mHandler.sendEmptyMessage(2);//重新显示题目
                 return true;
             }
-            if (keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+            if (!btn_lock && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 resetVolume();
                 mediaPlayer.start();
                 user_ans = eword.getText().toString().replaceAll(" ","");
@@ -186,6 +190,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(0).sendToTarget();
                     suspend_flag = false;
+                    btn_lock = true;
                     scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
                 }else{
                     WrongTimes++;
@@ -221,6 +226,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     }
                     eword.setTextColor(Color.parseColor("#000000"));
                     correct_word.setVisibility(View.INVISIBLE);
+                    btn_lock = false;
                     break;
                 case 3://go back to recite_word_activity
                     //关闭键盘

@@ -146,7 +146,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 if(isCountdownfinish){
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                     changed_volume++;
-                    mediaPlayer.start();
+//                    mediaPlayer.start();
                 }else{
                     cpb_countdown.finishProgressBar();
                 }
