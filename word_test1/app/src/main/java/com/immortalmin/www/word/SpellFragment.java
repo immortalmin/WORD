@@ -120,8 +120,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     suspend_flag = false;
                     Message msg = new Message();
                     msg.what = 2;
-                    //字符串中最后一个字符是刚输入的，所以只保留最后一个字符
-                    msg.obj = s.charAt(s.length()-1);
+                    //只保留下标前的一个字符，即刚输入的字符
+                    msg.obj = s.charAt(eword.getSelectionStart()-1);
                     mHandler.sendMessage(msg);
                 }
             }

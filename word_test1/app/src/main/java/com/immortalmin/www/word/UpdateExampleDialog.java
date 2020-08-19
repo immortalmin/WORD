@@ -21,7 +21,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     private Context context;
     private HashMap<String,Object>data = null;
     private Button commit_btn,cancel_btn;
-    private EditText word_meaning,E_sentence,C_translate;
+    private MyEditText word_meaning,E_sentence,C_translate;
     private OnDialogInteractionListener listener;
     private boolean cancel_flag=false;
     public UpdateExampleDialog(Context context) {
@@ -44,17 +44,16 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.update_example,null);
-//        Log.i("ccc",context.getClass().getName());
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-//        Log.i("ccc","after context");
-        word_meaning = (EditText)view.findViewById(R.id.word_meaning);
-        E_sentence = (EditText)view.findViewById(R.id.E_sentence);
-        C_translate = (EditText)view.findViewById(R.id.C_translate);
+        word_meaning = (MyEditText)view.findViewById(R.id.word_meaning);
+        E_sentence = (MyEditText)view.findViewById(R.id.E_sentence);
+        C_translate = (MyEditText)view.findViewById(R.id.C_translate);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
 
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
+
         mHandler.obtainMessage(0).sendToTarget();
         setContentView(view);
     }
