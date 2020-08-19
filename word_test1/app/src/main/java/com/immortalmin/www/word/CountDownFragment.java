@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.AUDIO_SERVICE;
 
+//XXX:发音逻辑有点混乱，之后记得重写
 public class CountDownFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
@@ -95,6 +96,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         sound_acquaint = soundPool.load(getActivity(), R.raw.bubble1, 1);
         sound_vague = soundPool.load(getActivity(), R.raw.bubble2, 1);
         sound_unknown = soundPool.load(getActivity(), R.raw.bubble3, 1);
+        //点击按钮后延迟跳转
         music_delay = new Runnable() {
             @Override
             public void run() {
@@ -159,7 +161,14 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 }
                 soundPool.play(sound_acquaint, 0.3f, 0.3f, 0, 0, 1.0f);
                 user_sel = 1;
-                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
+                //如果已经发过音的，只延迟1000毫秒就跳转
+                //没发过音的，延迟单词音频的时间再跳转
+                if(pron_flag){
+                    scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
+                }else{
+                    scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
+                }
+
                 break;
             case R.id.vague:
                 resetVolume();
@@ -239,6 +248,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                         display_pro();
                     }
                 });
+                pron_flag = false;//因为一轮只需要发一次音，既然开始要发音，最后就不需要发音了
                 mediaPlayer.start();
                 break;
             case "2"://show word_ch
@@ -256,6 +266,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                         display_pro();
                     }
                 });
+                pron_flag = false;
                 mediaPlayer.start();
                 break;
         }
