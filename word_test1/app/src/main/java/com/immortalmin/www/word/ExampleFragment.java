@@ -305,29 +305,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         del_alert.show();
     }
 
-
-    /**
-     * discontinue from 5/12/2020
-     */
-    private void delete_example(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/delete_example.php",jsonObject);
-            }
-        }).start();
-        examplelist.remove(del_index);
-        exampleAdapter.notifyDataSetChanged();
-        if(examplelist.size()==0){
-            non_example.setVisibility(View.VISIBLE);
-            example_list.setVisibility(View.INVISIBLE);
-        }else{
-            non_example.setVisibility(View.INVISIBLE);
-            example_list.setVisibility(View.VISIBLE);
-        }
-    }
-
     private void deleteExample(String eid){
         JSONObject jsonObject = new JSONObject();
         try{

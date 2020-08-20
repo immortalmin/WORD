@@ -46,16 +46,14 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
     private Button commit_btn,cancel_btn,first_add_btn;
-    private EditText word_group,C_meaning;
+    private MyEditText word_group,C_meaning;
     private TextView tv2;
     private OnDialogInteractionListener listener;
-    private EditText[][] word = new EditText[10][5];
-    private RelativeLayout[][] word_layout = new RelativeLayout[10][5];
+    private MyEditText[][] word = new MyEditText[100][5];
     private RelativeLayout[] btn_layout = new RelativeLayout[10];
     private LinearLayout example_layout;
     private Button[] del_btn = new Button[10];
     private Button[] add_btn = new Button[10];
-    private Button[][] operate_btn = new Button[10][5];
     private int index=0;
     private boolean[] del_flag = new boolean[10];
     private int sum=0;//统计例句的数量
@@ -83,8 +81,8 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.add_word,null);
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-        word_group = (EditText)view.findViewById(R.id.word_group);
-        C_meaning = (EditText)view.findViewById(R.id.C_meaning);
+        word_group = (MyEditText)view.findViewById(R.id.word_group);
+        C_meaning = (MyEditText)view.findViewById(R.id.C_meaning);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
         cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
         first_add_btn = (Button)view.findViewById(R.id.first_add_btn);
@@ -95,10 +93,36 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         cancel_btn.setOnClickListener(this);
         first_add_btn.setOnClickListener(this);
         tv2.setOnClickListener(this);
+
+        //XXX:因为最初是存在“新增例句”的，之后C_meaning的内容改变之后，其粘贴的内容无法同步更新，所以先用这个解决
+        C_meaning.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //如果先增加了例句框，再修改C_meaning，其粘贴的内容依旧无法同步，因此对每个现有的输入框都重新设置PasteString
+                for(int i=0;i<index;i++){
+                    if(del_flag[i]) word[i][0].setPasteString(editable.toString());
+                }
+            }
+        });
         setContentView(view);
         Arrays.fill(del_flag,true);
         add_view();
-        word_group.setText(word_text);
+        //FIXME:word_group在未获取焦点的情况下，显得异常的粗
+//        word_group.setText(word_text);
+        Message message = new Message();
+        message.what = 3;
+        message.obj = word_text;
+        mHandler.sendMessage(message);
         if(word_text.length()>0){
             setfocus();
         }
@@ -116,7 +140,6 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
 
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void addWordInteraction(JSONObject jsonObject);
     }
 
@@ -161,113 +184,46 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 case 2:
                     cancel_flag = false;
                     break;
+                case 3:
+                    word_group.setText(message.obj.toString());
+                    break;
             }
             return false;
         }
     });
 
+
     private void add_view(){
-        final int ind=index;
         sum++;
         String[] hint = {"在例句中的意思","英文例句","中文翻译"};
-        Drawable paste_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.paste, null);
-        Drawable delete_icon = ResourcesCompat.getDrawable(context.getResources(), R.drawable.del3, null);
+        final int ind=index;
         for(int i=0;i<3;i++){
-            final int now_i = i;
-            // 1.创建外围LinearLayout控件
-            word_layout[ind][i] = new RelativeLayout(context);
-            RelativeLayout.LayoutParams eLayoutlayoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            eLayoutlayoutParams.setMargins(conversion(18), conversion(5), conversion(18), 0);
-//            eLayoutlayoutParams.setLayoutDirection(LinearLayout.HORIZONTAL);
-            word_layout[ind][i].setLayoutParams(eLayoutlayoutParams);
-            word_layout[ind][i].setGravity(Gravity.LEFT);
-            Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.word_input, null);
-            word_layout[ind][i].setBackground(d);
-            word_layout[ind][i].setPadding(conversion(10),0, conversion(10),0);
-            //2.word_meaning
-            word[ind][i] = new EditText(context);
+            word[ind][i] = new MyEditText(context);
             LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            word[ind][i].setPadding(0,0,50,0);
+            word_meaning_Params.setMargins(conversion(18), conversion(5), conversion(18), 0);
+            word[ind][i].setLayoutParams(word_meaning_Params);
+            word[ind][i].setHint(hint[i]);
+            if(i==0){
+                word[ind][i].setTextType(1);
+                word[ind][i].setPasteString(C_meaning.getText().toString());
+            }else{
+                word[ind][i].setTextType(0);
+            }
+            word[ind][i].setDisplayStyle(1);
             word[ind][i].setMaxLines(3);
             word[ind][i].setMinHeight(conversion(30));
-            word[ind][i].setLayoutParams(word_meaning_Params);
-            word[ind][i].setBackgroundColor(Color.parseColor("#00000000"));
-            word[ind][i].setHint(hint[i]);
-            word[ind][i].addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if(now_i==0){
-                        if(word[ind][now_i].getText().toString().length()==0){
-                            operate_btn[ind][now_i].setBackground(paste_icon);
-                        }else{
-                            operate_btn[ind][now_i].setBackground(delete_icon);
-                        }
-                    }else{
-                        if(word[ind][now_i].getText().toString().length()==0){
-                            operate_btn[ind][now_i].setVisibility(View.INVISIBLE);
-                        }else{
-                            operate_btn[ind][now_i].setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-            });
-            word_layout[ind][i].addView(word[ind][i]);
-
-            //操作按钮
-            operate_btn[ind][now_i] = new Button(context);
-            RelativeLayout.LayoutParams operate_btn_Params = new RelativeLayout.LayoutParams(conversion(20), conversion(20));
-            operate_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            operate_btn_Params.addRule(RelativeLayout.CENTER_VERTICAL);
-            operate_btn[ind][now_i].setLayoutParams(operate_btn_Params);
-            if(i==0){
-                operate_btn[ind][now_i].setBackground(paste_icon);
-                operate_btn[ind][now_i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(word[ind][0].getText().toString().length()==0){
-                            word[ind][0].setText(C_meaning.getText());
-                        }else{
-                            word[ind][0].setText("");
-                        }
-                    }
-                });
-            }else{
-                operate_btn[ind][now_i].setBackground(delete_icon);
-                operate_btn[ind][now_i].setVisibility(View.INVISIBLE);
-                operate_btn[ind][now_i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        word[ind][now_i].setText("");
-                    }
-                });
-            }
-            word_layout[ind][i].addView(operate_btn[ind][now_i]);
-            example_layout.addView(word_layout[ind][i]);
+            example_layout.addView(word[ind][i]);
         }
-
-        //按钮
         btn_layout[ind] = new RelativeLayout(context);
         LinearLayout.LayoutParams btn_layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         btn_layout[ind].setLayoutParams(btn_layoutParams);
+
         del_btn[ind] = new Button(context);
         RelativeLayout.LayoutParams del_btn_Params = new RelativeLayout.LayoutParams(
-                conversion(25),
-                conversion(25));
+                conversion(25), conversion(25));
         del_btn_Params.setMargins(conversion(20), 0, conversion(18), 0);
         del_btn_Params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         del_btn[ind].setLayoutParams(del_btn_Params);
@@ -300,13 +256,13 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 del_flag[ind]=false;
-                example_layout.removeView(word_layout[ind][0]);
-                example_layout.removeView(word_layout[ind][1]);
-                example_layout.removeView(word_layout[ind][2]);
+                example_layout.removeView(word[ind][0]);
+                example_layout.removeView(word[ind][1]);
+                example_layout.removeView(word[ind][2]);
                 example_layout.removeView(btn_layout[ind]);
                 sum--;
                 if(sum==0){
-                    mHandler.obtainMessage(1).sendToTarget();
+                    first_add_btn.setVisibility(View.VISIBLE);
                 }
             }
         });

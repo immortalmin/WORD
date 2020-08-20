@@ -16,12 +16,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+//XXX:word_en本该设置为有粘贴按钮的输入框，但是因为没办法得到需要的文本内容，暂时搁置
 public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
     private HashMap<String,Object>data = null;
     private Button commit_btn,cancel_btn;
-    private MyEditText word_meaning,E_sentence,C_translate;
+    private MyEditText word_en,E_sentence,C_translate;
     private OnDialogInteractionListener listener;
     private boolean cancel_flag=false;
     public UpdateExampleDialog(Context context) {
@@ -45,7 +46,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.update_example,null);
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-        word_meaning = (MyEditText)view.findViewById(R.id.word_meaning);
+        word_en = (MyEditText)view.findViewById(R.id.word_en);
         E_sentence = (MyEditText)view.findViewById(R.id.E_sentence);
         C_translate = (MyEditText)view.findViewById(R.id.C_translate);
         commit_btn = (Button)view.findViewById(R.id.commit_btn);
@@ -63,7 +64,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_meaning.setText(data.get("word_en").toString());
+                    word_en.setText(data.get("word_en").toString());
                     E_sentence.setText(data.get("E_sentence").toString());
                     C_translate.setText(data.get("C_translate").toString());
                     break;
@@ -107,7 +108,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
 
     private boolean judge(){
         String s1,s2,s3;
-        s1 = word_meaning.getText().toString();
+        s1 = word_en.getText().toString();
         s2 = E_sentence.getText().toString();
         s3 = C_translate.getText().toString();
         if(s1.length()==0||s2.length()==0||s3.length()==0){
@@ -124,7 +125,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("eid",data.get("eid").toString());
-            jsonObject.put("word_meaning",word_meaning.getText().toString());
+            jsonObject.put("word_meaning",word_en.getText().toString());
             jsonObject.put("E_sentence",E_sentence.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_translate",C_translate.getText().toString());
         }catch (JSONException e){

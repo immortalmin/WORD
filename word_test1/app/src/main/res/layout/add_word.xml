@@ -2,8 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/worddialog_round_corners"
     android:maxHeight="500dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
 
@@ -17,48 +20,73 @@
         android:textColor="#ffffff"
         android:textSize="15dp" />
 
-    <LinearLayout
-        android:id="@+id/word_group_lin"
-        style="@style/WordInputStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/word_group_lin"-->
+<!--        style="@style/WordInputStyle"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp">-->
 
-        <EditText
-            android:id="@+id/word_group"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="#00000000"
-            android:hint="单词"
-            android:text="" />
+<!--        <EditText-->
+<!--            android:id="@+id/word_group"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="#00000000"-->
+<!--            android:hint="单词"-->
+<!--            android:text="" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
-    <LinearLayout
-        android:id="@+id/C_meaning_lin"
-        style="@style/WordInputStyle"
+<!--    <LinearLayout-->
+<!--        android:id="@+id/C_meaning_lin"-->
+<!--        style="@style/WordInputStyle"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:focusable="true"-->
+<!--        android:focusableInTouchMode="true"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/C_meaning"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="#00000000"-->
+<!--            android:hint="中文意思"-->
+<!--            android:text="" />-->
+
+<!--    </LinearLayout>-->
+
+    <com.immortalmin.www.word.MyEditText
+        android:id="@+id/word_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:maxLines="3"
+        android:minHeight="30dp"
+        android:hint="单词"
+        app:DisplayStyle="1"
+        app:TextType="0"/>
 
-        <EditText
-            android:id="@+id/C_meaning"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="#00000000"
-            android:hint="中文意思"
-            android:text="" />
-
-    </LinearLayout>
-
+    <com.immortalmin.www.word.MyEditText
+        android:id="@+id/C_meaning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:maxLines="3"
+        android:minHeight="30dp"
+        android:hint="中文意思"
+        app:DisplayStyle="1"
+        app:TextType="0"/>
 
     <View
         android:id="@+id/view1"

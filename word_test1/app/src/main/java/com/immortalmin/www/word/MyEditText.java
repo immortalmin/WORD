@@ -190,6 +190,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         if("".equals(hindString)){
             hindString = getHint().toString();
         }
+        //XXX:单行文本样式没有绘制提示文本
         if(DisplayStyle==1){
             if(!isFold){
                 drawText(canvas);
