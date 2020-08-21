@@ -88,7 +88,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         this.backdrop = backdrop;
         this.dict_source = dict_source;
         getExampleData();
-//        getwordlist(true);
     }
 
     public void setExamplelist(ArrayList<HashMap<String,Object>> data,boolean isTobottom){
@@ -141,8 +140,10 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
 
                     break;
                 case 2:
+
                     break;
                 case 3:
+
                     break;
                 case 4:
 

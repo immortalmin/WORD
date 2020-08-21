@@ -220,7 +220,6 @@ public class ExampleActivity extends AppCompatActivity implements
         }
     }
 
-    //mHandler.obtainMessage(0).sendToTarget();
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -268,22 +267,12 @@ public class ExampleActivity extends AppCompatActivity implements
                         collect.setBackground(drawable);
                     }
                     //set music of word
-//                    current_word = word.get("word_group").toString();
                     current_word = word.get("word_en").toString();
                     resetMediaPlayer(current_word);
                     if(first_coming){
                         mediaPlayer.start();
                         first_coming = false;
                     }
-                    //collect
-//                    collect_flag = Integer.valueOf(word.get("collect").toString());
-//                    if(collect_flag==1){
-//                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
-//                        collect.setBackground(drawable);
-//                    }else{
-//                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
-//                        collect.setBackground(drawable);
-//                    }
                     break;
                 case 5:
                     Glide.with(ExampleActivity.this).load(captureUtil.getcapture(ExampleActivity.this))
@@ -368,12 +357,6 @@ public class ExampleActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         deleteWord();
-//                        delete_word();
-//                        Intent intent = new Intent();
-//                        setResult(2,intent);
-//                        finish();
-//                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-//                        Toast.makeText(ExampleTestActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
                         sweetAlertDialog.cancel();
                     }
                 })
@@ -389,24 +372,6 @@ public class ExampleActivity extends AppCompatActivity implements
         del_alert.show();
     }
 
-    /**
-     * discontinue from 5/12/2020
-     */
-    private void delete_word(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("id",word.get("wid"));
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/delete_word.php",jsonObject);
-            }
-        }).start();
-    }
 
     private void deleteWord(){
         isChanged = true;
@@ -428,35 +393,6 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-    /**
-     * discontinue from 5/16/2020
-     * 0:取消收藏；1:添加收藏
-     * @param collect
-     */
-    private void update_collect(int collect){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    if(collect==0){
-                        jsonObject.put("rid",word.get("rid"));
-                        jsonObject.put("collect",0);
-                    }else{
-                        jsonObject.put("uid",userData.getUid());
-                        jsonObject.put("wid",word.get("wid"));
-                        jsonObject.put("collect",1);
-                        jsonObject.put("dict_source",dict_source);
-                    }
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                String jsonstr = httpGetContext.getData("http://47.98.239.237/word/php_file2/update_collect.php",jsonObject);
-
-            }
-        }).start();
-    }
 
     /**
      * 0:取消收藏；1:添加收藏
@@ -482,35 +418,13 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.setLoadDataComplete((result)->{
             if(sel==1){
                 word = jsonRe.wordData2(result);
+                Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
             }
             collect.setClickable(true);
         });
         myAsyncTask.execute(jsonObject);
-    }
-
-
-    /**
-     * discontinue from 5/12/2020
-     */
-    private void getwordlist() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",userData.getUid());
-                    jsonObject.put("wid",Integer.valueOf(wid));
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getworddata.php",jsonObject);
-                word = jsonRe.wordData(wordjson);
-//                String examplejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getexampledata.php",jsonObject);
-                mHandler.obtainMessage(4).sendToTarget();
-            }
-        }).start();
-//        Log.i("ccc",word.toString());
     }
 
     public void getWordData(){

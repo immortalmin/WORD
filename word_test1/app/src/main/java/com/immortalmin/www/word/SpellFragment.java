@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -184,9 +185,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             if (!btn_lock && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 resetVolume();
                 mediaPlayer.start();
-                user_ans = eword.getText().toString().replaceAll(" ","");
-                String co_word = word_en.replaceAll(" ","");
-                if(co_word.equals(user_ans)){
+                if(Comparison(eword.getText().toString(),word_en)){
                     soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(0).sendToTarget();
                     suspend_flag = false;
@@ -204,11 +203,30 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         }
     };
 
+    /**
+     * 校对机制
+     * 去除除英文字母以外所有的字符
+     * 不分大小写
+     * 希望实现 /两边的单词可以互换
+     * @param s1
+     * @param s2
+     * @return
+     */
+    Boolean Comparison(String s1,String s2){
+        s1 = s1.replaceAll("[^a-zA-Z]","").toLowerCase();
+        s2 = s2.replaceAll("[^a-zA-Z]","").toLowerCase();
+        if(s1.equals(s2)) return true;
+        return false;
+    }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0://correct
+                    eword.setText(word_en);
+                    eword.setSelection(word_en.length());
+                    eword.setCursorVisible(false);//隐藏光标
                     eword.setTextColor(Color.parseColor("#05f725"));
                     break;
                 case 1://wrong
@@ -279,10 +297,22 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         changed_volume = 0;
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
+        eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
+
         this.mediaPlayer = (MediaPlayer)words.get("media_player");
         mHandler.sendEmptyMessage(2);
         showInput(eword);
+    }
+
+    /**
+     * 为控件自动获取焦点
+     */
+    private void setfocus(View view) {
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     /**

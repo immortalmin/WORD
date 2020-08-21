@@ -117,24 +117,25 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         setContentView(view);
         Arrays.fill(del_flag,true);
         add_view();
-        //FIXME:word_group在未获取焦点的情况下，显得异常的粗
-//        word_group.setText(word_text);
+
         Message message = new Message();
         message.what = 3;
         message.obj = word_text;
         mHandler.sendMessage(message);
+        //FIXME:word_group在未获取焦点的情况下，显得异常的粗。暂时的解决办法是自动获取焦点，再转移焦点
+        setfocus(word_group);
         if(word_text.length()>0){
-            setfocus();
+            setfocus(C_meaning);
         }
     }
 
     /**
-     * 为word_group自动获取焦点
+     * 为控件自动获取焦点
      */
-    private void setfocus() {
-        C_meaning.setFocusable(true);
-        C_meaning.setFocusableInTouchMode(true);
-        C_meaning.requestFocus();
+    private void setfocus(View view) {
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 

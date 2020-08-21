@@ -78,7 +78,6 @@ public class ReciteWordActivity extends AppCompatActivity
     private int pre_ind = 0;//上一个单词的id
     private Boolean pron_lock = false;
     private HashMap<String, Object> recite_info = new HashMap<String, Object>();
-    private Map<String, Object> update_word = new HashMap<String, Object>();
     private HashMap<String, Object> now_words = null;
     private static final String TAG = "ReciteWordActivity";
 
@@ -112,8 +111,6 @@ public class ReciteWordActivity extends AppCompatActivity
         pre_ind = correct_ind;
         //初始化单词音频
         resetMediaPlayer(recite_list.get(correct_ind).get("word_en").toString());
-//        Log.i("ccc", recite_list.get(correct_ind).get("id").toString());
-        int mode = 1;
         switch (today_finish) {//according to today_finish
             case 0://select
                 hideInput();
@@ -177,37 +174,6 @@ public class ReciteWordActivity extends AppCompatActivity
         correct_sel = (int) (Math.random() * 4);
         select[correct_sel] = correct_ind;
 
-    }
-
-    /**
-     * 获取今天要背的单词列表
-     * discontinue from 5/19/2020
-     */
-    private void getrecitelist() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("mount",recite_num + recite_scope);
-                    jsonObject.put("uid",userData.getUid());
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getrecitelist.php",jsonObject);
-                recite_list = jsonRe.reciteData(recitejson);
-                if(recite_list.size()<recite_num+recite_scope){
-                    Log.i("ccc","单词数不足");
-                    Looper.prepare();
-                    mHandler.obtainMessage(1).sendToTarget();
-                    inadequateDialog.show();
-                    Looper.loop();
-                }else{
-                    start_recite();
-                }
-            }
-        }).start();
     }
 
     private void getRecite(){
@@ -663,12 +629,7 @@ public class ReciteWordActivity extends AppCompatActivity
      * @param i
      */
     public void update_sql_data(int i,int what) {
-        update_word  = new HashMap<>();
-//        update_word.put("cid",recite_list.get(i).get("cid").toString());
-//        update_word.put("correct_times", recite_list.get(i).get("correct_times").toString());
-//        update_word.put("error_times", recite_list.get(i).get("error_times").toString());
         UpdateServer updateServer = new UpdateServer();
-//        updateServer.sendMap(update_word);
         updateServer.sendMap(recite_list.get(i),what);
         scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
     }
@@ -684,7 +645,6 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         mHandler.obtainMessage(1).sendToTarget();
         finishDialog.show();
-//        return_main();
     }
 
     /**
@@ -696,11 +656,10 @@ public class ReciteWordActivity extends AppCompatActivity
         Intent intent = new Intent(ReciteWordActivity.this, ExampleActivity.class);
         intent.putExtra("wid", recite_list.get(id).get("wid").toString());
         intent.putExtra("dict_source", recite_list.get(id).get("dict_source").toString());
-//        startActivity(intent);
         startActivityForResult(intent, 1);
-
     }
 
+    //FIXME:如果是从单词详情界面返回，并且下一轮是拼写模式，键盘不会自动弹出
     /**
      * 子页面跳回
      *

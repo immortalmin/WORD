@@ -26,7 +26,7 @@ import org.w3c.dom.Text;
 import java.nio.channels.NonReadableChannelException;
 import java.util.Locale;
 
-
+//FIXME:在未获取焦点的情况下直接填充文本，会显得臃肿
 /**
  * 参考博客：https://www.jianshu.com/p/7717cda9eb2a
  * 未实现动画特效
