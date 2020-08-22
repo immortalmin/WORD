@@ -250,6 +250,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     //关闭键盘
                     InputMethodManager InputManger = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     InputManger.hideSoftInputFromWindow(eword.getWindowToken(), 0);
+                    //停止播放音频
+                    if(mediaPlayer.isPlaying()){
+                        mediaPlayer.pause();
+                        mediaPlayer.seekTo(0);
+                    }
                     //向Activity返回数据
                     mListener.spellFragmentInteraction(WrongTimes);
                     break;
@@ -267,12 +272,16 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      * @param view
      */
     public void onClick(View view){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-        }
+//        if(mediaPlayer.isPlaying()){
+//            mediaPlayer.pause();
+//            mediaPlayer.seekTo(0);
+//        }
         switch(view.getId()){
             case R.id.cword:
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                }
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 changed_volume++;
                 mediaPlayer.start();

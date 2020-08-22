@@ -113,6 +113,10 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void display_pro(){
         isCountdownfinish = true;
         if(pron_flag){
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                mediaPlayer.seekTo(0);
+            }
             mediaPlayer.start();
         }
     }
@@ -138,10 +142,10 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         if(!living_flag){
             return ;
         }
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-        }
+//        if(mediaPlayer.isPlaying()){
+//            mediaPlayer.pause();
+//            mediaPlayer.seekTo(0);
+//        }
         living_flag = false;
         switch(view.getId()){
             case R.id.cpb_countdown:
@@ -209,6 +213,10 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
      * 向activity回送数据
      */
     public void send_to_activity(int res){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+        }
         if (mListener != null) {
             HashMap<String,Object> s = new HashMap<String,Object>();
             switch (res){

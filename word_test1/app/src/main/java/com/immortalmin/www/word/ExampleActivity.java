@@ -446,20 +446,6 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-    /**
-     * discontinue from 5/12/2020
-     * @param jsonObject
-     */
-    private void update_word(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_word.php",jsonObject);
-            }
-        }).start();
-    }
-
     public void updateWord(JSONObject jsonObject){
         isChanged = true;
         try{
@@ -474,21 +460,6 @@ public class ExampleActivity extends AppCompatActivity implements
             mHandler.obtainMessage(4).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
-    }
-
-
-    /**
-     * discontinue from 5/12/2020
-     */
-    private void update_example(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_example.php",jsonObject);
-            }
-        }).start();
-//        getwordlist();
     }
 
     private void updateExample(JSONObject jsonObject){
@@ -506,21 +477,6 @@ public class ExampleActivity extends AppCompatActivity implements
             exampleFragment.setExamplelist(examplelist,false);
         });
         myAsyncTask.execute(jsonObject);
-    }
-
-    /**
-     * discontinue from 5/12/2020
-     */
-    private void add_example(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String jsonstr = httpGetContext.getData("http://47.98.239.237/word/php_file2/addexample.php",jsonObject);
-                ArrayList<Integer> id_list = jsonRe.return_id(jsonstr);
-            }
-        }).start();
-//        getwordlist();
     }
 
     private void addExample(JSONObject jsonObject){

@@ -244,8 +244,8 @@ public class ReviewWordActivity extends AppCompatActivity
         mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog finish_alert = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                 .setTitleText("Good job!")
-                .setContentText("Continue to recite?")
-                .setConfirmText("fine")
+                .setContentText("There are "+(review_list.size()-review_num)+" words left unreviewed")
+                .setConfirmText("continue")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {

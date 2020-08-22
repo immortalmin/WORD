@@ -164,10 +164,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         if(!living_flag){
             return ;
         }
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-        }
+//        if(mediaPlayer.isPlaying()){
+//            mediaPlayer.pause();
+//            mediaPlayer.seekTo(0);
+//        }
         switch(view.getId()){
             case R.id.sel1:
                 living_flag = false;
@@ -225,6 +225,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.wordview:
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                }
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 changed_volume++;
                 mediaPlayer.start();
@@ -330,6 +334,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      * 向activity回送数据
      */
     private void send_to_activity(int ans){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+        }
         if (mListener != null) {
             HashMap<String,Object> res = new HashMap<String,Object>();
             if(ans==-1){//select unknown

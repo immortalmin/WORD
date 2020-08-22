@@ -207,6 +207,7 @@ public class ReciteWordActivity extends AppCompatActivity
             mediaPlayer.reset();
         }
         try{
+            word = word.replaceAll("sb.","somebody").replaceAll("sth.","something").replaceAll("/"," or ");
             mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
             mediaPlayer.prepare();
         }catch (IOException e){
