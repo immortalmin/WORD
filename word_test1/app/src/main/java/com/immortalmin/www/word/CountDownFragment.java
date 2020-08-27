@@ -142,17 +142,17 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         if(!living_flag){
             return ;
         }
-//        if(mediaPlayer.isPlaying()){
-//            mediaPlayer.pause();
-//            mediaPlayer.seekTo(0);
-//        }
         living_flag = false;
         switch(view.getId()){
             case R.id.cpb_countdown:
                 if(isCountdownfinish){
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                     changed_volume++;
-//                    mediaPlayer.start();
+                    if(mediaPlayer.isPlaying()){
+                        mediaPlayer.pause();
+                        mediaPlayer.seekTo(0);
+                    }
+                    mediaPlayer.start();
                 }else{
                     cpb_countdown.finishProgressBar();
                 }
@@ -182,7 +182,12 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 }
                 soundPool.play(sound_vague, 0.3f, 0.3f, 0, 0, 1.0f);
                 user_sel = 2;
-                scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                }
+                mediaPlayer.start();
+                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
                 break;
             case R.id.strange:
                 resetVolume();
@@ -195,7 +200,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
                 break;
         }
-//        send_to_activity(res);
     }
 
     /**

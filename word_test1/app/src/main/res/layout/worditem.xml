@@ -27,6 +27,20 @@
             android:textColor="#dcdedb"
             android:textSize="13dp"
             android:text="指责；指控"
+            android:ellipsize="end"
+            android:maxEms="15"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:id="@+id/next_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/word_en"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="8/29"
+            android:textColor="#B9CCA8"
             />
 
 

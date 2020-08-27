@@ -83,7 +83,6 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-//        getwordlist();
         init_user();
         getCollect();
         get_amount();
@@ -109,31 +108,9 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.finished_num:
-                Log.i("ccc","finished_num");
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
         }
-    }
-
-
-    private void getwordlist() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",sp.getString("uid",null));
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getwordlist.php",jsonObject);
-                List<HashMap<String,Object>> wlist =jsonRe.allwordData(recitejson);
-                mHandler.obtainMessage(0,wlist).sendToTarget();
-            }
-        }).start();
-
     }
 
     private void getCollect(){
@@ -148,6 +125,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         myAsyncTask.setLoadDataComplete((result)->{
             if(collect_list==null){
                 collect_list = jsonRe.collectData(result);
+                Log.i("ccc",collect_list.toString());
                 wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
                 listView.setAdapter(wordListAdapter);
             }else{
