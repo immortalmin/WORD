@@ -31,10 +31,14 @@ public class WordListAdapter extends BaseAdapter {
 
         WordView word_en = (WordView)v.findViewById(R.id.word_en);
         TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
+        TextView review_date = (TextView)v.findViewById(R.id.review_date);
 
         word_en.setmText(mdata.get(position).get("word_en").toString());
         word_en.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
         word_ch.setText(mdata.get(position).get("word_ch").toString());
+        String review_date_string = mdata.get(position).get("review_date").toString();
+        if("1970-01-01".equals(review_date_string) || "null".equals(review_date_string)) review_date.setText("");
+        else review_date.setText(review_date_string);
         return v;
     }
 

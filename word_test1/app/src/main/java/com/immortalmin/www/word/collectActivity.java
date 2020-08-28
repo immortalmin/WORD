@@ -125,7 +125,6 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         myAsyncTask.setLoadDataComplete((result)->{
             if(collect_list==null){
                 collect_list = jsonRe.collectData(result);
-                Log.i("ccc",collect_list.toString());
                 wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
                 listView.setAdapter(wordListAdapter);
             }else{

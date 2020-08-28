@@ -6,13 +6,22 @@
     tools:context=".ExampleFragment">
 
 
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:padding="0dp"
+        android:theme="@style/MyCheckBox"
+        android:text="只看自己的例句"
+        android:textColor="#A9EBF3"/>
 
     <ListView
         android:id="@+id/example_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_btn"
-        android:layout_marginTop="10dp"
+        android:layout_below="@+id/checkbox"
         android:layout_marginBottom="15dp"
         android:padding="0dp" />
 

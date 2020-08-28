@@ -38,4 +38,11 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <!--复选框样式，未勾选时为灰色，勾选好为蓝绿色-->
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#ADB6AF</item>
+        <item name="colorControlActivated">#4DCDDD</item>
+    </style>
+
+
 </resources>

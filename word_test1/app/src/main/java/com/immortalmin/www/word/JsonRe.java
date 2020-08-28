@@ -70,6 +70,7 @@ public class JsonRe {
                 word.put("correct_times",jsonObject.getString("correct_times"));
                 word.put("error_times",jsonObject.getString("error_times"));
                 word.put("last_date",jsonObject.getString("last_date"));
+                word.put("review_date",jsonObject.getString("review_date"));
                 word.put("dict_source",jsonObject.getString("dict_source"));
                 words.add(word);
             }

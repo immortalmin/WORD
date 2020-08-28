@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +43,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private ListView example_list;
     private TextView non_example;
     private ImageView backdrop;
+    private CheckBox checkbox;
     private ExampleAdapter exampleAdapter;
     private ArrayList<HashMap<String,Object>> examplelist = new ArrayList<>();
     private ArrayList<HashMap<String,Object>> temp = new ArrayList<>();
@@ -75,6 +78,26 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         super.onActivityCreated(savedInstanceState);
         example_list = (ListView)getActivity().findViewById(R.id.example_list);
         non_example = (TextView)getActivity().findViewById(R.id.non_example);
+        checkbox = (CheckBox)getActivity().findViewById(R.id.checkbox);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    //API level:21->24
+                    examplelist.removeIf(
+                            example->!"immortalmin".equals(example.get("source"))
+                    );
+                    exampleAdapter.notifyDataSetChanged();
+                }else{
+                    //TODO:取消勾选框后数据没有恢复
+                    examplelist.clear();
+                    examplelist.addAll(temp);
+                    Log.i("ccc",examplelist.toString());
+                    Log.i("ccc",temp.toString());
+                    exampleAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     public interface OnFragmentInteractionListener {
