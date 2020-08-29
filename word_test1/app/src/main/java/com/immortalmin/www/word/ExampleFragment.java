@@ -89,11 +89,8 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     );
                     exampleAdapter.notifyDataSetChanged();
                 }else{
-                    //TODO:取消勾选框后数据没有恢复
                     examplelist.clear();
                     examplelist.addAll(temp);
-                    Log.i("ccc",examplelist.toString());
-                    Log.i("ccc",temp.toString());
                     exampleAdapter.notifyDataSetChanged();
                 }
             }
@@ -205,81 +202,83 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         this.mode = mode;
     }
 
-    public void update_data(int what,JSONObject data){
-        try{
-            switch (what){
-                case 0://新增例句
-                    //有时间把translate换成sentences
-                    JSONArray jsonArray = (JSONArray)data.get("translate");
-                    HashMap<String,Object> sentence = new HashMap<>();
-                    for(int i=0;i<jsonArray.length();i++){
-                        sentence = new HashMap<>();
-                        JSONObject sentence_json = (JSONObject)jsonArray.opt(i);
-                        String word_meaning = sentence_json.getString("word_meaning").replaceAll("\\\\n","\\\n");
-                        String E_sentence = sentence_json.getString("E_sentence").replaceAll("\\\\n","\\\n");
-                        String C_translate = sentence_json.getString("C_translate").replaceAll("\\\\n","\\\n");
-                        if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
-                            word_meaning = word_meaning.substring(0,word_meaning.length()-1);
-                        }
-                        if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
-                            E_sentence = E_sentence.substring(0,E_sentence.length()-1);
-                        }
-                        if(C_translate.charAt(C_translate.length()-1) == '\n'){
-                            C_translate = C_translate.substring(0,C_translate.length()-1);
-                        }
-                        sentence.put("word_meaning",word_meaning);
-                        sentence.put("E_sentence",E_sentence);
-                        sentence.put("C_translate",C_translate);
-                        sentence.put("source",data.getString("source"));
-
-                    }
-                    examplelist.add(sentence);
-                    exampleAdapter.notifyDataSetChanged();
-                    Log.i("ccc","add_example:"+examplelist.toString());
-                    example_list.setSelection(examplelist.size()-1);
-                    getwordlist(false);
-                    break;
-                case 1://修改例句
-                    sentence = examplelist.get(edit_index);
-                    sentence.put("word_meaning",data.getString("word_meaning"));
-                    sentence.put("E_sentence",data.getString("E_sentence"));
-                    sentence.put("C_translate",data.getString("C_translate"));
-                    examplelist.set(edit_index,sentence);
-                    exampleAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-
-    }
+//    public void update_data(int what,JSONObject data){
+//        try{
+//            switch (what){
+//                case 0://新增例句
+//                    //有时间把translate换成sentences
+//                    JSONArray jsonArray = (JSONArray)data.get("translate");
+//                    HashMap<String,Object> sentence = new HashMap<>();
+//                    for(int i=0;i<jsonArray.length();i++){
+//                        sentence = new HashMap<>();
+//                        JSONObject sentence_json = (JSONObject)jsonArray.opt(i);
+//                        String word_meaning = sentence_json.getString("word_meaning").replaceAll("\\\\n","\\\n");
+//                        String E_sentence = sentence_json.getString("E_sentence").replaceAll("\\\\n","\\\n");
+//                        String C_translate = sentence_json.getString("C_translate").replaceAll("\\\\n","\\\n");
+//                        if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
+//                            word_meaning = word_meaning.substring(0,word_meaning.length()-1);
+//                        }
+//                        if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
+//                            E_sentence = E_sentence.substring(0,E_sentence.length()-1);
+//                        }
+//                        if(C_translate.charAt(C_translate.length()-1) == '\n'){
+//                            C_translate = C_translate.substring(0,C_translate.length()-1);
+//                        }
+//                        sentence.put("word_meaning",word_meaning);
+//                        sentence.put("E_sentence",E_sentence);
+//                        sentence.put("C_translate",C_translate);
+//                        sentence.put("source",data.getString("source"));
+//
+//                    }
+//                    examplelist.add(sentence);
+//                    exampleAdapter.notifyDataSetChanged();
+//                    Log.i("ccc","add_example:"+examplelist.toString());
+//                    example_list.setSelection(examplelist.size()-1);
+//                    getwordlist(false);
+//                    break;
+//                case 1://修改例句
+//                    sentence = examplelist.get(edit_index);
+//                    sentence.put("word_meaning",data.getString("word_meaning"));
+//                    sentence.put("E_sentence",data.getString("E_sentence"));
+//                    sentence.put("C_translate",data.getString("C_translate"));
+//                    examplelist.set(edit_index,sentence);
+//                    exampleAdapter.notifyDataSetChanged();
+//                    break;
+//            }
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     //examplelist将改变
     //是否需要更新UI
-    private void getwordlist(boolean isupdateUI) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",userData.getUid());
-                    jsonObject.put("wid",Integer.valueOf(wid));
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String examplejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getexampledata.php",jsonObject);
-//                examplelist = jsonRe.exampleData(examplejson);
-                temp = jsonRe.exampleData(examplejson);
-                examplelist.clear();
-                examplelist.addAll(temp);
-                if(isupdateUI){
-                    mHandler.obtainMessage(0).sendToTarget();
-                }
-            }
-        }).start();
-
-    }
+//    private void getwordlist(boolean isupdateUI) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                JSONObject jsonObject = new JSONObject();
+//                try{
+//                    jsonObject.put("uid",userData.getUid());
+//                    jsonObject.put("wid",Integer.valueOf(wid));
+//                }catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                HttpGetContext httpGetContext = new HttpGetContext();
+//                String examplejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getexampledata.php",jsonObject);
+////                examplelist = jsonRe.exampleData(examplejson);
+//                temp = jsonRe.exampleData(examplejson);
+////                temp.clear();
+////                temp.addAll(jsonRe.exampleData(examplejson));
+//                examplelist.clear();
+//                examplelist.addAll(temp);
+//                if(isupdateUI){
+//                    mHandler.obtainMessage(0).sendToTarget();
+//                }
+//            }
+//        }).start();
+//
+//    }
 
     private void getExampleData(){
         JSONObject jsonObject = new JSONObject();
@@ -295,6 +294,8 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist.clear();
             examplelist.addAll(jsonRe.exampleData(result));
+            temp.clear();
+            temp.addAll(jsonRe.exampleData(result));
             mHandler.obtainMessage(0).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
