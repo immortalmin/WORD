@@ -137,9 +137,11 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     if(examplelist.size() == 0){
                         non_example.setVisibility(View.VISIBLE);
                         example_list.setVisibility(View.INVISIBLE);
+                        checkbox.setVisibility(View.INVISIBLE);
                     }else{
                         non_example.setVisibility(View.INVISIBLE);
                         example_list.setVisibility(View.VISIBLE);
+                        checkbox.setVisibility(View.VISIBLE);
                         exampleAdapter = new ExampleAdapter(getActivity(),examplelist,mode,userData.getUsername());
                         example_list.setAdapter(exampleAdapter);
                         exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {

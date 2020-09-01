@@ -17,7 +17,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -522,42 +524,28 @@ public class ExampleActivity extends AppCompatActivity implements
 
     @Override
     public void updateExampleInteraction(JSONObject jsonObject){
-//        update_example(jsonObject);
         updateExample(jsonObject);
-//        try{
-//            jsonObject.put("source",userData.getUsername());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        exampleFragment.update_data(1,jsonObject);
     }
 
     @Override
     public void addExampleInteraction(JSONObject jsonObject){
         addExample(jsonObject);
-//        add_example(jsonObject);
-//        try{
-//            jsonObject.put("source",userData.getUsername());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        exampleFragment.update_data(0,jsonObject);
     }
 
     @Override
     public void updateWordInteraction(JSONObject jsonObject){
-//        try{
-////            jsonObject.put("uid",userData.getUid());
-////
-////            word.put("word_group",jsonObject.getString("word_group"));
-////            word.put("C_meaning",jsonObject.getString("C_meaning"));
-////        }catch (JSONException e){
-////            e.printStackTrace();
-////        }
-//        update_word(jsonObject);
         updateWord(jsonObject);
-//        mHandler.obtainMessage(4,jsonObject).sendToTarget();
+    }
 
+    /**
+     * 显示键盘
+     *
+     * @param et 输入焦点
+     */
+    public void showInput(final EditText et) {
+        et.requestFocus();
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
     }
 
     /**

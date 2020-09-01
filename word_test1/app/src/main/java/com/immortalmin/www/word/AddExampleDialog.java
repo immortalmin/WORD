@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,11 +25,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class AddExampleDialog extends Dialog implements View.OnClickListener{
 
@@ -207,6 +217,19 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         btn_layout[ind].addView(del_btn[ind]);
         example_layout.addView(btn_layout[ind]);
         index++;
+        if(sum==1){
+            setfocus(word[0][0]);
+        }
+    }
+
+    /**
+     * 为控件自动获取焦点
+     */
+    private void setfocus(View view) {
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     private int conversion(int value){
