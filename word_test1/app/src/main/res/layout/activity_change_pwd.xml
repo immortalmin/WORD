@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/launch2"
+    tools:context=".ChangePwdActivity">
+
+    <Button
+        android:id="@+id/return_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/return3"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/nav_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:textColor="#303133"
+        android:textStyle="bold"
+        android:text="修改密码" />
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        >
+
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/oldPwd_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="old password"
+            app:DisplayStyle="0"
+            app:TextType="0"
+            />
+
+        <TextView
+            android:id="@+id/oldPwd_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/oldPwd_et"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="2dp"
+            android:visibility="invisible"
+            android:text="密码错误"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/newPwd_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/oldPwd_et"
+            android:hint="new password"
+            app:DisplayStyle="0"
+            app:TextType="0"
+            />
+
+        <TextView
+            android:id="@+id/pwd_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newPwd_et"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="2dp"
+            android:visibility="invisible"
+            android:text="6-16位数字字母混合,首位不能为数字"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/confirmPwd_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/newPwd_et"
+            android:hint="confirm password"
+            app:DisplayStyle="0"
+            app:TextType="0"
+            />
+
+        <TextView
+            android:id="@+id/confirm_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confirmPwd_et"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="2dp"
+            android:visibility="invisible"
+            android:text="密码不一致"
+            android:textColor="#f70606"
+            />
+
+        <Button
+            android:id="@+id/confirm_btn"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/confirmPwd_et"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/login_btn"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:text="Confirm" />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

@@ -39,8 +39,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         EditDialog.OnDialogInteractionListener{
 
     private Button return_btn,logout_btn,motto_edit_btn,setting_btn;
-    private EditText recite_num,recite_scope;
-    private TextView nickname,motto;
+    private TextView nickname,motto,changePwd;
     private CircleImageView photo;
     private ImageView backdrop;
     private SignIn signIn;
@@ -60,10 +59,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         logout_btn = (Button)findViewById(R.id.logout_btn);
         motto_edit_btn = (Button)findViewById(R.id.motto_edit_btn);
         setting_btn = (Button)findViewById(R.id.setting_btn);
-        recite_num = (EditText)findViewById(R.id.recite_num);
-        recite_scope = (EditText)findViewById(R.id.recite_scope);
         nickname = (TextView) findViewById(R.id.nickname);
         motto = (TextView) findViewById(R.id.motto);
+        changePwd = (TextView) findViewById(R.id.changePwd);
         photo = (CircleImageView) findViewById(R.id.photo);
         signIn = (SignIn) findViewById(R.id.signIn);
         backdrop = (ImageView)findViewById(R.id.backdrop);
@@ -74,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setting_btn.setOnClickListener(this);
         nickname.setOnClickListener(this);
         motto.setOnClickListener(this);
+        changePwd.setOnClickListener(this);
         init();
     }
 
@@ -165,6 +164,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 intent = new Intent(ProfileActivity.this,SettingActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
+                break;
+            case R.id.changePwd:
+                intent = new Intent(ProfileActivity.this,ChangePwdActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }
     }
@@ -265,8 +269,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     photo.setImageBitmap((Bitmap)msg.obj);
                     break;
                 case 1:
-                    recite_num.setText(String.valueOf(userData.getRecite_num()));
-                    recite_scope.setText(String.valueOf(userData.getRecite_scope()));
                     nickname.setText(userData.getUsername());
                     motto.setText(userData.getMotto());
                     setImage(userData.getProfile_photo());

@@ -114,6 +114,10 @@ public class DataUtil {
     }
 
 
+    /**
+     * 从本地获取UserData?
+     * @return
+     */
     private UserData set_user(){
         UserData userData = new UserData();
         SharedPreferences sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);

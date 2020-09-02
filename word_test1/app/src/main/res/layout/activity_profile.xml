@@ -137,68 +137,20 @@
             android:paddingRight="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/changePwd"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="每组要完成背诵的数量"
-                    android:textSize="15dp"
-                    android:layout_weight="1"/>
-                <EditText
-                    android:id="@+id/recite_num"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:background="#00000000"
-                    android:paddingRight="5dp"
-                    android:textSize="18dp"
-                    android:maxLength="3"
-                    android:inputType="number"
-                    android:textAlignment="textEnd"
-                    android:text="20"/>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#eaeaea"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="6dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="修改密码"
+                android:textColor="#474D47"
+                android:textSize="16sp"
                 />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="每组额外加入的数量"
-                    android:textSize="15dp"
-                    android:layout_weight="1"/>
-                <EditText
-                    android:id="@+id/recite_scope"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:background="#00000000"
-                    android:paddingRight="5dp"
-                    android:textSize="18dp"
-                    android:inputType="number"
-                    android:maxLength="3"
-                    android:textAlignment="textEnd"
-                    android:text="10"/>
-            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#eaeaea"
+                android:background="#D8D5D5"
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
