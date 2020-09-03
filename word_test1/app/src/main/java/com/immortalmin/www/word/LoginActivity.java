@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(userdata.size()==0){
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(pwd.equals(userdata.get("password"))||(!isVisible&&!isChanged)){
+                    if(pwd.equals(userdata.get("password").toString())||(!isVisible&&!isChanged)){
                         //退出登录的话，不会执行下面的操作
                         if(isVisible){
                             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
