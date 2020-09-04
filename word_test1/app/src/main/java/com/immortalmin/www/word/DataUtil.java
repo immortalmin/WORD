@@ -50,6 +50,7 @@ public class DataUtil {
             //将用户数据保存到本地
             SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putString("username", userdata.get("username").toString())
+                    .putString("password",userdata.get("password").toString())
                     .putString("profile_photo", userdata.get("profile_photo").toString())
                     .putString("status","1")
                     .putString("email",userdata.get("email").toString())

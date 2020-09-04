@@ -219,11 +219,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
                 }else{
                     if(pwd.equals(userdata.get("password").toString())||(!isVisible&&!isChanged)){
-                        //退出登录的话，不会执行下面的操作
-                        if(isVisible){
+                        //退出登录再登录，只需要修改状态（else的部分）
+                        if(isVisible){//这里是新老用户登录，修改本地数据
                             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                             sp.edit().putString("username", userdata.get("username").toString())
-                                    .putString("password", password_et.getText().toString())
+//                                    .putString("password", password_et.getText().toString())
+                                    .putString("password", userdata.get("password").toString())
                                     .putString("profile_photo", userdata.get("profile_photo").toString())
                                     .putString("status","1")
                                     .putString("email",userdata.get("email").toString())
@@ -232,6 +233,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
                                     .apply();
                             get_setting();
+                        }else{//修改状态
+                            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                            sp.edit().putString("status","1").apply();
                         }
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         mHandler.obtainMessage(1).sendToTarget();

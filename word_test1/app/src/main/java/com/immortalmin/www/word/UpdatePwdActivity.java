@@ -121,6 +121,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
                     break;
                 case 4:
                     intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
                     overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
@@ -147,6 +148,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.return_btn:
                 intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
@@ -171,6 +173,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
         sp.edit().putString("username",userdata.get("username").toString())
 //                .putString("password",userdata.get("pwd").toString())
                 .putString("profile_photo",userdata.get("profile_photo").toString())
+                .putString("password",null)
                 .putString("status","0")
                 .apply();
         mHandler.obtainMessage(4).sendToTarget();
@@ -180,6 +183,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);

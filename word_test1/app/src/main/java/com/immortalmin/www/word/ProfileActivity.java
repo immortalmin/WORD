@@ -94,21 +94,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
-    }
+//    private void init_user(){
+//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//        userData.setUid(sp.getString("uid",null));
+//        userData.setRecite_num(sp.getInt("recite_num",20));
+//        userData.setRecite_scope(sp.getInt("recite_scope",10));
+//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        userData.setUsername(sp.getString("username",null));
+//        userData.setPassword(sp.getString("password",null));
+//        userData.setProfile_photo(sp.getString("profile_photo",null));
+//        userData.setStatus(sp.getString("status","0"));
+//        userData.setLast_login(sp.getLong("last_login",946656000000L));
+//        userData.setEmail(sp.getString("email",null));
+//        userData.setTelephone(sp.getString("telephone",null));
+//        userData.setMotto(sp.getString("motto",null));
+//    }
 
     public void onClick(View view){
         switch (view.getId()){

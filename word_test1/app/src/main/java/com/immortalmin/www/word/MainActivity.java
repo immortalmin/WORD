@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //更新单词复习数量
         getReviewList();
+
     }
 
     private void init_user(){
