@@ -45,6 +45,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private String fuzzy_str;
+    private DbDao mDbDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         listView1.setOnItemClickListener(listlistener1);
         searchView1.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
+        mDbDao = new DbDao(this);
         init_user();
         setCursorIcon();
     }
@@ -70,6 +73,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String wid = word_list.get(position).get("wid").toString();
             String dict_source = word_list.get(position).get("dict_source").toString();
             jump_to_example(wid,dict_source);
+            mDbDao.insertData(word_list.get(position).get("word_en").toString());
         }
     };
 

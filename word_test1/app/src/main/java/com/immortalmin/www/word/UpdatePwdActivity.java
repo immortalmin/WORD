@@ -147,9 +147,9 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
                 update_password(jsonObject);
                 break;
             case R.id.return_btn:
-                intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+//                intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

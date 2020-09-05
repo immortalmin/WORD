@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private SearchView search_bar;
     private RelativeLayout main_relative;
-    private WordDAO wordDAO = new WordDAO();
+//    private WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
-    private DBAdapter dbAdapter;
+//    private DBAdapter dbAdapter;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
     private int screen_width,screen_height;
@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
         });
-        dbAdapter = new DBAdapter(this);
-        dbAdapter.open();
+//        dbAdapter = new DBAdapter(this);
+//        dbAdapter.open();
 
 
         //广播关闭

@@ -147,9 +147,6 @@ public class SMSVerificationActivity extends AppCompatActivity implements View.O
                 }
                 break;
             case R.id.return_btn:
-//                intent = new Intent(SMSVerificationActivity.this,LoginActivity.class);
-//                startActivity(intent);
-                //TODO:从该页面返回，没返回到ChangePwdActivity
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -178,7 +175,6 @@ public class SMSVerificationActivity extends AppCompatActivity implements View.O
                     intent = new Intent(SMSVerificationActivity.this,UpdatePwdActivity.class);
                     intent.putExtra("telephone",telephone.getText().toString());
                     startActivity(intent);
-                    finish();
                     overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                     break;
                 case 1:

@@ -79,7 +79,6 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
             case R.id.SMS_btn:
                 Intent intent = new Intent(ChangePwdActivity.this, SMSVerificationActivity.class);
                 startActivity(intent);
-                finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }
