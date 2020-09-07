@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,7 +46,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private String fuzzy_str;
-    private DbDao mDbDao;
+    private DbDao mDbDao = new DbDao(SearchActivity.this);
+    private MyAsyncTask myAsyncTask;
+    private SearchAdapter searchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         listView1.setOnItemClickListener(listlistener1);
         searchView1.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
-        mDbDao = new DbDao(this);
         init_user();
         setCursorIcon();
     }
@@ -73,7 +75,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String wid = word_list.get(position).get("wid").toString();
             String dict_source = word_list.get(position).get("dict_source").toString();
             jump_to_example(wid,dict_source);
-            mDbDao.insertData(word_list.get(position).get("word_en").toString());
+            mDbDao.insertData(word_list.get(position));
         }
     };
 
@@ -96,6 +98,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             msg.what=1;
             msg.obj=s;
             mHandler.sendMessageDelayed(msg,200);
+            //查询历史记录
+//            if(mDbDao == null) mDbDao = new DbDao(SearchActivity.this);
+            List<HashMap<String,Object>> res = mDbDao.queryData(s);
+            Log.i("ccc",res.toString());
             return false;
         }
     };
@@ -122,25 +128,52 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * 模糊查询的线程
      * @param word
      */
-    private void fuzzyquery(final String word) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                word_list.clear();
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",userData.getUid());
-                    jsonObject.put("word",word);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-//                word_list = jsonRe.allwordData(recitejson);
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
-                word_list = jsonRe.getSearchData(recitejson);
+//    private void fuzzyquery(final String word) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                word_list.clear();
+//                JSONObject jsonObject = new JSONObject();
+//                try{
+//                    jsonObject.put("uid",userData.getUid());
+//                    jsonObject.put("word",word);
+//                }catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                HttpGetContext httpGetContext = new HttpGetContext();
+////                word_list = jsonRe.allwordData(recitejson);
+//                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
+//                word_list = jsonRe.getSearchData(recitejson);
+//
+//                mHandler.obtainMessage(0,word_list).sendToTarget();
+//            }
+//        }).start();
+//    }
+
+    /**
+     * 模糊查询
+     * @param word
+     */
+    private void getWordList(String word){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",12);
+            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("word",word);
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result -> {
+            word_list.clear();
+            word_list.addAll(jsonRe.getSearchData(result));
+            if(searchAdapter==null){
                 mHandler.obtainMessage(0,word_list).sendToTarget();
+            }else{
+                searchAdapter.notifyDataSetChanged();
             }
-        }).start();
+        }));
+        myAsyncTask.execute(jsonObject);
     }
 
 
@@ -163,7 +196,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
-                fuzzyquery(fuzzy_str);
+                getWordList(fuzzy_str);
             }
         }).start();
     }
@@ -175,10 +208,11 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             switch (message.what){
                 case 0:
                     word_list = (List<HashMap<String,Object>>)message.obj;
-                    listView1.setAdapter(new SearchAdapter(SearchActivity.this,word_list));
+                    searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
+                    listView1.setAdapter(searchAdapter);
                     break;
                 case 1:
-                    fuzzyquery((String)message.obj);
+                    getWordList((String)message.obj);
                     break;
                 case 2:
                     Glide.with(SearchActivity.this).load(captureUtil.getcapture(SearchActivity.this))
@@ -283,7 +317,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 2) {
-            fuzzyquery(fuzzy_str);
+            getWordList(fuzzy_str);
         }
     }
 }
