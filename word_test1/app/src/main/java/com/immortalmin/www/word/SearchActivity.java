@@ -37,29 +37,33 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         AddWordDialog.OnDialogInteractionListener{
 
     private SearchView searchView1;
-    private ListView listView1;
+    private ListView listView,historyListView;
     private ImageView imgview;
     private Button add_word_btn;
     private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
+    private List<HashMap<String,Object>> history_list= new ArrayList<HashMap<String,Object>>();
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private String fuzzy_str;
-    private DbDao mDbDao = new DbDao(SearchActivity.this);
+    private DbDao mDbDao;
     private MyAsyncTask myAsyncTask;
-    private SearchAdapter searchAdapter;
+    private SearchAdapter searchAdapter,historySearchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         searchView1 = (SearchView)findViewById(R.id.searchview1);
-        listView1 = (ListView)findViewById(R.id.ListView1);
+        listView = (ListView)findViewById(R.id.listView);
+        historyListView = (ListView)findViewById(R.id.historyListView);
         imgview = (ImageView)findViewById(R.id.imgview);
         add_word_btn = (Button)findViewById(R.id.add_word_btn);
+        mDbDao = new DbDao(SearchActivity.this);
         searchView1.setOnQueryTextListener(searchlistener1);
-        listView1.setOnItemClickListener(listlistener1);
+        listView.setOnItemClickListener(listlistener);
+//        historyListView.setOnItemClickListener(historyListlistener);
         searchView1.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
         init_user();
@@ -69,13 +73,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * listView1的点击事件
      */
-    ListView.OnItemClickListener listlistener1 = new AdapterView.OnItemClickListener() {
+    ListView.OnItemClickListener listlistener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             String wid = word_list.get(position).get("wid").toString();
             String dict_source = word_list.get(position).get("dict_source").toString();
             jump_to_example(wid,dict_source);
-            mDbDao.insertData(word_list.get(position));
+            mDbDao.insertData((HashMap<String, Object>)word_list.get(position));
         }
     };
 
@@ -100,8 +104,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             mHandler.sendMessageDelayed(msg,200);
             //查询历史记录
 //            if(mDbDao == null) mDbDao = new DbDao(SearchActivity.this);
-            List<HashMap<String,Object>> res = mDbDao.queryData(s);
-            Log.i("ccc",res.toString());
+            history_list.clear();
+            history_list.addAll(mDbDao.queryData(s));
+            if(historySearchAdapter==null){
+                mHandler.sendEmptyMessage(4);
+            }else{
+                historySearchAdapter.notifyDataSetChanged();
+            }
             return false;
         }
     };
@@ -209,7 +218,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 case 0:
                     word_list = (List<HashMap<String,Object>>)message.obj;
                     searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
-                    listView1.setAdapter(searchAdapter);
+                    listView.setAdapter(searchAdapter);
                     break;
                 case 1:
                     getWordList((String)message.obj);
@@ -221,6 +230,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     break;
                 case 3:
                     imgview.setVisibility(View.INVISIBLE);
+                    break;
+                case 4:
+                    historySearchAdapter = new SearchAdapter(SearchActivity.this,history_list);
+                    historyListView.setAdapter(historySearchAdapter);
                     break;
             }
             return false;

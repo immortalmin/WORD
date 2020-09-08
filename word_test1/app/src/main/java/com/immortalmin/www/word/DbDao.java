@@ -3,6 +3,7 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,11 @@ public class DbDao {
 
     public DbDao(Context context){
         this.context = context;
+        if(context==null){
+            Log.i("ccc","context is null");
+        }else{
+            Log.i("ccc","context is not null");
+        }
         init();
     }
 
@@ -26,7 +32,7 @@ public class DbDao {
     public List<HashMap<String,Object>> queryData(String tempName){
 
 //        List<String> data = new ArrayList<>();
-        //模糊查询
+////        模糊查询
 //        Cursor cursor = helper.getReadableDatabase().rawQuery("select id as _id,name from records where name like '%"+tempName+"%' order by id desc",null);
 //        while(cursor.moveToNext()){
 //            String name = cursor.getString(cursor.getColumnIndex("name"));
@@ -35,7 +41,6 @@ public class DbDao {
 //        cursor.close();
 //        return data;
         List<HashMap<String,Object>> wordList = new ArrayList<>();
-        //TODO:空指针异常
         Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source from records where word_en like '%"+tempName+"%'",null);
         while(cursor.moveToNext()){
             HashMap<String,Object> word = new HashMap<>();
@@ -74,21 +79,21 @@ public class DbDao {
         String word_en = word.get("word_en").toString();
         String word_ch = word.get("word_ch").toString();
         int dict_source = Integer.valueOf(word.get("dict_source").toString());
-        db.execSQL("insert into records(wid,word_en,word_ch,dict_source) values("+wid+","+word_en+","+word_ch+","+dict_source+")");
+        db.execSQL("insert into records(wid,word_en,word_ch,dict_source) values("+wid+",'"+word_en+"','"+word_ch+"',"+dict_source+")");
         db.close();
     }
 
     /**
      * 删除数据
-     * @param id
+     * @param name
      * @return
      */
-    public int delete(int id){
+    public int delete(String name){
         //获取数据
         SQLiteDatabase db = helper.getWritableDatabase();
         //执行SQL
-//        int delete = db.delete("records","name=?",new String[]{name});
-        int delete = db.delete("records","id="+id,null);
+        int delete = db.delete("records","name=?",new String[]{name});
+//        int delete = db.delete("records","id="+id,null);
         db.close();
         return delete;
     }
