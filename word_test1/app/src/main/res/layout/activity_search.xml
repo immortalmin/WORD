@@ -38,19 +38,31 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/searchview1">
 
+        <Button
+            android:id="@+id/clear_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/trash_can"
+            />
+
         <TextView
             android:id="@+id/historyTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="17sp"
             android:layout_centerHorizontal="true"
+            android:layout_alignBottom="@+id/clear_btn"
             android:text="历史记录"/>
+
         <ListView
             android:id="@+id/historyListView"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/historyTextView"
+            android:layout_below="@+id/clear_btn"
             android:divider="#00000000"
             android:dividerHeight="10dp"
             >
@@ -63,6 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/historyListView"
             android:layout_centerHorizontal="true"
+            android:textSize="17sp"
             android:text="新查询"/>
 
         <ListView

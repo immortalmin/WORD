@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
@@ -39,7 +40,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private SearchView searchView1;
     private ListView listView,historyListView;
     private ImageView imgview;
-    private Button add_word_btn;
+    private Button add_word_btn,clear_btn;
     private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
     private List<HashMap<String,Object>> history_list= new ArrayList<HashMap<String,Object>>();
     private JsonRe jsonRe= new JsonRe();
@@ -60,18 +61,20 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         historyListView = (ListView)findViewById(R.id.historyListView);
         imgview = (ImageView)findViewById(R.id.imgview);
         add_word_btn = (Button)findViewById(R.id.add_word_btn);
+        clear_btn = (Button)findViewById(R.id.clear_btn);
         mDbDao = new DbDao(SearchActivity.this);
         searchView1.setOnQueryTextListener(searchlistener1);
         listView.setOnItemClickListener(listlistener);
-//        historyListView.setOnItemClickListener(historyListlistener);
+        historyListView.setOnItemClickListener(historyListlistener);
         searchView1.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
+        clear_btn.setOnClickListener(this);
         init_user();
         setCursorIcon();
     }
 
     /**
-     * listView1的点击事件
+     * listView的点击事件
      */
     ListView.OnItemClickListener listlistener = new AdapterView.OnItemClickListener() {
         @Override
@@ -80,6 +83,19 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String dict_source = word_list.get(position).get("dict_source").toString();
             jump_to_example(wid,dict_source);
             mDbDao.insertData((HashMap<String, Object>)word_list.get(position));
+        }
+    };
+
+    /**
+     * historyListView的点击事件
+     */
+    ListView.OnItemClickListener historyListlistener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            String wid = history_list.get(position).get("wid").toString();
+            String dict_source = history_list.get(position).get("dict_source").toString();
+            jump_to_example(wid,dict_source);
+//            mDbDao.insertData((HashMap<String, Object>)word_list.get(position));
         }
     };
 
@@ -103,17 +119,24 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             msg.obj=s;
             mHandler.sendMessageDelayed(msg,200);
             //查询历史记录
-//            if(mDbDao == null) mDbDao = new DbDao(SearchActivity.this);
-            history_list.clear();
-            history_list.addAll(mDbDao.queryData(s));
-            if(historySearchAdapter==null){
-                mHandler.sendEmptyMessage(4);
-            }else{
-                historySearchAdapter.notifyDataSetChanged();
-            }
+            queryHistoryRecords(s);
             return false;
         }
     };
+
+    /**
+     * 查询历史记录
+     * @param s
+     */
+    private void queryHistoryRecords(String s){
+        history_list.clear();
+        history_list.addAll(mDbDao.queryData(s));
+        if(historySearchAdapter==null){
+            mHandler.sendEmptyMessage(4);
+        }else{
+            historySearchAdapter.notifyDataSetChanged();
+        }
+    }
 
 
     private void init_user(){
@@ -130,7 +153,37 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_word_btn:
                 showDialog();
                 break;
+            case R.id.clear_btn:
+                clear_dialog();
+                break;
         }
+    }
+
+    private void clear_dialog() {
+        mHandler.sendEmptyMessage(2);
+        SweetAlertDialog clear_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        clear_alert.setTitleText("Delete Records")
+                .setContentText("Are you sure to delete all history records?")
+                .setConfirmText("yes")
+                .setCancelText("nooo")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                        mHandler.sendEmptyMessage(3);
+                        mDbDao.deleteData();
+                        queryHistoryRecords(fuzzy_str);
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                        mHandler.sendEmptyMessage(3);
+                    }
+                });
+        clear_alert.setCancelable(false);
+        clear_alert.show();
     }
 
     /**
@@ -176,6 +229,21 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         myAsyncTask.setLoadDataComplete((result -> {
             word_list.clear();
             word_list.addAll(jsonRe.getSearchData(result));
+            //去除新查询中已存在于历史记录中的单词
+            ArrayList<String> history_word = new ArrayList<>();
+            ArrayList<String> new_word = new ArrayList<>();
+            for(int i=0;i<history_list.size();i++){
+                history_word.add(history_list.get(i).get("word_en").toString());
+            }
+            for(int i=0;i<word_list.size();i++){
+                new_word.add(word_list.get(i).get("word_en").toString());
+            }
+            for(int i=0;i<new_word.size();i++){
+                if(history_word.contains(new_word.get(i))){
+                    word_list.remove(i);
+                }
+            }
+            //
             if(searchAdapter==null){
                 mHandler.obtainMessage(0,word_list).sendToTarget();
             }else{

@@ -41,7 +41,7 @@ public class DbDao {
 //        cursor.close();
 //        return data;
         List<HashMap<String,Object>> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source from records where word_en like '%"+tempName+"%'",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source from records where word_en like '%"+tempName+"%' order by id desc limit 10",null);
         while(cursor.moveToNext()){
             HashMap<String,Object> word = new HashMap<>();
             word.put("id",cursor.getString(cursor.getColumnIndex("id")));
