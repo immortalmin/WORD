@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private ListView listView,historyListView;
     private ImageView imgview;
     private Button add_word_btn,clear_btn;
+    private TextView historyTextView,newTextView;
     private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
     private List<HashMap<String,Object>> history_list= new ArrayList<HashMap<String,Object>>();
     private JsonRe jsonRe= new JsonRe();
@@ -56,6 +58,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        historyTextView = (TextView)findViewById(R.id.historyTextView);
+        newTextView = (TextView)findViewById(R.id.newTextView);
         searchView1 = (SearchView)findViewById(R.id.searchview1);
         listView = (ListView)findViewById(R.id.listView);
         historyListView = (ListView)findViewById(R.id.historyListView);
@@ -111,13 +115,21 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean onQueryTextChange(String s) {
             fuzzy_str = s;
-            if(mHandler.hasMessages(1)){
-                mHandler.removeMessages(1);
+            if(s.length()>0){
+                if(mHandler.hasMessages(1)){
+                    mHandler.removeMessages(1);
+                }
+                Message msg = new Message();
+                msg.what=1;
+                msg.obj=s;
+                mHandler.sendMessageDelayed(msg,200);
+            }else{
+                mHandler.obtainMessage(5,1).sendToTarget();
+                word_list.clear();
+                if(searchAdapter!=null){
+                    searchAdapter.notifyDataSetChanged();
+                }
             }
-            Message msg = new Message();
-            msg.what=1;
-            msg.obj=s;
-            mHandler.sendMessageDelayed(msg,200);
             //查询历史记录
             queryHistoryRecords(s);
             return false;
@@ -131,6 +143,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private void queryHistoryRecords(String s){
         history_list.clear();
         history_list.addAll(mDbDao.queryData(s));
+        if(history_list.size()>0) mHandler.obtainMessage(5,2).sendToTarget();
+        else mHandler.obtainMessage(5,0).sendToTarget();
         if(historySearchAdapter==null){
             mHandler.sendEmptyMessage(4);
         }else{
@@ -244,6 +258,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
             //
+            if(word_list.size()>0) mHandler.obtainMessage(5,3).sendToTarget();//显示newTextView
+            else mHandler.obtainMessage(5,1).sendToTarget();//隐藏newTextView
             if(searchAdapter==null){
                 mHandler.obtainMessage(0,word_list).sendToTarget();
             }else{
@@ -302,6 +318,25 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 case 4:
                     historySearchAdapter = new SearchAdapter(SearchActivity.this,history_list);
                     historyListView.setAdapter(historySearchAdapter);
+                    break;
+                case 5:
+                    int num = (int)message.obj;
+                    switch (num){
+                        case 0:
+                            historyTextView.setVisibility(View.INVISIBLE);
+                            clear_btn.setVisibility(View.INVISIBLE);
+                            break;
+                        case 1:
+                            newTextView.setVisibility(View.INVISIBLE);
+                            break;
+                        case 2:
+                            historyTextView.setVisibility(View.VISIBLE);
+                            clear_btn.setVisibility(View.VISIBLE);
+                            break;
+                        case 3:
+                            newTextView.setVisibility(View.VISIBLE);
+                            break;
+                    }
                     break;
             }
             return false;
@@ -398,6 +433,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 2) {
+            queryHistoryRecords(fuzzy_str);
             getWordList(fuzzy_str);
         }
     }
