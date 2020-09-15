@@ -56,7 +56,7 @@ public class DbDao {
     }
 
     /**
-     * 检查数据库中是否已经有该条数据
+     * 检查数据库中是否已经有该条数据（未使用过）
      * @param tempName
      * @return
      */
@@ -84,7 +84,7 @@ public class DbDao {
     }
 
     /**
-     * 删除数据
+     * 删除一条数据（未使用过）
      * @param name
      * @return
      */
@@ -98,6 +98,9 @@ public class DbDao {
         return delete;
     }
 
+    /**
+     * 清空所有历史记录
+     */
     public void deleteData(){
         db = helper.getWritableDatabase();
         db.execSQL("delete from records");

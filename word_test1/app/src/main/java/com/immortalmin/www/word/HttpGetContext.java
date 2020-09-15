@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -204,6 +205,64 @@ public class HttpGetContext {
                         ResponseBody responseBody = response.body();
                         String res = responseBody.string();
 //                        Log.i("ccc",res);
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 上传功能建议(0)或错误反馈(1)
+     * @param what
+     * @param data
+     */
+    public void uploadFeedback(int what, HashMap<String,Object> data){
+        try{
+            String imagePath = data.get("imagePath").toString();
+            File file = new File(imagePath);
+            OkHttpClient okHttpClient = new OkHttpClient();
+            RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody requestBody = new MultipartBody.Builder().build();
+            if(what==0){
+                requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("what",String.valueOf(what))
+                    .addFormDataPart("uid",data.get("uid").toString())
+                    .addFormDataPart("image", imagePath, image)
+                    .addFormDataPart("description",data.get("description").toString())
+                    .addFormDataPart("contact",data.get("contact").toString())
+                    .build();
+            }else{
+                requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("what",String.valueOf(what))
+                        .addFormDataPart("uid",data.get("uid").toString())
+                        .addFormDataPart("phone_model",data.get("phone_model").toString())
+                        .addFormDataPart("image", imagePath, image)
+                        .addFormDataPart("description",data.get("description").toString())
+                        .addFormDataPart("contact",data.get("contact").toString())
+                        .build();
+            }
+            Request request = new Request.Builder()
+                    .url("http://47.98.239.237/word/php_file2/upload_feedback.php")
+                    .post(requestBody)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("ccc","upload feedback failure");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()){
+                        Log.i("ccc","upload feedback success");
+//                        ResponseBody responseBody = response.body();
+//                        String res = responseBody.string();
                     }
                 }
             });

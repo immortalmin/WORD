@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -325,6 +326,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                         case 0:
                             historyTextView.setVisibility(View.INVISIBLE);
                             clear_btn.setVisibility(View.INVISIBLE);
+//                            historyTextView.setHeight(0);
+//                            clear_btn.setHeight(0);
                             break;
                         case 1:
                             newTextView.setVisibility(View.INVISIBLE);
@@ -332,6 +335,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                         case 2:
                             historyTextView.setVisibility(View.VISIBLE);
                             clear_btn.setVisibility(View.VISIBLE);
+//                            historyTextView.getLayoutParams().height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+//                            historyTextView.getLayoutParams().height = 20;
+                            historyTextView.requestLayout();
                             break;
                         case 3:
                             newTextView.setVisibility(View.VISIBLE);
