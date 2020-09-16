@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         EditDialog.OnDialogInteractionListener{
 
     private Button return_btn,logout_btn,motto_edit_btn,setting_btn;
-    private TextView nickname,motto,changePwd;
+    private TextView nickname,motto,changePwd,feedback;
     private CircleImageView photo;
     private ImageView backdrop;
     private SignIn signIn;
@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         nickname = (TextView) findViewById(R.id.nickname);
         motto = (TextView) findViewById(R.id.motto);
         changePwd = (TextView) findViewById(R.id.changePwd);
+        feedback = (TextView) findViewById(R.id.feedback);
         photo = (CircleImageView) findViewById(R.id.photo);
         signIn = (SignIn) findViewById(R.id.signIn);
         backdrop = (ImageView)findViewById(R.id.backdrop);
@@ -73,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         nickname.setOnClickListener(this);
         motto.setOnClickListener(this);
         changePwd.setOnClickListener(this);
+        feedback.setOnClickListener(this);
         init();
     }
 
@@ -170,6 +172,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
+            case R.id.feedback:
+                intent = new Intent(ProfileActivity.this,FeedbackActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
+
         }
     }
 

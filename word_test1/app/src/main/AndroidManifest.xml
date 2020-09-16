@@ -32,7 +32,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
-        <activity android:name=".FeedbackActivity"></activity>
+        <activity android:name=".CommitFeedbackActivity"></activity>
+        <activity android:name=".FeedbackActivity" />
         <activity android:name=".ChangePwdActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".collectActivity" />
