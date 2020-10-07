@@ -37,18 +37,130 @@
         android:background="@drawable/left_arrow"
         />
 
-    <com.immortalmin.www.word.MyEditText
+    <RadioGroup
+        android:id="@+id/radiogroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/feedback_tv"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp">
+
+
+        <RadioButton
+            android:id="@+id/functionRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="16sp"
+            android:text="功能建议"/>
+
+        <RadioButton
+            android:id="@+id/feedbackRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:checked="false"
+            android:textSize="16sp"
+            android:text="错误反馈"/>
+    </RadioGroup>
+
+
+    <com.immortalmin.www.word.MyEditText
+        android:id="@+id/descriptionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/radiogroup1"
         android:maxLines="5"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:TextType="0"
         app:DisplayStyle="1"
         android:hint="请详细描述你的问题"
         />
+
+
+
+    <RadioGroup
+        android:id="@+id/radiogroup2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionText"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp">
+
+
+        <RadioButton
+            android:id="@+id/radiobutton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="16sp"
+            android:text="手机号码"/>
+
+        <RadioButton
+            android:id="@+id/radiobutton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textSize="16sp"
+            android:text="邮箱"/>
+        <RadioButton
+            android:id="@+id/radiobutton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textSize="16sp"
+            android:text="QQ"/>
+        <RadioButton
+            android:id="@+id/radiobutton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textSize="16sp"
+            android:text="微信"/>
+    </RadioGroup>
+
+    <com.immortalmin.www.word.MyEditText
+        android:id="@+id/contactText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radiogroup2"
+        android:maxLines="2"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        app:TextType="0"
+        app:DisplayStyle="1"
+        android:hint="联系方式"
+        />
+
+    <ImageView
+        android:id="@+id/iv1"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/contactText"/>
+
+    <Button
+        android:id="@+id/add_pic_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/contactText"
+        android:layout_toRightOf="@+id/iv1"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/add_picture"
+        />
+
+<!--    <android.support.v4.view.ViewPager-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+
 
 
 </RelativeLayout>

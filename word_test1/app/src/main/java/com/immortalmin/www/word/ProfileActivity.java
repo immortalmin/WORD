@@ -132,8 +132,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.photo:
-                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i,0);
+                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent,0);
                 break;
             case R.id.nickname:
                 edit_data = new HashMap<>();
@@ -144,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
-            case R.id.motto_edit_btn:
+            case R.id.motto_edit_btn: case R.id.motto:
                 edit_data = new HashMap<>();
                 edit_data.put("attr","motto");
                 edit_data.put("title","修改个性签名");
@@ -153,15 +153,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
-            case R.id.motto:
-                edit_data = new HashMap<>();
-                edit_data.put("attr","motto");
-                edit_data.put("title","修改个性签名");
-                edit_data.put("max_length",50);
-                edit_data.put("content",motto.getText());
-                show_edit_dialog(edit_data);
-                mHandler.obtainMessage(2).sendToTarget();
-                break;
+//            case R.id.motto:
+//                edit_data = new HashMap<>();
+//                edit_data.put("attr","motto");
+//                edit_data.put("title","修改个性签名");
+//                edit_data.put("max_length",50);
+//                edit_data.put("content",motto.getText());
+//                show_edit_dialog(edit_data);
+//                mHandler.obtainMessage(2).sendToTarget();
+//                break;
             case R.id.setting_btn:
                 intent = new Intent(ProfileActivity.this,SettingActivity.class);
                 startActivity(intent);
