@@ -190,6 +190,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     mHandler.obtainMessage(0).sendToTarget();
                     suspend_flag = false;
                     btn_lock = true;
+                    eword.setEnabled(false);
                     scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
                 }else{
                     WrongTimes++;
@@ -308,7 +309,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         word_ch = words.get("word_ch").toString();
         eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
-
+        eword.setEnabled(true);
         this.mediaPlayer = (MediaPlayer)words.get("media_player");
         mHandler.sendEmptyMessage(2);
         showInput(eword);
