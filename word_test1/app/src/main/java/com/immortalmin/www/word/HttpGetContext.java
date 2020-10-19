@@ -178,7 +178,6 @@ public class HttpGetContext {
 
     public void uploadpic(String url,String imagePath,String uid){
         try{
-            Log.i("ccc",imagePath);
             File file = new File(imagePath);
             OkHttpClient okHttpClient = new OkHttpClient();
             RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
@@ -201,10 +200,8 @@ public class HttpGetContext {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if(response.isSuccessful()){
-                        Log.i("ccc","upload success");
                         ResponseBody responseBody = response.body();
                         String res = responseBody.string();
-//                        Log.i("ccc",res);
                     }
                 }
             });

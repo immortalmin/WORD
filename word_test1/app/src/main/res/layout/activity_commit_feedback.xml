@@ -93,7 +93,7 @@
 
 
         <RadioButton
-            android:id="@+id/radiobutton1"
+            android:id="@+id/phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -101,7 +101,7 @@
             android:text="手机号码"/>
 
         <RadioButton
-            android:id="@+id/radiobutton2"
+            android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -109,7 +109,7 @@
             android:textSize="16sp"
             android:text="邮箱"/>
         <RadioButton
-            android:id="@+id/radiobutton3"
+            android:id="@+id/QQ"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -117,7 +117,7 @@
             android:textSize="16sp"
             android:text="QQ"/>
         <RadioButton
-            android:id="@+id/radiobutton4"
+            android:id="@+id/wechat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -144,6 +144,8 @@
         android:id="@+id/iv1"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         android:layout_below="@+id/contactText"/>
 
     <Button
@@ -157,9 +159,20 @@
         android:background="@drawable/add_picture"
         />
 
-<!--    <android.support.v4.view.ViewPager-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
+    <Button
+        android:id="@+id/commit_btn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_pic_btn"
+        android:layout_marginTop="200dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_corners_green"
+        android:textAllCaps="false"
+        android:textColor="#FCFAFA"
+        android:textSize="20dp"
+        android:text="commit" />
+
+
 
 
 
