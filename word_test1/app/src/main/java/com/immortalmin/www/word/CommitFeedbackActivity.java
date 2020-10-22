@@ -88,14 +88,13 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("uid",userData.getUid());
                 data.put("description",descriptionText.getText());
-                if(!"".equals(ImageString)){
-                    data.put("image",ImageString);
-                }
+                data.put("image",ImageString);
                 switch (radiogroup1.getCheckedRadioButtonId()){
                     case R.id.functionRB:
-
+                        data.put("what","0");
                         break;
                     case R.id.feedbackRB:
+                        data.put("what","1");
                         data.put("phone_model","XiaoMi6");
                         break;
                 }
@@ -114,10 +113,20 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                         break;
                 }
                 //提交反馈
-                //TODO:编写提交网络数据的部分，以及数据库表的设计
-                Log.i("ccc",data.toString());
+                commitFeedback(data);
                 break;
         }
+    }
+
+    private void commitFeedback(final HashMap<String,Object> data){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.uploadFeedback(data);
+            }
+        }).start();
+
     }
 
     private Handler mHandler = new Handler(new Handler.Callback(){
@@ -132,18 +141,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
             return false;
         }
     });
-
-    private void commitContext(final String url, HashMap<String,Object> data){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                HttpGetContext httpGetContext = new HttpGetContext();
-//                httpGetContext.uploadFeedback(url,file,userData.getUid());
-                Log.i("ccc",data.toString());
-            }
-        }).start();
-
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,14 +164,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
                     //上传图片到服务器
-//                    commitContext("http://47.98.239.237/word/php_file2/upload_picture.php",android.os.Environment.getExternalStorageDirectory()+"/temp.jpg");
                     ImageString = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
-                    //删除老的，添加新的
-//                    ImageUtils imageUtils = new ImageUtils();
-//                    imageUtils.deletePhotoFromStorage(userData.getProfile_photo());
-//                    imageUtils.savePhotoToStorage(bitmap,userData.getProfile_photo());
-//                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//                    sp.edit().putString("profile_photo", userData.getProfile_photo()).apply();
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }else{

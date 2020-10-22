@@ -211,37 +211,59 @@ public class HttpGetContext {
 
     }
 
+    //XXX:代码似乎有些冗余
     /**
      * 上传功能建议(0)或错误反馈(1)
-     * @param what
      * @param data
      */
-    public void uploadFeedback(int what, HashMap<String,Object> data){
+    public void uploadFeedback(HashMap<String,Object> data){
         try{
-            String imagePath = data.get("imagePath").toString();
-            File file = new File(imagePath);
+            String imagePath = data.get("image").toString();
+            RequestBody requestBody = null;
             OkHttpClient okHttpClient = new OkHttpClient();
-            RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
-            RequestBody requestBody = new MultipartBody.Builder().build();
-            if(what==0){
-                requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("what",String.valueOf(what))
-                    .addFormDataPart("uid",data.get("uid").toString())
-                    .addFormDataPart("image", imagePath, image)
-                    .addFormDataPart("description",data.get("description").toString())
-                    .addFormDataPart("contact",data.get("contact").toString())
-                    .build();
+            if("".equals(imagePath)){
+                if("0".equals(data.get("what").toString())){
+                    requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("what",data.get("what").toString())
+                            .addFormDataPart("uid",data.get("uid").toString())
+                            .addFormDataPart("description",data.get("description").toString())
+                            .addFormDataPart("contact",data.get("contact").toString())
+                            .build();
+                }else{
+                    requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("what",data.get("what").toString())
+                            .addFormDataPart("uid",data.get("uid").toString())
+                            .addFormDataPart("phone_model",data.get("phone_model").toString())
+                            .addFormDataPart("description",data.get("description").toString())
+                            .addFormDataPart("contact",data.get("contact").toString())
+                            .build();
+                }
             }else{
-                requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("what",String.valueOf(what))
-                        .addFormDataPart("uid",data.get("uid").toString())
-                        .addFormDataPart("phone_model",data.get("phone_model").toString())
-                        .addFormDataPart("image", imagePath, image)
-                        .addFormDataPart("description",data.get("description").toString())
-                        .addFormDataPart("contact",data.get("contact").toString())
-                        .build();
+                File file = new File(imagePath);
+                RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
+                if("0".equals(data.get("what").toString())){
+                    requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("what",data.get("what").toString())
+                            .addFormDataPart("uid",data.get("uid").toString())
+                            .addFormDataPart("image", imagePath, image)
+                            .addFormDataPart("description",data.get("description").toString())
+                            .addFormDataPart("contact",data.get("contact").toString())
+                            .build();
+                }else{
+                    requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("what",data.get("what").toString())
+                            .addFormDataPart("uid",data.get("uid").toString())
+                            .addFormDataPart("phone_model",data.get("phone_model").toString())
+                            .addFormDataPart("image", imagePath, image)
+                            .addFormDataPart("description",data.get("description").toString())
+                            .addFormDataPart("contact",data.get("contact").toString())
+                            .build();
+                }
+
             }
             Request request = new Request.Builder()
                     .url("http://47.98.239.237/word/php_file2/upload_feedback.php")
@@ -258,8 +280,9 @@ public class HttpGetContext {
                 public void onResponse(Call call, Response response) throws IOException {
                     if(response.isSuccessful()){
                         Log.i("ccc","upload feedback success");
-//                        ResponseBody responseBody = response.body();
-//                        String res = responseBody.string();
+                        ResponseBody responseBody = response.body();
+                        String res = responseBody.string();
+                        Log.i("ccc",res);
                     }
                 }
             });
