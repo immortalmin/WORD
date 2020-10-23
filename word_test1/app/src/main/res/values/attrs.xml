@@ -42,6 +42,12 @@
         <attr name="indicatorTextSize"/>
         <attr name="indicatorTextColor"/>
     </declare-styleable>
+
+    <declare-styleable name="AutoLineUtil">
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+    </declare-styleable>
+
 </resources>
 
 

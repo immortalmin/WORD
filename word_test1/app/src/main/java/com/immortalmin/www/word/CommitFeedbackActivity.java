@@ -15,12 +15,14 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -34,11 +36,12 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
 
     Button return_btn,add_pic_btn,commit_btn;
     RadioGroup radiogroup1,radiogroup2;
-    ImageView iv1;
+    private AutoLineUtil img_group;
     private MyEditText descriptionText,contactText;
     private UserData userData = new UserData();
     private DataUtil dataUtil;
     private String ImageString = "";
+    private int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,9 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         commit_btn = (Button)findViewById(R.id.commit_btn);
         radiogroup1 = (RadioGroup)findViewById(R.id.radiogroup1);
         radiogroup2 = (RadioGroup)findViewById(R.id.radiogroup2);
-        iv1 = (ImageView) findViewById(R.id.iv1);
         descriptionText = (MyEditText) findViewById(R.id.descriptionText);
         contactText = (MyEditText) findViewById(R.id.contactText);
+        img_group = (AutoLineUtil) findViewById(R.id.img_group);
         return_btn.setOnClickListener(this);
         add_pic_btn.setOnClickListener(this);
         commit_btn.setOnClickListener(this);
@@ -134,7 +137,24 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         public boolean handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    iv1.setImageBitmap((Bitmap)msg.obj);
+//                    iv1.setImageBitmap((Bitmap)msg.obj);
+                    LayoutInflater inflater = getLayoutInflater();
+                    View view1 = inflater.inflate(R.layout.imglayout,null);
+                    ImageView imageview =view1.findViewById(R.id.imageView);
+                    Bitmap img = (Bitmap)msg.obj;
+                    int img_width = img.getWidth();
+                    int img_height = img.getHeight();
+                    Bitmap square_img = Bitmap.createBitmap(img,0,0,Math.min(img_width,img_height),Math.min(img_width,img_height));
+                    imageview.setImageBitmap(square_img);
+                    Button img_del = view1.findViewById(R.id.img_del);
+                    img_del.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            img_group.removeView(view1);
+                            count--;
+                        }
+                    });
+                    img_group.addView(view1,count++);
                     break;
 
             }

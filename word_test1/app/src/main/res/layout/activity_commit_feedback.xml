@@ -140,31 +140,34 @@
         android:hint="联系方式"
         />
 
-    <ImageView
-        android:id="@+id/iv1"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_below="@+id/contactText"/>
-
-    <Button
-        android:id="@+id/add_pic_btn"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <com.immortalmin.www.word.AutoLineUtil
+        android:id="@+id/img_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/contactText"
-        android:layout_toRightOf="@+id/iv1"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/add_picture"
-        />
+        android:layout_margin="10dp"
+        app:horizontalSpacing="5dp"
+        app:verticalSpacing="3dp"
+        >
+
+
+        <Button
+            android:id="@+id/add_pic_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/add_picture"
+            />
+    </com.immortalmin.www.word.AutoLineUtil>
+
+
+
 
     <Button
         android:id="@+id/commit_btn"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/add_pic_btn"
-        android:layout_marginTop="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/rounded_corners_green"
         android:textAllCaps="false"
