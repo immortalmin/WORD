@@ -26,8 +26,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
@@ -41,7 +45,9 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     private UserData userData = new UserData();
     private DataUtil dataUtil;
     private String ImageString = "";
-    private int count=0;
+    private ArrayList<String> img_list = new ArrayList<>();//需要上传的图片
+    private ArrayList<Integer> remove_list = new ArrayList<>();//img_list需要移除的图片的下标
+    private int count=0,img_index=0;//count表示要上传的照片的数量，img_index表示所有的照片（包括中途被用户去除的照片）的数量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +97,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("uid",userData.getUid());
                 data.put("description",descriptionText.getText());
-                data.put("image",ImageString);
                 switch (radiogroup1.getCheckedRadioButtonId()){
                     case R.id.functionRB:
                         data.put("what","0");
@@ -115,6 +120,19 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                         data.put("contact","wechat:"+contactText.getText());
                         break;
                 }
+                //去除img_list中需要被移除的图片
+                //先按下标从大到小排序
+                Collections.sort(remove_list, new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer t1, Integer t2) {
+                        return t2-t1;
+                    }
+                });
+                //再一个个删除
+                for(int i=0;i<remove_list.size();i++){
+                    int index = remove_list.get(i);
+                    img_list.remove(index);
+                }
                 //提交反馈
                 commitFeedback(data);
                 break;
@@ -126,18 +144,51 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.uploadFeedback(data);
+                int feedback_res = httpGetContext.uploadFeedback(data,img_list);
+                //XXX:应该等上传反馈结束并返回结果后再显示结果给用户，但是我不会，埋下一个坑给未来的陈大神解决
+                /*现在这样容易出现意想不到的结果，比如用户上传反馈失败了也不知道。*/
+//                Log.i("ccc",""+feedback_res);
+//                if(feedback_res==1){
+//                    mHandler.obtainMessage(1,"十分感谢您的反馈，我们会尽快处理!").sendToTarget();
+//                }else{
+//                    mHandler.obtainMessage(1,"糟糕，提交回馈出错了...").sendToTarget();
+//                    //这可如何是好？
+//                }
+                mHandler.obtainMessage(1,"十分感谢您的反馈，我们会尽快处理!").sendToTarget();
             }
         }).start();
 
     }
+
+    private void resDialog(String res){
+//        mHandler.obtainMessage(1).sendToTarget();
+        SweetAlertDialog feedback_dialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE);
+        feedback_dialog.setTitleText("Feedback")
+                .setContentText(res)
+                .setConfirmText("OK")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        Intent intent = new Intent();
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.setClass(CommitFeedbackActivity.this, FeedbackActivity.class);
+//                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
+                    }
+                });
+        feedback_dialog.setCancelable(false);
+        feedback_dialog.show();
+    }
+
+
 
     private Handler mHandler = new Handler(new Handler.Callback(){
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-//                    iv1.setImageBitmap((Bitmap)msg.obj);
+                    int now_ind=img_index;
                     LayoutInflater inflater = getLayoutInflater();
                     View view1 = inflater.inflate(R.layout.imglayout,null);
                     ImageView imageview =view1.findViewById(R.id.imageView);
@@ -151,12 +202,17 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onClick(View view) {
                             img_group.removeView(view1);
+//                            img_list.remove(now_ind);
+                            remove_list.add(now_ind);
                             count--;
                         }
                     });
                     img_group.addView(view1,count++);
+                    img_index++;
                     break;
-
+                case 1:
+                    resDialog((String)msg.obj);
+                    break;
             }
             return false;
         }
@@ -184,7 +240,8 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
                     //上传图片到服务器
-                    ImageString = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
+//                    ImageString = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
+                    img_list.add(picturePath);
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }else{
