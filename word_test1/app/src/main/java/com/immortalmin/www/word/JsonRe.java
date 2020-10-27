@@ -17,6 +17,30 @@ public class JsonRe {
     List<Map<String, Object>> wordInfoList;// 定义List容器，节点类型是map
     List<Map<String, Object>> wordList;// 定义List容器，节点类型是map
 
+    public ArrayList<HashMap<String,Object>> feedbackData(String jsonStr){
+        ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                HashMap<String,Object> feedback = new HashMap<>();
+                feedback.put("fid",jsonObject.getString("fid"));
+                feedback.put("uid",jsonObject.getString("uid"));
+                feedback.put("phone_model",jsonObject.getString("phone_model"));
+                feedback.put("description",jsonObject.getString("description"));
+                feedback.put("contact",jsonObject.getString("contact"));
+                feedback.put("progress",jsonObject.getString("progress"));
+                feedback.put("img_path",jsonObject.getString("img_path"));
+                feedback.put("what",jsonObject.getString("what"));
+                feedbackList.add(feedback);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return feedbackList;
+    }
+
+
     public HashMap<String,Object>getcount(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
@@ -221,35 +245,6 @@ public class JsonRe {
         return exampleList;
     }
 
-    /**
-     * 2020/7/21 stopped using
-     * @param jsonStr
-     * @return
-     */
-//    public List<HashMap<String,Object>> reciteData(String jsonStr){
-//        List<HashMap<String,Object>> reciteList = new ArrayList<>();
-//        try {
-//            JSONArray jsonArray = new JSONArray(jsonStr);
-//            for(int i=0;i<jsonArray.length();i++){
-//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-//                HashMap<String,Object> word = new HashMap<>();
-//                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-//                word.put("collect",jsonObject.getString("collect"));
-//                word.put("correct_times",jsonObject.getString("correct_times"));
-//                word.put("error_times",jsonObject.getString("error_times"));
-//                word.put("last_date",jsonObject.getString("last_date"));
-//                word.put("source",jsonObject.getString("source"));
-//                word.put("prof_flag",jsonObject.getString("prof_flag"));
-//                word.put("wid",jsonObject.getString("wid"));
-//                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
-//                word.put("today_correct_times",0);
-//                reciteList.add(word);
-//            }
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return reciteList;
-//    }
 
     public List<HashMap<String,Object>> reciteData(String jsonStr){
         List<HashMap<String,Object>> reciteList = new ArrayList<>();
@@ -337,54 +332,6 @@ public class JsonRe {
     }
 
 
-    //2020/7/24 stopped using
-    //将json转为需要的数据结构  old version
-    public List<Map<String, Object>>  getWordList(String jsonStr) {
-        wordInfoList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
-        List<Map<String, Object>> ExampleList;// 定义List容器，节点类型是map
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> example_map = new HashMap<String, Object>();
-        try {
-            JSONArray  jsonArray=new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++)
-            {
-                //jsonArray.length()获取json中数组元素的个数
-                map = new HashMap<String, Object>();
-                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);//获取数组中第i个数组元素
-                String id = jsonObject.getString("id");
-                String Word = jsonObject.getString("word");
-                map.put("correct_times",jsonObject.getString("correct_times"));
-                map.put("error_times",jsonObject.getString("error_times"));
-                map.put("prof_flag",jsonObject.getString("prof_flag"));
-                JSONObject  word=new JSONObject(Word);
-                map.put("page", word.getString("page"));
-                map.put("C_meaning", word.getString("C_meaning"));
-                String translate = word.getString("translate");
-                map.put("word_group", word.getString("word_group"));
-                JSONArray Examples = new JSONArray(translate);
-                ExampleList = new ArrayList<Map<String, Object>>();//保存例句
-                for(int j=0;j<Examples.length();j++){
-                    example_map = new HashMap<String, Object>();
-                    JSONObject example = (JSONObject) Examples.opt(j);
-                    String word_meaning = example.getString("word_meaning");
-                    String E_sentence = example.getString("E_sentence");
-                    String C_translate = example.getString("C_translate");
-                    word_meaning = word_meaning.replaceAll("\\\\n","\\\n");
-                    E_sentence = E_sentence.replaceAll("\\\\n","\\\n");
-                    C_translate = C_translate.replaceAll("\\\\n","\\\n");
-                    example_map.put("word_meaning",word_meaning);
-                    example_map.put("E_sentence",E_sentence);
-                    example_map.put("C_translate",C_translate);
-                    ExampleList.add(example_map);
-                }
-                map.put("translate",ExampleList);
-                wordInfoList.add(map);// 将一个节点的数据（一条商家信息）添加到list容器中
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordInfoList;
-    }
     public List<Map<String, Object>>  getReciteList(String jsonStr) {
         wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         Map<String, Object> map = new HashMap<String, Object>();

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/feedback_bg"
+    android:background="#E1F3CF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CommitFeedbackActivity">
@@ -169,7 +169,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="100dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corners_green"
+        android:background="@drawable/rounded_corners_purple"
         android:textAllCaps="false"
         android:textColor="#FCFAFA"
         android:textSize="20dp"

@@ -4,38 +4,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/feedback_bg"
     tools:context=".FeedbackActivity">
 
-    <TextView
-        android:id="@+id/feedback_tv"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/head_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="22sp"
-        android:textColor="#414040"
-        android:layout_centerHorizontal="true"
-        android:text="Community" />
+        android:background="#E1F3CF"
+        >
 
-    <Button
-        android:id="@+id/return_btn"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/left_arrow"
-        />
+        <TextView
+            android:id="@+id/feedback_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textSize="22sp"
+            android:textColor="#414040"
+            android:layout_centerHorizontal="true"
+            android:text="Community" />
 
-    <Button
-        android:id="@+id/commit_feedback_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#00000000"
-        android:layout_marginTop="5dp"
-        android:layout_alignParentEnd="true"
-        android:text="提交反馈"
-        android:textSize="17sp"
-        />
+        <Button
+            android:id="@+id/return_btn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/left_arrow"
+            />
+
+        <Button
+            android:id="@+id/commit_feedback_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="提交反馈"
+            android:textSize="17sp"
+            />
+
+    </RelativeLayout>
+
+
+
+    <ListView
+        android:id="@+id/feedback_lv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/head_layout"
+        android:dividerHeight="10dp"
+        android:divider="#E1F3CF"/>
 
 
 

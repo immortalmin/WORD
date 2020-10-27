@@ -1,66 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     >
 
-    <ImageView
-        android:id="@+id/profile_photo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/trash_can"
-        />
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/profile_photo"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="immortalmin"/>
-
-    <TextView
-        android:id="@+id/date_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/username"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="10dp"
-        android:text="2020-10-22 19:34"/>
-
-    <TextView
-        android:id="@+id/context"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/username"
-        android:layout_toRightOf="@+id/profile_photo"
-        android:text="问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈"/>
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
 
 
-    <Button
-        android:id="@+id/like_btn"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
-        android:background="#00000000"
-        android:drawableLeft="@drawable/like_off"
-        android:layout_below="@+id/context"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="50dp"
-        android:textSize="15dp"
-        android:text="3247"/>
 
-    <Button
-        android:id="@+id/comment_btn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="#00000000"
-        android:drawableRight="@drawable/comment"
-        android:layout_below="@+id/context"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
-        android:text=""/>
+        <ImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/trash_can"
+            />
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="200dp"
+            android:layout_height="25dp"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="immortalmin"/>
 
-</RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/context"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/username"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:text="@string/feedback_context"/>
+
+        <com.immortalmin.www.word.AutoLineUtil
+            android:id="@+id/img_group"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_below="@+id/context"
+            app:horizontalSpacing="5dp"
+            app:verticalSpacing="3dp">
+
+        </com.immortalmin.www.word.AutoLineUtil>
+
+        <TextView
+            android:id="@+id/date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_below="@+id/img_group"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:text="2020-10-22 19:34"/>
+
+        <Button
+            android:id="@+id/like_btn"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:background="#00000000"
+            android:drawableLeft="@drawable/like_off"
+            android:layout_below="@+id/img_group"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="40dp"
+            android:textSize="15dp"
+            android:text="3247"/>
+
+        <Button
+            android:id="@+id/comment_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="#00000000"
+            android:drawableRight="@drawable/comment"
+            android:layout_below="@+id/img_group"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text=""/>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -59,6 +59,7 @@ import okhttp3.ResponseBody;
  * */
 public class HttpGetContext {
     public static int feedback_res = -1;
+    private JsonRe jsonRe = new JsonRe();
     public String  httpclientgettext(String url) {
         String result="";
 
@@ -104,32 +105,32 @@ public class HttpGetContext {
         return  bmp;
     }
     //http://dict.youdao.com/dictvoice?type=1&audio=accuse%20of
-    public int update_recite_list(String url) {
-        int res=0;
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse response = httpClient.execute(httpGet);
-            if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                res=1;
-                // 使用utf-8参数保证从网页获取的内容中文能正常显示
-//                result = EntityUtils.toString(entity, "utf-8");
-                //去除返回文本消息中的换行回车字符
-//                result = result.replace("\r\n", "");
-                //  Log.i("HTTP", "GET:" + result);
-                //  mHandler.obtainMessage(1,result).sendToTarget();
-            } else {
-                res=2;
-                // mHandler.sendEmptyMessage(2);//2表示服务器未响应
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            res=3;
-            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
-        }
-        return res;
-    }
+//    public int update_recite_list(String url) {
+//        int res=0;
+//        try {
+//            HttpClient httpClient = new DefaultHttpClient();
+//            HttpGet httpGet = new HttpGet(url);
+//            HttpResponse response = httpClient.execute(httpGet);
+//            if (response.getStatusLine().getStatusCode() == 200) {
+//                HttpEntity entity = response.getEntity();
+//                res=1;
+//                // 使用utf-8参数保证从网页获取的内容中文能正常显示
+////                result = EntityUtils.toString(entity, "utf-8");
+//                //去除返回文本消息中的换行回车字符
+////                result = result.replace("\r\n", "");
+//                //  Log.i("HTTP", "GET:" + result);
+//                //  mHandler.obtainMessage(1,result).sendToTarget();
+//            } else {
+//                res=2;
+//                // mHandler.sendEmptyMessage(2);//2表示服务器未响应
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            res=3;
+//            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
+//        }
+//        return res;
+//    }
 
     /**
      * @param url
@@ -347,6 +348,79 @@ public class HttpGetContext {
         }
         return feedback_res;
     }
+
+    public ArrayList<HashMap<String,Object>> getFeedbackList(JSONObject jsonObject) {
+        String url = "http://47.98.239.237/word/php_file2/getfeedbacklist.php";
+        ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
+        Bitmap bmp =null;
+
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity entity = null;//解决中文乱码问题
+        try {
+            entity = new StringEntity(jsonObject.toString(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType("application/json");
+        }
+        httpPost.setEntity(entity);
+        HttpClient httpClient = new DefaultHttpClient();
+        // 获取HttpResponse实例
+        HttpResponse httpResp = null;
+        try {
+            httpResp = httpClient.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 判断是够请求成功
+        if (httpResp != null) {
+            if (httpResp.getStatusLine().getStatusCode() == 200) {
+                // 获取返回的数据
+                String result = null;
+                try {
+                    result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
+                    result = result.replace("\r\n", "");
+//                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
+                    feedbackList = jsonRe.feedbackData(result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
+            }
+        }
+//        Log.i("ccc",feedbackList.toString());
+        String img_url = "http://www.immortalmin.com/word/img/feedback/";
+        for(int i=0;i<feedbackList.size();i++){
+            String[] img_paths = feedbackList.get(i).get("img_path").toString().split("#");
+            ArrayList<Object> img_list = new ArrayList<>();
+            for(String img:img_paths){
+                try {
+                    HttpClient httpclient = new DefaultHttpClient();
+                    //使用HttpClient时，我们提前设置好参数，比如超时时间3000ms
+                    httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 3000);
+                    HttpGet httpGet = new HttpGet(img_url+img);
+                    HttpResponse httpresponse = httpclient.execute(httpGet);
+                    if (httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {//获取图片数据成功
+                        HttpEntity httpentity = httpresponse.getEntity();//获取的图片资源保存在HttpEntity实体中
+                        InputStream in = httpentity.getContent();//获取图片数据的输入流
+                        bmp = BitmapFactory.decodeStream(in); //解码图片
+                        in.close();// 关闭输入流
+                        img_list.add(bmp);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            feedbackList.get(i).put("img_list",img_list);
+
+        }
+        Log.i("ccc",feedbackList.toString());
+        return  feedbackList;
+    }
+
 
     public void userRegister(JSONObject jsonObject){
         try{
