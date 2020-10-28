@@ -302,6 +302,7 @@ public class HttpGetContext {
      */
 
     public int uploadFeedback(HashMap<String,Object> data, ArrayList<String> img_list){
+        Log.i("ccc",img_list.toString());
         try{
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             for (int i = 0; i <img_list.size() ; i++) {
@@ -400,7 +401,7 @@ public class HttpGetContext {
                 try {
                     HttpClient httpclient = new DefaultHttpClient();
                     //使用HttpClient时，我们提前设置好参数，比如超时时间3000ms
-                    httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 3000);
+                    httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 1000);
                     HttpGet httpGet = new HttpGet(img_url+img);
                     HttpResponse httpresponse = httpclient.execute(httpGet);
                     if (httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {//获取图片数据成功
@@ -410,13 +411,16 @@ public class HttpGetContext {
                         in.close();// 关闭输入流
                         img_list.add(bmp);
                     }
+//                    Log.i("ccc",img+"获取成功");
                 } catch (Exception e) {
                     e.printStackTrace();
+//                    Log.i("ccc",img+"获取失败");
                 }
             }
             feedbackList.get(i).put("img_list",img_list);
 
         }
+//        Log.i("ccc","获取图片结束");
         Log.i("ccc",feedbackList.toString());
         return  feedbackList;
     }

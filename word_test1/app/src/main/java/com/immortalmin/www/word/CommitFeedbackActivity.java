@@ -44,6 +44,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     private MyEditText descriptionText,contactText;
     private UserData userData = new UserData();
     private DataUtil dataUtil;
+    private ImageUtils imageUtils = new ImageUtils();
     private String ImageString = "";
     private ArrayList<String> img_list = new ArrayList<>();//需要上传的图片
     private ArrayList<Integer> remove_list = new ArrayList<>();//img_list需要移除的图片的下标
@@ -237,11 +238,16 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     // 从数据视图中获取已选择图片的路径
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
-                    // 将图片显示到界面上
-                    Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+
+                    //TODO:选择两张图片，结果上传之后两张图片变成一样的了
                     //上传图片到服务器
 //                    ImageString = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
-                    img_list.add(picturePath);
+//                    imageUtils.compressImage(picturePath)
+//                    img_list.add(picturePath);
+                    String tempPath = imageUtils.compressImage(picturePath,img_index);
+                    img_list.add(tempPath);
+                    // 将图片显示到界面上
+                    Bitmap bitmap = ImageUtils.getBitmapFromPath(tempPath, 80, 80);
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }else{

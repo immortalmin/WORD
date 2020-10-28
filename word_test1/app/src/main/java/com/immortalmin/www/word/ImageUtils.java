@@ -27,7 +27,7 @@ public class ImageUtils {
     }
     // 从路径获取Bitmap
     public static Bitmap getBitmapFromPath(String imgPath, int reqWidth, int reqHeight) {
-        imgPath = compressImage(imgPath);
+        imgPath = compressImage(imgPath,0);
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imgPath, options);
@@ -192,16 +192,25 @@ public class ImageUtils {
      * 图片压缩-质量压缩
      *
      * @param filePath 源图片路径
+     * @param num 下标
      * @return 压缩后的路径
      */
 
-    public static String compressImage(String filePath) {
+    public static String compressImage(String filePath,int num) {
 
         //原文件
         File oldFile = new File(filePath);
 
 
-        String targetPath = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
+        String targetPath = android.os.Environment.getExternalStorageDirectory()+"/temp_"+num+".jpg";
+
+        //删除临时文件
+        File temp_file = new File(targetPath);
+        if(temp_file.isFile()&&temp_file.exists()){
+//            temp_file.delete();
+        }
+
+
         //压缩文件路径 照片路径/
 //        String targetPath = oldFile.getPath();
         int quality = 50;//压缩比例0-100

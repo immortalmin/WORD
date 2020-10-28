@@ -71,6 +71,7 @@ public class FeedbackAdapter extends BaseAdapter {
         }else{
             v = convertView;
             viewHolder = (ViewHolder)v.getTag();
+            viewHolder.img_group.removeAllViews();
         }
 
         //获取控件实例，并调用set...方法使其显示出来
