@@ -64,10 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private SearchView search_bar;
     private RelativeLayout main_relative;
-//    private WordDAO wordDAO = new WordDAO();
     private SoundPool soundPool;
     private int sound_success,sound_fail;
-//    private DBAdapter dbAdapter;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
     private int screen_width,screen_height;
@@ -165,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic);
                 imageUtils.savePhotoToStorage(bitmap,pic);
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }

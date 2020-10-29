@@ -170,10 +170,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                        Intent intent = new Intent();
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.setClass(CommitFeedbackActivity.this, FeedbackActivity.class);
-//                        startActivity(intent);
                         finish();
                         overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                     }
@@ -239,12 +235,8 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
 
-                    //TODO:选择两张图片，结果上传之后两张图片变成一样的了
-                    //上传图片到服务器
-//                    ImageString = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
-//                    imageUtils.compressImage(picturePath)
-//                    img_list.add(picturePath);
-                    String tempPath = imageUtils.compressImage(picturePath,img_index);
+                    //保存到本地的临时文件中
+                    String tempPath = imageUtils.compressImage(picturePath,"temp_"+img_index);
                     img_list.add(tempPath);
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(tempPath, 80, 80);

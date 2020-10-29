@@ -58,8 +58,10 @@ import okhttp3.ResponseBody;
  *
  * */
 public class HttpGetContext {
-    public static int feedback_res = -1;
+    private static int feedback_res = -1;
     private JsonRe jsonRe = new JsonRe();
+    private ImageUtils imageUtils = new ImageUtils();
+
     public String  httpclientgettext(String url) {
         String result="";
 
@@ -180,6 +182,7 @@ public class HttpGetContext {
 
     public void uploadpic(String url,String imagePath,String uid){
         try{
+            imagePath = imageUtils.compressImage(imagePath,uid);
             File file = new File(imagePath);
             OkHttpClient okHttpClient = new OkHttpClient();
             RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);

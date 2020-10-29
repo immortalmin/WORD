@@ -239,7 +239,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage(pic);
         }else{
-//            Log.i("ccc","照片存在");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }
@@ -249,9 +248,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic);
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic);
                 imageUtils.savePhotoToStorage(bitmap,pic);
-                Log.i("ccc","图片下载完成");
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
         }).start();
@@ -363,7 +361,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
                     //上传图片到服务器
-                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",android.os.Environment.getExternalStorageDirectory()+"/temp.jpg");
+//                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",android.os.Environment.getExternalStorageDirectory()+"/temp.jpg");
+                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
 
                     //删除老的，添加新的
                     ImageUtils imageUtils = new ImageUtils();

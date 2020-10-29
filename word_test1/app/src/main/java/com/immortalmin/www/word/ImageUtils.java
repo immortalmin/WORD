@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -16,18 +17,18 @@ import java.lang.ref.SoftReference;
 
 public class ImageUtils {
     public static Bitmap getPhotoFromStorage(String pic) {
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/" + pic ;
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/WORD/" + pic ;
         return getBitmapFromPath(photoPath, 80, 80);
     }
 
     public static void deletePhotoFromStorage(String pic){
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/" + pic ;
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/WORD/" + pic ;
         File file = new File(photoPath);
         file.delete();
     }
     // 从路径获取Bitmap
     public static Bitmap getBitmapFromPath(String imgPath, int reqWidth, int reqHeight) {
-        imgPath = compressImage(imgPath,0);
+//        imgPath = compressImage(imgPath,);
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imgPath, options);
@@ -67,7 +68,6 @@ public class ImageUtils {
                     break;
             }
         }
-//        Log.i("ccc","degree"+String.valueOf(degree));
         if(degree!=0){
             Matrix m = new Matrix();
             m.postRotate(degree);
@@ -98,7 +98,7 @@ public class ImageUtils {
     public static void savePhotoToStorage(Bitmap photoBitmap, String pic) {
         //更改的名字
         String photoName = pic;
-        String photoPath = Environment.getExternalStorageDirectory() + "/";
+        String photoPath = Environment.getExternalStorageDirectory() + "/WORD/";
         File fileDir = new File(photoPath);
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -108,8 +108,11 @@ public class ImageUtils {
         try {
             //重命名并保存
             photoFile = new File(photoPath, photoName);
-            photoFile.createNewFile();
 
+            //将老的文件删除
+            if(photoFile.exists()){
+                photoFile.delete();
+            }
             fos = new FileOutputStream(photoFile);
             photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
@@ -190,26 +193,17 @@ public class ImageUtils {
 
     /**
      * 图片压缩-质量压缩
-     *
      * @param filePath 源图片路径
-     * @param num 下标
+     * @param fileName 文件名
      * @return 压缩后的路径
      */
 
-    public static String compressImage(String filePath,int num) {
+    public static String compressImage(String filePath,String fileName) {
 
         //原文件
         File oldFile = new File(filePath);
 
-
-        String targetPath = android.os.Environment.getExternalStorageDirectory()+"/temp_"+num+".jpg";
-
-        //删除临时文件
-        File temp_file = new File(targetPath);
-        if(temp_file.isFile()&&temp_file.exists()){
-//            temp_file.delete();
-        }
-
+        String targetPath = android.os.Environment.getExternalStorageDirectory()+"/WORD/"+fileName+".jpg";
 
         //压缩文件路径 照片路径/
 //        String targetPath = oldFile.getPath();
@@ -224,7 +218,6 @@ public class ImageUtils {
         try {
             if (!outputFile.exists()) {
                 outputFile.getParentFile().mkdirs();
-                //outputFile.createNewFile();
             } else {
                 outputFile.delete();
             }
