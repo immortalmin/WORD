@@ -11,11 +11,14 @@
         android:layout_margin="10dp">
 
 
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_photo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
             android:background="@drawable/trash_can"
             />
         <TextView
@@ -23,7 +26,8 @@
             android:layout_width="200dp"
             android:layout_height="25dp"
             android:layout_toRightOf="@+id/profile_photo"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="5dp"
             android:textStyle="bold"
             android:textSize="18sp"
             android:text="immortalmin"/>
@@ -36,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
             android:layout_below="@+id/username"
             android:layout_toRightOf="@+id/profile_photo"
             android:text="@string/feedback_context"/>
@@ -59,30 +64,32 @@
             android:layout_height="25dp"
             android:layout_below="@+id/img_group"
             android:layout_toRightOf="@+id/profile_photo"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
             android:text="2020-10-22 19:34"/>
 
-        <Button
-            android:id="@+id/like_btn"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            android:background="#00000000"
-            android:drawableLeft="@drawable/like_off"
-            android:layout_below="@+id/img_group"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="40dp"
-            android:textSize="15dp"
-            android:text="3247"/>
+<!--        <Button-->
+<!--            android:id="@+id/like_btn"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="#00000000"-->
+<!--            android:drawableLeft="@drawable/like_off"-->
+<!--            android:layout_below="@+id/img_group"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginEnd="40dp"-->
+<!--            android:textSize="15dp"-->
+<!--            android:text="3247"/>-->
 
-        <Button
-            android:id="@+id/comment_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="#00000000"
-            android:drawableRight="@drawable/comment"
-            android:layout_below="@+id/img_group"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:text=""/>
+<!--        <Button-->
+<!--            android:id="@+id/comment_btn"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="#00000000"-->
+<!--            android:drawableRight="@drawable/comment"-->
+<!--            android:layout_below="@+id/img_group"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:text=""/>-->
 
     </RelativeLayout>
 

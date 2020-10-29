@@ -3,6 +3,8 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.smssdk.gui.DefaultContactViewItem;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedbackAdapter extends BaseAdapter {
 
@@ -43,21 +46,6 @@ public class FeedbackAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-//        View v = mInflater.inflate(R.layout.feedbackitem,null);
-//        TextView username = (TextView)v.findViewById(R.id.username);
-//        username.setText(mdata.get(position).get("aaa").toString());
-
-//        WordView word_en = (WordView)v.findViewById(R.id.word_en);
-//        TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
-//        TextView review_date = (TextView)v.findViewById(R.id.review_date);
-//
-//        word_en.setmText(mdata.get(position).get("word_en").toString());
-//        word_en.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
-//        word_ch.setText(mdata.get(position).get("word_ch").toString());
-//        String review_date_string = mdata.get(position).get("review_date").toString();
-//        if("1970-01-01".equals(review_date_string) || "null".equals(review_date_string)) review_date.setText("");
-//        else review_date.setText(review_date_string);
         View v;
         ViewHolder viewHolder;
         if(convertView==null){
@@ -65,7 +53,7 @@ public class FeedbackAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.username = v.findViewById(R.id.username);
             viewHolder.context = v.findViewById(R.id.context);
-//            viewHolder.profile_photo = v.findViewById(R.id.profile_photo);
+            viewHolder.profile_photo = v.findViewById(R.id.profile_photo);
             viewHolder.img_group = v.findViewById(R.id.img_group);
             v.setTag(viewHolder);
         }else{
@@ -75,22 +63,52 @@ public class FeedbackAdapter extends BaseAdapter {
         }
 
         //获取控件实例，并调用set...方法使其显示出来
-        viewHolder.username.setText(mdata.get(position).get("uid").toString());
+        viewHolder.username.setText(mdata.get(position).get("username").toString());
         viewHolder.context.setText(mdata.get(position).get("description").toString());
-
-
-        ArrayList<Object> img_list = (ArrayList<Object>)mdata.get(position).get("img_list");
-        for(int i=0;i<img_list.size();i++){
+        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);
+        //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
+        String[] img_paths = mdata.get(position).get("img_path").toString().split("#");
+        for(int i=0;i<img_paths.length;i++){
             ImageView imageView = new ImageView(context);
             LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
-//            word_meaning_Params.setMargins(conversion(18), conversion(5), conversion(18), 0);
             imageView.setLayoutParams(word_meaning_Params);
-            imageView.setImageBitmap((Bitmap)img_list.get(i));
+            getImage("http://47.98.239.237/word/img/feedback/",img_paths[i],imageView);
             viewHolder.img_group.addView(imageView);
         }
-//        viewHolder.profile_photo.setImageBitmap((Bitmap)img_list.get(0));
+
         return v;
     }
+
+    //url:"http://47.98.239.237/word/img/feedback/"
+    private void getImage(String url,final String pic,final ImageView imageView){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGetContext httpGetContext = new HttpGetContext();
+                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic);
+                HashMap<String,Object> img_data = new HashMap<>();
+                img_data.put("imageView",imageView);
+                img_data.put("bitmap",bitmap);
+                mHandler.obtainMessage(0,img_data).sendToTarget();
+            }
+        }).start();
+    }
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 0:
+                    HashMap<String,Object> img_data = (HashMap<String,Object>)message.obj;
+                    ImageView imageView = (ImageView)img_data.get("imageView");
+                    Bitmap bitmap = (Bitmap)img_data.get("bitmap");
+                    imageView.setImageBitmap(bitmap);
+                    break;
+
+            }
+            return false;
+        }
+    });
 
     private int conversion(int value){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics());
@@ -116,7 +134,7 @@ public class FeedbackAdapter extends BaseAdapter {
 
     class ViewHolder{
         TextView username,context;
-//        ImageView profile_photo;
+        CircleImageView profile_photo;
         AutoLineUtil img_group;
     }
 }

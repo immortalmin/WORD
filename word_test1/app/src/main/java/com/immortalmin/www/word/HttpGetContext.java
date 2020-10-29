@@ -107,32 +107,6 @@ public class HttpGetContext {
         return  bmp;
     }
     //http://dict.youdao.com/dictvoice?type=1&audio=accuse%20of
-//    public int update_recite_list(String url) {
-//        int res=0;
-//        try {
-//            HttpClient httpClient = new DefaultHttpClient();
-//            HttpGet httpGet = new HttpGet(url);
-//            HttpResponse response = httpClient.execute(httpGet);
-//            if (response.getStatusLine().getStatusCode() == 200) {
-//                HttpEntity entity = response.getEntity();
-//                res=1;
-//                // 使用utf-8参数保证从网页获取的内容中文能正常显示
-////                result = EntityUtils.toString(entity, "utf-8");
-//                //去除返回文本消息中的换行回车字符
-////                result = result.replace("\r\n", "");
-//                //  Log.i("HTTP", "GET:" + result);
-//                //  mHandler.obtainMessage(1,result).sendToTarget();
-//            } else {
-//                res=2;
-//                // mHandler.sendEmptyMessage(2);//2表示服务器未响应
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            res=3;
-//            //mHandler.sendEmptyMessage(3);//3表示HttpClient执行异常应
-//        }
-//        return res;
-//    }
 
     /**
      * @param url
@@ -395,7 +369,8 @@ public class HttpGetContext {
                 Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
             }
         }
-//        Log.i("ccc",feedbackList.toString());
+
+        /*
         String img_url = "http://www.immortalmin.com/word/img/feedback/";
         for(int i=0;i<feedbackList.size();i++){
             String[] img_paths = feedbackList.get(i).get("img_path").toString().split("#");
@@ -425,6 +400,7 @@ public class HttpGetContext {
         }
 //        Log.i("ccc","获取图片结束");
         Log.i("ccc",feedbackList.toString());
+        */
         return  feedbackList;
     }
 
