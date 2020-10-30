@@ -31,6 +31,7 @@ public class JsonRe {
                 feedback.put("phone_model",jsonObject.getString("phone_model"));
                 feedback.put("description",jsonObject.getString("description"));
                 feedback.put("contact",jsonObject.getString("contact"));
+                feedback.put("add_time",jsonObject.getString("add_time"));
                 feedback.put("progress",jsonObject.getString("progress"));
                 feedback.put("img_path",jsonObject.getString("img_path"));
                 feedback.put("what",jsonObject.getString("what"));

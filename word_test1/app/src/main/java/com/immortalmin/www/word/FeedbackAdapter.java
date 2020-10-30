@@ -53,8 +53,10 @@ public class FeedbackAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.username = v.findViewById(R.id.username);
             viewHolder.context = v.findViewById(R.id.context);
+            viewHolder.add_time = v.findViewById(R.id.add_time);
             viewHolder.profile_photo = v.findViewById(R.id.profile_photo);
             viewHolder.img_group = v.findViewById(R.id.img_group);
+            viewHolder.icon_iv = v.findViewById(R.id.icon_iv);
             v.setTag(viewHolder);
         }else{
             v = convertView;
@@ -65,13 +67,19 @@ public class FeedbackAdapter extends BaseAdapter {
         //获取控件实例，并调用set...方法使其显示出来
         viewHolder.username.setText(mdata.get(position).get("username").toString());
         viewHolder.context.setText(mdata.get(position).get("description").toString());
+        viewHolder.add_time.setText(mdata.get(position).get("add_time").toString());
+        if("0".equals(mdata.get(position).get("what").toString())){
+            viewHolder.icon_iv.setImageResource(R.drawable.bug_icon);
+        }else{
+            viewHolder.icon_iv.setImageResource(R.drawable.suggestion_icon);
+        }
         getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);
         //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
         String[] img_paths = mdata.get(position).get("img_path").toString().split("#");
         for(int i=0;i<img_paths.length;i++){
             ImageView imageView = new ImageView(context);
-            LinearLayout.LayoutParams word_meaning_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
-            imageView.setLayoutParams(word_meaning_Params);
+            LinearLayout.LayoutParams imageView_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
+            imageView.setLayoutParams(imageView_Params);
             getImage("http://47.98.239.237/word/img/feedback/",img_paths[i],imageView);
             viewHolder.img_group.addView(imageView);
         }
@@ -102,6 +110,8 @@ public class FeedbackAdapter extends BaseAdapter {
                     HashMap<String,Object> img_data = (HashMap<String,Object>)message.obj;
                     ImageView imageView = (ImageView)img_data.get("imageView");
                     Bitmap bitmap = (Bitmap)img_data.get("bitmap");
+//                    int img_width = bitmap.getWidth();
+//                    int img_height = bitmap.getHeight();
                     imageView.setImageBitmap(bitmap);
                     break;
 
@@ -133,9 +143,10 @@ public class FeedbackAdapter extends BaseAdapter {
     }
 
     class ViewHolder{
-        TextView username,context;
+        TextView username,context,add_time;
         CircleImageView profile_photo;
         AutoLineUtil img_group;
+        ImageView icon_iv;
     }
 }
 

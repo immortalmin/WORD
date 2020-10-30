@@ -23,7 +23,7 @@
             />
         <TextView
             android:id="@+id/username"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_toRightOf="@+id/profile_photo"
             android:layout_marginTop="4dp"
@@ -31,6 +31,16 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:text="immortalmin"/>
+
+        <ImageView
+            android:id="@+id/icon_iv"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_toRightOf="@+id/username"
+            android:layout_alignTop="@+id/username"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="10dp"/>
+
 
 
 
@@ -56,10 +66,11 @@
             app:horizontalSpacing="5dp"
             app:verticalSpacing="3dp">
 
+
         </com.immortalmin.www.word.AutoLineUtil>
 
         <TextView
-            android:id="@+id/date_tv"
+            android:id="@+id/add_time"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_below="@+id/img_group"

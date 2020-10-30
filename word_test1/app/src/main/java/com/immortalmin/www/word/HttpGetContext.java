@@ -279,7 +279,7 @@ public class HttpGetContext {
      */
 
     public int uploadFeedback(HashMap<String,Object> data, ArrayList<String> img_list){
-        Log.i("ccc",img_list.toString());
+//        Log.i("ccc",img_list.toString());
         try{
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             for (int i = 0; i <img_list.size() ; i++) {
@@ -315,9 +315,9 @@ public class HttpGetContext {
                     if(response.isSuccessful()){
                         Log.i("ccc","upload feedback success");
                         feedback_res = 1;
-//                        ResponseBody responseBody = response.body();
-//                        String res = responseBody.string();
-//                        Log.i("ccc",res);
+                        ResponseBody responseBody = response.body();
+                        String res = responseBody.string();
+                        Log.i("ccc",res);
                     }
                 }
             });
