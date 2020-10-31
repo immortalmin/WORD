@@ -248,7 +248,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic);
+                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
                 imageUtils.savePhotoToStorage(bitmap,pic);
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }

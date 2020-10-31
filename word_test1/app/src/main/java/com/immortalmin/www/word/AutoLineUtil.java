@@ -3,6 +3,7 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.immortalmin.www.word.R;
@@ -68,6 +69,8 @@ public class AutoLineUtil extends ViewGroup {
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(
                     getAutoLinefeedHeight(width), heightMode);
         }
+//        Log.i("ccc","widthMeasureSpec:"+widthMeasureSpec);
+//        Log.i("ccc","heightMeasureSpec:"+heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

@@ -41,6 +41,20 @@
             android:layout_marginTop="3dp"
             android:layout_marginStart="10dp"/>
 
+        <TextView
+            android:id="@+id/progress_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_alignTop="@+id/username"
+            android:text="待处理"
+            android:textColor="#FDF7F7"
+            android:textSize="10sp"
+            android:background="#2FE9D8"
+            />
+
 
 
 
@@ -52,16 +66,17 @@
             android:layout_marginTop="10dp"
             android:layout_marginStart="5dp"
             android:layout_below="@+id/username"
-            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_toEndOf="@+id/profile_photo"
             android:text="@string/feedback_context"/>
 
         <com.immortalmin.www.word.AutoLineUtil
             android:id="@+id/img_group"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/profile_photo"
             android:layout_below="@+id/context"
             app:horizontalSpacing="5dp"
             app:verticalSpacing="3dp">
@@ -74,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_below="@+id/img_group"
-            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_toEndOf="@+id/profile_photo"
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
             android:text="2020-10-22 19:34"/>

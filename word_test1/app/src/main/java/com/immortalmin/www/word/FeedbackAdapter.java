@@ -54,6 +54,7 @@ public class FeedbackAdapter extends BaseAdapter {
             viewHolder.username = v.findViewById(R.id.username);
             viewHolder.context = v.findViewById(R.id.context);
             viewHolder.add_time = v.findViewById(R.id.add_time);
+            viewHolder.progress_tv = v.findViewById(R.id.progress_tv);
             viewHolder.profile_photo = v.findViewById(R.id.profile_photo);
             viewHolder.img_group = v.findViewById(R.id.img_group);
             viewHolder.icon_iv = v.findViewById(R.id.icon_iv);
@@ -73,17 +74,51 @@ public class FeedbackAdapter extends BaseAdapter {
         }else{
             viewHolder.icon_iv.setImageResource(R.drawable.suggestion_icon);
         }
-        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);
-        //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
-        String[] img_paths = mdata.get(position).get("img_path").toString().split("#");
-        for(int i=0;i<img_paths.length;i++){
-            ImageView imageView = new ImageView(context);
-            LinearLayout.LayoutParams imageView_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
-            imageView.setLayoutParams(imageView_Params);
-            getImage("http://47.98.239.237/word/img/feedback/",img_paths[i],imageView);
-            viewHolder.img_group.addView(imageView);
-        }
+        viewHolder.progress_tv.setText(mdata.get(position).get("progress").toString());
+        switch (mdata.get(position).get("progress").toString()){
+            case "待处理":
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#F79C15"));
+                break;
+            case "已采纳":
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
+                break;
+            case "未采纳":
 
+                break;
+            case "实现中":
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
+                break;
+            case "已实现":
+
+                break;
+            case "修复中":
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
+                break;
+            case "已修复":
+
+                break;
+        }
+        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);
+        String img_path = mdata.get(position).get("img_path").toString();
+        if(!"null".equals(img_path)){
+            //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
+            String[] img_paths = mdata.get(position).get("img_path").toString().split("#");
+            for(int i=0;i<img_paths.length;i++){
+                ImageView imageView = new ImageView(context);
+                LinearLayout.LayoutParams imageView_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
+                imageView.setLayoutParams(imageView_Params);
+                getImage("http://47.98.239.237/word/img/feedback/",img_paths[i],imageView);
+                viewHolder.img_group.addView(imageView);
+            }
+            //给img_group设置高度
+            AutoLineUtil.LayoutParams autoLineParams = viewHolder.img_group.getLayoutParams();
+            autoLineParams.height = conversion(80);
+            viewHolder.img_group.setLayoutParams(autoLineParams);
+        }else{
+            AutoLineUtil.LayoutParams autoLineParams = viewHolder.img_group.getLayoutParams();
+            autoLineParams.height = conversion(0);
+            viewHolder.img_group.setLayoutParams(autoLineParams);
+        }
         return v;
     }
 
@@ -93,7 +128,7 @@ public class FeedbackAdapter extends BaseAdapter {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic);
+                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic,1);
                 HashMap<String,Object> img_data = new HashMap<>();
                 img_data.put("imageView",imageView);
                 img_data.put("bitmap",bitmap);
@@ -110,8 +145,6 @@ public class FeedbackAdapter extends BaseAdapter {
                     HashMap<String,Object> img_data = (HashMap<String,Object>)message.obj;
                     ImageView imageView = (ImageView)img_data.get("imageView");
                     Bitmap bitmap = (Bitmap)img_data.get("bitmap");
-//                    int img_width = bitmap.getWidth();
-//                    int img_height = bitmap.getHeight();
                     imageView.setImageBitmap(bitmap);
                     break;
 
@@ -143,7 +176,7 @@ public class FeedbackAdapter extends BaseAdapter {
     }
 
     class ViewHolder{
-        TextView username,context,add_time;
+        TextView username,context,add_time,progress_tv;
         CircleImageView profile_photo;
         AutoLineUtil img_group;
         ImageView icon_iv;

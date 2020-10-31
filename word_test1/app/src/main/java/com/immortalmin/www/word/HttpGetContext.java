@@ -86,8 +86,14 @@ public class HttpGetContext {
         return result;
     }
 
-    //使用httpclient对象访问服务器获取服务器中图片，返回图片的bitmap对象
-    public Bitmap HttpclientGetImg(String url) {
+    //XXX:本来想直接将图片返回的，要怎么处理获取端再自己处理，可是似乎容易图片还没获取到，就开始处理了
+    /**
+     * 使用httpclient对象访问服务器获取服务器中图片，返回图片的bitmap对象
+     * @param url
+     * @param opt 0:不做任何处理  1：方形
+     * @return
+     */
+    public Bitmap HttpclientGetImg(String url,int opt) {
         Bitmap bmp =null;
         try {
             HttpClient httpclient = new DefaultHttpClient();
@@ -99,6 +105,12 @@ public class HttpGetContext {
                 HttpEntity httpentity = httpresponse.getEntity();//获取的图片资源保存在HttpEntity实体中
                 InputStream in = httpentity.getContent();//获取图片数据的输入流
                 bmp = BitmapFactory.decodeStream(in); //解码图片
+                if(opt==1){//将图片处理成方形的
+                    int img_width = bmp.getWidth();
+                    int img_height = bmp.getHeight();
+                    int side_length = Math.min(img_height,img_width);
+                    bmp = Bitmap.createBitmap(bmp,(img_width-side_length)/2,(img_height-side_length)/2,side_length,side_length);
+                }
                 in.close();// 关闭输入流
             }
         } catch (Exception e) {
