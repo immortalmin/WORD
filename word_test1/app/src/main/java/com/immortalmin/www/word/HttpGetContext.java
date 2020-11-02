@@ -339,82 +339,51 @@ public class HttpGetContext {
         return feedback_res;
     }
 
-    public ArrayList<HashMap<String,Object>> getFeedbackList(JSONObject jsonObject) {
-        String url = "http://47.98.239.237/word/php_file2/getfeedbacklist.php";
-        ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
-        Bitmap bmp =null;
-
-        HttpPost httpPost = new HttpPost(url);
-        StringEntity entity = null;//解决中文乱码问题
-        try {
-            entity = new StringEntity(jsonObject.toString(), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        if (entity != null) {
-            entity.setContentEncoding("UTF-8");
-            entity.setContentType("application/json");
-        }
-        httpPost.setEntity(entity);
-        HttpClient httpClient = new DefaultHttpClient();
-        // 获取HttpResponse实例
-        HttpResponse httpResp = null;
-        try {
-            httpResp = httpClient.execute(httpPost);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 判断是够请求成功
-        if (httpResp != null) {
-            if (httpResp.getStatusLine().getStatusCode() == 200) {
-                // 获取返回的数据
-                String result = null;
-                try {
-                    result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
-                    result = result.replace("\r\n", "");
-//                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
-                    feedbackList = jsonRe.feedbackData(result);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
-            }
-        }
-
-        /*
-        String img_url = "http://www.immortalmin.com/word/img/feedback/";
-        for(int i=0;i<feedbackList.size();i++){
-            String[] img_paths = feedbackList.get(i).get("img_path").toString().split("#");
-            ArrayList<Object> img_list = new ArrayList<>();
-            for(String img:img_paths){
-                try {
-                    HttpClient httpclient = new DefaultHttpClient();
-                    //使用HttpClient时，我们提前设置好参数，比如超时时间3000ms
-                    httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 1000);
-                    HttpGet httpGet = new HttpGet(img_url+img);
-                    HttpResponse httpresponse = httpclient.execute(httpGet);
-                    if (httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {//获取图片数据成功
-                        HttpEntity httpentity = httpresponse.getEntity();//获取的图片资源保存在HttpEntity实体中
-                        InputStream in = httpentity.getContent();//获取图片数据的输入流
-                        bmp = BitmapFactory.decodeStream(in); //解码图片
-                        in.close();// 关闭输入流
-                        img_list.add(bmp);
-                    }
-//                    Log.i("ccc",img+"获取成功");
-                } catch (Exception e) {
-                    e.printStackTrace();
-//                    Log.i("ccc",img+"获取失败");
-                }
-            }
-            feedbackList.get(i).put("img_list",img_list);
-
-        }
-//        Log.i("ccc","获取图片结束");
-        Log.i("ccc",feedbackList.toString());
-        */
-        return  feedbackList;
-    }
+//    stop using from 11/2/2020
+//    public ArrayList<HashMap<String,Object>> getFeedbackList(JSONObject jsonObject) {
+//        String url = "http://47.98.239.237/word/php_file2/getfeedbacklist.php";
+//        ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
+//        Bitmap bmp =null;
+//
+//        HttpPost httpPost = new HttpPost(url);
+//        StringEntity entity = null;//解决中文乱码问题
+//        try {
+//            entity = new StringEntity(jsonObject.toString(), "utf-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        if (entity != null) {
+//            entity.setContentEncoding("UTF-8");
+//            entity.setContentType("application/json");
+//        }
+//        httpPost.setEntity(entity);
+//        HttpClient httpClient = new DefaultHttpClient();
+//        // 获取HttpResponse实例
+//        HttpResponse httpResp = null;
+//        try {
+//            httpResp = httpClient.execute(httpPost);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        // 判断是够请求成功
+//        if (httpResp != null) {
+//            if (httpResp.getStatusLine().getStatusCode() == 200) {
+//                // 获取返回的数据
+//                String result = null;
+//                try {
+//                    result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
+//                    result = result.replace("\r\n", "");
+////                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
+//                    feedbackList = jsonRe.feedbackData(result);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
+//            }
+//        }
+//        return  feedbackList;
+//    }
 
 
     public void userRegister(JSONObject jsonObject){

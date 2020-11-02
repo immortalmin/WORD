@@ -77,25 +77,13 @@ public class FeedbackAdapter extends BaseAdapter {
         viewHolder.progress_tv.setText(mdata.get(position).get("progress").toString());
         switch (mdata.get(position).get("progress").toString()){
             case "待处理":
-                viewHolder.progress_tv.setTextColor(Color.parseColor("#F79C15"));
+                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#F79C15"));
                 break;
-            case "已采纳":
-                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
+            case "已采纳":case "实现中":case "修复中":
+                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#2FE9D8"));
                 break;
-            case "未采纳":
-
-                break;
-            case "实现中":
-                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
-                break;
-            case "已实现":
-
-                break;
-            case "修复中":
-                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
-                break;
-            case "已修复":
-
+            case "未采纳":case "已实现":case "已修复":
+                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#04CF0C"));
                 break;
         }
         getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);

@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,9 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     private ListView feedback_lv;
     private FeedbackAdapter feedbackAdapter = null;
     private ArrayList<HashMap<String,Object>> feedbackList = null;
+    private MyAsyncTask myAsyncTask = new MyAsyncTask();
+    private JsonRe jsonRe = new JsonRe();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +51,7 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.commit_feedback_btn:
                 Intent intent = new Intent(FeedbackActivity.this,CommitFeedbackActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.slide_right_in,R.anim.slide_to_left);
                 break;
             case R.id.return_btn:
@@ -59,22 +64,52 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void getFeedbackList() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("what",0);
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                feedbackList = httpGetContext.getFeedbackList(jsonObject);
-                mHandler.sendEmptyMessage(0);
-            }
-        }).start();
+    //stop using from 11/2/2020
+//    private void getFeedbackList() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                JSONObject jsonObject = new JSONObject();
+//                try{
+//                    jsonObject.put("what",0);
+//                }catch (JSONException e){
+//                    e.printStackTrace();
+//                }
+//                HttpGetContext httpGetContext = new HttpGetContext();
+//                if(feedbackAdapter==null){
+//                    feedbackList = httpGetContext.getFeedbackList(jsonObject);
+//                }else{
+//                    feedbackList.clear();
+//                    feedbackList.addAll(httpGetContext.getFeedbackList(jsonObject));
+//                }
+//                mHandler.sendEmptyMessage(0);
+//            }
+//        }).start();
+//
+//    }
 
+
+    private void getFeedbackList(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",26);
+            jsonObject.put("AllOrPerson",0);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            if(feedbackAdapter==null){
+                feedbackList = jsonRe.feedbackData(result);
+                feedbackAdapter = new FeedbackAdapter(FeedbackActivity.this,feedbackList);
+                feedback_lv.setAdapter(feedbackAdapter);
+            }else{
+                feedbackList.clear();
+                feedbackList.addAll(jsonRe.feedbackData(result));
+                feedbackAdapter.notifyDataSetChanged();
+            }
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -82,11 +117,8 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-//                    feedbackList = (ArrayList<HashMap<String,Object>>)message.obj;
-                    feedbackAdapter = new FeedbackAdapter(FeedbackActivity.this,feedbackList);
-                    feedback_lv.setAdapter(feedbackAdapter);
-                    break;
 
+                    break;
             }
             return false;
         }
@@ -103,6 +135,16 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
             return false;
         }else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
+        if (requestCode == 1 && resultCode == 1) {//如果提交了新的反馈，则更新数据
+            getFeedbackList();
         }
     }
 }

@@ -87,11 +87,13 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     public void onClick(View view){
         switch (view.getId()){
             case R.id.return_btn:
+                Intent intent = new Intent();
+                setResult(0,intent);
                 finish();
                 overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                 break;
             case R.id.add_pic_btn:
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent,0);
                 break;
             case R.id.commit_btn:
@@ -170,6 +172,8 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Intent intent = new Intent();
+                        setResult(1,intent);
                         finish();
                         overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                     }
@@ -253,8 +257,8 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//            Intent intent = new Intent();
-//            setResult(1,intent);
+            Intent intent = new Intent();
+            setResult(0,intent);
             finish();
             overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
             return false;
