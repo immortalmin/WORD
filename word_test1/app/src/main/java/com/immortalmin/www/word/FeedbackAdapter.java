@@ -1,10 +1,13 @@
 package com.immortalmin.www.word;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -86,17 +89,37 @@ public class FeedbackAdapter extends BaseAdapter {
                 viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#04CF0C"));
                 break;
         }
-        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo);
+        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo,1);
         String img_path = mdata.get(position).get("img_path").toString();
         if(!"null".equals(img_path)){
             //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
             String[] img_paths = mdata.get(position).get("img_path").toString().split("#");
             for(int i=0;i<img_paths.length;i++){
+                String image_show_path = img_paths[i];
                 ImageView imageView = new ImageView(context);
                 LinearLayout.LayoutParams imageView_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
                 imageView.setLayoutParams(imageView_Params);
-                getImage("http://47.98.239.237/word/img/feedback/",img_paths[i],imageView);
+                getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageView,1);
                 viewHolder.img_group.addView(imageView);
+                //XXX:因为会出现The specified child already has a parent.巴拉巴拉的问题，只能另外多弄个imageView用来放大显示
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Dialog imgDialog = new Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                        ImageView imageShow = new ImageView(context);
+                        imageShow.setBackgroundColor(Color.WHITE);
+                        getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageShow,0);
+                        imgDialog.setContentView(imageShow);
+                        imgDialog.show();
+                        imageShow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                imgDialog.dismiss();
+                            }
+                        });
+                    }
+                });
+
             }
             //给img_group设置高度
             AutoLineUtil.LayoutParams autoLineParams = viewHolder.img_group.getLayoutParams();
@@ -110,13 +133,20 @@ public class FeedbackAdapter extends BaseAdapter {
         return v;
     }
 
+    /**
+     *
+     * @param url
+     * @param pic
+     * @param imageView
+     * @param mode 0:不做处理； 1:方形
+     */
     //url:"http://47.98.239.237/word/img/feedback/"
-    private void getImage(String url,final String pic,final ImageView imageView){
+    private void getImage(String url,final String pic, ImageView imageView,int mode){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic,1);
+                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic,mode);
                 HashMap<String,Object> img_data = new HashMap<>();
                 img_data.put("imageView",imageView);
                 img_data.put("bitmap",bitmap);
@@ -140,6 +170,14 @@ public class FeedbackAdapter extends BaseAdapter {
             return false;
         }
     });
+
+//    public interface onItemListener{
+//        void
+//    }
+//
+//    public void setOnItemClickListener(onItemListener mOnItemListener){
+//
+//    }
 
     private int conversion(int value){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics());

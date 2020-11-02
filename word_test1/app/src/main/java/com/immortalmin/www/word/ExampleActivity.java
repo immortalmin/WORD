@@ -475,7 +475,7 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist = jsonRe.exampleData(result);
-            Log.i("ccc",examplelist.toString());
+//            Log.i("ccc",examplelist.toString());
             exampleFragment.setExamplelist(examplelist,false);
         });
         myAsyncTask.execute(jsonObject);
