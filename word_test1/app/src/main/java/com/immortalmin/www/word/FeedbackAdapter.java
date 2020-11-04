@@ -14,6 +14,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -102,6 +103,8 @@ public class FeedbackAdapter extends BaseAdapter {
                 getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageView,1);
                 viewHolder.img_group.addView(imageView);
                 //XXX:因为会出现The specified child already has a parent.巴拉巴拉的问题，只能另外多弄个imageView用来放大显示
+                //不过因为listView中显示的时候是方形的，而放大的时候需要是原来的形状，所以也只能重新获取图片了，毕竟之前挖了点坑。
+                //我觉得应该上传图片的时候上传原图，下载的时候根据需求，可以下载压缩之后的图，方形的图，或者原图。
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -110,6 +113,8 @@ public class FeedbackAdapter extends BaseAdapter {
                         imageShow.setBackgroundColor(Color.WHITE);
                         getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageShow,0);
                         imgDialog.setContentView(imageShow);
+                        Window window = imgDialog.getWindow();
+                        window.setWindowAnimations(R.style.myDialogStyle);
                         imgDialog.show();
                         imageShow.setOnClickListener(new View.OnClickListener() {
                             @Override
