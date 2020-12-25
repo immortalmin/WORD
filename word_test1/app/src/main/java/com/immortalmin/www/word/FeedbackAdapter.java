@@ -79,6 +79,20 @@ public class FeedbackAdapter extends BaseAdapter {
             viewHolder.icon_iv.setImageResource(R.drawable.suggestion_icon);
         }
         viewHolder.progress_tv.setText(mdata.get(position).get("progress").toString());
+        //颜色是应该丰富一点，还是简约一点？
+        /*
+        进度
+        1、功能建议：
+            待处理
+            已采纳
+            未采纳
+            实现中
+            已实现
+        2、错误反馈：
+            待处理
+            修复中
+            已修复
+        */
         switch (mdata.get(position).get("progress").toString()){
             case "待处理":
                 viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#F79C15"));
@@ -90,6 +104,7 @@ public class FeedbackAdapter extends BaseAdapter {
                 viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#04CF0C"));
                 break;
         }
+        //显示头像
         getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo,1);
         String img_path = mdata.get(position).get("img_path").toString();
         if(!"null".equals(img_path)){
@@ -140,12 +155,11 @@ public class FeedbackAdapter extends BaseAdapter {
 
     /**
      *
-     * @param url
-     * @param pic
-     * @param imageView
+     * @param url 图片下载地址    url:"http://47.98.239.237/word/img/feedback/"
+     * @param pic 图片名称
+     * @param imageView 显示的ImageView
      * @param mode 0:不做处理； 1:方形
      */
-    //url:"http://47.98.239.237/word/img/feedback/"
     private void getImage(String url,final String pic, ImageView imageView,int mode){
         new Thread(new Runnable() {
             @Override
@@ -175,14 +189,6 @@ public class FeedbackAdapter extends BaseAdapter {
             return false;
         }
     });
-
-//    public interface onItemListener{
-//        void
-//    }
-//
-//    public void setOnItemClickListener(onItemListener mOnItemListener){
-//
-//    }
 
     private int conversion(int value){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics());

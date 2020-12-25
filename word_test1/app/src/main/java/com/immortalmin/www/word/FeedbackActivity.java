@@ -59,36 +59,16 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.feedback_tv:
-//                getFeedbackList();
+//                Log.i("ccc","Product Model: " + android.os.Build.MODEL + ","
+//                        + android.os.Build.VERSION.SDK + ","
+//                        + android.os.Build.VERSION.RELEASE);
                 break;
         }
     }
 
-    //stop using from 11/2/2020
-//    private void getFeedbackList() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                JSONObject jsonObject = new JSONObject();
-//                try{
-//                    jsonObject.put("what",0);
-//                }catch (JSONException e){
-//                    e.printStackTrace();
-//                }
-//                HttpGetContext httpGetContext = new HttpGetContext();
-//                if(feedbackAdapter==null){
-//                    feedbackList = httpGetContext.getFeedbackList(jsonObject);
-//                }else{
-//                    feedbackList.clear();
-//                    feedbackList.addAll(httpGetContext.getFeedbackList(jsonObject));
-//                }
-//                mHandler.sendEmptyMessage(0);
-//            }
-//        }).start();
-//
-//    }
-
-
+    /**
+     * 获取反馈列表
+     */
     private void getFeedbackList(){
         JSONObject jsonObject = new JSONObject();
         try{

@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="#FFFFFD"
     >
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp">
-
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_photo"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:civ_border_width="1dp"
             app:civ_border_overlay="true"
-            app:civ_border_color="#8c8888"
             app:civ_fill_color="#bab3b3"
             android:background="@drawable/trash_can"
             />
@@ -94,29 +88,41 @@
             android:layout_marginStart="5dp"
             android:text="2020-10-22 19:34"/>
 
-<!--        <Button-->
-<!--            android:id="@+id/like_btn"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:background="#00000000"-->
-<!--            android:drawableLeft="@drawable/like_off"-->
-<!--            android:layout_below="@+id/img_group"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_marginEnd="40dp"-->
-<!--            android:textSize="15dp"-->
-<!--            android:text="3247"/>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_below="@+id/profile_photo"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginStart="7dp"-->
+<!--            >-->
 
-<!--        <Button-->
-<!--            android:id="@+id/comment_btn"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:background="#00000000"-->
-<!--            android:drawableRight="@drawable/comment"-->
-<!--            android:layout_below="@+id/img_group"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_marginEnd="10dp"-->
-<!--            android:text=""/>-->
+<!--            <Button-->
+<!--                android:id="@+id/up_btn"-->
+<!--                android:layout_width="15dp"-->
+<!--                android:layout_height="15dp"-->
+<!--                android:padding="1dp"-->
+<!--                android:background="@drawable/up_off"/>-->
 
-    </RelativeLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/vote_tv"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textSize="13sp"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:text="+11"/>-->
 
-</FrameLayout>
+
+<!--            <Button-->
+<!--                android:id="@+id/down_btn"-->
+<!--                android:layout_width="15dp"-->
+<!--                android:layout_height="15dp"-->
+<!--                android:padding="1dp"-->
+<!--                android:background="@drawable/down_off"-->
+<!--                android:layout_marginTop="5dp"/>-->
+
+
+<!--        </LinearLayout>-->
+
+
+</RelativeLayout>

@@ -503,7 +503,7 @@ public class ExampleActivity extends AppCompatActivity implements
         }
         try{
             word = word.replaceAll("sb.","somebody").replaceAll("sth.","something").replaceAll("/"," or ");
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
             mediaPlayer.prepare();
         }catch (IOException e){
             e.printStackTrace();

@@ -208,7 +208,8 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         try{
             word = word.replaceAll("sb.","somebody").replaceAll("sth.","something").replaceAll("/"," or ");
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            //获取单词音频时，要把单词转换成小写的，不然会获取不到，导致页面卡住
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
             mediaPlayer.prepare();
         }catch (IOException e){
             e.printStackTrace();

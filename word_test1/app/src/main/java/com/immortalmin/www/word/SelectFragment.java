@@ -164,10 +164,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         if(!living_flag){
             return ;
         }
-//        if(mediaPlayer.isPlaying()){
-//            mediaPlayer.pause();
-//            mediaPlayer.seekTo(0);
-//        }
         switch(view.getId()){
             case R.id.sel1:
                 living_flag = false;

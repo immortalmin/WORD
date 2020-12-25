@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -163,7 +164,8 @@ public class ReviewWordActivity extends AppCompatActivity
             mediaPlayer.reset();
         }
         try{
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
+            //获取单词音频时，要把单词转换成小写的，不然会获取不到，导致页面卡住
+            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
             mediaPlayer.prepare();
         }catch (IOException e){
             e.printStackTrace();

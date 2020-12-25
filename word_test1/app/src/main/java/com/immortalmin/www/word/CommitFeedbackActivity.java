@@ -45,7 +45,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     private UserData userData = new UserData();
     private DataUtil dataUtil;
     private ImageUtils imageUtils = new ImageUtils();
-    private String ImageString = "";
     private ArrayList<String> img_list = new ArrayList<>();//需要上传的图片
     private ArrayList<Integer> remove_list = new ArrayList<>();//img_list需要移除的图片的下标
     private int count=0,img_index=0;//count表示要上传的照片的数量，img_index表示所有的照片（包括中途被用户去除的照片）的数量
@@ -106,7 +105,9 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                         break;
                     case R.id.feedbackRB:
                         data.put("what","1");
-                        data.put("phone_model","XiaoMi6");
+                        data.put("phone_model","手机型号:" + android.os.Build.MODEL + ",SDK:"
+                                + android.os.Build.VERSION.SDK + ",版本号:"
+                                + android.os.Build.VERSION.RELEASE);
                         break;
                 }
                 switch (radiogroup2.getCheckedRadioButtonId()){
@@ -163,8 +164,11 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
 
     }
 
+    /**
+     * 提交反馈后弹出的Dialog
+     * @param res
+     */
     private void resDialog(String res){
-//        mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog feedback_dialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE);
         feedback_dialog.setTitleText("Feedback")
                 .setContentText(res)
@@ -194,6 +198,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     View view1 = inflater.inflate(R.layout.imglayout,null);
                     ImageView imageview =view1.findViewById(R.id.imageView);
                     Bitmap img = (Bitmap)msg.obj;
+                    //将图片显示成方形的
                     int img_width = img.getWidth();
                     int img_height = img.getHeight();
                     Bitmap square_img = Bitmap.createBitmap(img,0,0,Math.min(img_width,img_height),Math.min(img_width,img_height));
@@ -203,7 +208,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onClick(View view) {
                             img_group.removeView(view1);
-//                            img_list.remove(now_ind);
                             remove_list.add(now_ind);
                             count--;
                         }
