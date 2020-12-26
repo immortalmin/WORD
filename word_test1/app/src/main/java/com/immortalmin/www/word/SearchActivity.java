@@ -253,12 +253,11 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             for(int i=0;i<word_list.size();i++){
                 new_word.add(word_list.get(i).get("word_en").toString());
             }
-            for(int i=0;i<new_word.size();i++){
+            for(int i=new_word.size()-1;i>=0;i--){
                 if(history_word.contains(new_word.get(i))){
                     word_list.remove(i);
                 }
             }
-            //
             if(word_list.size()>0) mHandler.obtainMessage(5,3).sendToTarget();//显示newTextView
             else mHandler.obtainMessage(5,1).sendToTarget();//隐藏newTextView
             if(searchAdapter==null){
