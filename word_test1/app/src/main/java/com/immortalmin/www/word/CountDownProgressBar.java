@@ -296,14 +296,14 @@ public class CountDownProgressBar extends View {
 
     /**
      * 按进度显示百分比，可选择是否启用数字动画
-     *
+     * 将过长的中文释义进行修剪
      * @param duration 动画时长
      */
     public void setDuration(int duration,String first_word,String second_word, OnFinishListener listener) {
         this.listener = listener;
         this.duration = duration + 1000;
-        this.first_word = first_word;
-        this.second_word = second_word;
+        this.first_word = (first_word.length()>=20&&isNeedCut(first_word)?first_word.substring(0,20)+"...":first_word);
+        this.second_word = (second_word.length()>=20&&isNeedCut(second_word)?second_word.substring(0,20):second_word);
         setSecondColor(Color.RED);
 //        Log.i("ccc firstColor",String.valueOf(firstColor));
         /*
@@ -340,6 +340,18 @@ public class CountDownProgressBar extends View {
         animator.setInterpolator(new LinearInterpolator());
         animator.setDuration(duration);
         animator.start();
+    }
+
+    /**
+     * 判断字符串是word_en还是word_ch
+     * 目前只是简单地判断第一个字符是不是英文字母
+     * @param s
+     * @return
+     */
+    private boolean isNeedCut(String s){
+        char c = s.charAt(0);
+        if(c>='a'&&c<='z'||c>='A'&&c<='Z') return false;
+        return true;
     }
 
     public interface OnFinishListener {
