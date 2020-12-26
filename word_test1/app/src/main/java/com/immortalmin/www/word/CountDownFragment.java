@@ -254,7 +254,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void countdown_mode(){
         switch (mode){
             case "1"://play music
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),"Guess who I am",word_en, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),"Guess who I am",word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -264,7 +264,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 mediaPlayer.start();
                 break;
             case "2"://show word_ch
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_ch,word_en, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_ch,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -272,7 +272,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 });
                 break;
             case "3"://show word_en
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_en,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();

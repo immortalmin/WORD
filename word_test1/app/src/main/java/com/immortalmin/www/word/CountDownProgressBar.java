@@ -32,7 +32,7 @@ public class CountDownProgressBar extends View {
     /**
      * 单词
      */
-    private String first_word = "None",second_word = "None";
+    private String first_word = "None",second_word = "None",third_word="无";
 
     /**
      * 当前进度值
@@ -111,11 +111,9 @@ public class CountDownProgressBar extends View {
             int attr = ta.getIndex(i);
             switch (attr) {
                 case R.styleable.CountDownProgressBar_countDown_firstColor:
-//                    firstColor = ta.getColor(attr, Color.LTGRAY); // 默认底色为亮灰色
                     firstColor = ta.getColor(attr, Color.parseColor("#50ea0a30")); //
                     break;
                 case R.styleable.CountDownProgressBar_countDown_secondColor:
-//                    secondColor = ta.getColor(attr, Color.BLUE); // 默认进度条颜色为蓝色
                     secondColor = ta.getColor(attr, Color.parseColor("#50ea0a30")); //
                     break;
                 case R.styleable.CountDownProgressBar_countDown_centerTextSize:
@@ -160,10 +158,8 @@ public class CountDownProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        Log.i("ccc","onDraw");
         int center = this.getWidth() / 2;
         int radius = center - circleWidth / 2;
-
         drawCircle(canvas, center, radius); // 绘制进度圆弧
         drawText(canvas, center);
     }
@@ -176,10 +172,8 @@ public class CountDownProgressBar extends View {
      * @param radius 圆的半径
      */
     private void drawCircle(Canvas canvas, int center, int radius) {
-//        Log.i("ccc","drawCircle");
         circlePaint.setShader(null); // 清除上一次的shader
         circlePaint.setColor(firstColor); // 设置底部圆环的颜色，这里使用第一种颜色
-//        Log.i("ccc firstColor",String.valueOf(firstColor));
         circlePaint.setStyle(Paint.Style.STROKE); // 设置绘制的圆为空心
         canvas.drawCircle(center, center, radius, circlePaint); // 画底部的空心圆
         RectF oval = new RectF(center - radius, center - radius, center + radius, center + radius); // 圆的外接正方形
@@ -206,40 +200,51 @@ public class CountDownProgressBar extends View {
      */
     private void drawText(Canvas canvas, int center) {
         String word;
+        /**
+         * 这里也要设置文字的大小是因为...，大概是因为后面获取fontMetrics需要吧。
+         */
+        textPaint.setTextSize(centerTextSize);
         if (maxValue == currentValue) {
-            word = second_word;
-            textPaint.setTextSize(centerTextSize);
+            //因为有两行，所以选择其中长的那一个作为文字大小的自适应的依据
+            //比较时second_word要除以2是因为英文字母占的宽度大约只有汉字的一半
+            word = (second_word.length()/2>third_word.length()?second_word:third_word);
             textPaint.setTextSize(Math.min(getRightSize(word),maxSize));
         } else {
-            /*
-            percent = (result / 60 < 10 ? "0" + result / 60 : result / 60) + ":" + (result % 60 < 10 ? "0" + result % 60 : result % 60);
-//            percent = result+"秒";
-            textPaint.setTextSize(centerTextSize+centerTextSize/3); // 设置要绘制的文字大小
-            */
             word = first_word;
-            textPaint.setTextSize(centerTextSize);
             textPaint.setTextSize(Math.min(getRightSize(word),maxSize));
         }
+
         textPaint.setTextAlign(Paint.Align.CENTER); // 设置文字居中，文字的x坐标要注意
         textPaint.setColor(centerTextColor); // 设置文字颜色
 
-        textPaint.setStrokeWidth(0); // 注意此处一定要重新设置宽度为0,否则绘制的文字会重叠
-        Rect bounds = new Rect(); // 文字边框
-        textPaint.getTextBounds(word, 0, word.length(), bounds); // 获得绘制文字的边界矩形
-        FontMetricsInt fontMetrics = textPaint.getFontMetricsInt(); // 获取绘制Text时的四条线
+        FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
         int baseline = center + (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom; // 计算文字的基线,方法见http://blog.csdn.net/harvic880925/article/details/50423762
-        canvas.drawText(word, center, baseline, textPaint); // 绘制表示进度的文字
-
+        // 绘制表示进度的文字
+        if (maxValue == currentValue){
+            //word_en
+            textPaint.setTextSize(Math.min(getRightSize(second_word),maxSize));
+            canvas.drawText(second_word, center, baseline-50, textPaint);
+            //word_ch
+            textPaint.setTextSize(Math.min(getRightSize(third_word),maxSize));
+            canvas.drawText(third_word,center,baseline+50,textPaint);
+        }else{
+            canvas.drawText(first_word, center, baseline, textPaint);
+        }
     }
 
+    /**
+     * 根据文字的长度，设置文字的大小
+     * @param text
+     * @return
+     */
     private int getRightSize(String text){
         Rect rect = new Rect();
         textPaint.getTextBounds(text,0,text.length(),rect);
         fontMetrics = textPaint.getFontMetrics();
         float width = rect.width();
         float height = fontMetrics.bottom-fontMetrics.top;
-        float canvasWidth = (float)getWidth()*0.9f;
-        float canvasHeight = (float)getHeight()*0.9f;
+        float canvasWidth = (float)getWidth()*0.8f;
+        float canvasHeight = (float)getHeight()*0.8f;
         return Math.min((int)Math.floor(canvasWidth*(float)centerTextSize/width),(int)Math.floor(canvasHeight*(float)centerTextSize/height));
     }
 
@@ -253,7 +258,6 @@ public class CountDownProgressBar extends View {
                 .getDisplayMetrics());
         circlePaint.setStrokeWidth(circleWidth);
         //一般只是希望在View发生改变时对UI进行重绘。invalidate()方法系统会自动调用 View的onDraw()方法。
-//        Log.i("ccc","setCircleWidth");
         invalidate();
     }
 
@@ -299,29 +303,13 @@ public class CountDownProgressBar extends View {
      * 将过长的中文释义进行修剪
      * @param duration 动画时长
      */
-    public void setDuration(int duration,String first_word,String second_word, OnFinishListener listener) {
+    public void setDuration(int duration,String first_word,String second_word,String third_word, OnFinishListener listener) {
         this.listener = listener;
         this.duration = duration + 1000;
         this.first_word = (first_word.length()>=20&&isNeedCut(first_word)?first_word.substring(0,20)+"...":first_word);
         this.second_word = (second_word.length()>=20&&isNeedCut(second_word)?second_word.substring(0,20):second_word);
+        this.third_word = (third_word.length()>=20?third_word.substring(0,20)+"...":third_word);
         setSecondColor(Color.RED);
-//        Log.i("ccc firstColor",String.valueOf(firstColor));
-        /*
-        if(first_word.length()>=20){
-            //先简单设置一下
-            //set textsize according to lenth of word
-            centerTextSize=(int)dip2px(20);
-        }else{
-            centerTextSize=(int)dip2px(25);
-        }
-        if(second_word.length()>=8){
-            //先简单设置一下
-            //set textsize according to lenth of word
-            centerTextSize2=(int)dip2px(10);
-        }else{
-            centerTextSize2=(int)dip2px(15);
-        }
-        */
         if (animator != null) {
             animator.cancel();
         } else {
@@ -355,7 +343,6 @@ public class CountDownProgressBar extends View {
     }
 
     public interface OnFinishListener {
-
         void onFinish();
     }
 
@@ -380,6 +367,10 @@ public class CountDownProgressBar extends View {
 
     public void setSecond_word(String second_word) {
         this.second_word = second_word;
+    }
+
+    public void setThird_word(String third_word) {
+        this.third_word = third_word;
     }
 
 
