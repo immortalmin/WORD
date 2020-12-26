@@ -202,32 +202,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /**
-     * 模糊查询的线程
-     * @param word
-     */
-//    private void fuzzyquery(final String word) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                word_list.clear();
-//                JSONObject jsonObject = new JSONObject();
-//                try{
-//                    jsonObject.put("uid",userData.getUid());
-//                    jsonObject.put("word",word);
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                HttpGetContext httpGetContext = new HttpGetContext();
-////                word_list = jsonRe.allwordData(recitejson);
-//                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
-//                word_list = jsonRe.getSearchData(recitejson);
-//
-//                mHandler.obtainMessage(0,word_list).sendToTarget();
-//            }
-//        }).start();
-//    }
-
-    /**
      * 模糊查询
      * @param word
      */
@@ -437,9 +411,11 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
-        if (requestCode == 1 && resultCode == 2) {
-            queryHistoryRecords(fuzzy_str);
-            getWordList(fuzzy_str);
-        }
+//        if (requestCode == 1 && resultCode == 2) {
+//            queryHistoryRecords(fuzzy_str);
+//            getWordList(fuzzy_str);
+//        }
+        queryHistoryRecords(fuzzy_str);
+        getWordList(fuzzy_str);
     }
 }

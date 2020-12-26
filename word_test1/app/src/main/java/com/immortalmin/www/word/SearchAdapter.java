@@ -24,15 +24,6 @@ public class SearchAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.searchitem,null);
-        //old
-//        WordView word_group = (WordView)v.findViewById(R.id.word_group);
-//        TextView C_meaning = (TextView)v.findViewById(R.id.C_meaning);
-//
-//        word_group.setmText(mdata.get(position).get("word_group").toString());
-//        word_group.setAccount((float)(Integer.valueOf(mdata.get(position).get("correct_times").toString())/5.0));
-//        C_meaning.setText(mdata.get(position).get("C_meaning").toString());
-
-        //new
         WordView word_en = (WordView)v.findViewById(R.id.word_en);
         TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
 

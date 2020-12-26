@@ -71,7 +71,6 @@ public class ExampleActivity extends AppCompatActivity implements
     private String current_word="error",wid = "100",dict_source="0";
     private boolean first_coming = true;
     private int collect_flag = 0, del_id = 1;
-    private boolean isChanged = false;
 
 
     @Override
@@ -211,11 +210,6 @@ public class ExampleActivity extends AppCompatActivity implements
                     mediaPlayer.seekTo(0);
                 }
                 Intent intent = new Intent();
-                if(isChanged){
-                    setResult(1,intent);
-                }else{
-                    setResult(2,intent);
-                }
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -376,7 +370,6 @@ public class ExampleActivity extends AppCompatActivity implements
 
 
     private void deleteWord(){
-        isChanged = true;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",word.get("wid"));
@@ -386,8 +379,6 @@ public class ExampleActivity extends AppCompatActivity implements
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            Intent intent = new Intent();
-            setResult(2,intent);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             Toast.makeText(ExampleActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
@@ -401,7 +392,6 @@ public class ExampleActivity extends AppCompatActivity implements
      * @param sel
      */
     private void updateCollect(int sel){
-        isChanged = true;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",17);
@@ -449,7 +439,6 @@ public class ExampleActivity extends AppCompatActivity implements
     }
 
     public void updateWord(JSONObject jsonObject){
-        isChanged = true;
         try{
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("what",24);
@@ -561,12 +550,6 @@ public class ExampleActivity extends AppCompatActivity implements
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
                 mediaPlayer.seekTo(0);
-            }
-            Intent intent = new Intent();
-            if(isChanged){
-                setResult(1,intent);
-            }else{
-                setResult(2,intent);
             }
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);

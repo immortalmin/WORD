@@ -69,7 +69,7 @@ public class DbDao {
     }
 
     /**
-     * 插入数据
+     * 添加历史记录
      * @param word
      */
     public void insertData(HashMap<String,Object> word){
