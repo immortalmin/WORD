@@ -118,6 +118,11 @@ public class JsonRe {
                 word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
                 word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
                 word.put("dict_source",jsonObject.getString("dict_source"));
+                word.put("cid",jsonObject.getString("cid"));
+                word.put("gid",jsonObject.getString("gid"));
+                word.put("correct_times",jsonObject.getString("correct_times"));
+                word.put("error_times",jsonObject.getString("error_times"));
+                word.put("last_date",jsonObject.getString("last_date"));
                 wordList.add(word);
             }
         }catch (JSONException e) {

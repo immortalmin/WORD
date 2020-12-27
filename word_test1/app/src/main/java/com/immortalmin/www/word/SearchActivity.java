@@ -299,8 +299,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                         case 0:
                             historyTextView.setVisibility(View.INVISIBLE);
                             clear_btn.setVisibility(View.INVISIBLE);
-//                            historyTextView.setHeight(0);
-//                            clear_btn.setHeight(0);
                             break;
                         case 1:
                             newTextView.setVisibility(View.INVISIBLE);
@@ -308,8 +306,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                         case 2:
                             historyTextView.setVisibility(View.VISIBLE);
                             clear_btn.setVisibility(View.VISIBLE);
-//                            historyTextView.getLayoutParams().height = RelativeLayout.LayoutParams.WRAP_CONTENT;
-//                            historyTextView.getLayoutParams().height = 20;
                             historyTextView.requestLayout();
                             break;
                         case 3:
@@ -322,39 +318,12 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
     });
 
-//    /**
-//     * 截屏
-//     * @return
-//     */
-//    private Bitmap getcapture(){
-//        View view = getWindow().getDecorView();     // 获取DecorView
-//        view.setDrawingCacheEnabled(true);
-//        view.buildDrawingCache();
-//        Bitmap bitmap = view.getDrawingCache();
-//        bitmap = Bitmap.createBitmap(bitmap, 0, 0,getScreenWidth(SearchActivity.this), getScreenHeight(SearchActivity.this), null, false);
-//        return bitmap;
-//    }
-//
-//    //获取屏幕高度 不包含虚拟按键=
-//    public static int getScreenHeight(Context context) {
-//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//        return dm.heightPixels;
-//    }
-//
-//    //获取屏幕宽度
-//    public static int getScreenWidth(Context context) {
-//        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//        return dm.widthPixels;
-//    }
-
     /**
      * 跳转到例句页面
      * @param wid
      */
     public void jump_to_example(String wid,String dict_source){
-//        Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
         Intent intent = new Intent(SearchActivity.this, ExampleActivity.class);
-//        intent.putExtra("id",id);
         intent.putExtra("wid",wid);
         intent.putExtra("dict_source",dict_source);
         startActivityForResult(intent,1);

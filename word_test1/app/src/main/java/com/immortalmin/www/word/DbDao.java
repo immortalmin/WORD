@@ -29,19 +29,19 @@ public class DbDao {
         queryData("");
     }
 
-    public List<HashMap<String,Object>> queryData(String tempName){
+    /**
+     * 历史记录 模糊查询
+     * @param queryString
+     * @return
+     */
+    public List<HashMap<String,Object>> queryData(String queryString){
+        String wordQuery="%";
+        for(int i=0;i<queryString.length();i++){
+            wordQuery=wordQuery+queryString.charAt(i)+"%";
+        }
 
-//        List<String> data = new ArrayList<>();
-////        模糊查询
-//        Cursor cursor = helper.getReadableDatabase().rawQuery("select id as _id,name from records where name like '%"+tempName+"%' order by id desc",null);
-//        while(cursor.moveToNext()){
-//            String name = cursor.getString(cursor.getColumnIndex("name"));
-//            data.add(name);
-//        }
-//        cursor.close();
-//        return data;
         List<HashMap<String,Object>> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source from records where word_en like '%"+tempName+"%' order by id desc limit 10",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like '"+wordQuery+"' order by id desc limit 10",null);
         while(cursor.moveToNext()){
             HashMap<String,Object> word = new HashMap<>();
             word.put("id",cursor.getString(cursor.getColumnIndex("id")));
@@ -49,6 +49,11 @@ public class DbDao {
             word.put("word_en",cursor.getString(cursor.getColumnIndex("word_en")));
             word.put("word_ch",cursor.getString(cursor.getColumnIndex("word_ch")));
             word.put("dict_source",cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.put("cid",cursor.getString(cursor.getColumnIndex("cid")));
+            word.put("gid",cursor.getString(cursor.getColumnIndex("gid")));
+            word.put("correct_times",cursor.getString(cursor.getColumnIndex("correct_times")));
+            word.put("error_times",cursor.getString(cursor.getColumnIndex("error_times")));
+            word.put("last_date",cursor.getString(cursor.getColumnIndex("last_date")));
             wordList.add(word);
         }
         cursor.close();
@@ -74,12 +79,17 @@ public class DbDao {
      */
     public void insertData(HashMap<String,Object> word){
         db = helper.getWritableDatabase();
-//        db.execSQL("insert into records(name) values('"+tempName+"')");
         int wid = Integer.valueOf(word.get("wid").toString());
         String word_en = word.get("word_en").toString();
         String word_ch = word.get("word_ch").toString();
         int dict_source = Integer.valueOf(word.get("dict_source").toString());
-        db.execSQL("insert into records(wid,word_en,word_ch,dict_source) values("+wid+",'"+word_en+"','"+word_ch+"',"+dict_source+")");
+        String cid = word.get("cid").toString();
+        String gid = word.get("gid").toString();
+        String correct_times = word.get("correct_times").toString();
+        String error_times = word.get("error_times").toString();
+        String last_date = word.get("last_date").toString();
+        db.execSQL("insert into records(wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date) " +
+                "values("+wid+",'"+word_en+"','"+word_ch+"',"+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+")");
         db.close();
     }
 

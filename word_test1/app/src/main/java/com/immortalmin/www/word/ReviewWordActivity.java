@@ -67,7 +67,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private List<HashMap<String, Object>> review_list = null;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
-    private int[] finish_ind = new int[10000];//今天是否已经连续背对5次
+    private int[] finish_ind = new int[10000];//该单词是否完成今天的背诵
     private int finish_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
     private int current_ind = -1;

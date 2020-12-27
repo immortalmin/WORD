@@ -26,9 +26,13 @@ public class SearchAdapter extends BaseAdapter {
         View v = mInflater.inflate(R.layout.searchitem,null);
         WordView word_en = (WordView)v.findViewById(R.id.word_en);
         TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
+        int correct_times = Integer.parseInt(mdata.get(position).get("correct_times").toString());
+        int grasp_times = 5;
+        float account = (correct_times>=grasp_times?1.0f:(float)correct_times/(float)grasp_times);
 
         word_en.setmText(mdata.get(position).get("word_en").toString());
-        word_en.setAccount(0);
+
+        word_en.setAccount(account);
         word_ch.setText(mdata.get(position).get("word_ch").toString());
 
         return v;
