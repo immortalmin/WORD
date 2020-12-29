@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
+        <activity android:name=".ProgressTestActivity"></activity>
         <activity android:name=".CommitFeedbackActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".ChangePwdActivity" />

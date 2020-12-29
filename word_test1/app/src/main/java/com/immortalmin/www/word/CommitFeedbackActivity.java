@@ -33,6 +33,8 @@ import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
@@ -53,6 +55,13 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commit_feedback);
+
+//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+//                        .setDefaultFontPath("fonts/Roboto-ThinItalic.ttf")
+//                        .setFontAttrId(R.attr.fontPath)
+//                        .build()
+//        );
+
         return_btn = (Button)findViewById(R.id.return_btn);
         add_pic_btn = (Button)findViewById(R.id.add_pic_btn);
         commit_btn = (Button)findViewById(R.id.commit_btn);
@@ -67,6 +76,11 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         dataUtil = new DataUtil(this);
         init();
     }
+
+//    @Override
+//    protected void attachBaseContext(Context newBase) {
+//        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+//    }
 
     private void init() {
         //获取用户信息
