@@ -34,7 +34,7 @@ import static android.content.Context.AUDIO_SERVICE;
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -109,47 +109,8 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         resetColor = new Runnable(){
             public void run(){
                 mHandler.obtainMessage(1).sendToTarget();
-//                progressBar.setProgress(finish_num/recite_num);
-//                progressBar.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        int pro_num = finish_num*100/recite_num;
-//                        progressBar.setProgress(pro_num);
-//                    }
-//                });
-//
-//                if(finish_num>=recite_num){
-//                    //设置按钮不可用
-//                    sel1.setClickable(false);
-//                    sel2.setClickable(false);
-//                    sel3.setClickable(false);
-//                    sel4.setClickable(false);
-//                    update_sql_data();
-//                }else if(!pron_lock){
-//                    recite();
-//                }
             }
         };
-        /**
-         * 接收来自activity的数据(first time)
-         */
-//        Bundle bundle = getArguments();
-//        word_list.put("wordview",bundle.getString("wordview"));
-//        word_list.put("sel1",bundle.getString("sel1"));
-//        word_list.put("sel2",bundle.getString("sel2"));
-//        word_list.put("sel3",bundle.getString("sel3"));
-//        word_list.put("sel4",bundle.getString("sel4"));
-//        word_list.put("today_correct_times",bundle.getString("today_correct_times"));
-//        word_list.put("c_times",bundle.getString("c_times"));
-//        correct_sel = Integer.valueOf(bundle.getString("correct_sel"));
-//
-//        mediaPlayer = new MediaPlayer();
-//        initMediaPlayer(bundle.getString("wordview"),0);//音频初始化
-//        mediaPlayer.start();
-//
-//        mHandler.obtainMessage(0).sendToTarget();
-
-
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -221,13 +182,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                 scheduledThreadPool.schedule(resetColor,500, TimeUnit.MILLISECONDS);
                 break;
             case R.id.wordview:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 changed_volume++;
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 break;
         }
     }
@@ -277,26 +234,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         changed_volume=0;
     }
 
-
-    /**
-     * 音频播放
-     * @param word
-     * @param what
-     */
-    private void initMediaPlayer(String word,int what) {
-        try {
-            if(what == 0){
-                //modify type to change pronunciation between US and UK
-                mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word));
-            }else if(what == 1){
-                mediaPlayer.setDataSource(word);
-            }
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -330,10 +267,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      * 向activity回送数据
      */
     private void send_to_activity(int ans){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-        }
+        mediaPlayerUtil.stop();
         if (mListener != null) {
             HashMap<String,Object> res = new HashMap<String,Object>();
             if(ans==-1){//select unknown
@@ -356,8 +290,8 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         living_flag = true;//激活按钮
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
         this.word_list = words;
-        this.mediaPlayer = (MediaPlayer)words.get("media_player");
-        mediaPlayer.start();
+        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
+        mediaPlayerUtil.start();
         mHandler.obtainMessage(0).sendToTarget();
     }
 }

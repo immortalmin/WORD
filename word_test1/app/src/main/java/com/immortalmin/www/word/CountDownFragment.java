@@ -36,7 +36,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private Button acquaint,vague,strange;
     private CountDownProgressBar cpb_countdown;
     private Boolean isCountdownfinish=false,pron_flag=true,living_flag=true;//pron_flag:是否播放音频,living_flag:按钮是否激活
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -113,11 +113,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void display_pro(){
         isCountdownfinish = true;
         if(pron_flag){
-            if(mediaPlayer.isPlaying()){
-                mediaPlayer.pause();
-                mediaPlayer.seekTo(0);
-            }
-            mediaPlayer.start();
+            mediaPlayerUtil.start();
         }
     }
 
@@ -148,11 +144,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 if(isCountdownfinish){
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                     changed_volume++;
-                    if(mediaPlayer.isPlaying()){
-                        mediaPlayer.pause();
-                        mediaPlayer.seekTo(0);
-                    }
-                    mediaPlayer.start();
+                    mediaPlayerUtil.start();
                 }else{
                     cpb_countdown.finishProgressBar();
                 }
@@ -168,7 +160,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 //如果已经发过音的，只延迟1000毫秒就跳转
                 //没发过音的，延迟单词音频的时间再跳转
                 if(pron_flag){
-                    scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
+                    scheduledThreadPool.schedule(music_delay,mediaPlayerUtil.getDuration(), TimeUnit.MILLISECONDS);
                 }else{
                     scheduledThreadPool.schedule(music_delay,1000, TimeUnit.MILLISECONDS);
                 }
@@ -182,12 +174,8 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 }
                 soundPool.play(sound_vague, 0.3f, 0.3f, 0, 0, 1.0f);
                 user_sel = 2;
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
-                mediaPlayer.start();
-                scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration(), TimeUnit.MILLISECONDS);
+                mediaPlayerUtil.start();
+                scheduledThreadPool.schedule(music_delay,mediaPlayerUtil.getDuration(), TimeUnit.MILLISECONDS);
                 break;
             case R.id.strange:
                 resetVolume();
@@ -217,10 +205,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
      * 向activity回送数据
      */
     public void send_to_activity(int res){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-        }
+        mediaPlayerUtil.stop();
         if (mListener != null) {
             HashMap<String,Object> s = new HashMap<String,Object>();
             switch (res){
@@ -247,24 +232,24 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         mode = words.get("mode").toString();
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
-        this.mediaPlayer = (MediaPlayer)words.get("media_player");
+        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
         countdown_mode();
     }
 
     private void countdown_mode(){
         switch (mode){
             case "1"://play music
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),"Guess who I am",word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),"Guess who I am",word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
                     }
                 });
                 pron_flag = false;//因为一轮只需要发一次音，既然开始要发音，最后就不需要发音了
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 break;
             case "2"://show word_ch
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_ch,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_ch,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
@@ -272,14 +257,14 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 });
                 break;
             case "3"://show word_en
-                cpb_countdown.setDuration(Math.max(mediaPlayer.getDuration(),duration),word_en,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_en,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
                     @Override
                     public void onFinish() {
                         display_pro();
                     }
                 });
                 pron_flag = false;
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 break;
         }
     }

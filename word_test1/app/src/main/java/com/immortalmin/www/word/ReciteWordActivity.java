@@ -63,7 +63,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private List<HashMap<String, Object>> recite_list = null;//the list of word
     private int recite_num = 1;//the number of word today
     private int recite_scope = 5;//additional number of word
@@ -110,7 +110,7 @@ public class ReciteWordActivity extends AppCompatActivity
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
         //初始化单词音频
-        resetMediaPlayer(recite_list.get(correct_ind).get("word_en").toString());
+        mediaPlayerUtil.reset(recite_list.get(correct_ind).get("word_en").toString());
         switch (today_finish) {//according to today_finish
             case 0://select
                 hideInput();
@@ -123,7 +123,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 recite_info.put("sel4", recite_list.get(select[3]).get("word_ch").toString());
                 recite_info.put("correct_sel", correct_sel);
                 recite_info.put("c_times", String.valueOf(c_times));
-                recite_info.put("media_player",mediaPlayer);
+                recite_info.put("media_player",mediaPlayerUtil);
                 start_select_mode(recite_info);
                 break;
             case 1://countdown
@@ -133,7 +133,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
                 now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayer);
+                now_words.put("media_player",mediaPlayerUtil);
                 start_countdown_mode(now_words);
                 break;
             case 2://spell
@@ -141,7 +141,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
                 now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayer);
+                now_words.put("media_player",mediaPlayerUtil);
                 start_spell_mode(now_words);
                 break;
         }
@@ -199,23 +199,6 @@ public class ReciteWordActivity extends AppCompatActivity
             }
         });
         myAsyncTask.execute(jsonObject);
-    }
-
-    private Boolean resetMediaPlayer(String word){
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-        }
-        try{
-            word = word.replaceAll("sb.","somebody").replaceAll("sth.","something").replaceAll("/"," or ");
-            //获取单词音频时，要把单词转换成小写的，不然会获取不到，导致页面卡住
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
-            mediaPlayer.prepare();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 
     /**

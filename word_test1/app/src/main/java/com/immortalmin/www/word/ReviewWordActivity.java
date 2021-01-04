@@ -63,7 +63,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private SweetAlertDialog interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private Map<String, Object> update_word = null;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private List<HashMap<String, Object>> review_list = null;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
@@ -135,7 +135,7 @@ public class ReviewWordActivity extends AppCompatActivity
         today_finish = Integer.valueOf(review_list.get(current_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
         //初始化单词音频
-        resetMediaPlayer(review_list.get(current_ind).get("word_en").toString());
+        mediaPlayerUtil.reset(review_list.get(current_ind).get("word_en").toString());
         hideInput();
         switch(today_finish){
             case 0:
@@ -144,7 +144,7 @@ public class ReviewWordActivity extends AppCompatActivity
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
                 now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayer);
+                now_words.put("media_player",mediaPlayerUtil);
                 start_countdown_mode(now_words);
                 break;
             case 1:
@@ -152,26 +152,10 @@ public class ReviewWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
                 now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayer);
+                now_words.put("media_player",mediaPlayerUtil);
                 start_spell_mode(now_words);
                 break;
         }
-    }
-
-    private Boolean resetMediaPlayer(String word){
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-        }
-        try{
-            //获取单词音频时，要把单词转换成小写的，不然会获取不到，导致页面卡住
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
-            mediaPlayer.prepare();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 
     /**

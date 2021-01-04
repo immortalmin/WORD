@@ -61,7 +61,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private KelinsiFragment kelinsiFragment = new KelinsiFragment();
     private HashMap<String,Object> word = null;
     private ArrayList<HashMap<String,Object>> examplelist = null;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -192,11 +192,7 @@ public class ExampleActivity extends AppCompatActivity implements
                 }
                 break;
             case R.id.word_en:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 break;
             case R.id.word_del_btn:
                 del_warning();
@@ -205,11 +201,7 @@ public class ExampleActivity extends AppCompatActivity implements
                 updateWordDialog(word);
                 break;
             case R.id.return_btn:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
-                Intent intent = new Intent();
+                mediaPlayerUtil.stop();
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -264,9 +256,9 @@ public class ExampleActivity extends AppCompatActivity implements
                     }
                     //set music of word
                     current_word = word.get("word_en").toString();
-                    resetMediaPlayer(current_word);
+                    mediaPlayerUtil.reset(current_word);
                     if(first_coming){
-                        mediaPlayer.start();
+                        mediaPlayerUtil.start();
                         first_coming = false;
                     }
                     break;
@@ -485,22 +477,6 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-    private Boolean resetMediaPlayer(String word){
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-        }
-        try{
-            word = word.replaceAll("sb.","somebody").replaceAll("sth.","something").replaceAll("/"," or ");
-            mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
-            mediaPlayer.prepare();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void exampleFragmentInteraction(String res){
 
@@ -546,11 +522,7 @@ public class ExampleActivity extends AppCompatActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//            Intent intent = new Intent(ExampleActivity.this, ReciteActivity.class);
-            if(mediaPlayer.isPlaying()){
-                mediaPlayer.pause();
-                mediaPlayer.seekTo(0);
-            }
+            mediaPlayerUtil.stop();
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             return false;

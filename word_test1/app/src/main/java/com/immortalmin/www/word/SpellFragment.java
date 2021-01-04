@@ -41,7 +41,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private String word_en,word_ch,mode,user_ans;
     private CountDownProgressBar cpb_countdown;
-    private MediaPlayer mediaPlayer=new MediaPlayer();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -184,14 +184,14 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             }
             if (!btn_lock && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
                 resetVolume();
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 if(Comparison(eword.getText().toString(),word_en)){
                     soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                     mHandler.obtainMessage(0).sendToTarget();
                     suspend_flag = false;
                     btn_lock = true;
                     eword.setEnabled(false);
-                    scheduledThreadPool.schedule(music_delay,mediaPlayer.getDuration()+200, TimeUnit.MILLISECONDS);
+                    scheduledThreadPool.schedule(music_delay,mediaPlayerUtil.getDuration()+200, TimeUnit.MILLISECONDS);
                 }else{
                     WrongTimes++;
                     soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
@@ -252,10 +252,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     InputMethodManager InputManger = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     InputManger.hideSoftInputFromWindow(eword.getWindowToken(), 0);
                     //停止播放音频
-                    if(mediaPlayer.isPlaying()){
-                        mediaPlayer.pause();
-                        mediaPlayer.seekTo(0);
-                    }
+                    mediaPlayerUtil.stop();
                     //向Activity返回数据
                     mListener.spellFragmentInteraction(WrongTimes);
                     break;
@@ -273,19 +270,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      * @param view
      */
     public void onClick(View view){
-//        if(mediaPlayer.isPlaying()){
-//            mediaPlayer.pause();
-//            mediaPlayer.seekTo(0);
-//        }
         switch(view.getId()){
             case R.id.cword:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    mediaPlayer.seekTo(0);
-                }
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 changed_volume++;
-                mediaPlayer.start();
+                mediaPlayerUtil.start();
                 break;
 
         }
@@ -310,7 +299,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
         eword.setEnabled(true);
-        this.mediaPlayer = (MediaPlayer)words.get("media_player");
+        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
         mHandler.sendEmptyMessage(2);
         showInput(eword);
     }
