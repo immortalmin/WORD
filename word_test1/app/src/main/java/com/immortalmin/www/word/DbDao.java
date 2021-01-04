@@ -39,9 +39,10 @@ public class DbDao {
         for(int i=0;i<queryString.length();i++){
             wordQuery=wordQuery+queryString.charAt(i)+"%";
         }
-
+        wordQuery = wordQuery.replaceAll("\'","\\\'").replaceAll("\"","\"\"");
+        Log.i("ccc","wordQuery:"+wordQuery);
         List<HashMap<String,Object>> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like '"+wordQuery+"' order by id desc limit 10",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like \""+wordQuery+"\" order by id desc limit 10",null);
         while(cursor.moveToNext()){
             HashMap<String,Object> word = new HashMap<>();
             word.put("id",cursor.getString(cursor.getColumnIndex("id")));
@@ -80,7 +81,7 @@ public class DbDao {
     public void insertData(HashMap<String,Object> word){
         db = helper.getWritableDatabase();
         int wid = Integer.valueOf(word.get("wid").toString());
-        String word_en = word.get("word_en").toString();
+        String word_en = word.get("word_en").toString().replaceAll("\'","\\\'").replaceAll("\"","\"\"");
         String word_ch = word.get("word_ch").toString();
         int dict_source = Integer.valueOf(word.get("dict_source").toString());
         String cid = word.get("cid").toString();
@@ -89,7 +90,7 @@ public class DbDao {
         String error_times = word.get("error_times").toString();
         String last_date = word.get("last_date").toString();
         db.execSQL("insert into records(wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date) " +
-                "values("+wid+",'"+word_en+"','"+word_ch+"',"+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+")");
+                "values("+wid+",\""+word_en+"\",\""+word_ch+"\","+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+")");
         db.close();
     }
 
