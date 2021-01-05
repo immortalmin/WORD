@@ -127,7 +127,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         try{
             jsonObject.put("wid",data.get("wid").toString());
             jsonObject.put("word_group",word_group.getText().toString().replaceAll("\"","\\\\\\\""));
-            jsonObject.put("C_meaning",C_meaning.getText().toString());
+            jsonObject.put("C_meaning",C_meaning.getText().toString().replaceAll("\"","\\\\\\\""));
         }catch (JSONException e){
             e.printStackTrace();
         }

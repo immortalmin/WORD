@@ -23,6 +23,10 @@ public class MediaPlayerUtil {
             word = word.replaceAll("sb.","somebody").replaceAll("sb","somebody")
                     .replaceAll("sth.","something").replaceAll("sth","something")
                     .replaceAll("/"," or ");
+            //处理没有因为字母、数字的字符串
+            if(word.replaceAll("[^a-zA-Z0-9]","").length()==0){
+                word="nothing";
+            }
             mediaPlayer.setDataSource("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
             mediaPlayer.prepare();
         }catch (IOException e){

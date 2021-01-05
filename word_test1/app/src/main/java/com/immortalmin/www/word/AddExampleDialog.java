@@ -266,9 +266,9 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<index;i++){
                 JSONObject translate = new JSONObject();
-                String wString = word[i][0].getText().toString();
+                String wString = word[i][0].getText().toString().replaceAll("\"","\\\\\\\"");
                 String eString = word[i][1].getText().toString().replaceAll("\"","\\\\\\\"");
-                String cString = word[i][2].getText().toString();
+                String cString = word[i][2].getText().toString().replaceAll("\"","\\\\\\\"");
                 if(del_flag[i] && wString.length()!=0 && eString.length()!=0 && cString.length()!=0){
                     translate.put("word_meaning",wString+'\n');
                     translate.put("E_sentence",eString+'\n');

@@ -125,9 +125,9 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("eid",data.get("eid").toString());
-            jsonObject.put("word_meaning",word_en.getText().toString());
+            jsonObject.put("word_meaning",word_en.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("E_sentence",E_sentence.getText().toString().replaceAll("\"","\\\\\\\""));
-            jsonObject.put("C_translate",C_translate.getText().toString());
+            jsonObject.put("C_translate",C_translate.getText().toString().replaceAll("\"","\\\\\\\""));
         }catch (JSONException e){
             e.printStackTrace();
         }

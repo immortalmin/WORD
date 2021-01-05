@@ -39,8 +39,7 @@ public class DbDao {
         for(int i=0;i<queryString.length();i++){
             wordQuery=wordQuery+queryString.charAt(i)+"%";
         }
-        wordQuery = wordQuery.replaceAll("\'","\\\'").replaceAll("\"","\"\"");
-        Log.i("ccc","wordQuery:"+wordQuery);
+        wordQuery = wordQuery.replaceAll("\"","\"\"");
         List<HashMap<String,Object>> wordList = new ArrayList<>();
         Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like \""+wordQuery+"\" order by id desc limit 10",null);
         while(cursor.moveToNext()){
@@ -81,8 +80,8 @@ public class DbDao {
     public void insertData(HashMap<String,Object> word){
         db = helper.getWritableDatabase();
         int wid = Integer.valueOf(word.get("wid").toString());
-        String word_en = word.get("word_en").toString().replaceAll("\'","\\\'").replaceAll("\"","\"\"");
-        String word_ch = word.get("word_ch").toString();
+        String word_en = word.get("word_en").toString().replaceAll("\"","\"\"");
+        String word_ch = word.get("word_ch").toString().replaceAll("\"","\"\"");
         int dict_source = Integer.valueOf(word.get("dict_source").toString());
         String cid = word.get("cid").toString();
         String gid = word.get("gid").toString();

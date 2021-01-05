@@ -217,7 +217,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result -> {
-//            Log.i("ccc","result:"+result);
             word_list.clear();
             word_list.addAll(jsonRe.getSearchData(result));
             //去除新查询中已存在于历史记录中的单词
