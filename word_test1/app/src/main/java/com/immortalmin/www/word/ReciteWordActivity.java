@@ -63,7 +63,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+//    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private List<HashMap<String, Object>> recite_list = null;//the list of word
     private int recite_num = 1;//the number of word today
     private int recite_scope = 5;//additional number of word
@@ -109,8 +109,6 @@ public class ReciteWordActivity extends AppCompatActivity
         today_finish = Integer.valueOf(recite_list.get(correct_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
-        //初始化单词音频
-        mediaPlayerUtil.reset(recite_list.get(correct_ind).get("word_en").toString());
         switch (today_finish) {//according to today_finish
             case 0://select
                 hideInput();
@@ -123,7 +121,6 @@ public class ReciteWordActivity extends AppCompatActivity
                 recite_info.put("sel4", recite_list.get(select[3]).get("word_ch").toString());
                 recite_info.put("correct_sel", correct_sel);
                 recite_info.put("c_times", String.valueOf(c_times));
-                recite_info.put("media_player",mediaPlayerUtil);
                 start_select_mode(recite_info);
                 break;
             case 1://countdown
@@ -133,7 +130,6 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
                 now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayerUtil);
                 start_countdown_mode(now_words);
                 break;
             case 2://spell
@@ -141,7 +137,6 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
                 now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayerUtil);
                 start_spell_mode(now_words);
                 break;
         }

@@ -36,7 +36,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private Button acquaint,vague,strange;
     private CountDownProgressBar cpb_countdown;
     private Boolean isCountdownfinish=false,pron_flag=true,living_flag=true;//pron_flag:是否播放音频,living_flag:按钮是否激活
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+    private MediaPlayerUtil mediaPlayerUtil;
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -54,7 +54,8 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        Log.d(TAG,"onAttach");
+        mediaPlayerUtil = new MediaPlayerUtil(context);
+//        Log.d(TAG,"onAttach");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -74,7 +75,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.activity_countdown,null);
-        Log.d(TAG,"onCreateView");
+//        Log.d(TAG,"onCreateView");
         return view;
     }
 
@@ -219,7 +220,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                     s.put("judge",3);
                     break;
             }
-//            a.add(s);
             mListener.countdownonFragmentInteraction(s);
         }
     }
@@ -232,7 +232,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         mode = words.get("mode").toString();
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
-        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
         countdown_mode();
     }
 
@@ -246,7 +245,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 pron_flag = false;//因为一轮只需要发一次音，既然开始要发音，最后就不需要发音了
-                mediaPlayerUtil.start();
+                mediaPlayerUtil.reset(word_en,true);
                 break;
             case "2"://show word_ch
                 cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_ch,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
@@ -255,6 +254,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                         display_pro();
                     }
                 });
+                mediaPlayerUtil.reset(word_en,false);
                 break;
             case "3"://show word_en
                 cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_en,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
@@ -264,7 +264,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 pron_flag = false;
-                mediaPlayerUtil.start();
+                mediaPlayerUtil.reset(word_en,true);
                 break;
         }
     }

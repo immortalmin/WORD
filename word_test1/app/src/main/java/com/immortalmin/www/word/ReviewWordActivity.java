@@ -63,7 +63,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private SweetAlertDialog interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private Map<String, Object> update_word = null;
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+//    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private List<HashMap<String, Object>> review_list = null;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
@@ -134,8 +134,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
         today_finish = Integer.valueOf(review_list.get(current_ind).get("today_correct_times").toString());
         mHandler.obtainMessage(0).sendToTarget();
-        //初始化单词音频
-        mediaPlayerUtil.reset(review_list.get(current_ind).get("word_en").toString());
         hideInput();
         switch(today_finish){
             case 0:
@@ -144,7 +142,6 @@ public class ReviewWordActivity extends AppCompatActivity
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
                 now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayerUtil);
                 start_countdown_mode(now_words);
                 break;
             case 1:
@@ -152,7 +149,6 @@ public class ReviewWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
                 now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
-                now_words.put("media_player",mediaPlayerUtil);
                 start_spell_mode(now_words);
                 break;
         }

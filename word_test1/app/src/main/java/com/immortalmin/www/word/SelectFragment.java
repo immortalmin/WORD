@@ -34,7 +34,7 @@ import static android.content.Context.AUDIO_SERVICE;
 public class SelectFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SelectFragment";
     private OnFragmentInteractionListener mListener;
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+    private MediaPlayerUtil mediaPlayerUtil;
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -60,7 +60,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        Log.d(TAG,"onAttach");
+        mediaPlayerUtil = new MediaPlayerUtil(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -239,11 +239,16 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    wordview.setText(word_list.get("wordview").toString());
-                    sel1.setText(word_list.get("sel1").toString());
-                    sel2.setText(word_list.get("sel2").toString());
-                    sel3.setText(word_list.get("sel3").toString());
-                    sel4.setText(word_list.get("sel4").toString());
+                    String wordviewString = word_list.get("wordview").toString();
+                    String sel1String = word_list.get("sel1").toString();
+                    String sel2String = word_list.get("sel2").toString();
+                    String sel3String = word_list.get("sel3").toString();
+                    String sel4String = word_list.get("sel4").toString();
+                    wordview.setText(wordviewString.length()>=30?wordviewString.substring(0,25)+"...":wordviewString);
+                    sel1.setText(sel1String.length()>=30?sel1String.substring(0,25)+"...":sel1String);
+                    sel2.setText(sel2String.length()>=30?sel2String.substring(0,25)+"...":sel2String);
+                    sel3.setText(sel3String.length()>=30?sel3String.substring(0,25)+"...":sel3String);
+                    sel4.setText(sel4String.length()>=30?sel4String.substring(0,25)+"...":sel4String);
                     word_times_pro.post(new Runnable() {
                         @Override
                         public void run() {
@@ -290,8 +295,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         living_flag = true;//激活按钮
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
         this.word_list = words;
-        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
-        mediaPlayerUtil.start();
+        mediaPlayerUtil.reset(words.get("wordview").toString(),true);
         mHandler.obtainMessage(0).sendToTarget();
     }
 }

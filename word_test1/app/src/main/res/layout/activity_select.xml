@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:textSize="80px"
+        android:textSize="30sp"
         android:textColor="#000000"
-        android:text="" />
+        android:text="hahaha" />
 
     <ProgressBar
         android:id="@+id/word_times_pro"
@@ -42,6 +42,7 @@
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
             android:textAllCaps="false"
+            android:textSize="15sp"
             android:text="" />
 
         <Button
@@ -52,6 +53,7 @@
             android:layout_marginTop="10dp"
             android:textAllCaps="false"
             android:layout_below="@+id/sel1"
+            android:textSize="15sp"
             android:text="" />
 
         <Button
@@ -62,6 +64,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel2"
             android:textAllCaps="false"
+            android:textSize="15sp"
             android:text="" />
 
         <Button
@@ -72,6 +75,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/sel3"
             android:textAllCaps="false"
+            android:textSize="15sp"
             android:text="" />
 
         <Button

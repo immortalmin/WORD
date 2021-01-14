@@ -16,11 +16,6 @@ public class DbDao {
 
     public DbDao(Context context){
         this.context = context;
-        if(context==null){
-            Log.i("ccc","context is null");
-        }else{
-            Log.i("ccc","context is not null");
-        }
         init();
     }
 
@@ -94,7 +89,7 @@ public class DbDao {
     }
 
     /**
-     * 删除一条数据（未使用过）
+     * 删除一条数据
      * @param name
      * @return
      */

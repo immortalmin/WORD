@@ -61,7 +61,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private KelinsiFragment kelinsiFragment = new KelinsiFragment();
     private HashMap<String,Object> word = null;
     private ArrayList<HashMap<String,Object>> examplelist = null;
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -256,10 +256,11 @@ public class ExampleActivity extends AppCompatActivity implements
                     }
                     //set music of word
                     current_word = word.get("word_en").toString();
-                    mediaPlayerUtil.reset(current_word);
                     if(first_coming){
-                        mediaPlayerUtil.start();
+                        mediaPlayerUtil.reset(current_word,true);
                         first_coming = false;
+                    }else{
+                        mediaPlayerUtil.reset(current_word,false);
                     }
                     break;
                 case 5:

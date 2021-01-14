@@ -39,9 +39,9 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
     private OnFragmentInteractionListener mListener;
-    private String word_en,word_ch,mode,user_ans;
+    private String word_en,word_ch;
     private CountDownProgressBar cpb_countdown;
-    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil();
+    private MediaPlayerUtil mediaPlayerUtil;
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
@@ -63,7 +63,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        Log.d(TAG,"onAttach");
+        mediaPlayerUtil = new MediaPlayerUtil(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -236,7 +236,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     correct_word.setVisibility(View.VISIBLE);
                     break;
                 case 2://set c_word
-                    cword.setText(word_ch);
+                    //防止中文释义太长
+                    if(word_ch.length()>=30){
+                        cword.setText(word_ch.substring(0,30)+"...");
+                    }else{
+                        cword.setText(word_ch);
+                    }
                     if(message.obj!=null){
                         eword.setText(message.obj.toString());
                         eword.setSelection(message.obj.toString().length());
@@ -299,7 +304,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
         eword.setEnabled(true);
-        this.mediaPlayerUtil = (MediaPlayerUtil)words.get("media_player");
+        mediaPlayerUtil.reset(word_en,false);
         mHandler.sendEmptyMessage(2);
         showInput(eword);
     }
