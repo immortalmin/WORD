@@ -36,7 +36,7 @@ public class DbDao {
         }
         wordQuery = wordQuery.replaceAll("\"","\"\"");
         List<HashMap<String,Object>> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like \""+wordQuery+"\" order by id desc limit 10",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like \""+wordQuery+"\" order by query_date desc limit 10",null);
         while(cursor.moveToNext()){
             HashMap<String,Object> word = new HashMap<>();
             word.put("id",cursor.getString(cursor.getColumnIndex("id")));
@@ -83,21 +83,21 @@ public class DbDao {
         String correct_times = word.get("correct_times").toString();
         String error_times = word.get("error_times").toString();
         String last_date = word.get("last_date").toString();
-        db.execSQL("insert into records(wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date) " +
-                "values("+wid+",\""+word_en+"\",\""+word_ch+"\","+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+")");
+        String query_date = String.valueOf(System.currentTimeMillis());
+        db.execSQL("insert into records(wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date,query_date) " +
+                "values("+wid+",\""+word_en+"\",\""+word_ch+"\","+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+","+query_date+")");
         db.close();
     }
 
     /**
-     * 删除一条数据
-     * @param name
+     * 删除单条记录
+     * @param wid 单词id
+     * @param dict_source 单词来源
      * @return
      */
-    public int delete(String name){
-        //获取数据
+    public int deleteSingleData(String wid,String dict_source){
         SQLiteDatabase db = helper.getWritableDatabase();
-        //执行SQL
-        int delete = db.delete("records","name=?",new String[]{name});
+        int delete = db.delete("records","wid=? and dict_source=?",new String[]{wid,dict_source});
 //        int delete = db.delete("records","id="+id,null);
         db.close();
         return delete;
@@ -109,6 +109,25 @@ public class DbDao {
     public void deleteData(){
         db = helper.getWritableDatabase();
         db.execSQL("delete from records");
+        db.close();
+    }
+
+    /**
+     * 更新单词
+     * @param wid 单词id
+     * @param dict_source 单词来源
+     * @param word_en 英文单词
+     * @param word_ch 中文释义
+     */
+    public void updateData(String wid,String dict_source,String word_en,String word_ch){
+        db = helper.getWritableDatabase();
+        db.execSQL("update records set word_en=\""+word_en+"\",word_ch=\""+word_ch+"\" where wid="+wid+" and dict_source="+dict_source);
+        db.close();
+    }
+
+    public void updateQueryDate(String wid,String dict_source){
+        db = helper.getWritableDatabase();
+        db.execSQL("update records set query_date=\""+System.currentTimeMillis()+"\" where wid="+wid+" and dict_source="+dict_source);
         db.close();
     }
 

@@ -131,28 +131,28 @@ public class JsonRe {
         return wordList;
     }
 
-    public HashMap<String,Object> wordData(String jsonStr){
-        HashMap<String,Object> word = new HashMap<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-            word.put("collect",jsonObject.getString("collect"));
-            word.put("correct_times",jsonObject.getString("correct_times"));
-            word.put("error_times",jsonObject.getString("error_times"));
-            word.put("last_date",jsonObject.getString("last_date"));
-            word.put("source",jsonObject.getString("source").replaceAll("\n",""));
-            word.put("prof_flag",jsonObject.getString("prof_flag"));
-            word.put("wid",jsonObject.getString("wid"));
-            word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
-            word.put("today_correct_times",0);
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return word;
-    }
+//    public HashMap<String,Object> wordData(String jsonStr){
+//        HashMap<String,Object> word = new HashMap<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+//            word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
+//            word.put("collect",jsonObject.getString("collect"));
+//            word.put("correct_times",jsonObject.getString("correct_times"));
+//            word.put("error_times",jsonObject.getString("error_times"));
+//            word.put("last_date",jsonObject.getString("last_date"));
+//            word.put("source",jsonObject.getString("source").replaceAll("\n",""));
+//            word.put("prof_flag",jsonObject.getString("prof_flag"));
+//            word.put("wid",jsonObject.getString("wid"));
+//            word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
+//            word.put("today_correct_times",0);
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return word;
+//    }
 
-    public HashMap<String,Object> wordData2(String jsonStr){
+    public HashMap<String,Object> wordData(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);

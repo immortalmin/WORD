@@ -62,6 +62,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private HashMap<String,Object> word = null;
     private ArrayList<HashMap<String,Object>> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
+    private DbDao mDbDao;
     private UserData userData = new UserData();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -104,6 +105,7 @@ public class ExampleActivity extends AppCompatActivity implements
     }
 
     private void init() {
+        mDbDao = new DbDao(ExampleActivity.this);
         first_coming = true;
         init_user();
         getWordData();
@@ -367,6 +369,8 @@ public class ExampleActivity extends AppCompatActivity implements
         try{
             jsonObject.put("wid",word.get("wid"));
             jsonObject.put("what",3);
+            //从历史记录中删除该条记录
+            mDbDao.deleteSingleData(jsonObject.getString("wid"),dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -402,7 +406,7 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             if(sel==1){
-                word = jsonRe.wordData2(result);
+                word = jsonRe.wordData(result);
                 Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
@@ -424,8 +428,7 @@ public class ExampleActivity extends AppCompatActivity implements
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-//            word = jsonRe.wordData(result);
-            word = jsonRe.wordData2(result);
+            word = jsonRe.wordData(result);
             mHandler.obtainMessage(4).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
@@ -435,15 +438,18 @@ public class ExampleActivity extends AppCompatActivity implements
         try{
             jsonObject.put("uid",userData.getUid());
             jsonObject.put("what",24);
+            //更新本地的数据库（历史记录）
+            mDbDao.updateData(jsonObject.get("wid").toString(),dict_source,jsonObject.get("word_group").toString(),jsonObject.get("C_meaning").toString());
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            word = jsonRe.wordData2(result);
+            word = jsonRe.wordData(result);
             mHandler.obtainMessage(4).sendToTarget();
         });
         myAsyncTask.execute(jsonObject);
+
     }
 
     private void updateExample(JSONObject jsonObject){
@@ -457,7 +463,6 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             examplelist = jsonRe.exampleData(result);
-//            Log.i("ccc",examplelist.toString());
             exampleFragment.setExamplelist(examplelist,false);
         });
         myAsyncTask.execute(jsonObject);

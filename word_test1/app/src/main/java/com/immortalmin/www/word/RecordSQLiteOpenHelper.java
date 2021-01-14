@@ -14,7 +14,7 @@ public class RecordSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db){
         //db.execSQL("create table records(id integer primary key autoincrement,wid integer,word_en text,word_ch text,dict_source integer)");
-        db.execSQL("create table records(id integer primary key autoincrement,wid integer,word_en text,word_ch text,dict_source integer,cid integer,gid integer,correct_times integer,error_times integer,last_date date)");
+        db.execSQL("create table records(id integer primary key autoincrement,wid integer,word_en text,word_ch text,dict_source integer,cid integer,gid integer,correct_times integer,error_times integer,last_date date,query_date date)");
     }
 
     @Override

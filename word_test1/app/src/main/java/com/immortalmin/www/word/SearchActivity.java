@@ -100,7 +100,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String wid = history_list.get(position).get("wid").toString();
             String dict_source = history_list.get(position).get("dict_source").toString();
             jump_to_example(wid,dict_source);
-//            mDbDao.insertData((HashMap<String, Object>)word_list.get(position));
+            //更新历史记录中的查询时间
+            mDbDao.updateQueryDate(wid,dict_source);
         }
     };
 
