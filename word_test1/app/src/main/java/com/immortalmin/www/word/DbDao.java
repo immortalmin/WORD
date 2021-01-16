@@ -29,17 +29,28 @@ public class DbDao {
      * @param queryString
      * @return
      */
-    public List<HashMap<String,Object>> queryData(String queryString){
+    public List<DetailWord> queryData(String queryString){
         String wordQuery="%";
         for(int i=0;i<queryString.length();i++){
             wordQuery=wordQuery+queryString.charAt(i)+"%";
         }
         wordQuery = wordQuery.replaceAll("\"","\"\"");
-        List<HashMap<String,Object>> wordList = new ArrayList<>();
+        List<DetailWord> wordList = new ArrayList<>();
         Cursor cursor = helper.getReadableDatabase().rawQuery("select id,wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date from records where word_en like \""+wordQuery+"\" order by query_date desc limit 10",null);
         while(cursor.moveToNext()){
-            HashMap<String,Object> word = new HashMap<>();
-            word.put("id",cursor.getString(cursor.getColumnIndex("id")));
+            DetailWord word = new DetailWord();
+            word.setHid(cursor.getString(cursor.getColumnIndex("id")));
+            word.setWid(cursor.getString(cursor.getColumnIndex("wid")));
+            word.setWord_en(cursor.getString(cursor.getColumnIndex("word_en")));
+            word.setWord_ch(cursor.getString(cursor.getColumnIndex("word_ch")));
+            word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.setCid(cursor.getString(cursor.getColumnIndex("cid")));
+            word.setGid(cursor.getString(cursor.getColumnIndex("gid")));
+            word.setCorrect_times(cursor.getString(cursor.getColumnIndex("correct_times")));
+            word.setError_times(cursor.getString(cursor.getColumnIndex("error_times")));
+            word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
+
+            /*word.put("id",cursor.getString(cursor.getColumnIndex("id")));
             word.put("wid",cursor.getString(cursor.getColumnIndex("wid")));
             word.put("word_en",cursor.getString(cursor.getColumnIndex("word_en")));
             word.put("word_ch",cursor.getString(cursor.getColumnIndex("word_ch")));
@@ -48,7 +59,7 @@ public class DbDao {
             word.put("gid",cursor.getString(cursor.getColumnIndex("gid")));
             word.put("correct_times",cursor.getString(cursor.getColumnIndex("correct_times")));
             word.put("error_times",cursor.getString(cursor.getColumnIndex("error_times")));
-            word.put("last_date",cursor.getString(cursor.getColumnIndex("last_date")));
+            word.put("last_date",cursor.getString(cursor.getColumnIndex("last_date")));*/
             wordList.add(word);
         }
         cursor.close();
@@ -72,17 +83,17 @@ public class DbDao {
      * 添加历史记录
      * @param word
      */
-    public void insertData(HashMap<String,Object> word){
+    public void insertData(DetailWord word){
         db = helper.getWritableDatabase();
-        int wid = Integer.valueOf(word.get("wid").toString());
-        String word_en = word.get("word_en").toString().replaceAll("\"","\"\"");
-        String word_ch = word.get("word_ch").toString().replaceAll("\"","\"\"");
-        int dict_source = Integer.valueOf(word.get("dict_source").toString());
-        String cid = word.get("cid").toString();
-        String gid = word.get("gid").toString();
-        String correct_times = word.get("correct_times").toString();
-        String error_times = word.get("error_times").toString();
-        String last_date = word.get("last_date").toString();
+        int wid = Integer.valueOf(word.getWid());
+        String word_en = word.getWord_en().replaceAll("\"","\"\"");
+        String word_ch = word.getWord_ch().replaceAll("\"","\"\"");
+        int dict_source = Integer.valueOf(word.getDict_source());
+        String cid = word.getCid();
+        String gid = word.getGid();
+        String correct_times = String.valueOf(word.getCorrect_times());
+        String error_times = String.valueOf(word.getError_times());
+        String last_date = word.getLast_date();
         String query_date = String.valueOf(System.currentTimeMillis());
         db.execSQL("insert into records(wid,word_en,word_ch,dict_source,cid,gid,correct_times,error_times,last_date,query_date) " +
                 "values("+wid+",\""+word_en+"\",\""+word_ch+"\","+dict_source+","+cid+","+gid+","+correct_times+","+error_times+","+last_date+","+query_date+")");
@@ -125,6 +136,11 @@ public class DbDao {
         db.close();
     }
 
+    /**
+     * 更新查询时间
+     * @param wid 单词id
+     * @param dict_source 单词来源
+     */
     public void updateQueryDate(String wid,String dict_source){
         db = helper.getWritableDatabase();
         db.execSQL("update records set query_date=\""+System.currentTimeMillis()+"\" where wid="+wid+" and dict_source="+dict_source);

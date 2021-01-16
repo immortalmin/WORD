@@ -29,7 +29,7 @@ import java.util.HashMap;
 public class UpdateWordDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
-    private HashMap<String,Object>data = null;
+    private DetailWord data;
     private Button commit_btn,cancel_btn;
     private EditText word_group,C_meaning;
     private OnDialogInteractionListener listener;
@@ -39,7 +39,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         this.context=context;
     }
 
-    public UpdateWordDialog(Context context, int themeResId, HashMap<String,Object>data) {
+    public UpdateWordDialog(Context context, int themeResId, DetailWord data) {
         super(context, themeResId);
         this.context=context;
         this.data = data;
@@ -70,8 +70,8 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_group.setText(data.get("word_en").toString());
-                    C_meaning.setText(data.get("word_ch").toString());
+                    word_group.setText(data.getWord_en());
+                    C_meaning.setText(data.getWord_ch());
                     break;
                 case 1:
                     cancel_flag = true;
@@ -125,7 +125,7 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("wid",data.get("wid").toString());
+            jsonObject.put("wid",data.getWid());
             jsonObject.put("word_group",word_group.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_meaning",C_meaning.getText().toString().replaceAll("\"","\\\\\\\""));
         }catch (JSONException e){

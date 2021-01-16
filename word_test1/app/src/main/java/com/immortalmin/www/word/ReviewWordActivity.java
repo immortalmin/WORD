@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private HashMap<String,Object> setting = new HashMap<>();
     private Map<String, Object> update_word = null;
 //    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
-    private List<HashMap<String, Object>> review_list = null;//the list of word
+    private ArrayList<DetailWord> review_list;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
     private int[] finish_ind = new int[10000];//该单词是否完成今天的背诵
@@ -108,7 +109,7 @@ public class ReviewWordActivity extends AppCompatActivity
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            review_list =jsonRe.reciteData(result);
+            review_list =jsonRe.collectData(result);
             review_num = Math.min(review_list.size(),group_num);
             if(review_num>0){
                 startReview();
@@ -132,7 +133,7 @@ public class ReviewWordActivity extends AppCompatActivity
             current_ind++;
             if(current_ind==review_num) current_ind=0;
         }
-        today_finish = Integer.valueOf(review_list.get(current_ind).get("today_correct_times").toString());
+        today_finish = review_list.get(current_ind).getToday_correct_times();
         mHandler.obtainMessage(0).sendToTarget();
         hideInput();
         switch(today_finish){
@@ -140,15 +141,15 @@ public class ReviewWordActivity extends AppCompatActivity
                 int countdown_mode = (int) (Math.random() * 3) + 1;
                 now_words = new HashMap<>();
                 now_words.put("mode", countdown_mode);
-                now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
-                now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
+                now_words.put("word_en", review_list.get(current_ind).getWord_en());
+                now_words.put("word_ch", review_list.get(current_ind).getWord_ch());
                 start_countdown_mode(now_words);
                 break;
             case 1:
                 now_words = new HashMap<>();
                 now_words.put("once_flag", true);
-                now_words.put("word_en", review_list.get(current_ind).get("word_en").toString());
-                now_words.put("word_ch", review_list.get(current_ind).get("word_ch").toString());
+                now_words.put("word_en", review_list.get(current_ind).getWord_en());
+                now_words.put("word_ch", review_list.get(current_ind).getWord_ch());
                 start_spell_mode(now_words);
                 break;
         }
@@ -206,15 +207,12 @@ public class ReviewWordActivity extends AppCompatActivity
                 .setTitleText("shortage of words")
                 .setContentText("you finished all")
                 .setConfirmText("return to main")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
         inadequateDialog.setCancelable(false);
     }
@@ -228,35 +226,29 @@ public class ReviewWordActivity extends AppCompatActivity
                 .setTitleText("Good job!")
                 .setContentText("There are "+(review_list.size()-review_num)+" words left unreviewed")
                 .setConfirmText("continue")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        current_ind = -1;
-                        Arrays.fill(finish_ind, 0);
-                        finish_num = 0;
-                        total_progress.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                total_progress.setProgress(0);
-                            }
-                        });
-                        for(int i=0;i<review_num;i++) review_list.remove(0);
-                        review_num = Math.min(review_list.size(),group_num);
-                        startReview();
-                        mHandler.obtainMessage(2).sendToTarget();
-                        sweetAlertDialog.cancel();
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    current_ind = -1;
+                    Arrays.fill(finish_ind, 0);
+                    finish_num = 0;
+                    total_progress.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            total_progress.setProgress(0);
+                        }
+                    });
+                    for(int i=0;i<review_num;i++) review_list.remove(0);
+                    review_num = Math.min(review_list.size(),group_num);
+                    startReview();
+                    mHandler.obtainMessage(2).sendToTarget();
+                    sweetAlertDialog.cancel();
                 })
                 .setCancelText("later")
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
 
         finish_alert.setCancelable(false);
@@ -272,15 +264,12 @@ public class ReviewWordActivity extends AppCompatActivity
                 .setTitleText("Good job!")
                 .setContentText("Return to main page.")
                 .setConfirmText("fine")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
 
         finish_alert.setCancelable(false);
@@ -297,22 +286,16 @@ public class ReviewWordActivity extends AppCompatActivity
                 .setContentText("Won't be able to recover this file!")
                 .setConfirmText("fine")
                 .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReviewWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReviewWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 })
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.obtainMessage(2).sendToTarget();
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.obtainMessage(2).sendToTarget();
                 });
         interrup_alert.setCancelable(false);
         interrup_alert.show();
@@ -355,8 +338,8 @@ public class ReviewWordActivity extends AppCompatActivity
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    total_times.setText(String.valueOf(finish_num) + "/" + String.valueOf(review_num));
-                    word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
+                    total_times.setText(finish_num + "/" + review_num);
+                    word_times.setText(today_finish + "/" + c_times);
                     break;
                 case 1:
                     Glide.with(ReviewWordActivity.this).load(captureUtil.getcapture(ReviewWordActivity.this))
@@ -379,22 +362,21 @@ public class ReviewWordActivity extends AppCompatActivity
      */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
-        HashMap<String, Object> now_word = new HashMap<String, Object>();
-        now_word = review_list.get(current_ind);
-        int to_co_times = Integer.valueOf(now_word.get("today_correct_times").toString());
-        int er_times = Integer.valueOf(now_word.get("error_times").toString());
+        DetailWord now_word = review_list.get(current_ind);
+        int to_co_times = now_word.getToday_correct_times();
+        int er_times = now_word.getError_times();
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
-                now_word.put("today_correct_times", to_co_times + 1);
+                now_word.setToday_correct_times(to_co_times + 1);
                 review_list.set(current_ind, now_word);
                 break;
             case 2://vague
-                now_word.put("today_correct_times", 0);
+                now_word.setToday_correct_times(0);
                 review_list.set(current_ind, now_word);
                 break;
             case 3://unknown
-                now_word.put("today_correct_times", 0);
-                now_word.put("error_times", er_times + 1);
+                now_word.setToday_correct_times(0);
+                now_word.setError_times(er_times + 1);
                 review_list.set(current_ind, now_word);
                 pron_lock = true;
                 jump_to_example(current_ind);
@@ -406,51 +388,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
-//    /**
-//     * spellfragment的回调函数
-//     *
-//     * @param res
-//     */
-//    @Override
-//    public void spellFragmentInteraction(HashMap<String, Object> res) {
-//        HashMap<String, Object> correct_word = new HashMap<String, Object>();
-//        correct_word = review_list.get(current_ind);
-//        int er_times = Integer.valueOf(correct_word.get("error_times").toString());
-//        int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
-//        if ("1".equals(res.get("judge").toString())) {
-//            if (Boolean.valueOf(res.get("once_flag").toString())) {//一次就过
-//                finish_ind[current_ind] = 1;
-//                finish_num++;
-//                total_progress.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        int pro_num = finish_num * 100 / review_num;
-//                        total_progress.setProgress(pro_num);
-//                    }
-//                });
-//                correct_word.put("correct_times", co_times + 1);
-//                review_list.set(current_ind, correct_word);
-//                update_sql_data(current_ind,1);
-//            } else {//不是一次就过，下回重新拼写
-//                correct_word.put("today_correct_times", 0);
-//                review_list.set(current_ind, correct_word);
-//            }
-//            mHandler.obtainMessage(0).sendToTarget();
-//            if (finish_num >= review_num) {
-//                if(review_num == review_list.size()) finishDialog();
-//                else finishAGroupDialog();
-////                update_all();
-//            }else{
-//                startReview();
-//            }
-//        } else {//回答错误，重新拼写
-//            correct_word.put("error_times", er_times + 1);
-//            review_list.set(current_ind, correct_word);
-//            now_words.put("once_flag", false);
-//            start_spell_mode(now_words);
-//        }
-//    }
-
     /**
      * spellfragment的回调函数
      *
@@ -458,10 +395,9 @@ public class ReviewWordActivity extends AppCompatActivity
      */
     @Override
     public void spellFragmentInteraction(int WrongTimes) {
-        HashMap<String, Object> correct_word = new HashMap<String, Object>();
-        correct_word = review_list.get(current_ind);
-        int er_times = Integer.valueOf(correct_word.get("error_times").toString());
-        int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
+        DetailWord correct_word = review_list.get(current_ind);
+        int er_times = correct_word.getError_times();
+        int co_times = correct_word.getCorrect_times();
         if (WrongTimes == 0) {//一次就过
             finish_ind[current_ind] = 1;
             finish_num++;
@@ -472,12 +408,12 @@ public class ReviewWordActivity extends AppCompatActivity
                     total_progress.setProgress(pro_num);
                 }
             });
-            correct_word.put("correct_times", co_times + 1);
+            correct_word.setCorrect_times(co_times + 1);
             review_list.set(current_ind, correct_word);
             update_sql_data(current_ind,1);
         } else {//不是一次就过，下回重新拼写
-            correct_word.put("error_times", er_times + WrongTimes);
-            correct_word.put("today_correct_times", 0);
+            correct_word.setError_times(er_times + WrongTimes);
+            correct_word.setToday_correct_times(0);
             review_list.set(current_ind, correct_word);
         }
         mHandler.obtainMessage(0).sendToTarget();
@@ -520,8 +456,8 @@ public class ReviewWordActivity extends AppCompatActivity
      */
     public void jump_to_example(int id) {
         Intent intent = new Intent(ReviewWordActivity.this, ExampleActivity.class);
-        intent.putExtra("wid", review_list.get(id).get("wid").toString());
-        intent.putExtra("dict_source", review_list.get(id).get("dict_source").toString());
+        intent.putExtra("wid", review_list.get(id).getWid());
+        intent.putExtra("dict_source", review_list.get(id).getDict_source());
         startActivityForResult(intent, 1);
 
     }

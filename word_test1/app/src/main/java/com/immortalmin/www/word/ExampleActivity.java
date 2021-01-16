@@ -59,7 +59,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private ExampleFragment exampleFragment = new ExampleFragment();
     private KelinsiFragment kelinsiFragment = new KelinsiFragment();
-    private HashMap<String,Object> word = null;
+    private DetailWord word;
     private ArrayList<HashMap<String,Object>> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private DbDao mDbDao;
@@ -223,7 +223,7 @@ public class ExampleActivity extends AppCompatActivity implements
                     kelinsi_btn.setBackgroundColor(Color.parseColor("#30000000"));
                     break;
                 case 2:
-                    if(userData.getUsername().equals(word.get("source").toString())){
+                    if(userData.getUsername().equals(word.getSource())){
                         word_del_btn.setVisibility(View.VISIBLE);
                         word_edit_btn.setVisibility(View.VISIBLE);
                     }else{
@@ -245,19 +245,19 @@ public class ExampleActivity extends AppCompatActivity implements
                     break;
                 case 4:
                     //new
-                    word_en.setmText(word.get("word_en").toString());
+                    word_en.setmText(word.getWord_en());
                     word_en.setAccount(0);
-                    word_ch.setText(word.get("word_ch").toString());
+                    word_ch.setText(word.getWord_ch());
                     //暂时不显示
 //                    source.setText(word.get("source").toString());
-                    if(!"null".equals(word.get("cid"))){//是收藏的单词
-                        word_en.setAccount((float)(Integer.valueOf(word.get("correct_times").toString())/5.0));
+                    if(!"null".equals(word.getCid())){//是收藏的单词
+                        word_en.setAccount((float)(word.getCorrect_times()/5.0));
                         collect_flag=1;
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
                         collect.setBackground(drawable);
                     }
                     //set music of word
-                    current_word = word.get("word_en").toString();
+                    current_word = word.getWord_en();
                     if(first_coming){
                         mediaPlayerUtil.reset(current_word,true);
                         first_coming = false;
@@ -300,7 +300,7 @@ public class ExampleActivity extends AppCompatActivity implements
         }
     });
 
-    private void updateWordDialog(HashMap<String,Object> data){
+    private void updateWordDialog(DetailWord data){
         mHandler.obtainMessage(5).sendToTarget();
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
@@ -367,7 +367,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private void deleteWord(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("wid",word.get("wid"));
+            jsonObject.put("wid",word.getWid());
             jsonObject.put("what",3);
             //从历史记录中删除该条记录
             mDbDao.deleteSingleData(jsonObject.getString("wid"),dict_source);
@@ -394,10 +394,10 @@ public class ExampleActivity extends AppCompatActivity implements
             jsonObject.put("what",17);
             jsonObject.put("collect",sel);
             if(sel==0){
-                jsonObject.put("cid",word.get("cid"));
+                jsonObject.put("cid",word.getCid());
             }else{
                 jsonObject.put("uid",userData.getUid());
-                jsonObject.put("wid",word.get("wid"));
+                jsonObject.put("wid",word.getWid());
                 jsonObject.put("dict_source",dict_source);
             }
         }catch (JSONException e){

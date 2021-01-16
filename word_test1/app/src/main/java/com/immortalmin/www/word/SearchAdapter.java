@@ -13,10 +13,10 @@ import java.util.Map;
 
 public class SearchAdapter extends BaseAdapter {
 
-    List<HashMap<String,Object>> mdata;
+    List<DetailWord> mdata;
     private LayoutInflater mInflater;//布局装载器对象
 
-    public SearchAdapter(Context context, List<HashMap<String,Object>> data) {
+    public SearchAdapter(Context context, List<DetailWord> data) {
         this.mdata = data;
         mInflater = LayoutInflater.from(context);
     }
@@ -26,14 +26,14 @@ public class SearchAdapter extends BaseAdapter {
         View v = mInflater.inflate(R.layout.searchitem,null);
         WordView word_en = (WordView)v.findViewById(R.id.word_en);
         TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
-        int correct_times = Integer.parseInt(mdata.get(position).get("correct_times").toString());
+        int correct_times = mdata.get(position).getCorrect_times();
         int grasp_times = 5;
         float account = (correct_times>=grasp_times?1.0f:(float)correct_times/(float)grasp_times);
 
-        word_en.setmText(mdata.get(position).get("word_en").toString());
+        word_en.setmText(mdata.get(position).getWord_en());
 
         word_en.setAccount(account);
-        word_ch.setText(mdata.get(position).get("word_ch").toString());
+        word_ch.setText(mdata.get(position).getWord_ch());
 
         return v;
     }

@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -61,10 +62,9 @@ public class ReciteWordActivity extends AppCompatActivity
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserData userData = new UserData();
     private ProgressBar total_progress;
-    private SweetAlertDialog finishDialog,interruptDialog,inadequateDialog;
+    private SweetAlertDialog finishDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
-//    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
-    private List<HashMap<String, Object>> recite_list = null;//the list of word
+    private ArrayList<DetailWord> recite_list = null;//the list of word
     private int recite_num = 1;//the number of word today
     private int recite_scope = 5;//additional number of word
     private int c_times = 3;//每个单词变成今天背完需要的次数
@@ -106,19 +106,19 @@ public class ReciteWordActivity extends AppCompatActivity
                 break;
             }
         }
-        today_finish = Integer.valueOf(recite_list.get(correct_ind).get("today_correct_times").toString());
+        today_finish = recite_list.get(correct_ind).getToday_correct_times();
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
         switch (today_finish) {//according to today_finish
             case 0://select
                 hideInput();
                 select_option();
-                recite_info.put("wordview", recite_list.get(select[correct_sel]).get("word_en").toString());
-                recite_info.put("today_correct_times", recite_list.get(select[correct_sel]).get("today_correct_times"));
-                recite_info.put("sel1", recite_list.get(select[0]).get("word_ch").toString());
-                recite_info.put("sel2", recite_list.get(select[1]).get("word_ch").toString());
-                recite_info.put("sel3", recite_list.get(select[2]).get("word_ch").toString());
-                recite_info.put("sel4", recite_list.get(select[3]).get("word_ch").toString());
+                recite_info.put("wordview", recite_list.get(select[correct_sel]).getWord_en());
+                recite_info.put("today_correct_times", recite_list.get(select[correct_sel]).getToday_correct_times());
+                recite_info.put("sel1", recite_list.get(select[0]).getWord_ch());
+                recite_info.put("sel2", recite_list.get(select[1]).getWord_ch());
+                recite_info.put("sel3", recite_list.get(select[2]).getWord_ch());
+                recite_info.put("sel4", recite_list.get(select[3]).getWord_ch());
                 recite_info.put("correct_sel", correct_sel);
                 recite_info.put("c_times", String.valueOf(c_times));
                 start_select_mode(recite_info);
@@ -128,15 +128,15 @@ public class ReciteWordActivity extends AppCompatActivity
                 int countdown_mode = (int) (Math.random() * 3) + 1;
                 now_words = new HashMap<>();
                 now_words.put("mode", countdown_mode);
-                now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
-                now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
+                now_words.put("word_en", recite_list.get(correct_ind).getWord_en());
+                now_words.put("word_ch", recite_list.get(correct_ind).getWord_ch());
                 start_countdown_mode(now_words);
                 break;
             case 2://spell
                 now_words = new HashMap<>();
                 now_words.put("once_flag", true);
-                now_words.put("word_en", recite_list.get(correct_ind).get("word_en").toString());
-                now_words.put("word_ch", recite_list.get(correct_ind).get("word_ch").toString());
+                now_words.put("word_en", recite_list.get(correct_ind).getWord_en());
+                now_words.put("word_ch", recite_list.get(correct_ind).getWord_ch());
                 start_spell_mode(now_words);
                 break;
         }
@@ -182,7 +182,7 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            recite_list =jsonRe.reciteData(result);
+            recite_list =jsonRe.collectData(result);
             if(recite_list.size()<recite_num+recite_scope){
                 //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
                 Looper.prepare();
@@ -430,23 +430,22 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
-        HashMap<String, Object> now_word = new HashMap<String, Object>();
-        now_word = recite_list.get(correct_ind);
-        int to_co_times = Integer.valueOf(now_word.get("today_correct_times").toString());
-        int er_times = Integer.valueOf(now_word.get("error_times").toString());
-        int co_times = Integer.valueOf(now_word.get("correct_times").toString());
+        DetailWord now_word = recite_list.get(correct_ind);
+        int to_co_times =now_word.getToday_correct_times();
+        int er_times = now_word.getError_times();
+        int co_times = now_word.getCorrect_times();
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
-                now_word.put("today_correct_times", to_co_times + 1);
+                now_word.setToday_correct_times(to_co_times + 1);
                 recite_list.set(correct_ind, now_word);
                 break;
             case 2://vague
-                now_word.put("today_correct_times", 0);
+                now_word.setToday_correct_times(0);
                 recite_list.set(correct_ind, now_word);
                 break;
             case 3://unknown
-                now_word.put("today_correct_times", 0);
-                now_word.put("error_times", er_times + 1);
+                now_word.setToday_correct_times(0);
+                now_word.setError_times(er_times + 1);
                 recite_list.set(correct_ind, now_word);
                 pron_lock = true;
                 jump_to_example(correct_ind);
@@ -466,23 +465,20 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void selectonFragmentInteraction(HashMap<String, Object> res) {
-        HashMap<String, Object> correct_word = new HashMap<String, Object>();
-        HashMap<String, Object> wrong_word = new HashMap<String, Object>();
+        DetailWord correct_word;
+        DetailWord wrong_word;
         switch (res.get("judge").hashCode()) {
             case 1:
                 correct_word = recite_list.get(correct_ind);
-                correct_word.put("today_correct_times", Integer.valueOf(correct_word.get("today_correct_times").toString()) + 1);
-                if (Integer.valueOf(correct_word.get("today_correct_times").toString()) >= c_times) {
+                correct_word.setToday_correct_times(correct_word.getToday_correct_times() + 1);
+                if (correct_word.getToday_correct_times() >= c_times) {
                     finish_ind[correct_ind] = 1;
                     finish_num++;
-                    total_progress.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int pro_num = finish_num * 100 / recite_num;
-                            total_progress.setProgress(pro_num);
-                        }
+                    total_progress.post(() -> {
+                        int pro_num = finish_num * 100 / recite_num;
+                        total_progress.setProgress(pro_num);
                     });
-                    correct_word.put("correct_times", Integer.valueOf(correct_word.get("correct_times").toString()) + 1);
+                    correct_word.setCorrect_times(correct_word.getCorrect_times() + 1);
 //                    if (Integer.valueOf(correct_word.get("correct_times").toString()) >= prof_times) {
 //                        correct_word.put("prof_flag", 1);
 //                    }
@@ -494,20 +490,20 @@ public class ReciteWordActivity extends AppCompatActivity
                 break;
             case 2:
                 correct_word = recite_list.get(correct_ind);
-                correct_word.put("today_correct_times", 0);
-                correct_word.put("error_times", Integer.valueOf(correct_word.get("error_times").toString()) + 1);
+                correct_word.setToday_correct_times(0);
+                correct_word.setError_times(correct_word.getError_times() + 1);
                 recite_list.set(correct_ind, correct_word);
                 wrong_word = recite_list.get(select[Integer.valueOf(res.get("wrong_sel").toString())]);
-                wrong_word.put("today_correct_times", 0);
-                wrong_word.put("error_times", Integer.valueOf(wrong_word.get("error_times").toString()) + 1);
+                wrong_word.setToday_correct_times(0);
+                wrong_word.setError_times(wrong_word.getError_times() + 1);
                 recite_list.set(select[Integer.valueOf(res.get("wrong_sel").toString())], wrong_word);
                 pron_lock = true;
                 jump_to_example(correct_ind);
                 break;
             case 3:
                 correct_word = recite_list.get(correct_ind);
-                correct_word.put("today_correct_times", 0);
-                correct_word.put("error_times", Integer.valueOf(correct_word.get("error_times").toString()) + 1);
+                correct_word.setToday_correct_times(0);
+                correct_word.setError_times(correct_word.getError_times() + 1);
                 recite_list.set(correct_ind, correct_word);
                 pron_lock = true;
                 jump_to_example(correct_ind);
@@ -573,26 +569,22 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     @Override
     public void spellFragmentInteraction(int WrongTimes) {
-        HashMap<String, Object> correct_word = new HashMap<String, Object>();
-        correct_word = recite_list.get(correct_ind);
-        int er_times = Integer.valueOf(correct_word.get("error_times").toString());
-        int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
+        DetailWord correct_word = recite_list.get(correct_ind);
+        int er_times = correct_word.getError_times();
+        int co_times = correct_word.getCorrect_times();
         if (WrongTimes == 0) {//一次就过
             finish_ind[correct_ind] = 1;
             finish_num++;
-            total_progress.post(new Runnable() {
-                @Override
-                public void run() {
-                    int pro_num = finish_num * 100 / recite_num;
-                    total_progress.setProgress(pro_num);
-                }
+            total_progress.post(() -> {
+                int pro_num = finish_num * 100 / recite_num;
+                total_progress.setProgress(pro_num);
             });
-            correct_word.put("correct_times", co_times + 1);
+            correct_word.setCorrect_times(co_times + 1);
             recite_list.set(correct_ind, correct_word);
             update_sql_data(correct_ind,1);
         } else {//不是一次就过，下回重新拼写
-            correct_word.put("error_times", er_times + WrongTimes);
-            correct_word.put("today_correct_times", 0);
+            correct_word.setError_times(er_times + WrongTimes);
+            correct_word.setToday_correct_times(0);
             recite_list.set(correct_ind, correct_word);
         }
         mHandler.obtainMessage(0).sendToTarget();
@@ -634,8 +626,8 @@ public class ReciteWordActivity extends AppCompatActivity
      */
     public void jump_to_example(int id) {
         Intent intent = new Intent(ReciteWordActivity.this, ExampleActivity.class);
-        intent.putExtra("wid", recite_list.get(id).get("wid").toString());
-        intent.putExtra("dict_source", recite_list.get(id).get("dict_source").toString());
+        intent.putExtra("wid", recite_list.get(id).getWid());
+        intent.putExtra("dict_source", recite_list.get(id).getDict_source());
         startActivityForResult(intent, 1);
     }
 

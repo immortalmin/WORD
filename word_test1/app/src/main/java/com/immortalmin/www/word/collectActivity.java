@@ -39,8 +39,8 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView imgview;
     private TextView all_num,finished_num;
     private RelativeLayout main_relative;
-    private List<HashMap<String,Object>> word_list=null;
-    private List<HashMap<String,Object>> collect_list=null;
+    private List<DetailWord> word_list=null;
+    private List<DetailWord> collect_list=null;
     private WordListAdapter wordListAdapter = null;
     private int now_position=0;
     @Override
@@ -60,8 +60,8 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(collectActivity.this, ExampleActivity.class);
 //                String wid = word_list.get(position).get("wid").toString();
-                intent.putExtra("wid",collect_list.get(position).get("wid").toString());
-                intent.putExtra("dict_source",collect_list.get(position).get("dict_source").toString());
+                intent.putExtra("wid",collect_list.get(position).getWid());
+                intent.putExtra("dict_source",collect_list.get(position).getDict_source());
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             }
@@ -160,7 +160,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_list = (List<HashMap<String,Object>>)message.obj;
+                    word_list = (List<DetailWord>)message.obj;
                     wordListAdapter = new WordListAdapter(collectActivity.this,word_list);
                     listView.setAdapter(wordListAdapter);
                     listView.setSelection(now_position);

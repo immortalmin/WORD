@@ -44,8 +44,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView imgview;
     private Button add_word_btn,clear_btn;
     private TextView historyTextView,newTextView;
-    private List<HashMap<String,Object>> word_list= new ArrayList<HashMap<String,Object>>();
-    private List<HashMap<String,Object>> history_list= new ArrayList<HashMap<String,Object>>();
+    private List<DetailWord> word_list= new ArrayList<>();
+    private List<DetailWord> history_list= new ArrayList<>();
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -84,10 +84,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     ListView.OnItemClickListener listlistener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            String wid = word_list.get(position).get("wid").toString();
-            String dict_source = word_list.get(position).get("dict_source").toString();
+            String wid = word_list.get(position).getWid();
+            String dict_source = word_list.get(position).getDict_source();
             jump_to_example(wid,dict_source);
-            mDbDao.insertData((HashMap<String, Object>)word_list.get(position));
+            mDbDao.insertData(word_list.get(position));
         }
     };
 
@@ -97,8 +97,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     ListView.OnItemClickListener historyListlistener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            String wid = history_list.get(position).get("wid").toString();
-            String dict_source = history_list.get(position).get("dict_source").toString();
+            String wid = history_list.get(position).getWid();
+            String dict_source = history_list.get(position).getDict_source();
             jump_to_example(wid,dict_source);
             //更新历史记录中的查询时间
             mDbDao.updateQueryDate(wid,dict_source);
@@ -219,15 +219,15 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result -> {
             word_list.clear();
-            word_list.addAll(jsonRe.getSearchData(result));
+            word_list.addAll(jsonRe.collectData(result));
             //去除新查询中已存在于历史记录中的单词
             ArrayList<String> history_word = new ArrayList<>();
             ArrayList<String> new_word = new ArrayList<>();
             for(int i=0;i<history_list.size();i++){
-                history_word.add(history_list.get(i).get("word_en").toString());
+                history_word.add(history_list.get(i).getWord_en());
             }
             for(int i=0;i<word_list.size();i++){
-                new_word.add(word_list.get(i).get("word_en").toString());
+                new_word.add(word_list.get(i).getWord_en());
             }
             for(int i=new_word.size()-1;i>=0;i--){
                 if(history_word.contains(new_word.get(i))){
@@ -276,7 +276,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_list = (List<HashMap<String,Object>>)message.obj;
+                    word_list = (List<DetailWord>)message.obj;
                     searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
                     listView.setAdapter(searchAdapter);
                     break;

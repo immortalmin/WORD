@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class UpdateServer implements Runnable{
 
-    Map<String,Object> update_word = new HashMap<String, Object>();
+    DetailWord update_word;
     int what = 0;
-    public void sendMap(Map<String,Object> update_word,int what){
+    public void sendMap(DetailWord update_word,int what){
         this.update_word=update_word;
         this.what = what;
     }
@@ -29,10 +29,10 @@ public class UpdateServer implements Runnable{
     public void run(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("cid",update_word.get("cid").toString());
+            jsonObject.put("cid",update_word.getCid());
             jsonObject.put("what",what);
-            jsonObject.put("correct_times",update_word.get("correct_times").toString());
-            jsonObject.put("error_times",update_word.get("error_times").toString());
+            jsonObject.put("correct_times",update_word.getCorrect_times());
+            jsonObject.put("error_times",update_word.getError_times());
         }catch (JSONException e) {
             e.printStackTrace();
         }

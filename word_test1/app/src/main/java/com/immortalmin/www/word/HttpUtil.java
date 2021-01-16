@@ -38,7 +38,7 @@ public class HttpUtil {
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsearchlist.php",jsonObject);
-                word_list = jsonRe.allwordData(recitejson);
+//                word_list = jsonRe.allwordData(recitejson);
 //                Log.i("ccc",word_list.toString());
 //                mHandler.obtainMessage(0,word_list).sendToTarget();
             }

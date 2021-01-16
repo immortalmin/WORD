@@ -38,8 +38,6 @@
         <activity android:name=".ChangePwdActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".collectActivity" />
-        <activity android:name=".ExampleOldVersionActivity" />
-        <activity android:name=".TestActivity" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +48,6 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".ReciteWordActivity" />
         <activity android:name=".WordViewTestActivity" />
-        <activity android:name=".DataTestActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />

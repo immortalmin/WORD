@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 将JSON字符串转换成相应数据的工具类
+ */
 public class JsonRe {
-
-    List<Map<String, Object>> wordInfoList;// 定义List容器，节点类型是map
-    List<Map<String, Object>> wordList;// 定义List容器，节点类型是map
 
     public ArrayList<HashMap<String,Object>> feedbackData(String jsonStr){
         ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
@@ -43,7 +43,6 @@ public class JsonRe {
         return feedbackList;
     }
 
-
     public HashMap<String,Object>getcount(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
@@ -57,30 +56,8 @@ public class JsonRe {
         return word;
     }
 
-    public List<HashMap<String,Object>> allwordData(String jsonStr){
-        List<HashMap<String,Object>> wordList = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> word = new HashMap<>();
-                word.put("wid",jsonObject.getString("wid"));
-                word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
-                word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-                word.put("source",jsonObject.getString("source"));
-                word.put("collect",jsonObject.getString("collect"));
-                word.put("correct_times",jsonObject.getString("correct_times"));
-                word.put("error_times",jsonObject.getString("error_times"));
-                word.put("prof_flag",jsonObject.getString("prof_flag"));
-                word.put("last_date",jsonObject.getString("last_date"));
-                wordList.add(word);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordList;
-    }
-
+    /*
+    stopping using from 2021/1/15
     public ArrayList<HashMap<String,Object>> collectData(String jsonStr){
         ArrayList<HashMap<String,Object>> words = new ArrayList<>();
         try {
@@ -89,7 +66,6 @@ public class JsonRe {
                 HashMap<String,Object> word = new HashMap<>();
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
                 word.put("cid",jsonObject.getString("cid"));
-                word.put("uid",jsonObject.getString("uid"));
                 word.put("gid",jsonObject.getString("gid"));
                 word.put("wid",jsonObject.getString("wid"));
                 word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
@@ -105,8 +81,36 @@ public class JsonRe {
             e.printStackTrace();
         }
         return words;
+    }*/
+
+    //XXX:取个好点的名字吧
+    public ArrayList<DetailWord> collectData(String jsonStr){
+        ArrayList<DetailWord> words = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                DetailWord word = new DetailWord();
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                word.setCid(jsonObject.getString("cid"));
+                word.setGid(jsonObject.getString("gid"));
+                word.setWid(jsonObject.getString("wid"));
+                word.setWord_en(jsonObject.getString("word_en").replaceAll("\n",""));
+                word.setWord_ch(jsonObject.getString("word_ch").replaceAll("\n",""));
+                word.setCorrect_times(jsonObject.getString("correct_times"));
+                word.setError_times(jsonObject.getString("error_times"));
+                word.setLast_date(jsonObject.getString("last_date"));
+                word.setReview_date(jsonObject.getString("review_date"));
+                word.setDict_source(jsonObject.getString("dict_source"));
+                words.add(word);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return words;
     }
 
+    /*
+    stopping using from 2021/1/15
     public List<HashMap<String,Object>> getSearchData(String jsonStr){
         List<HashMap<String,Object>> wordList = new ArrayList<>();
         try {
@@ -129,29 +133,10 @@ public class JsonRe {
             e.printStackTrace();
         }
         return wordList;
-    }
+    }*/
 
-//    public HashMap<String,Object> wordData(String jsonStr){
-//        HashMap<String,Object> word = new HashMap<>();
-//        try {
-//            JSONArray jsonArray = new JSONArray(jsonStr);
-//            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-//            word.put("C_meaning",jsonObject.getString("C_meaning").replaceAll("\n",""));
-//            word.put("collect",jsonObject.getString("collect"));
-//            word.put("correct_times",jsonObject.getString("correct_times"));
-//            word.put("error_times",jsonObject.getString("error_times"));
-//            word.put("last_date",jsonObject.getString("last_date"));
-//            word.put("source",jsonObject.getString("source").replaceAll("\n",""));
-//            word.put("prof_flag",jsonObject.getString("prof_flag"));
-//            word.put("wid",jsonObject.getString("wid"));
-//            word.put("word_group",jsonObject.getString("word_group").replaceAll("\n",""));
-//            word.put("today_correct_times",0);
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return word;
-//    }
-
+    /*
+    stopping using from 2021/1/15
     public HashMap<String,Object> wordData(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
@@ -167,6 +152,27 @@ public class JsonRe {
             word.put("error_times",jsonObject.getString("error_times"));
             word.put("last_date",jsonObject.getString("last_date"));
             word.put("source",jsonObject.getString("source"));
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }*/
+    public DetailWord wordData(String jsonStr){
+        DetailWord word = new DetailWord();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+            word.setWid(jsonObject.getString("wid"));
+            word.setWord_en(jsonObject.getString("word_en").replaceAll("\n",""));
+            word.setWord_ch(jsonObject.getString("word_ch").replaceAll("\n",""));
+            word.setCorrect_times(jsonObject.getString("correct_times"));
+            word.setError_times(jsonObject.getString("error_times"));
+            word.setLast_date(jsonObject.getString("last_date"));
+            word.setReview_date(jsonObject.getString("review_date"));
+            word.setCid(jsonObject.getString("cid"));
+            word.setGid(jsonObject.getString("gid"));
+            word.setDict_source(jsonObject.getString("dict_source"));
+            word.setSource(jsonObject.getString("source"));
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -253,7 +259,8 @@ public class JsonRe {
         return exampleList;
     }
 
-
+    /*
+    stopping using from 2021/1/15
     public List<HashMap<String,Object>> reciteData(String jsonStr){
         List<HashMap<String,Object>> reciteList = new ArrayList<>();
         try {
@@ -277,7 +284,7 @@ public class JsonRe {
             e.printStackTrace();
         }
         return reciteList;
-    }
+    }*/
 
     public HashMap<String,Object> userData(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
@@ -326,6 +333,8 @@ public class JsonRe {
         return usetime;
     }
 
+    /*
+    stopping using from 2021/1/15
     public ArrayList<Integer> return_id(String jsonstr){
         ArrayList<Integer> id_list = new ArrayList<>();
         try{
@@ -337,41 +346,10 @@ public class JsonRe {
             e.printStackTrace();
         }
         return id_list;
-    }
+    }*/
 
-
-    public List<Map<String, Object>>  getReciteList(String jsonStr) {
-        wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            JSONArray  jsonArray=new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++)
-            {
-                //jsonArray.length()获取json中数组元素的个数
-                map = new HashMap<String, Object>();
-                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);//获取数组中第i个数组元素
-                String id = jsonObject.getString("id");
-                String word_group = jsonObject.getString("word_group");
-                word_group = word_group.replaceAll("\n","");
-                String C_meaning = jsonObject.getString("C_meaning");
-                C_meaning = C_meaning.replaceAll("\n","");
-                String correct_times = jsonObject.getString("correct_times");
-                String error_times = jsonObject.getString("error_times");
-                String prof_flag = jsonObject.getString("prof_flag");
-                map.put("id",id);
-                map.put("word_group",word_group);
-                map.put("C_meaning",C_meaning);
-                map.put("correct_times",correct_times);
-                map.put("error_times",error_times);
-                map.put("prof_flag",prof_flag);
-                map.put("today_correct_times",0);
-                wordList.add(map);// 将一个节点的数据（一条商家信息）添加到list容器中
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordList;
-    }
+    /*
+    stopping using from 2021/1/15
     public List<Map<String, Object>>  getSpanish(String jsonStr) {
         wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
         Map<String, Object> map = new HashMap<String, Object>();
@@ -428,43 +406,5 @@ public class JsonRe {
             e.printStackTrace();
         }
         return wordList;
-    }
-    public String get_amount(String jsonStr) {
-        String amount="0";
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject num = (JSONObject) jsonArray.opt(0);
-            amount = num.getString("count(*)");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return amount;
-    }
-
-    /**
-     * 获取单词完成数据
-     * @param jsonStr
-     * @return
-     */
-    public List<Map<String, Object>> get_wordinfo(String jsonStr) {
-        wordList = new ArrayList<Map<String, Object>>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject word = (JSONObject) jsonArray.opt(i);
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("id",word.getString("id"));
-                map.put("word_group",word.getString("word_group"));
-                map.put("C_meaning",word.getString("C_meaning"));
-                map.put("correct_times",word.getString("correct_times"));
-                map.put("error_times",word.getString("error_times"));
-                map.put("prof_flag",word.getString("prof_flag"));
-                wordList.add(map);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordList;
-    }
+    }*/
 }
