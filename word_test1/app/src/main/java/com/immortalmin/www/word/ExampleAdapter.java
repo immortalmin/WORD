@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ExampleAdapter extends BaseAdapter {
 
-    ArrayList<HashMap<String,Object>> mdata;
+    ArrayList<OtherSentence> mdata;
     private LayoutInflater mInflater;//布局装载器对象
     private onItemListener mOnItemListener;
     private int mode = 0;//0 view,1 edit
@@ -27,7 +27,7 @@ public class ExampleAdapter extends BaseAdapter {
     private Button del_btn,edit_btn;
     private String username;
 
-    public ExampleAdapter(Context context, ArrayList<HashMap<String,Object>> data,int mode,String username) {
+    public ExampleAdapter(Context context, ArrayList<OtherSentence> data,int mode,String username) {
         this.mdata = data;
         this.mode = mode;
         this.username = username;
@@ -45,7 +45,7 @@ public class ExampleAdapter extends BaseAdapter {
         edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
 
         try{
-            if(mode==1&&mdata.get(position).get("source").toString().equals(username)){
+            if(mode==1&&mdata.get(position).getSource().equals(username)){
                 del_btn.setVisibility(View.VISIBLE);
                 edit_btn.setVisibility(View.VISIBLE);
             }else{
@@ -57,10 +57,10 @@ public class ExampleAdapter extends BaseAdapter {
         }
 
 //        word_meaning.setText(mdata.get(position).get("word_meaning").toString());
-        word_meaning.setText(mdata.get(position).get("word_en").toString());
-        E_sentence.setText(mdata.get(position).get("E_sentence").toString());
-        C_translate.setText(mdata.get(position).get("C_translate").toString());
-        source.setText("——由"+mdata.get(position).get("source").toString()+"添加");
+        word_meaning.setText(mdata.get(position).getWord_meaning());
+        E_sentence.setText(mdata.get(position).getSentence_en());
+        C_translate.setText(mdata.get(position).getSentence_ch());
+        source.setText("——由"+mdata.get(position).getSource()+"添加");
         del_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -60,7 +60,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private ExampleFragment exampleFragment = new ExampleFragment();
     private KelinsiFragment kelinsiFragment = new KelinsiFragment();
     private DetailWord word;
-    private ArrayList<HashMap<String,Object>> examplelist = null;
+    private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private DbDao mDbDao;
     private UserData userData = new UserData();
@@ -305,12 +305,7 @@ public class ExampleActivity extends AppCompatActivity implements
         UpdateWordDialog updateWordDialog = new UpdateWordDialog(this,R.style.MyDialog,data);
         updateWordDialog.show();
         updateWordDialog.setCancelable(false);
-        updateWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(6).sendToTarget();
-            }
-        });
+        updateWordDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(6).sendToTarget());
     }
 
     private void addExampleDialog(){
@@ -326,12 +321,7 @@ public class ExampleActivity extends AppCompatActivity implements
         AddExampleDialog addExampleDialog = new AddExampleDialog(this,R.style.MyDialog,jsonObject);
         addExampleDialog.show();
         addExampleDialog.setCancelable(false);
-        addExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(6).sendToTarget();
-            }
-        });
+        addExampleDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(6).sendToTarget());
     }
 
     /**
@@ -344,20 +334,14 @@ public class ExampleActivity extends AppCompatActivity implements
                 .setContentText("Data will be permanently deleted.")
                 .setConfirmText("OK")
                 .setCancelText("No,cancel del!")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        deleteWord();
-                        sweetAlertDialog.cancel();
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    deleteWord();
+                    sweetAlertDialog.cancel();
                 })
                 .showCancelButton(true)
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.obtainMessage(6).sendToTarget();
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.obtainMessage(6).sendToTarget();
                 });
         del_alert.setCancelable(false);
         del_alert.show();
@@ -506,17 +490,6 @@ public class ExampleActivity extends AppCompatActivity implements
     @Override
     public void updateWordInteraction(JSONObject jsonObject){
         updateWord(jsonObject);
-    }
-
-    /**
-     * 显示键盘
-     *
-     * @param et 输入焦点
-     */
-    public void showInput(final EditText et) {
-        et.requestFocus();
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
     }
 
     /**

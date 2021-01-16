@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
-    private HashMap<String,Object>data = null;
+    private OtherSentence data;
     private Button commit_btn,cancel_btn;
     private MyEditText word_en,E_sentence,C_translate;
     private OnDialogInteractionListener listener;
@@ -30,7 +30,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         this.context=context;
     }
 
-    public UpdateExampleDialog(Context context, int themeResId, HashMap<String,Object>data) {
+    public UpdateExampleDialog(Context context, int themeResId, OtherSentence data) {
         super(context, themeResId);
         this.context=context;
         this.data = data;
@@ -64,9 +64,9 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    word_en.setText(data.get("word_en").toString());
-                    E_sentence.setText(data.get("E_sentence").toString());
-                    C_translate.setText(data.get("C_translate").toString());
+                    word_en.setText(data.getWord_meaning());
+                    E_sentence.setText(data.getSentence_en());
+                    C_translate.setText(data.getSentence_ch());
                     break;
                 case 1:
                     cancel_flag=false;
@@ -124,7 +124,7 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("eid",data.get("eid").toString());
+            jsonObject.put("eid",data.getEid());
             jsonObject.put("word_meaning",word_en.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("E_sentence",E_sentence.getText().toString().replaceAll("\"","\\\\\\\""));
             jsonObject.put("C_translate",C_translate.getText().toString().replaceAll("\"","\\\\\\\""));

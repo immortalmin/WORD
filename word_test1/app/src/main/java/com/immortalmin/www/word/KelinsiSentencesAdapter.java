@@ -15,11 +15,11 @@ import java.util.HashMap;
 
 public class KelinsiSentencesAdapter extends BaseAdapter {
 
-    ArrayList<HashMap<String,Object>> mdata;
+    ArrayList<KelinsiSentence> mdata;
     private LayoutInflater mInflater;//布局装载器对象
     private TextView sentence_en,sentence_ch;
 
-    public KelinsiSentencesAdapter(Context context, ArrayList<HashMap<String,Object>> data) {
+    public KelinsiSentencesAdapter(Context context, ArrayList<KelinsiSentence> data) {
         this.mdata = data;
         mInflater = LayoutInflater.from(context);
     }
@@ -29,8 +29,8 @@ public class KelinsiSentencesAdapter extends BaseAdapter {
         View v = mInflater.inflate(R.layout.kelinsisentenceitem,null);
         sentence_en = (TextView)v.findViewById(R.id.sentence_en);
         sentence_ch = (TextView)v.findViewById(R.id.sentence_ch);
-        sentence_en.setText(mdata.get(position).get("sentence_en").toString());
-        sentence_ch.setText(mdata.get(position).get("sentence_ch").toString());
+        sentence_en.setText(mdata.get(position).getSentence_en());
+        sentence_ch.setText(mdata.get(position).getSentence_ch());
         return v;
     }
 

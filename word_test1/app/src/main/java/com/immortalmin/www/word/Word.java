@@ -6,14 +6,12 @@ package com.immortalmin.www.word;
 public class Word {
     private String wid;//单词的id
     private String word_en;//英文单词
-    private String word_ch;//中文释义
 
     public Word(){}
 
-    public Word(String wid, String word_en, String word_ch) {
+    public Word(String wid, String word_en) {
         this.wid = wid;
         this.word_en = word_en;
-        this.word_ch = word_ch;
     }
 
     public String getWid() {
@@ -32,20 +30,11 @@ public class Word {
         this.word_en = word_en;
     }
 
-    public String getWord_ch() {
-        return word_ch;
-    }
-
-    public void setWord_ch(String word_ch) {
-        this.word_ch = word_ch;
-    }
-
     @Override
     public String toString() {
         return "Word{" +
                 "wid='" + wid + '\'' +
                 ", word_en='" + word_en + '\'' +
-                ", word_ch='" + word_ch + '\'' +
                 '}';
     }
 }

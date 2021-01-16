@@ -63,8 +63,6 @@ public class ReviewWordActivity extends AppCompatActivity
     private ProgressBar total_progress;
     private SweetAlertDialog interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
-    private Map<String, Object> update_word = null;
-//    private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private ArrayList<DetailWord> review_list;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
@@ -103,13 +101,12 @@ public class ReviewWordActivity extends AppCompatActivity
             //获取当前时间
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
             jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-//            jsonObject.put("review_date","2020-07-01");
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            review_list =jsonRe.collectData(result);
+            review_list =jsonRe.detailWordData(result);
             review_num = Math.min(review_list.size(),group_num);
             if(review_num>0){
                 startReview();
@@ -250,7 +247,6 @@ public class ReviewWordActivity extends AppCompatActivity
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
-
         finish_alert.setCancelable(false);
         finish_alert.show();
     }
@@ -431,23 +427,10 @@ public class ReviewWordActivity extends AppCompatActivity
      * @param what 0：不更新日期  1：更新日期
      */
     public void update_sql_data(int i,int what) {
-        update_word  = new HashMap<>();
         UpdateServer updateServer = new UpdateServer();
         updateServer.sendMap(review_list.get(i),what);
         scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
     }
-
-    /**
-     * update rest of word list
-     */
-//    private void update_all(){
-//        for(int i=0;i<review_num;i++){
-//            if(finish_ind[i]==0){
-//                update_sql_data(i,0);
-//            }
-//        }
-//        finishDialog();
-//    }
 
     /**
      * 跳转到例句页面
@@ -476,8 +459,6 @@ public class ReviewWordActivity extends AppCompatActivity
         if (requestCode == 1) {
             pron_lock = false;
             startReview();
-//            if(mode==0) startCountdownReview();
-//            else startSpellReview();
         }
     }
 

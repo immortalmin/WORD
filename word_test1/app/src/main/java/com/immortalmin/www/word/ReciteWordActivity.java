@@ -182,7 +182,7 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            recite_list =jsonRe.collectData(result);
+            recite_list =jsonRe.detailWordData(result);
             if(recite_list.size()<recite_num+recite_scope){
                 //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
                 Looper.prepare();
@@ -238,7 +238,6 @@ public class ReciteWordActivity extends AppCompatActivity
         recite_scope = userData.getRecite_scope();
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
-//        getrecitelist();//get the list of word
         getRecite();
     }
 
@@ -343,48 +342,6 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     /**
-     * 返回主页
-     */
-    private void return_main(){
-        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText("Good job!")
-                .setContentText("return to main page.")
-                .setConfirmText("fine")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .show();
-    }
-
-    /**
-     * 中途退出
-     */
-    private void interrupt(){
-        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Are you sure?")
-                .setContentText("Won't be able to recover this file!")
-                .setConfirmText("fine")
-                .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
-                })
-                .show();
-    }
-
-    /**
      * 选项按钮点击事件
      *
      * @param view
@@ -396,7 +353,6 @@ public class ReciteWordActivity extends AppCompatActivity
                 break;
             case R.id.ret_btn:
                 interruptDialog();
-//                interrupt();
                 break;
         }
     }
@@ -514,53 +470,6 @@ public class ReciteWordActivity extends AppCompatActivity
             start_recite();
         }
     }
-
-//    /**
-//     * spellfragment的回调函数
-//     *
-//     * @param WrongTimes
-//     */
-//    @Override
-//    public void spellFragmentInteraction(int WrongTimes) {
-//        HashMap<String, Object> correct_word = new HashMap<String, Object>();
-//        correct_word = recite_list.get(correct_ind);
-//        int er_times = Integer.valueOf(correct_word.get("error_times").toString());
-//        int co_times = Integer.valueOf(correct_word.get("correct_times").toString());
-//        if ("1".equals(res.get("judge").toString())) {
-//            if (Boolean.valueOf(res.get("once_flag").toString())) {//一次就过
-//                finish_ind[correct_ind] = 1;
-//                finish_num++;
-//                total_progress.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        int pro_num = finish_num * 100 / recite_num;
-//                        total_progress.setProgress(pro_num);
-//                    }
-//                });
-//                correct_word.put("correct_times", co_times + 1);
-////                if (co_times + 1 >= prof_times) {
-////                    correct_word.put("prof_flag", 1);
-////                }
-//                recite_list.set(correct_ind, correct_word);
-//                update_sql_data(correct_ind,1);
-//            } else {//不是一次就过，下回重新拼写
-//                correct_word.put("error_times", er_times + 1);
-//                correct_word.put("today_correct_times", 0);
-//                recite_list.set(correct_ind, correct_word);
-//            }
-//            mHandler.obtainMessage(0).sendToTarget();
-//            if (finish_num >= recite_num) {
-//                update_all();
-//            }else{
-//                start_recite();
-//            }
-//        } else {//回答错误，重新拼写
-//            correct_word.put("error_times", er_times + 1);
-//            recite_list.set(correct_ind, correct_word);
-//            now_words.put("once_flag", false);
-//            start_spell_mode(now_words);
-//        }
-//    }
 
     /**
      * spellfragment的回调函数

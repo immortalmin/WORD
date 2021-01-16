@@ -55,7 +55,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     public void onAttach(Context context){
         super.onAttach(context);
         mediaPlayerUtil = new MediaPlayerUtil(context);
-//        Log.d(TAG,"onAttach");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -75,7 +74,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.activity_countdown,null);
-//        Log.d(TAG,"onCreateView");
         return view;
     }
 

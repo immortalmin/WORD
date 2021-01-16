@@ -36,7 +36,6 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     private MyAsyncTask myAsyncTask = null;
     private BlurImageView blurImageView = new BlurImageView();
     private ListView listView;
-    private ImageView imgview;
     private TextView all_num,finished_num;
     private RelativeLayout main_relative;
     private List<DetailWord> word_list=null;
@@ -49,36 +48,29 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_collect);
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
-        listView=(ListView)findViewById(R.id.ListView1);
-        all_num = (TextView)findViewById(R.id.all_num);
-        finished_num = (TextView)findViewById(R.id.finished_num);
-        main_relative = (RelativeLayout)findViewById(R.id.main_relative);
-        imgview = (ImageView)findViewById(R.id.imgview);
+        listView= findViewById(R.id.ListView1);
+        all_num = findViewById(R.id.all_num);
+        finished_num = findViewById(R.id.finished_num);
+        main_relative = findViewById(R.id.main_relative);
         finished_num.setOnClickListener(this);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(collectActivity.this, ExampleActivity.class);
-//                String wid = word_list.get(position).get("wid").toString();
-                intent.putExtra("wid",collect_list.get(position).getWid());
-                intent.putExtra("dict_source",collect_list.get(position).getDict_source());
-                startActivityForResult(intent,1);
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-            }
+        listView.setOnItemClickListener((adapterView, view, position, l) -> {
+            Intent intent = new Intent(collectActivity.this, ExampleActivity.class);
+            intent.putExtra("wid",collect_list.get(position).getWid());
+            intent.putExtra("dict_source",collect_list.get(position).getDict_source());
+            startActivityForResult(intent,1);
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
 
             }
-
             @Override
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {
                 now_position = i;
             }
         });
         init();
-
 
     }
 
@@ -124,34 +116,31 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             if(collect_list==null){
-                collect_list = jsonRe.collectData(result);
+                collect_list = jsonRe.detailWordData(result);
                 wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
                 listView.setAdapter(wordListAdapter);
             }else{
                 collect_list.clear();
-                collect_list.addAll(jsonRe.collectData(result));
+                collect_list.addAll(jsonRe.detailWordData(result));
                 wordListAdapter.notifyDataSetChanged();
             }
         });
         myAsyncTask.execute(jsonObject);
     }
     private void get_amount() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",sp.getString("uid",null));
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
-                HashMap<String,Object> count = null;
-                count = jsonRe.getcount(recitejson);
-                mHandler.obtainMessage(1,count).sendToTarget();
+        new Thread(() -> {
+            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("uid",sp.getString("uid",null));
+            }catch (JSONException e){
+                e.printStackTrace();
             }
+            HttpGetContext httpGetContext = new HttpGetContext();
+            String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
+            HashMap<String,Object> count = null;
+            count = jsonRe.getcount(recitejson);
+            mHandler.obtainMessage(1,count).sendToTarget();
         }).start();
 
     }

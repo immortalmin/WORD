@@ -4,6 +4,8 @@ package com.immortalmin.www.word;
  * 带有数据记录的单词
  */
 public class DetailWord extends Word{
+
+    private String word_ch;
     private int correct_times;
     private int error_times;
     private String last_date;
@@ -31,7 +33,8 @@ public class DetailWord extends Word{
      * @param dict_source
      */
     public DetailWord(String wid, String word_en, String word_ch, String correct_times, String error_times, String last_date, String review_date, String cid, String gid, String dict_source) {
-        super(wid, word_en, word_ch);
+        super(wid, word_en);
+        this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
         this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
@@ -56,7 +59,8 @@ public class DetailWord extends Word{
      * @param source
      */
     public DetailWord(String wid, String word_en, String word_ch, String correct_times, String error_times, String last_date, String review_date, String cid, String gid, String dict_source, String source) {
-        super(wid, word_en, word_ch);
+        super(wid, word_en);
+        this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
         this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
@@ -65,6 +69,14 @@ public class DetailWord extends Word{
         this.gid = gid;
         this.dict_source = dict_source;
         this.source = source;
+    }
+
+    public String getWord_ch() {
+        return word_ch;
+    }
+
+    public void setWord_ch(String word_ch) {
+        this.word_ch = word_ch;
     }
 
     public int getCorrect_times() {
@@ -164,7 +176,7 @@ public class DetailWord extends Word{
         return "CollectWord{" +
                 "wid=" + getWid() +
                 ", word_en=" + getWord_en() +
-                ", word_ch=" + getWord_ch() +
+                ", word_ch=" + word_ch +
                 ", correct_times=" + correct_times +
                 ", error_times=" + error_times +
                 ", last_date='" + last_date + '\'' +

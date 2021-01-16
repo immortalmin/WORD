@@ -14,14 +14,14 @@ import java.util.HashMap;
 
 public class KelinsiAdapter extends BaseAdapter {
 
-    ArrayList<HashMap<String,Object>> mdata;
+    ArrayList<KelinsiItem> mdata;
     private Context context;
     private LayoutInflater mInflater;//布局装载器对象
     private TextView number,label,word_ch,explanation,gram;
     private MyListView sentences_listview;
     private KelinsiSentencesAdapter kelinsiSentencesAdapter;
 
-    public KelinsiAdapter(Context context, ArrayList<HashMap<String,Object>> data) {
+    public KelinsiAdapter(Context context, ArrayList<KelinsiItem> data) {
         this.context = context;
         this.mdata = data;
         mInflater = LayoutInflater.from(context);
@@ -36,12 +36,12 @@ public class KelinsiAdapter extends BaseAdapter {
         explanation = (TextView)v.findViewById(R.id.explanation);
         gram = (TextView)v.findViewById(R.id.gram);
         sentences_listview = (MyListView)v.findViewById(R.id.sentences_listview);
-        number.setText(mdata.get(position).get("number").toString());
-        label.setText(mdata.get(position).get("label").toString());
-        word_ch.setText(mdata.get(position).get("word_ch").toString());
-        explanation.setText(mdata.get(position).get("explanation").toString());
-        gram.setText(mdata.get(position).get("gram").toString());
-        kelinsiSentencesAdapter = new KelinsiSentencesAdapter(context,(ArrayList<HashMap<String,Object>>) mdata.get(position).get("sentences"));
+        number.setText(mdata.get(position).getNumber());
+        label.setText(mdata.get(position).getLabel());
+        word_ch.setText(mdata.get(position).getWord_ch());
+        explanation.setText(mdata.get(position).getExplanation());
+        gram.setText(mdata.get(position).getGram());
+        kelinsiSentencesAdapter = new KelinsiSentencesAdapter(context,mdata.get(position).getSentences());
         sentences_listview.setAdapter(kelinsiSentencesAdapter);
         return v;
     }

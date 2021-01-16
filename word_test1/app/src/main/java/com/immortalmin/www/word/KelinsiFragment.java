@@ -28,8 +28,7 @@ public class KelinsiFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private MyAsyncTask myAsyncTask;
     private JsonRe jsonRe = new JsonRe();
-    private HashMap<String,Object> kelinsi_word = null;
-    private TextView word_en,star;
+    private KelinsiWord kelinsiWord = null;
     private MyListView items_listview;
     private KelinsiAdapter kelinsiAdapter;
     private int wid=0;
@@ -55,10 +54,7 @@ public class KelinsiFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        word_en = getActivity().findViewById(R.id.word_en);
-//        star = getActivity().findViewById(R.id.star);
         items_listview = getActivity().findViewById(R.id.items_listview);
-
         getKelinsiData();
     }
 
@@ -79,7 +75,7 @@ public class KelinsiFragment extends Fragment {
                 case 0:
 //                    word_en.setText(kelinsi_word.get("word_en").toString());
 //                    star.setText(kelinsi_word.get("star").toString());
-                    kelinsiAdapter = new KelinsiAdapter(getActivity(),(ArrayList<HashMap<String,Object>>) kelinsi_word.get("items"));
+                    kelinsiAdapter = new KelinsiAdapter(getActivity(),kelinsiWord.getItems());
                     items_listview.setAdapter(kelinsiAdapter);
                     break;
             }
@@ -98,9 +94,8 @@ public class KelinsiFragment extends Fragment {
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            kelinsi_word = jsonRe.kelinsiwordData(result);
+            kelinsiWord = jsonRe.kelinsiWordData(result);
             mHandler.obtainMessage(0).sendToTarget();
-//            Log.i("ccc",kelinsi_word.toString());
         });
         myAsyncTask.execute(jsonObject);
     }

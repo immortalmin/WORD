@@ -13,7 +13,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:theme="@style/MyCheckBox"
-        android:text="只看自己的例句"
+        android:text="MINE"
         android:textColor="#CEF5CF"/>
 
     <ListView

@@ -83,8 +83,7 @@ public class JsonRe {
         return words;
     }*/
 
-    //XXX:取个好点的名字吧
-    public ArrayList<DetailWord> collectData(String jsonStr){
+    public ArrayList<DetailWord> detailWordData(String jsonStr){
         ArrayList<DetailWord> words = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -179,7 +178,7 @@ public class JsonRe {
         return word;
     }
 
-    public HashMap<String,Object> kelinsiwordData(String jsonStr){
+    /*public HashMap<String,Object> kelinsiwordData(String jsonStr){
         HashMap<String,Object> kelinsiword = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -223,10 +222,55 @@ public class JsonRe {
             e.printStackTrace();
         }
         return kelinsiword;
+    }*/
+
+    public KelinsiWord kelinsiWordData(String jsonStr){
+        KelinsiWord kelinsiWord = new KelinsiWord();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONArray json_items = new JSONArray(jsonObject.getString("items"));
+            ArrayList<KelinsiItem> items = new ArrayList<>();
+            for(int i=0;i<json_items.length();i++){
+                KelinsiItem item = new KelinsiItem();
+                JSONObject json_item = (JSONObject)json_items.opt(i);
+                item.setExplanation(json_item.getString("explanation"));
+                item.setGram(json_item.getString("gram"));
+                item.setIid(json_item.getString("iid"));
+                item.setLabel(json_item.getString("label"));
+                item.setNumber(json_item.getString("number"));
+                item.setWord_ch(json_item.getString("word_ch"));
+                ArrayList<String> en_tips = new ArrayList<>();
+                JSONArray json_en_tips = new JSONArray(json_item.getString("en_tip"));
+                for(int j=0;j<json_en_tips.length();j++){
+                    en_tips.add(json_en_tips.getString(j));
+                }
+                item.setEn_tips(en_tips);
+                ArrayList<KelinsiSentence> sentences = new ArrayList<>();
+                JSONArray json_sentences = new JSONArray(json_item.getString("sentences"));
+                for(int j=0;j<json_sentences.length();j++){
+                    KelinsiSentence sentence = new KelinsiSentence();
+                    JSONObject json_sentence = (JSONObject)json_sentences.opt(j);
+                    sentence.setSentence_ch(json_sentence.getString("sentence_ch"));
+                    sentence.setSentence_en(json_sentence.getString("sentence_en"));
+                    sentence.setSid(json_sentence.getString("sid"));
+                    sentences.add(sentence);
+                }
+                item.setSentences(sentences);
+                items.add(item);
+            }
+            kelinsiWord.setItems(items);
+            kelinsiWord.setStar(jsonObject.getString("star"));
+            kelinsiWord.setWid(jsonObject.getString("wid"));
+            kelinsiWord.setWord_en(jsonObject.getString("word_en"));
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return kelinsiWord;
     }
 
 
-    public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
+    /*public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
         ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -257,6 +301,39 @@ public class JsonRe {
             e.printStackTrace();
         }
         return exampleList;
+    }*/
+
+    public ArrayList<OtherSentence> exampleData(String jsonStr){
+        ArrayList<OtherSentence> sentences = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+                OtherSentence sentence = new OtherSentence();
+                sentence.setEid(jsonObject.getString("eid"));
+                String word_meaning,sentence_en,sentence_ch;
+                word_meaning = jsonObject.getString("word_en").replaceAll("\\\\n","\\\n");
+                sentence_en = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
+                sentence_ch = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
+                if(word_meaning.charAt(word_meaning.length()-1) == '\n'){
+                    word_meaning = word_meaning.substring(0,word_meaning.length()-1);
+                }
+                if(sentence_en.charAt(sentence_en.length()-1) == '\n'){
+                    sentence_en = sentence_en.substring(0,sentence_en.length()-1);
+                }
+                if(sentence_ch.charAt(sentence_ch.length()-1) == '\n'){
+                    sentence_ch = sentence_ch.substring(0,sentence_ch.length()-1);
+                }
+                sentence.setWord_meaning(word_meaning);
+                sentence.setSentence_en(sentence_en);
+                sentence.setSentence_ch(sentence_ch);
+                sentence.setSource(jsonObject.getString("source"));
+                sentences.add(sentence);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return sentences;
     }
 
     /*

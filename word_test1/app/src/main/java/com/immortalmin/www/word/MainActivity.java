@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            ArrayList<DetailWord> review_list =jsonRe.collectData(result);
+            ArrayList<DetailWord> review_list =jsonRe.detailWordData(result);
             int review_num = review_list.size();
             if(review_num == 0){
                 btn_review.setText("复习\n完成");
