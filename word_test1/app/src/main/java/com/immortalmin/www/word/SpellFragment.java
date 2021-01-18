@@ -83,7 +83,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.activity_spell,null);
-        Log.d(TAG,"onCreateView");
         return view;
     }
 
@@ -126,7 +125,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     msg.obj = s.charAt(eword.getSelectionStart()-1);
                     mHandler.sendMessage(msg);
                 }
-                Log.i("ccc",s.toString());
+                //显示或隐藏清除按钮
                 if(s.toString().length()>0){
                     mHandler.obtainMessage(5).sendToTarget();
                 }else{
