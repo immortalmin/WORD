@@ -49,7 +49,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Runnable music_delay,correct_action,wrong_action;
     private TextView cword,correct_word;//display word_ch
     private EditText eword;//spell word_en
-    private Button finish_btn;
+    private Button clean_btn;
     private int WrongTimes=0;//拼写错误的次数
     private Boolean suspend_flag = false;//拼写错误的话，显示正确结果，等用户再次回车或输入，再清除。true代表正在显示正确结果
     private Boolean btn_lock = false;//用来禁止连续的回车。true表示开启，等新一轮开启时，再关闭
@@ -90,11 +90,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        cword = (TextView)getActivity().findViewById(R.id.cword);
-        correct_word = (TextView)getActivity().findViewById(R.id.correct_word);
-        eword = (EditText) getActivity().findViewById(R.id.eword);
-        finish_btn = (Button) getActivity().findViewById(R.id.finish_btn);
+        cword = getActivity().findViewById(R.id.cword);
+        correct_word = getActivity().findViewById(R.id.correct_word);
+        eword = getActivity().findViewById(R.id.eword);
+        clean_btn = getActivity().findViewById(R.id.clean_btn);
         cword.setOnClickListener(this);
+        clean_btn.setOnClickListener(this);
         eword.setOnEditorActionListener(ewordEd);
 
 
@@ -125,6 +126,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     msg.obj = s.charAt(eword.getSelectionStart()-1);
                     mHandler.sendMessage(msg);
                 }
+                Log.i("ccc",s.toString());
+                if(s.toString().length()>0){
+                    mHandler.obtainMessage(5).sendToTarget();
+                }else{
+                    mHandler.obtainMessage(6).sendToTarget();
+                }
             }
         });
         //music
@@ -138,31 +145,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         /**
          * 让其播放完音频再进行后面的处理
          */
-        music_delay = new Runnable() {
-            @Override
-            public void run() {
-                mHandler.obtainMessage(3).sendToTarget();
-            }
-        };
-//        /**
-//         * 答案正确执行的操作
-//         */
-//        correct_action = new Runnable() {
-//            @Override
-//            public void run() {
-//                mHandler.obtainMessage(0).sendToTarget();
-//            }
-//        };
-//        /**
-//         * 答案错误执行的操作
-//         */
-//        wrong_action = new Runnable() {
-//            @Override
-//            public void run() {
-//                mHandler.obtainMessage(1).sendToTarget();
-//            }
-//        };
-//        finish_btn.requestLayout();
+        music_delay = () -> mHandler.obtainMessage(3).sendToTarget();
     }
     public interface OnFragmentInteractionListener {
         void spellFragmentInteraction(int WrongTimes);
@@ -176,7 +159,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if(btn_lock) return true;
-            if(!btn_lock && suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+            if(suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
                 suspend_flag = false;
                 btn_lock = true;
                 mHandler.sendEmptyMessage(2);//重新显示题目
@@ -265,6 +248,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     eword.setText("");
                     eword.setTextColor(Color.parseColor("#000000"));
                     correct_word.setVisibility(View.INVISIBLE);
+                case 5:
+                    clean_btn.setVisibility(View.VISIBLE);
+                    break;
+                case 6:
+                    clean_btn.setVisibility(View.INVISIBLE);
+                    break;
             }
             return false;
         }
@@ -280,6 +269,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 changed_volume++;
                 mediaPlayerUtil.start();
+                break;
+            case R.id.clean_btn:
+                eword.setText("");
                 break;
 
         }

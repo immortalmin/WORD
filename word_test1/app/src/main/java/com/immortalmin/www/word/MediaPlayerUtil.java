@@ -50,9 +50,9 @@ public class MediaPlayerUtil {
             //计时线程 如果1秒后还没有获取到单词的音频就提示获取失败
             Thread thread = new Thread(() -> {
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     Looper.prepare();
-                    Toast.makeText(context,"不会读o(╥﹏╥)o",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"不会读o(╥﹏╥)o TimeOut",Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 }catch (InterruptedException e){
                     e.printStackTrace();
@@ -63,7 +63,7 @@ public class MediaPlayerUtil {
              * 当播放失败时，也提醒失败
              */
             mediaPlayer.setOnErrorListener((mediaPlayer, i, i1) -> {
-                Toast.makeText(context,"不会读o(╥﹏╥)o",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"不会读o(╥﹏╥)o Error",Toast.LENGTH_SHORT).show();
                 return false;
             });
             mediaPlayer.setOnPreparedListener(mediaPlayer -> {

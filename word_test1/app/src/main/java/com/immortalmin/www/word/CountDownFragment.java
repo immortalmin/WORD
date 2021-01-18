@@ -236,31 +236,16 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private void countdown_mode(){
         switch (mode){
             case "1"://play music
-                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),"Guess who I am",word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
-                    @Override
-                    public void onFinish() {
-                        display_pro();
-                    }
-                });
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),"Guess who I am",word_en,word_ch, this::display_pro);
                 pron_flag = false;//因为一轮只需要发一次音，既然开始要发音，最后就不需要发音了
                 mediaPlayerUtil.reset(word_en,true);
                 break;
             case "2"://show word_ch
-                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_ch,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
-                    @Override
-                    public void onFinish() {
-                        display_pro();
-                    }
-                });
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_ch,word_en,word_ch, this::display_pro);
                 mediaPlayerUtil.reset(word_en,false);
                 break;
             case "3"://show word_en
-                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_en,word_en,word_ch, new CountDownProgressBar.OnFinishListener() {
-                    @Override
-                    public void onFinish() {
-                        display_pro();
-                    }
-                });
+                cpb_countdown.setDuration(Math.max(mediaPlayerUtil.getDuration(),duration),word_en,word_en,word_ch, this::display_pro);
                 pron_flag = false;
                 mediaPlayerUtil.reset(word_en,true);
                 break;
