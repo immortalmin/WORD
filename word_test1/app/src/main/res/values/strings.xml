@@ -17,5 +17,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="feedback_context">问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈问题建议错误反馈</string>
+    <string name="feedback_context">问题建议</string>
 </resources>

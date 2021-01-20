@@ -34,8 +34,8 @@
 
     <Button
         android:id="@+id/clean_btn"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_toEndOf="@+id/eword"
         android:layout_alignTop="@+id/eword"
         android:visibility="invisible"

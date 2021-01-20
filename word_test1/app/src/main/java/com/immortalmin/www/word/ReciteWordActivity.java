@@ -85,14 +85,14 @@ public class ReciteWordActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recite_word);
-        total_times = (TextView) findViewById(R.id.total_times);
-        word_times = (TextView) findViewById(R.id.word_times);
-        turn_mode = (Button) findViewById(R.id.turn_mode);
-        ret_btn = (Button) findViewById(R.id.ret_btn);
-        imgview = (ImageView)findViewById(R.id.imgview);
+        total_times = findViewById(R.id.total_times);
+        word_times = findViewById(R.id.word_times);
+        turn_mode = findViewById(R.id.turn_mode);
+        ret_btn = findViewById(R.id.ret_btn);
+        imgview = findViewById(R.id.imgview);
         turn_mode.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
-        total_progress = (ProgressBar) findViewById(R.id.total_progress);
+        total_progress = findViewById(R.id.total_progress);
         initialize();
     }
 
@@ -100,12 +100,9 @@ public class ReciteWordActivity extends AppCompatActivity
      * start a new recite round
      */
     private void start_recite() {
-        while (true) {
+        do {
             correct_ind = (int) (Math.random() * (recite_num + recite_scope));
-            if (finish_ind[correct_ind] == 0 && correct_ind != pre_ind) {
-                break;
-            }
-        }
+        } while (finish_ind[correct_ind] != 0 || correct_ind == pre_ind);
         today_finish = recite_list.get(correct_ind).getToday_correct_times();
         mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
@@ -152,8 +149,8 @@ public class ReciteWordActivity extends AppCompatActivity
         Arrays.fill(mark, 0);
         mark[correct_ind] = 1;//把正确选项标记为已选择
         int num;
-        while (true) {
-            while (true) {
+        do {
+            do {
                 num = (int) (Math.random() * (recite_num + recite_scope));
                 if (mark[num] == 0 && finish_ind[num] == 0 && num != pre_ind) {
                     mark[num] = 1;
@@ -161,11 +158,8 @@ public class ReciteWordActivity extends AppCompatActivity
                     count++;
                     break;
                 }
-            }
-            if (count == 4) {
-                break;
-            }
-        }
+            } while (true);
+        } while (count != 4);
         correct_sel = (int) (Math.random() * 4);
         select[correct_sel] = correct_ind;
 

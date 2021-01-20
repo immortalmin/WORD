@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Register0Fragment">
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/register_profile_photo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
+            android:src="@drawable/unload"/>
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/register_username_edit"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/register_profile_photo"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="16sp"
+            android:hint="用户名*"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
+
+        <TextView
+            android:id="@+id/user_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_username_edit"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="用户名已存在"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/register_password_edit"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/user_warn"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:inputType="textPassword"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="16sp"
+            android:hint="密码*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
+
+        <TextView
+            android:id="@+id/pwd_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_password_edit"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:visibility="visible"
+            android:text="6-16位数字字母混合,首位不能为数字"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/confirm_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/pwd_warn"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:inputType="textPassword"
+            android:textSize="16sp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:hint="再次输入密码*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
+
+        <TextView
+            android:id="@+id/confirm_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confirm_pwd"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
+            android:text="密码不一致"
+            android:textColor="#f70606"
+            />
+
+        <Button
+            android:id="@+id/nextBtn"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/confirm_warn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/login_btn"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:text="下一步"/>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

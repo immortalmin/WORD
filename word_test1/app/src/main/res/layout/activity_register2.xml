@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <Button
+        android:id="@+id/return_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/return3"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/nav_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:textColor="#303133"
+        android:textStyle="bold"
+        android:text="注 册" />
+
+    <FrameLayout
+        android:id="@+id/stepsFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/nav_text"
+        android:layout_marginTop="20dp">
+
+    </FrameLayout>
+
+    <!--<RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/register_profile_photo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            app:civ_border_width="1dp"
+            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
+            app:civ_fill_color="#bab3b3"
+            android:src="@drawable/unload"/>
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/register_username_edit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/register_profile_photo"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="19sp"
+            android:hint="username*"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
+
+        <TextView
+            android:id="@+id/user_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_username_edit"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="用户名已存在"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/register_password_edit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/register_username_edit"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:inputType="textPassword"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:textSize="19sp"
+            android:hint="password*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
+
+        <TextView
+            android:id="@+id/pwd_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_password_edit"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="6-16位数字字母混合,首位不能为数字"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/confirm_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/register_password_edit"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:inputType="textPassword"
+            android:textSize="19sp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:hint="confirm password*"
+            app:DisplayStyle="0"
+            app:TextType="2"/>
+
+        <TextView
+            android:id="@+id/confirm_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confirm_pwd"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="密码不一致"
+            android:textColor="#f70606"
+            />
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/telephone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/confirm_pwd"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:inputType="phone"
+            android:textSize="19sp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:hint="telephone*"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
+
+        <TextView
+            android:id="@+id/telephone_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/telephone"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="手机号格式错误"
+            android:textColor="#f70606"
+            />
+
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/telephone"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:inputType="textEmailAddress"
+            android:textSize="19sp"
+            android:textColor="#eef1f2"
+            android:textColorHint="#aeacb6"
+            android:hint="email"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
+
+        <TextView
+            android:id="@+id/email_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/email"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"
+            android:text="邮箱格式错误"
+            android:textColor="#f70606"
+            />
+        <Button
+            android:id="@+id/register_reg_btn"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/email"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/login_btn"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:text="Register" />
+    </RelativeLayout>-->
+
+</RelativeLayout>

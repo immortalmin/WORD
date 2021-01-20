@@ -361,8 +361,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-
-                intent = new Intent(MainActivity.this,ProgressTestActivity.class);
+                intent = new Intent(MainActivity.this,Register2Activity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

@@ -52,6 +52,7 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".Register2Activity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
