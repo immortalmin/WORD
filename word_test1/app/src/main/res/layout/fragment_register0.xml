@@ -13,7 +13,7 @@
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/register_profile_photo"
+            android:id="@+id/profile_photo"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginTop="50dp"
@@ -25,10 +25,10 @@
             android:src="@drawable/unload"/>
 
         <com.immortalmin.www.word.MyEditText
-            android:id="@+id/register_username_edit"
+            android:id="@+id/username_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_below="@+id/register_profile_photo"
+            android:layout_below="@+id/profile_photo"
             android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
@@ -43,7 +43,7 @@
             android:id="@+id/user_warn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_username_edit"
+            android:layout_below="@+id/username_tv"
             android:layout_marginStart="20dp"
             android:layout_marginTop="3dp"
             android:visibility="invisible"
@@ -52,7 +52,7 @@
             />
 
         <com.immortalmin.www.word.MyEditText
-            android:id="@+id/register_password_edit"
+            android:id="@+id/password_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_below="@+id/user_warn"
@@ -71,7 +71,7 @@
             android:id="@+id/pwd_warn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_password_edit"
+            android:layout_below="@+id/password_tv"
             android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:visibility="visible"
@@ -80,7 +80,7 @@
             />
 
         <com.immortalmin.www.word.MyEditText
-            android:id="@+id/confirm_pwd"
+            android:id="@+id/confirm_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_below="@+id/pwd_warn"
@@ -99,7 +99,7 @@
             android:id="@+id/confirm_warn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/confirm_pwd"
+            android:layout_below="@+id/confirm_tv"
             android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:visibility="invisible"

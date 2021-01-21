@@ -1,70 +1,51 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * 设置头像、用户名、密码
  */
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Register0Fragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Register0Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Register0Fragment extends Fragment implements View.OnClickListener{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private Context context;
     private OnFragmentInteractionListener mListener;
+    private CircleImageView profile_photo;
+    private MyEditText username_tv,password_tv,confirm_tv;
+    private TextView user_warn,pwd_warn,confirm_warn;
+    private HashMap<String,Object> userdata=null;
+    private JsonRe jsonRe = new JsonRe();
+    private MD5Utils md5Utils = new MD5Utils();
+    private MyAsyncTask myAsyncTask;
+    private String profilePhotoPath="null";
+    private boolean IsUsername=false,IsPassword=false,IsConfirm=false;
 
     public Register0Fragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Register0Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Register0Fragment newInstance(String param1, String param2) {
-        Register0Fragment fragment = new Register0Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -76,20 +57,26 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        profile_photo = Objects.requireNonNull(getActivity()).findViewById(R.id.profile_photo);
+        username_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.username_tv);
+        user_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.user_warn);
+        password_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.password_tv);
+        pwd_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.pwd_warn);
+        confirm_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_tv);
+        confirm_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_warn);
+
         Button nextBtn = Objects.requireNonNull(getActivity()).findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(this);
-    }
+        profile_photo.setOnClickListener(this);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.Register0FragmentInteraction();
-        }
+        init();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -108,25 +95,185 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.nextBtn:
+                String uname = username_tv.getText().toString();
+                String password = password_tv.getText().toString();
+                if(!judge()){
+                    break;
+                }
+//                JSONObject jsonObject = new JSONObject();
+//                try{
+//                    jsonObject.put("username",uname);
+//                    jsonObject.put("pwd",md5Utils.getMD5Code(password));
+//                    jsonObject.put("imgpath",profilePhotoPath);
+//                }catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                register(jsonObject);
                 if (mListener != null) {
-                    mListener.Register0FragmentInteraction();
+                    mListener.Register0FragmentInteraction(1);
+                }
+                break;
+            case R.id.profile_photo:
+                if (mListener != null) {
+                    mListener.Register0FragmentInteraction(0);
                 }
                 break;
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    private void init(){
+        username_tv.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mHandler.obtainMessage(0).sendToTarget();
+                query_user();
+            }
+        });
+
+        password_tv.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String now_pwd = password_tv.getText().toString();
+                if(!isPassword(now_pwd)){
+                    IsPassword = false;
+                    mHandler.obtainMessage(3).sendToTarget();
+                }else{
+                    IsPassword = true;
+                    mHandler.obtainMessage(2).sendToTarget();
+                }
+            }
+        });
+
+        confirm_tv.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(confirm_tv.getText().toString().equals(password_tv.getText().toString())){
+                    IsConfirm = true;
+                    mHandler.obtainMessage(4).sendToTarget();
+                }else{
+                    IsConfirm = false;
+                    mHandler.obtainMessage(5).sendToTarget();
+                }
+            }
+        });
+    }
+
+    private boolean judge(){
+        if(username_tv.getText().toString().length()==0){
+            Toast.makeText(context,"用户名为空",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsUsername){
+            Toast.makeText(context,"用户名已存在",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(password_tv.getText().toString().length()==0){
+            Toast.makeText(context,"请输入密码",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsPassword){
+            Toast.makeText(context,"密码不合法",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!IsConfirm){
+            Toast.makeText(context,"密码不一致",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
+                user_warn.setVisibility(View.INVISIBLE);
+                break;
+            case 1:
+                user_warn.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                pwd_warn.setVisibility(View.INVISIBLE);
+                break;
+            case 3:
+                pwd_warn.setVisibility(View.VISIBLE);
+                break;
+            case 4:
+                confirm_warn.setVisibility(View.INVISIBLE);
+                break;
+            case 5:
+                confirm_warn.setVisibility(View.VISIBLE);
+                break;
+            case 6:
+                profile_photo.setImageBitmap((Bitmap)message.obj);
+                break;
+        }
+        return false;
+    });
+
+    private void query_user() {
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("username",username_tv.getText().toString());
+            jsonObject.put("what",14);
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            userdata = jsonRe.userData(result);
+            if(userdata.size()!=0){
+                IsUsername = false;
+                mHandler.obtainMessage(1).sendToTarget();
+            }else{
+                IsUsername = true;
+            }
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+    public boolean isPassword(String password){
+        String regex="^(?![0-9])(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$";
+        Pattern p= Pattern.compile(regex);
+        Matcher m=p.matcher(password);
+        boolean isMatch=m.matches();
+        return isMatch;
+    }
+
+    public void showProfilePhoto(Bitmap bitmap){
+        mHandler.obtainMessage(6,bitmap).sendToTarget();
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void Register0FragmentInteraction();
+        void Register0FragmentInteraction(int what);
     }
 }

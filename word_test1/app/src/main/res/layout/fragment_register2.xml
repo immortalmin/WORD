@@ -12,11 +12,20 @@
         >
 
         <Button
-            android:id="@+id/btn1"
+            android:id="@+id/btn0"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="绑定邮箱"/>
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn0"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:text="设置问题"/>
 
         <Button
             android:id="@+id/btn2"
@@ -25,7 +34,7 @@
             android:layout_below="@id/btn1"
             android:layout_marginTop="10dp"
             android:textSize="15sp"
-            android:text="设置问题"/>
+            android:text="添加指纹"/>
 
         <Button
             android:id="@+id/btn3"
@@ -34,22 +43,13 @@
             android:layout_below="@id/btn2"
             android:layout_marginTop="10dp"
             android:textSize="15sp"
-            android:text="添加指纹"/>
+            android:text="设置多个密码"/>
 
         <Button
             android:id="@+id/btn4"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/btn3"
-            android:layout_marginTop="10dp"
-            android:textSize="15sp"
-            android:text="设置多个密码"/>
-
-        <Button
-            android:id="@+id/btn5"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btn4"
             android:layout_marginTop="10dp"
             android:textSize="15sp"
             android:text="设置密码提示文"/>

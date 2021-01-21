@@ -131,7 +131,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
 }
 
 /**
- *******usage:********
+ *******  USAGE  ********
  public void getWordData(){
  JSONObject jsonObject = new JSONObject();
  try{

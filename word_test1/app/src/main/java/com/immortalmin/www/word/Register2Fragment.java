@@ -3,29 +3,17 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Button;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Register2Fragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Register2Fragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 其他方式
  */
-public class Register2Fragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class Register2Fragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
@@ -33,38 +21,25 @@ public class Register2Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Register2Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Register2Fragment newInstance(String param1, String param2) {
-        Register2Fragment fragment = new Register2Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_register2, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Button btn0 = getActivity().findViewById(R.id.btn0);
+        Button btn1 = getActivity().findViewById(R.id.btn1);
+        Button btn2 = getActivity().findViewById(R.id.btn2);
+        Button btn3 = getActivity().findViewById(R.id.btn3);
+        Button btn4 = getActivity().findViewById(R.id.btn4);
+        btn0.setOnClickListener(this);
+        btn1.setOnClickListener(this);
+        btn2.setOnClickListener(this);
+        btn3.setOnClickListener(this);
+        btn4.setOnClickListener(this);
     }
 
     @Override
@@ -84,18 +59,28 @@ public class Register2Fragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btn0:
+                mListener.Register2FragmentInteraction(0);
+                break;
+            case R.id.btn1:
+                mListener.Register2FragmentInteraction(1);
+                break;
+            case R.id.btn2:
+                mListener.Register2FragmentInteraction(2);
+                break;
+            case R.id.btn3:
+                mListener.Register2FragmentInteraction(3);
+                break;
+            case R.id.btn4:
+                mListener.Register2FragmentInteraction(4);
+                break;
+        }
+    }
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void Register2FragmentInteraction();
+        void Register2FragmentInteraction(int what);
     }
 }

@@ -211,6 +211,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     eword.setSelection(word_en.length());
                     eword.setCursorVisible(false);//隐藏光标
                     eword.setTextColor(Color.parseColor("#05f725"));
+                    clean_btn.setVisibility(View.INVISIBLE);
                     break;
                 case 1://wrong
                     eword.setTextColor(Color.parseColor("#ed0707"));

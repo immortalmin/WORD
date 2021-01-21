@@ -105,7 +105,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
                         }
                         setSelection(getText().length());
                         isVisible = !isVisible;
-                        mVisible.OnVisible();
+//                        mVisible.OnVisible();//不知道是啥，先注释了
                     }
                 }
             }else{//多行情况下
@@ -268,7 +268,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
 
 
     public interface OnVisibleActionListener{
-        public void OnVisible();
+        void OnVisible();
     }
 
 
