@@ -10,12 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,7 +29,7 @@ import java.util.List;
 public class collectActivity extends AppCompatActivity implements View.OnClickListener{
 
     private JsonRe  jsonRe = new JsonRe();
-    private UserData userData = new UserData();
+    private User user = new User();
     private MyAsyncTask myAsyncTask = null;
     private BlurImageView blurImageView = new BlurImageView();
     private ListView listView;
@@ -83,18 +80,18 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
     }
 
     public void onClick(View view) {
@@ -109,7 +106,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",4);
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
         }catch (JSONException e){
             e.printStackTrace();
         }

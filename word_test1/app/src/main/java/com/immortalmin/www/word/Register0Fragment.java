@@ -1,15 +1,18 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +40,11 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     private CircleImageView profile_photo;
     private MyEditText username_tv,password_tv,confirm_tv;
     private TextView user_warn,pwd_warn,confirm_warn;
-    private HashMap<String,Object> userdata=null;
+    private User user;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private MyAsyncTask myAsyncTask;
+    private Runnable skipToNext;
     private String profilePhotoPath="null";
     private boolean IsUsername=false,IsPassword=false,IsConfirm=false;
 
@@ -95,23 +99,12 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.nextBtn:
-                String uname = username_tv.getText().toString();
-                String password = password_tv.getText().toString();
-                if(!judge()){
-                    break;
-                }
-//                JSONObject jsonObject = new JSONObject();
-//                try{
-//                    jsonObject.put("username",uname);
-//                    jsonObject.put("pwd",md5Utils.getMD5Code(password));
-//                    jsonObject.put("imgpath",profilePhotoPath);
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
+                mListener.Register0FragmentInteraction(1);
+//                if(!judge()){
+//                    break;
 //                }
-//                register(jsonObject);
-                if (mListener != null) {
-                    mListener.Register0FragmentInteraction(1);
-                }
+//                //注册用户
+//                registerUser();
                 break;
             case R.id.profile_photo:
                 if (mListener != null) {
@@ -121,7 +114,35 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    /**
+     * 用户注册
+     */
+    private void registerUser() {
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("username",username_tv.getText().toString());
+            jsonObject.put("pwd",md5Utils.getMD5Code(password_tv.getText().toString()));
+            jsonObject.put("imgpath",profilePhotoPath);
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.userRegister(jsonObject);
+            Looper.prepare();
+            Toast.makeText(context,"注册成功",Toast.LENGTH_SHORT).show();
+            mHandler.postDelayed(skipToNext,2000);
+            Looper.loop();
+        }).start();
+    }
+
     private void init(){
+
+        skipToNext = () -> {
+            if (mListener != null) {
+                mListener.Register0FragmentInteraction(1);
+            }
+        };
         username_tv.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -136,10 +157,9 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void afterTextChanged(Editable editable) {
                 mHandler.obtainMessage(0).sendToTarget();
-                query_user();
+                inspectUsername();
             }
         });
-
         password_tv.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -163,7 +183,6 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
                 }
             }
         });
-
         confirm_tv.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -239,7 +258,10 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         return false;
     });
 
-    private void query_user() {
+    /**
+     * 检查用户名是否已存在
+     */
+    private void inspectUsername() {
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("username",username_tv.getText().toString());
@@ -249,8 +271,8 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            userdata = jsonRe.userData(result);
-            if(userdata.size()!=0){
+            user = jsonRe.userData(result);
+            if(user!=null){
                 IsUsername = false;
                 mHandler.obtainMessage(1).sendToTarget();
             }else{
@@ -268,12 +290,12 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         return isMatch;
     }
 
-    public void showProfilePhoto(Bitmap bitmap){
+    public void showProfilePhoto(Bitmap bitmap,String imgPath){
         mHandler.obtainMessage(6,bitmap).sendToTarget();
+        profilePhotoPath = imgPath;
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void Register0FragmentInteraction(int what);
     }
 }

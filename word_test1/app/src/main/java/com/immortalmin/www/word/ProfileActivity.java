@@ -1,7 +1,6 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +42,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView backdrop;
     private SignIn signIn;
     private ImageUtils imageUtils = new ImageUtils();
-    private UserData userData = new UserData();
+    private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private DataUtil dataUtil = new DataUtil(ProfileActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -82,8 +80,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 //        init_user();
         dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
             @Override
-            public void onFinish(UserData userdata) {
-                userData = userdata;
+            public void onFinish(User userdata) {
+                user = userdata;
                 mHandler.obtainMessage(1).sendToTarget();
                 //获取使用时间并显示
                 getusetime();
@@ -98,18 +96,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 //    private void init_user(){
 //        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//        userData.setUid(sp.getString("uid",null));
-//        userData.setRecite_num(sp.getInt("recite_num",20));
-//        userData.setRecite_scope(sp.getInt("recite_scope",10));
+//        user.setUid(sp.getString("uid",null));
+//        user.setRecite_num(sp.getInt("recite_num",20));
+//        user.setRecite_scope(sp.getInt("recite_scope",10));
 //        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        userData.setUsername(sp.getString("username",null));
-//        userData.setPassword(sp.getString("password",null));
-//        userData.setProfile_photo(sp.getString("profile_photo",null));
-//        userData.setStatus(sp.getString("status","0"));
-//        userData.setLast_login(sp.getLong("last_login",946656000000L));
-//        userData.setEmail(sp.getString("email",null));
-//        userData.setTelephone(sp.getString("telephone",null));
-//        userData.setMotto(sp.getString("motto",null));
+//        user.setUsername(sp.getString("username",null));
+//        user.setPassword(sp.getString("password",null));
+//        user.setProfile_photo(sp.getString("profile_photo",null));
+//        user.setStatus(sp.getString("status","0"));
+//        user.setLast_login(sp.getLong("last_login",946656000000L));
+//        user.setEmail(sp.getString("email",null));
+//        user.setTelephone(sp.getString("telephone",null));
+//        user.setMotto(sp.getString("motto",null));
 //    }
 
     public void onClick(View view){
@@ -197,7 +195,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("uid",userData.getUid());
+                    jsonObject.put("uid", user.getUid());
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -220,7 +218,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private int get_today_usetime(){
         int minutes = 0;
         mUseTimeDataManager = UseTimeDataManager.getInstance(ProfileActivity.this);
-        mUseTimeDataManager.refreshData(userData.getLast_login(),System.currentTimeMillis());
+        mUseTimeDataManager.refreshData(user.getLast_login(),System.currentTimeMillis());
         JSONObject jsonObject = new JSONObject();
         List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
         for (int i = 0; i < packageInfos.size(); i++) {
@@ -244,26 +242,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void getImage(final String pic){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
-                imageUtils.savePhotoToStorage(bitmap,pic);
-                mHandler.obtainMessage(0,bitmap).sendToTarget();
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+            imageUtils.savePhotoToStorage(bitmap,pic);
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
         }).start();
     }
 
     private void show_edit_dialog(HashMap<String,Object> data){
         EditDialog editDialog = new EditDialog(this,R.style.MyDialog,data);
         editDialog.setCancelable(false);
-        editDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(3).sendToTarget();
-            }
-        });
+        editDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(3).sendToTarget());
         editDialog.show();
     }
 
@@ -275,9 +265,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     photo.setImageBitmap((Bitmap)msg.obj);
                     break;
                 case 1:
-                    nickname.setText(userData.getUsername());
-                    motto.setText(userData.getMotto());
-                    setImage(userData.getProfile_photo());
+                    nickname.setText(user.getUsername());
+                    motto.setText(user.getMotto());
+                    setImage(user.getProfile_photo());
                     break;
                 case 2:
                     Glide.with(ProfileActivity.this).load(captureUtil.getcapture(ProfileActivity.this))
@@ -294,12 +284,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void uploadPic(final String url,final String file){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.uploadpic(url,file,userData.getUid());
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.uploadpic(url,file, user.getUid());
         }).start();
 
     }
@@ -308,7 +295,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void EditInteraction(HashMap<String,Object> res){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put(res.get("attr").toString(),res.get("content").toString());
         }catch (JSONException e){
             e.printStackTrace();
@@ -328,10 +315,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         sp.edit().putString(res.get("attr").toString(),res.get("content").toString()).apply();
         switch (res.get("attr").toString()){
             case "username":
-                userData.setUsername(res.get("content").toString());
+                user.setUsername(res.get("content").toString());
                 break;
             case "motto":
-                userData.setMotto(res.get("content").toString());
+                user.setMotto(res.get("content").toString());
                 break;
         }
 
@@ -366,10 +353,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     //删除老的，添加新的
                     ImageUtils imageUtils = new ImageUtils();
-                    imageUtils.deletePhotoFromStorage(userData.getProfile_photo());
-                    imageUtils.savePhotoToStorage(bitmap,userData.getProfile_photo());
+                    imageUtils.deletePhotoFromStorage(user.getProfile_photo());
+                    imageUtils.savePhotoToStorage(bitmap, user.getProfile_photo());
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("profile_photo", userData.getProfile_photo()).apply();
+                    sp.edit().putString("profile_photo", user.getProfile_photo()).apply();
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
                     cursor.close();
                 }else{

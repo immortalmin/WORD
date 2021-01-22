@@ -56,32 +56,6 @@ public class JsonRe {
         return word;
     }
 
-    /*
-    stopping using from 2021/1/15
-    public ArrayList<HashMap<String,Object>> collectData(String jsonStr){
-        ArrayList<HashMap<String,Object>> words = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                HashMap<String,Object> word = new HashMap<>();
-                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-                word.put("cid",jsonObject.getString("cid"));
-                word.put("gid",jsonObject.getString("gid"));
-                word.put("wid",jsonObject.getString("wid"));
-                word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
-                word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
-                word.put("correct_times",jsonObject.getString("correct_times"));
-                word.put("error_times",jsonObject.getString("error_times"));
-                word.put("last_date",jsonObject.getString("last_date"));
-                word.put("review_date",jsonObject.getString("review_date"));
-                word.put("dict_source",jsonObject.getString("dict_source"));
-                words.add(word);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return words;
-    }*/
 
     public ArrayList<DetailWord> detailWordData(String jsonStr){
         ArrayList<DetailWord> words = new ArrayList<>();
@@ -108,54 +82,6 @@ public class JsonRe {
         return words;
     }
 
-    /*
-    stopping using from 2021/1/15
-    public List<HashMap<String,Object>> getSearchData(String jsonStr){
-        List<HashMap<String,Object>> wordList = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> word = new HashMap<>();
-                word.put("wid",jsonObject.getString("wid"));
-                word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
-                word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
-                word.put("dict_source",jsonObject.getString("dict_source"));
-                word.put("cid","null".equals(jsonObject.getString("cid"))?-1:jsonObject.getString("cid"));
-                word.put("gid","null".equals(jsonObject.getString("gid"))?-1:jsonObject.getString("gid"));
-                word.put("correct_times","null".equals(jsonObject.getString("correct_times"))?0:jsonObject.getString("correct_times"));
-                word.put("error_times","null".equals(jsonObject.getString("error_times"))?0:jsonObject.getString("error_times"));
-                word.put("last_date","null".equals(jsonObject.getString("last_date"))?"1970-1-1":jsonObject.getString("last_date"));
-                wordList.add(word);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordList;
-    }*/
-
-    /*
-    stopping using from 2021/1/15
-    public HashMap<String,Object> wordData(String jsonStr){
-        HashMap<String,Object> word = new HashMap<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("cid",jsonObject.getString("cid"));
-            word.put("uid",jsonObject.getString("uid"));
-            word.put("gid",jsonObject.getString("gid"));
-            word.put("wid",jsonObject.getString("wid"));
-            word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
-            word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
-            word.put("correct_times",jsonObject.getString("correct_times"));
-            word.put("error_times",jsonObject.getString("error_times"));
-            word.put("last_date",jsonObject.getString("last_date"));
-            word.put("source",jsonObject.getString("source"));
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return word;
-    }*/
     public DetailWord wordData(String jsonStr){
         DetailWord word = new DetailWord();
         try {
@@ -178,51 +104,6 @@ public class JsonRe {
         return word;
     }
 
-    /*public HashMap<String,Object> kelinsiwordData(String jsonStr){
-        HashMap<String,Object> kelinsiword = new HashMap<>();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonStr);
-            JSONArray json_items = new JSONArray(jsonObject.getString("items"));
-            ArrayList<HashMap<String,Object>> items = new ArrayList<>();
-            for(int i=0;i<json_items.length();i++){
-                HashMap<String,Object> item = new HashMap<>();
-                JSONObject json_item = (JSONObject)json_items.opt(i);
-                item.put("explanation",json_item.getString("explanation"));
-                item.put("gram",json_item.getString("gram"));
-                item.put("iid",json_item.getString("iid"));
-                item.put("label",json_item.getString("label"));
-                item.put("number",json_item.getString("number"));
-                item.put("word_ch",json_item.getString("word_ch"));
-                ArrayList<String> en_tips = new ArrayList<>();
-                JSONArray json_en_tips = new JSONArray(json_item.getString("en_tip"));
-                for(int j=0;j<json_en_tips.length();j++){
-                    en_tips.add(json_en_tips.getString(j));
-                }
-                item.put("en_tips",en_tips);
-                ArrayList<HashMap<String,Object>> sentences = new ArrayList<>();
-                JSONArray json_sentences = new JSONArray(json_item.getString("sentences"));
-                for(int j=0;j<json_sentences.length();j++){
-                    HashMap<String,Object> sentence = new HashMap<>();
-                    JSONObject json_sentence = (JSONObject)json_sentences.opt(j);
-                    sentence.put("sentence_ch",json_sentence.getString("sentence_ch"));
-                    sentence.put("sentence_en",json_sentence.getString("sentence_en"));
-                    sentence.put("sid",json_sentence.getString("sid"));
-                    sentences.add(sentence);
-                }
-                item.put("sentences",sentences);
-                items.add(item);
-            }
-
-            kelinsiword.put("items",items);
-            kelinsiword.put("star",jsonObject.getString("star"));
-            kelinsiword.put("wid",jsonObject.getString("wid"));
-            kelinsiword.put("word_en",jsonObject.getString("word_en"));
-
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return kelinsiword;
-    }*/
 
     public KelinsiWord kelinsiWordData(String jsonStr){
         KelinsiWord kelinsiWord = new KelinsiWord();
@@ -270,39 +151,6 @@ public class JsonRe {
     }
 
 
-    /*public ArrayList<HashMap<String,Object>> exampleData(String jsonStr){
-        ArrayList<HashMap<String,Object>> exampleList = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> example = new HashMap<>();
-                example.put("eid",jsonObject.getString("eid"));
-                String word_en,E_sentence,C_translate;
-                word_en = jsonObject.getString("word_en").replaceAll("\\\\n","\\\n");
-                E_sentence = jsonObject.getString("E_sentence").replaceAll("\\\\n","\\\n");
-                C_translate = jsonObject.getString("C_translate").replaceAll("\\\\n","\\\n");
-                if(word_en.charAt(word_en.length()-1) == '\n'){
-                    word_en = word_en.substring(0,word_en.length()-1);
-                }
-                if(E_sentence.charAt(E_sentence.length()-1) == '\n'){
-                    E_sentence = E_sentence.substring(0,E_sentence.length()-1);
-                }
-                if(C_translate.charAt(C_translate.length()-1) == '\n'){
-                    C_translate = C_translate.substring(0,C_translate.length()-1);
-                }
-                example.put("word_en",word_en);
-                example.put("E_sentence",E_sentence);
-                example.put("C_translate",C_translate);
-                example.put("source",jsonObject.getString("source"));
-                exampleList.add(example);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return exampleList;
-    }*/
-
     public ArrayList<OtherSentence> exampleData(String jsonStr){
         ArrayList<OtherSentence> sentences = new ArrayList<>();
         try {
@@ -336,50 +184,27 @@ public class JsonRe {
         return sentences;
     }
 
-    /*
-    stopping using from 2021/1/15
-    public List<HashMap<String,Object>> reciteData(String jsonStr){
-        List<HashMap<String,Object>> reciteList = new ArrayList<>();
+    public User userData(String jsonStr){
+        User user = null;
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                HashMap<String,Object> word = new HashMap<>();
-                word.put("cid",jsonObject.getString("cid"));
-                word.put("wid",jsonObject.getString("wid"));
-                word.put("word_en",jsonObject.getString("word_en").replaceAll("\n",""));
-                word.put("word_ch",jsonObject.getString("word_ch").replaceAll("\n",""));
-                word.put("correct_times",jsonObject.getString("correct_times"));
-                word.put("error_times",jsonObject.getString("error_times"));
-                word.put("last_date",jsonObject.getString("last_date"));
-                word.put("review_date",jsonObject.getString("review_date"));
-                word.put("dict_source",jsonObject.getString("dict_source"));
-                word.put("today_correct_times",0);
-                reciteList.add(word);
+            if(!jsonArray.isNull(0)){
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+                user = new User();
+                user.setUid(jsonObject.getString("uid"));
+                user.setUsername(jsonObject.getString("username"));
+                user.setPassword(jsonObject.getString("pwd"));
+                user.setProfile_photo(jsonObject.getString("profile_photo"));
+                user.setTelephone(jsonObject.getString("telephone"));
+                user.setEmail(jsonObject.getString("email"));
+                user.setMotto(jsonObject.getString("motto"));
+                user.setLast_login(jsonObject.getLong("last_login"));
             }
         }catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
-        return reciteList;
-    }*/
-
-    public HashMap<String,Object> userData(String jsonStr){
-        HashMap<String,Object> word = new HashMap<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("uid",jsonObject.getString("uid"));
-            word.put("username",jsonObject.getString("username"));
-            word.put("password",jsonObject.getString("pwd"));
-            word.put("profile_photo",jsonObject.getString("profile_photo"));
-            word.put("telephone",jsonObject.getString("telephone"));
-            word.put("email",jsonObject.getString("email"));
-            word.put("motto",jsonObject.getString("motto"));
-            word.put("last_login",jsonObject.getLong("last_login"));
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return word;
+        return user;
     }
 
     public HashMap<String,Object> userSetting(String jsonStr){

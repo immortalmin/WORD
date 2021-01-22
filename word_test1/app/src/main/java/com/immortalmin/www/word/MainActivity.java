@@ -41,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private JsonRe jsonRe = new JsonRe();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
-    private UserData userData = new UserData();
+    private User user = new User();
     private BlurImageView blurImageView = new BlurImageView();
     private MyAsyncTask myAsyncTask;
     private Context context;
@@ -134,18 +133,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
     }
     private void setImage(String pic) {
         Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
@@ -215,27 +214,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String nowday = simpleDateFormat.format(date);
 
         //代表是第一次登录
-        if(userData.getLast_login()==946656000000L){
+        if(user.getLast_login()==946656000000L){
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
-            userData.setLast_login(now_time_stamp);
+            user.setLast_login(now_time_stamp);
             JSONObject jsonObject = new JSONObject();
             try{
-                jsonObject.put("uid",userData.getUid());
-                jsonObject.put("last_login",userData.getLast_login());
+                jsonObject.put("uid", user.getUid());
+                jsonObject.put("last_login", user.getLast_login());
             }catch (JSONException e){
                 e.printStackTrace();
             }
             update_last_login(jsonObject);
             return;
         }
-        date = new Date(userData.getLast_login());
+        date = new Date(user.getLast_login());
         String last_day = simpleDateFormat.format(date);
         if(!nowday.equals(last_day)){
 //            Log.i("ccc","不是同一天");
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
-            mUseTimeDataManager.refreshData(userData.getLast_login(),now_time_stamp);
+            mUseTimeDataManager.refreshData(user.getLast_login(),now_time_stamp);
             JSONObject jsonObject = new JSONObject();
             List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
             for (int i = 0; i < packageInfos.size(); i++) {
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
 //                        use_time = packageInfos.get(i).getmUsedTime();
                         long minutes = packageInfos.get(i).getmUsedTime()/60000;
-                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("uid", user.getUid());
                         jsonObject.put("utime",(int)minutes);
                         jsonObject.put("udate",last_day);
                         jsonObject.put("utimestamp",now_time_stamp);
@@ -270,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.i("ccc",pre_day);
                     jsonObject = new JSONObject();
                     try{
-                        jsonObject.put("uid",userData.getUid());
+                        jsonObject.put("uid", user.getUid());
                         jsonObject.put("utime",0);
                         jsonObject.put("udate",pre_day);
                     }catch (JSONException e){
@@ -281,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
-            userData.setLast_login(now_time_stamp);
+            user.setLast_login(now_time_stamp);
         }else{
 //            Log.i("ccc","是同一天");
         }

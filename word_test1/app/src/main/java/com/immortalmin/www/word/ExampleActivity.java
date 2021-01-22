@@ -1,12 +1,10 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -14,12 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,10 +24,7 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -63,7 +55,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private DbDao mDbDao;
-    private UserData userData = new UserData();
+    private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -114,7 +106,7 @@ public class ExampleActivity extends AppCompatActivity implements
             transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.framelayout,exampleFragment);
             transaction.commit();
-            exampleFragment.setData(Integer.valueOf(wid),userData,backdrop,dict_source);//设置例句fragment的数据
+            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source);//设置例句fragment的数据
             mHandler.obtainMessage(8,0).sendToTarget();
         }else{//有柯林斯，可能有例句
             fragment_mode=1;
@@ -123,7 +115,7 @@ public class ExampleActivity extends AppCompatActivity implements
             transaction.add(R.id.framelayout,kelinsiFragment);
             transaction.hide(exampleFragment);
             transaction.commit();
-            exampleFragment.setData(Integer.valueOf(wid),userData,backdrop,dict_source);//设置例句fragment的数据
+            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source);//设置例句fragment的数据
             kelinsiFragment.setWid(Integer.valueOf(wid));
             mHandler.obtainMessage(8,1).sendToTarget();
         }
@@ -131,18 +123,18 @@ public class ExampleActivity extends AppCompatActivity implements
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
     }
 
     public void onClick(View view){
@@ -223,7 +215,7 @@ public class ExampleActivity extends AppCompatActivity implements
                     kelinsi_btn.setBackgroundColor(Color.parseColor("#30000000"));
                     break;
                 case 2:
-                    if(userData.getUsername().equals(word.getSource())){
+                    if(user.getUsername().equals(word.getSource())){
                         word_del_btn.setVisibility(View.VISIBLE);
                         word_edit_btn.setVisibility(View.VISIBLE);
                     }else{
@@ -313,7 +305,7 @@ public class ExampleActivity extends AppCompatActivity implements
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",wid);
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("C_meaning",word_ch.getText().toString());
         }catch (JSONException e){
             e.printStackTrace();
@@ -380,7 +372,7 @@ public class ExampleActivity extends AppCompatActivity implements
             if(sel==0){
                 jsonObject.put("cid",word.getCid());
             }else{
-                jsonObject.put("uid",userData.getUid());
+                jsonObject.put("uid", user.getUid());
                 jsonObject.put("wid",word.getWid());
                 jsonObject.put("dict_source",dict_source);
             }
@@ -404,7 +396,7 @@ public class ExampleActivity extends AppCompatActivity implements
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",6);
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
             jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){
@@ -420,7 +412,7 @@ public class ExampleActivity extends AppCompatActivity implements
 
     public void updateWord(JSONObject jsonObject){
         try{
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("what",24);
             //更新本地的数据库（历史记录）
             mDbDao.updateData(jsonObject.get("wid").toString(),dict_source,jsonObject.get("word_group").toString(),jsonObject.get("C_meaning").toString());

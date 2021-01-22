@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private MyEditText username_et,password_et;
     private Button login_btn,reg_btn,forget_pwd;
     private CircleImageView login_profile_photo;
-    private HashMap<String,Object> userdata=null;
+    private User user;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
@@ -174,9 +174,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-                userdata = jsonRe.userData(wordjson);
-                if(userdata.size()!=0){
-                    setImage(userdata.get("profile_photo").toString());
+                user = jsonRe.userData(wordjson);
+                if(user!=null){
+                    setImage(user.getProfile_photo());
                 }else{
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unload);
                     mHandler.obtainMessage(0,bitmap).sendToTarget();
@@ -192,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("uid",userdata.get("uid").toString());
+                    jsonObject.put("uid",user.getUid());
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -209,40 +209,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void judge(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String pwd =  md5Utils.getMD5Code(password_et.getText().toString());
-                Looper.prepare();
-                if(userdata.size()==0){
-                    Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
-                }else{
-                    if(pwd.equals(userdata.get("password").toString())||(!isVisible&&!isChanged)){
-                        //退出登录再登录，只需要修改状态（else的部分）
-                        if(isVisible){//这里是新老用户登录，修改本地数据
-                            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                            sp.edit().putString("username", userdata.get("username").toString())
-//                                    .putString("password", password_et.getText().toString())
-                                    .putString("password", userdata.get("password").toString())
-                                    .putString("profile_photo", userdata.get("profile_photo").toString())
-                                    .putString("status","1")
-                                    .putString("email",userdata.get("email").toString())
-                                    .putString("telephone",userdata.get("telephone").toString())
-                                    .putString("motto",userdata.get("motto").toString())
-                                    .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
-                                    .apply();
-                            get_setting();
-                        }else{//修改状态
-                            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                            sp.edit().putString("status","1").apply();
-                        }
-                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                        mHandler.obtainMessage(1).sendToTarget();
-                    }else{
-                        Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            String pwd =  md5Utils.getMD5Code(password_et.getText().toString());
+            Looper.prepare();
+            if(user!=null){
+                Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
+            }else{
+                if(pwd.equals(user.getPassword())||(!isVisible&&!isChanged)){
+                    //退出登录再登录，只需要修改状态（else的部分）
+                    if(isVisible){//这里是新老用户登录，修改本地数据
+                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                        sp.edit().putString("username", user.getUsername())
+                                .putString("password", user.getPassword())
+                                .putString("profile_photo", user.getProfile_photo())
+                                .putString("status","1")
+                                .putString("email",user.getEmail())
+                                .putString("telephone",user.getTelephone())
+                                .putString("motto",user.getMotto())
+                                .putLong("last_login",user.getLast_login())
+                                .apply();
+                        get_setting();
+                    }else{//修改状态
+                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                        sp.edit().putString("status","1").apply();
                     }
+                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                    mHandler.obtainMessage(1).sendToTarget();
+                }else{
+                    Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+                }
 
-                    //old
+                //old
 //                    if(pwd.equals(userdata.get("password")) || password_et.getText().toString().equals(userdata.get("password"))){
 //                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
 //                        sp.edit().putString("username", userdata.get("username").toString())
@@ -261,9 +258,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    }else{
 //                        Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
 //                    }
-                }
-                Looper.loop();
             }
+            Looper.loop();
         }).start();
 
     }
@@ -280,14 +276,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getImage(final String pic){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic,0);
-                imageUtils.savePhotoToStorage(bitmap,pic);
-                mHandler.obtainMessage(0,bitmap).sendToTarget();
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/"+pic,0);
+            imageUtils.savePhotoToStorage(bitmap,pic);
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
         }).start();
     }
 

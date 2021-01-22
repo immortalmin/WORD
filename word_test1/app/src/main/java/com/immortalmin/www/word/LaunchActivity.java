@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -21,26 +20,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.OnDialogInteractionListener{
 
-    private HashMap<String,Object> userdata=null;
+    private User user = new User();
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
-    private UserData userData = new UserData();
     private Handler handler = new Handler();
 
     @Override
@@ -71,7 +62,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 
     }
     private void jump_activity(){
-        if("1".equals(userData.getStatus())){
+        if("1".equals(user.getStatus())){
             getuserdata();
             handler.post(new Runnable() {
                 @Override
@@ -110,18 +101,18 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
     }
 
     private void getuserdata() {
@@ -137,17 +128,17 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
                 }
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-                userdata = jsonRe.userData(wordjson);
+                user = jsonRe.userData(wordjson);
                 //将用户数据保存到本地
                 SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putString("username", userdata.get("username").toString())
-                        .putString("password", userdata.get("password").toString())
-                        .putString("profile_photo", userdata.get("profile_photo").toString())
+                sp.edit().putString("username", user.getUsername())
+                        .putString("password", user.getPassword())
+                        .putString("profile_photo", user.getProfile_photo())
                         .putString("status","1")
-                        .putString("email",userdata.get("email").toString())
-                        .putString("telephone",userdata.get("telephone").toString())
-                        .putString("motto",userdata.get("motto").toString())
-                        .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
+                        .putString("email",user.getEmail())
+                        .putString("telephone",user.getTelephone())
+                        .putString("motto",user.getMotto())
+                        .putLong("last_login",user.getLast_login())
                         .apply();
                 get_setting();
             }
@@ -161,7 +152,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
             public void run()  {
                 JSONObject jsonObject = new JSONObject();
                 try{
-                    jsonObject.put("uid",userdata.get("uid").toString());
+                    jsonObject.put("uid",user.getUid());
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

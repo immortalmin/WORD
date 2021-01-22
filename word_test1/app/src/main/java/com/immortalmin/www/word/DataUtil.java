@@ -2,7 +2,6 @@ package com.immortalmin.www.word;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 public class DataUtil {
 
     private Context context;
-    private HashMap<String,Object> userdata=null;
+    private User user;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -22,7 +21,7 @@ public class DataUtil {
     }
 
     public interface HttpCallbackStringListener{
-        void onFinish(UserData userdata);
+        void onFinish(User userdata);
         void onError(Exception e);
     }
 
@@ -46,17 +45,17 @@ public class DataUtil {
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            userdata = jsonRe.userData(result);
+            user = jsonRe.userData(result);
             //将用户数据保存到本地
             SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putString("username", userdata.get("username").toString())
-                    .putString("password",userdata.get("password").toString())
-                    .putString("profile_photo", userdata.get("profile_photo").toString())
+            sp.edit().putString("username", user.getUsername())
+                    .putString("password",user.getPassword())
+                    .putString("profile_photo", user.getProfile_photo())
                     .putString("status","1")
-                    .putString("email",userdata.get("email").toString())
-                    .putString("telephone",userdata.get("telephone").toString())
-                    .putString("motto",userdata.get("motto").toString())
-                    .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
+                    .putString("email",user.getEmail())
+                    .putString("telephone",user.getTelephone())
+                    .putString("motto",user.getMotto())
+                    .putLong("last_login",Long.valueOf(user.getLast_login()))
                     .apply();
             getSetting(listener);
         });
@@ -96,7 +95,7 @@ public class DataUtil {
     private void getSetting(final HttpCallbackStringListener listener){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("uid",userdata.get("uid").toString());
+            jsonObject.put("uid",user.getUid());
             jsonObject.put("what",13);
         }catch (JSONException e){
             e.printStackTrace();
@@ -119,22 +118,22 @@ public class DataUtil {
      * 从本地获取UserData?
      * @return
      */
-    private UserData set_user(){
-        UserData userData = new UserData();
+    private User set_user(){
+        User user = new User();
         SharedPreferences sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
-        return userData;
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
+        return user;
     }
 
 }

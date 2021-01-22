@@ -41,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private MD5Utils md5Utils = new MD5Utils();
     private Runnable toLogin;
     private String profilephotoPath="null";
-    private HashMap<String,Object> userdata=null;
+    private User user;
     private boolean IsUsername=false,IsPassword=false,IsConfirm=false,IsTelephone=false,IsEmail=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +74,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         /**
          * 延迟跳转（等toast结束后跳转）
          */
-        toLogin = new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                intent.putExtra("username",register_username_edit.getText().toString());
-                setResult(1,intent);
-                finish();
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-            }
+        toLogin = () -> {
+            Intent intent = new Intent();
+            intent.putExtra("username",register_username_edit.getText().toString());
+            setResult(1,intent);
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         };
 
         register_username_edit.addTextChangedListener(new TextWatcher() {
@@ -301,8 +298,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-                userdata = jsonRe.userData(wordjson);
-                if(userdata.size()!=0){
+                user = jsonRe.userData(wordjson);
+                if(user!=null){
                     IsUsername = false;
                     mHandler.obtainMessage(1).sendToTarget();
                 }else{
@@ -362,13 +359,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @param userdata
      */
     private void register(final JSONObject userdata){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.userRegister(userdata);
-                mHandler.postDelayed(toLogin,2000);
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.userRegister(userdata);
+            mHandler.postDelayed(toLogin,2000);
         }).start();
 
     }

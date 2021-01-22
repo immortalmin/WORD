@@ -52,7 +52,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  11:getreviewlist   获取复习列表
      *  12:getsearchlist   获取搜索列表
      *  13:getsetting      获取用户设置
-     *  14:getuserdata     获取用户数据
+     *  14:getuserdata     获取用户数据  根据参数查询(username,telephone,email)
      *  15:getusetime      获取用户历史使用时间
      *
      *  16:register        注册

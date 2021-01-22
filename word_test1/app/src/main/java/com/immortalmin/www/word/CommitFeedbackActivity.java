@@ -1,30 +1,21 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,11 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import jp.wasabeef.glide.transformations.BlurTransformation;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class CommitFeedbackActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -44,7 +30,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     RadioGroup radiogroup1,radiogroup2;
     private AutoLineUtil img_group;
     private MyEditText descriptionText,contactText;
-    private UserData userData = new UserData();
+    private User user = new User();
     private DataUtil dataUtil;
     private ImageUtils imageUtils = new ImageUtils();
     private ArrayList<String> img_list = new ArrayList<>();//需要上传的图片
@@ -86,8 +72,8 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         //获取用户信息
         dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
             @Override
-            public void onFinish(UserData userdata) {
-                userData = userdata;
+            public void onFinish(User userdata) {
+                user = userdata;
             }
 
             @Override
@@ -111,7 +97,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.commit_btn:
                 HashMap<String,Object> data = new HashMap<>();
-                data.put("uid",userData.getUid());
+                data.put("uid", user.getUid());
                 data.put("description",descriptionText.getText());
                 switch (radiogroup1.getCheckedRadioButtonId()){
                     case R.id.functionRB:

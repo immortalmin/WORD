@@ -2,17 +2,13 @@ package com.immortalmin.www.word;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -22,13 +18,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -49,7 +42,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private ArrayList<OtherSentence> temp = new ArrayList<>();
     private int mode=0,wid=1,edit_index,del_index;
     private String dict_source="0";
-    private UserData userData = new UserData();
+    private User user = new User();
     private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -102,9 +95,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         void exampleFragmentInteraction(String res);
     }
 
-    public void setData(int wid,UserData userData,ImageView backdrop,String dict_source){
+    public void setData(int wid, User user, ImageView backdrop, String dict_source){
         this.wid = wid;
-        this.userData = userData;
+        this.user = user;
         this.backdrop = backdrop;
         this.dict_source = dict_source;
         getExampleData();
@@ -142,7 +135,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                         non_example.setVisibility(View.INVISIBLE);
                         example_list.setVisibility(View.VISIBLE);
                         checkbox.setVisibility(View.VISIBLE);
-                        exampleAdapter = new ExampleAdapter(getActivity(),examplelist,mode,userData.getUsername());
+                        exampleAdapter = new ExampleAdapter(getActivity(),examplelist,mode, user.getUsername());
                         example_list.setAdapter(exampleAdapter);
                         exampleAdapter.setOnItemClickListener(new ExampleAdapter.onItemListener() {
                             @Override
@@ -208,7 +201,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",8);//getexampledata
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
             jsonObject.put("dict_source",dict_source);
         }catch (JSONException e){

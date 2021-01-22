@@ -12,7 +12,7 @@
         android:layout_centerInParent="true">
 
         <com.immortalmin.www.word.MyEditText
-            android:id="@+id/telephone"
+            android:id="@+id/telephone_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
@@ -24,13 +24,13 @@
             android:textCursorDrawable="@drawable/cursor"
             android:hint="手机号码"
             app:DisplayStyle="0"
-            app:TextType="2"/>
+            app:TextType="0"/>
 
         <com.immortalmin.www.word.MyEditText
-            android:id="@+id/verification"
+            android:id="@+id/code_tv"
             android:layout_width="160dp"
             android:layout_height="35dp"
-            android:layout_below="@+id/telephone"
+            android:layout_below="@+id/telephone_tv"
             android:layout_marginTop="30dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="5dp"
@@ -40,16 +40,16 @@
             android:textCursorDrawable="@drawable/cursor"
             android:hint="验证码"
             app:DisplayStyle="0"
-            app:TextType="2"/>
+            app:TextType="0"/>
 
         <Button
             android:id="@+id/getCodeBtn"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_toEndOf="@+id/verification"
+            android:layout_toEndOf="@+id/code_tv"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="20dp"
-            android:layout_alignTop="@+id/verification"
+            android:layout_alignTop="@+id/code_tv"
             android:background="@drawable/rounded_corners_gray"
             android:textColor="#000000"
             android:padding="3dp"
@@ -60,7 +60,7 @@
             android:id="@+id/commitBtn"
             android:layout_width="120dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/verification"
+            android:layout_below="@+id/code_tv"
             android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="50dp"

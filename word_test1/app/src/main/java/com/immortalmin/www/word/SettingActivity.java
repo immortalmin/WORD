@@ -1,15 +1,9 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +15,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
         PickerDialog.OnDialogInteractionListener{
@@ -32,7 +25,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private PickerDialog pickerDialog;
     private MyAsyncTask myAsyncTask;
     private String[] settingStr = {"recite_num","recite_scope"};
-    private UserData userData = new UserData();
+    private User user = new User();
     private DataUtil dataUtil = new DataUtil(SettingActivity.this);
 
     @Override
@@ -51,8 +44,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         scope_num_layout.setOnClickListener(this);
         dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
             @Override
-            public void onFinish(UserData userdata) {
-                userData = userdata;
+            public void onFinish(User userdata) {
+                user = userdata;
                 mHandler.sendEmptyMessage(0);
             }
 
@@ -77,7 +70,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(5,10,20,30,50));
                 int position = 0;
                 for(int i=0;i<arrayList.size();i++){
-                    if(arrayList.get(i).equals(userData.getRecite_num())){
+                    if(arrayList.get(i).equals(user.getRecite_num())){
                         position = i;
                         break;
                     }
@@ -89,7 +82,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 arrayList = new ArrayList<>(Arrays.asList(5,10,15,20,25));
                 position = 0;
                 for(int i=0;i<arrayList.size();i++){
-                    if(arrayList.get(i).equals(userData.getRecite_scope())){
+                    if(arrayList.get(i).equals(user.getRecite_scope())){
                         position = i;
                         break;
                     }
@@ -105,8 +98,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    recite_num.setText(String.valueOf(userData.getRecite_num()));
-                    recite_scope.setText(String.valueOf(userData.getRecite_scope()));
+                    recite_num.setText(String.valueOf(user.getRecite_num()));
+                    recite_scope.setText(String.valueOf(user.getRecite_scope()));
                     break;
             }
             return false;
@@ -118,8 +111,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         myAsyncTask.setLoadDataComplete((result)->{
             dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
                 @Override
-                public void onFinish(UserData userdata) {
-                    userData = userdata;
+                public void onFinish(User userdata) {
+                    user = userdata;
                     mHandler.sendEmptyMessage(0);
                 }
 
@@ -139,7 +132,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         try{
             jsonObject.put("what",21);
             jsonObject.put(settingStr[Integer.valueOf(ret.get("what").toString())],ret.get("value"));
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
         }catch (JSONException e){
             e.printStackTrace();
         }

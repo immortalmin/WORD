@@ -42,7 +42,6 @@ public class Register2Activity extends AppCompatActivity
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private Runnable toLogin;
-    private String profilephotoPath="null";
     private HashMap<String,Object> userdata=null;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -173,12 +172,11 @@ public class Register2Activity extends AppCompatActivity
                     String picturePath = cursor.getString(columnIndex);
                     // 将图片显示到界面上
                     Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
-                    profilephotoPath = android.os.Environment.getExternalStorageDirectory()+"/temp.jpg";
 
                     /**
                      * 显示头像
                      */
-                    register0Fragment.showProfilePhoto(bitmap);
+                    register0Fragment.showProfilePhoto(bitmap,picturePath);
 
                     cursor.close();
                 }
@@ -199,11 +197,11 @@ public class Register2Activity extends AppCompatActivity
     @Override
     public void Register0FragmentInteraction(int what) {
         switch (what){
-            case 0:
+            case 0://选择图片作为头像
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
                 break;
-            case 1:
+            case 1://注册成功后跳转到下一步
                 transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_right_in,R.anim.slide_to_left);
                 transaction.hide(register0Fragment).show(register1Fragment);

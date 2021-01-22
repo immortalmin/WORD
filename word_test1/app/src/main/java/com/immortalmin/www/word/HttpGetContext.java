@@ -399,8 +399,6 @@ public class HttpGetContext {
                         .addFormDataPart("username",jsonObject.getString("username"))
                         .addFormDataPart("pwd",jsonObject.getString("pwd"))
                         .addFormDataPart("img_flag","0")
-                        .addFormDataPart("telephone",jsonObject.getString("telephone"))
-                        .addFormDataPart("email",jsonObject.getString("email"))
                         .build();
             }else{
                 File file = new File(imgpath);
@@ -411,8 +409,6 @@ public class HttpGetContext {
                         .addFormDataPart("username",jsonObject.getString("username"))
                         .addFormDataPart("pwd",jsonObject.getString("pwd"))
                         .addFormDataPart("img_flag","1")
-                        .addFormDataPart("telephone",jsonObject.getString("telephone"))
-                        .addFormDataPart("email",jsonObject.getString("email"))
                         .build();
             }
             Request request = new Request.Builder()
@@ -424,6 +420,7 @@ public class HttpGetContext {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.i("ccc","upload failure");
+                    Log.i("ccc",e.getMessage());
                 }
 
                 @Override
@@ -431,8 +428,8 @@ public class HttpGetContext {
                     if(response.isSuccessful()){
                         Log.i("ccc","upload success");
                         ResponseBody responseBody = response.body();
-//                        String res = responseBody.string();
-//                        Log.i("ccc",res);
+                        String res = responseBody.string();
+                        Log.i("ccc",res);
                     }
                 }
             });

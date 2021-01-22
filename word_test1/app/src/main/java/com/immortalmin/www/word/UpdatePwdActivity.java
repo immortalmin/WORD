@@ -162,17 +162,17 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
                 String jsonString = httpGetContext.getData("http://47.98.239.237/word/php_file2/update_password.php",jsonObject);
-                HashMap<String,Object> userdata = jsonRe.userData(jsonString);
-                set_sp(userdata);
+                User user = jsonRe.userData(jsonString);
+                set_sp(user);
             }
         }).start();
     }
 
-    private void set_sp(HashMap<String,Object> userdata){
+    private void set_sp(User user){
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        sp.edit().putString("username",userdata.get("username").toString())
+        sp.edit().putString("username",user.getUsername())
 //                .putString("password",userdata.get("pwd").toString())
-                .putString("profile_photo",userdata.get("profile_photo").toString())
+                .putString("profile_photo",user.getProfile_photo())
                 .putString("password",null)
                 .putString("status","0")
                 .apply();

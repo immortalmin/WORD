@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,7 +23,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
     private Button return_btn,confirm_btn,SMS_btn;
     private MyEditText oldPwd_et,newPwd_et,confirmPwd_et;
     private TextView oldPwd_warn,pwd_warn,confirm_warn;
-    private UserData userData;
+    private User user;
     private DataUtil dataUtil;
     private MD5Utils md5Utils;
     private MyAsyncTask myAsyncTask;
@@ -55,8 +53,8 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         //初始化userData
         dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
             @Override
-            public void onFinish(UserData userdata) {
-                userData = userdata;
+            public void onFinish(User userdata) {
+                user = userdata;
             }
 
             @Override
@@ -86,7 +84,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
 
     private void judge() {
         boolean res = true;
-        if(!userData.getPassword().equals(md5Utils.getMD5Code(oldPwd_et.getText().toString()))){
+        if(!user.getPassword().equals(md5Utils.getMD5Code(oldPwd_et.getText().toString()))){
             Toast.makeText(ChangePwdActivity.this,"旧密码输入错误",Toast.LENGTH_SHORT).show();
             res = false;
         }else if(newPwd_et.getText().toString().length()==0){
@@ -111,7 +109,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",19);
-            jsonObject.put("telephone",userData.getTelephone());
+            jsonObject.put("telephone", user.getTelephone());
             jsonObject.put("pwd",md5Utils.getMD5Code(pwd));
         }catch (JSONException e){
             e.printStackTrace();

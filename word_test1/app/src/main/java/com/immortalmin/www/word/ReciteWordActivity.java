@@ -3,7 +3,6 @@ package com.immortalmin.www.word;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -12,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -26,13 +24,9 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +54,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
-    private UserData userData = new UserData();
+    private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
@@ -169,7 +163,7 @@ public class ReciteWordActivity extends AppCompatActivity
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",10);
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("mount",recite_num+recite_scope);
         }catch (JSONException e){
             e.printStackTrace();
@@ -227,9 +221,9 @@ public class ReciteWordActivity extends AppCompatActivity
         init_user();
         init_fragment();
         dialog_init();
-        setting.put("uid",userData.getUid());
-        recite_num = userData.getRecite_num();
-        recite_scope = userData.getRecite_scope();
+        setting.put("uid", user.getUid());
+        recite_num = user.getRecite_num();
+        recite_scope = user.getRecite_scope();
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getRecite();
@@ -321,18 +315,18 @@ public class ReciteWordActivity extends AppCompatActivity
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
-        userData.setPassword(sp.getString("password",null));
-        userData.setProfile_photo(sp.getString("profile_photo",null));
-        userData.setStatus(sp.getString("status","0"));
-        userData.setLast_login(sp.getLong("last_login",946656000000L));
-        userData.setEmail(sp.getString("email",null));
-        userData.setTelephone(sp.getString("telephone",null));
-        userData.setMotto(sp.getString("motto",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+        user.setStatus(sp.getString("status","0"));
+        user.setLast_login(sp.getLong("last_login",946656000000L));
+        user.setEmail(sp.getString("email",null));
+        user.setTelephone(sp.getString("telephone",null));
+        user.setMotto(sp.getString("motto",null));
     }
 
     /**

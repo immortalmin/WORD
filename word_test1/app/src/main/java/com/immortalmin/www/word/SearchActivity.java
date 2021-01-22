@@ -9,14 +9,12 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -24,11 +22,9 @@ import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -49,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
-    private UserData userData = new UserData();
+    private User user = new User();
     private String fuzzy_str;
     private DbDao mDbDao;
     private MyAsyncTask myAsyncTask;
@@ -157,11 +153,11 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     private void init_user(){
         SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        userData.setUid(sp.getString("uid",null));
-        userData.setRecite_num(sp.getInt("recite_num",20));
-        userData.setRecite_scope(sp.getInt("recite_scope",10));
+        user.setUid(sp.getString("uid",null));
+        user.setRecite_num(sp.getInt("recite_num",20));
+        user.setRecite_scope(sp.getInt("recite_scope",10));
         sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        userData.setUsername(sp.getString("username",null));
+        user.setUsername(sp.getString("username",null));
     }
 
     public void onClick(View view){
@@ -211,7 +207,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",12);
-            jsonObject.put("uid",userData.getUid());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("word",word);
         }catch (JSONException e) {
             e.printStackTrace();
