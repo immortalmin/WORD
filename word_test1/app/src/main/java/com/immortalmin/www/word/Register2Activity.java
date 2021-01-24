@@ -42,7 +42,7 @@ public class Register2Activity extends AppCompatActivity
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private Runnable toLogin;
-    private HashMap<String,Object> userdata=null;
+    private User user = new User();
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private Register0Fragment register0Fragment = new Register0Fragment();
@@ -105,7 +105,6 @@ public class Register2Activity extends AppCompatActivity
             case 0://change the nav_text
                 nav_text.setText(titleString[stepIndex]);
                 break;
-
         }
         return false;
     });
@@ -195,17 +194,20 @@ public class Register2Activity extends AppCompatActivity
     }
 
     @Override
-    public void Register0FragmentInteraction(int what) {
+    public void Register0FragmentInteraction(HashMap<String,Object> data) {
+        int what = Integer.parseInt(data.get("what").toString());
         switch (what){
             case 0://选择图片作为头像
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i,0);
                 break;
             case 1://注册成功后跳转到下一步
+                user = (User)data.get("user");
                 transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_right_in,R.anim.slide_to_left);
                 transaction.hide(register0Fragment).show(register1Fragment);
                 transaction.commit();
+                register1Fragment.setUser(user);
                 stepIndex=1;
                 mHandler.obtainMessage(0).sendToTarget();
                 break;
@@ -215,7 +217,13 @@ public class Register2Activity extends AppCompatActivity
     public void Register1FragmentInteraction(int what) {
 
         switch(what){
-            case 0://commit 跳转到登录界面
+            case 0://commit 跳转到登录界面 **记得放回用户名**
+                Intent intent = new Intent();
+                intent.putExtra("user",user);
+                setResult(1,intent);
+                finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
             case 1://not binding
                 //弹框警告一下
                 //这里先跳转到登录界面

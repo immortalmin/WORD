@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -61,8 +62,9 @@ public class HttpGetContext {
     private static int feedback_res = -1;
     private JsonRe jsonRe = new JsonRe();
     private ImageUtils imageUtils = new ImageUtils();
+    private String res="";//XXX:不用全局变量没法返回得到的字符串
 
-    public String  httpclientgettext(String url) {
+    String httpclientgettext(String url) {
         String result="";
 
         try {
@@ -93,7 +95,7 @@ public class HttpGetContext {
      * @param opt 0:不做任何处理  1：方形
      * @return
      */
-    public Bitmap HttpclientGetImg(String url,int opt) {
+    Bitmap HttpclientGetImg(String url,int opt) {
         Bitmap bmp =null;
         try {
             HttpClient httpclient = new DefaultHttpClient();
@@ -121,11 +123,11 @@ public class HttpGetContext {
     //http://dict.youdao.com/dictvoice?type=1&audio=accuse%20of
 
     /**
-     * @param url
-     * @param jsonParam
-     * @return
+     * @param url 获取数据的URL
+     * @param jsonParam 参数
+     * @return String格式的json数据
      */
-    public String getData(String url,JSONObject jsonParam) {
+    String getData(String url,JSONObject jsonParam) {
         HttpPost httpPost = new HttpPost(url);
         StringEntity entity = null;//解决中文乱码问题
         try {
@@ -166,9 +168,9 @@ public class HttpGetContext {
         return null;
     }
 
-    public void uploadpic(String url,String imagePath,String uid){
+    void uploadpic(String url,String imagePath,String uid){
         try{
-            imagePath = imageUtils.compressImage(imagePath,uid);
+            imagePath = ImageUtils.compressImage(imagePath,uid);
             File file = new File(imagePath);
             OkHttpClient okHttpClient = new OkHttpClient();
             RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
@@ -184,114 +186,33 @@ public class HttpGetContext {
             Call call = okHttpClient.newCall(request);
             call.enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.i("ccc","upload failure");
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         ResponseBody responseBody = response.body();
+                        assert responseBody != null;
                         String res = responseBody.string();
+                        Log.i("ccc","uploadPic"+res);
                     }
                 }
             });
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
-    //XXX:代码似乎有些冗余
-    //stop using from 10/24/2020
-//    /**
-//     * 上传功能建议(0)或错误反馈(1)
-//     * @param data
-//     */
-//    public void uploadFeedback(HashMap<String,Object> data){
-////        try{
-////            String imagePath = data.get("image").toString();
-////            RequestBody requestBody = null;
-////            OkHttpClient okHttpClient = new OkHttpClient();
-////            if("".equals(imagePath)){
-////                if("0".equals(data.get("what").toString())){
-////                    requestBody = new MultipartBody.Builder()
-////                            .setType(MultipartBody.FORM)
-////                            .addFormDataPart("what",data.get("what").toString())
-////                            .addFormDataPart("uid",data.get("uid").toString())
-////                            .addFormDataPart("description",data.get("description").toString())
-////                            .addFormDataPart("contact",data.get("contact").toString())
-////                            .build();
-////                }else{
-////                    requestBody = new MultipartBody.Builder()
-////                            .setType(MultipartBody.FORM)
-////                            .addFormDataPart("what",data.get("what").toString())
-////                            .addFormDataPart("uid",data.get("uid").toString())
-////                            .addFormDataPart("phone_model",data.get("phone_model").toString())
-////                            .addFormDataPart("description",data.get("description").toString())
-////                            .addFormDataPart("contact",data.get("contact").toString())
-////                            .build();
-////                }
-////            }else{
-////                File file = new File(imagePath);
-////                RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
-////                if("0".equals(data.get("what").toString())){
-////                    requestBody = new MultipartBody.Builder()
-////                            .setType(MultipartBody.FORM)
-////                            .addFormDataPart("what",data.get("what").toString())
-////                            .addFormDataPart("uid",data.get("uid").toString())
-////                            .addFormDataPart("image", imagePath, image)
-////                            .addFormDataPart("description",data.get("description").toString())
-////                            .addFormDataPart("contact",data.get("contact").toString())
-////                            .build();
-////                }else{
-////                    requestBody = new MultipartBody.Builder()
-////                            .setType(MultipartBody.FORM)
-////                            .addFormDataPart("what",data.get("what").toString())
-////                            .addFormDataPart("uid",data.get("uid").toString())
-////                            .addFormDataPart("phone_model",data.get("phone_model").toString())
-////                            .addFormDataPart("image", imagePath, image)
-////                            .addFormDataPart("description",data.get("description").toString())
-////                            .addFormDataPart("contact",data.get("contact").toString())
-////                            .build();
-////                }
-////
-////            }
-////            Request request = new Request.Builder()
-////                    .url("http://47.98.239.237/word/php_file2/upload_feedback.php")
-////                    .post(requestBody)
-////                    .build();
-////            Call call = okHttpClient.newCall(request);
-////            call.enqueue(new Callback() {
-////                @Override
-////                public void onFailure(Call call, IOException e) {
-////                    Log.i("ccc","upload feedback failure");
-////                }
-////
-////                @Override
-////                public void onResponse(Call call, Response response) throws IOException {
-////                    if(response.isSuccessful()){
-////                        Log.i("ccc","upload feedback success");
-////                        ResponseBody responseBody = response.body();
-////                        String res = responseBody.string();
-////                        Log.i("ccc",res);
-////                    }
-////                }
-////            });
-////        }catch (Exception e){
-////            e.printStackTrace();
-////        }
-////
-////    }
 
     /**
      * 上传反馈（可以上传多张图片）
-     * @param data
-     * @param img_list
+     * @param data 反馈数据
+     * @param img_list 图片列表
      */
 
-    public int uploadFeedback(HashMap<String,Object> data, ArrayList<String> img_list){
-//        Log.i("ccc",img_list.toString());
+    int uploadFeedback(HashMap<String,Object> data, ArrayList<String> img_list){
         try{
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             for (int i = 0; i <img_list.size() ; i++) {
@@ -316,18 +237,19 @@ public class HttpGetContext {
             Call call = okHttpClient.newCall(request);
             call.enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.i("ccc","upload feedback failure");
                     e.printStackTrace();
                     feedback_res = -1;
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         Log.i("ccc","upload feedback success");
                         feedback_res = 1;
                         ResponseBody responseBody = response.body();
+                        assert responseBody != null;
                         String res = responseBody.string();
                         Log.i("ccc",res);
                     }
@@ -339,61 +261,17 @@ public class HttpGetContext {
         return feedback_res;
     }
 
-//    stop using from 11/2/2020
-//    public ArrayList<HashMap<String,Object>> getFeedbackList(JSONObject jsonObject) {
-//        String url = "http://47.98.239.237/word/php_file2/getfeedbacklist.php";
-//        ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
-//        Bitmap bmp =null;
-//
-//        HttpPost httpPost = new HttpPost(url);
-//        StringEntity entity = null;//解决中文乱码问题
-//        try {
-//            entity = new StringEntity(jsonObject.toString(), "utf-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        if (entity != null) {
-//            entity.setContentEncoding("UTF-8");
-//            entity.setContentType("application/json");
-//        }
-//        httpPost.setEntity(entity);
-//        HttpClient httpClient = new DefaultHttpClient();
-//        // 获取HttpResponse实例
-//        HttpResponse httpResp = null;
-//        try {
-//            httpResp = httpClient.execute(httpPost);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        // 判断是够请求成功
-//        if (httpResp != null) {
-//            if (httpResp.getStatusLine().getStatusCode() == 200) {
-//                // 获取返回的数据
-//                String result = null;
-//                try {
-//                    result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
-//                    result = result.replace("\r\n", "");
-////                    Log.e("HttpPost方式请求成功，返回数据如下：", result);
-//                    feedbackList = jsonRe.feedbackData(result);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                Log.e("打印数据", "HttpPost方式请求失败" + httpResp.getStatusLine().getStatusCode());
-//            }
-//        }
-//        return  feedbackList;
-//    }
 
-
-    public void userRegister(JSONObject jsonObject){
+    String userRegister(JSONObject jsonObject){
+        String result = "";
         try{
             String url = "http://47.98.239.237/word/php_file2/register.php";
-            String imgpath = jsonObject.getString("imgpath");
+            String imgPath = jsonObject.getString("imgpath");
+            imgPath = ImageUtils.compressImage(imgPath,"temp_profile");
             OkHttpClient okHttpClient = new OkHttpClient();
-            RequestBody requestBody = null;
+            RequestBody requestBody;
             //判断用户是否有上传头像
-            if(imgpath.equals("null")){
+            if(imgPath.equals("null")){
                 requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("username",jsonObject.getString("username"))
@@ -401,11 +279,11 @@ public class HttpGetContext {
                         .addFormDataPart("img_flag","0")
                         .build();
             }else{
-                File file = new File(imgpath);
+                File file = new File(imgPath);
                 RequestBody image = RequestBody.create(MediaType.parse("image/*"), file);
                 requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("image", imgpath, image)
+                        .addFormDataPart("image", imgPath, image)
                         .addFormDataPart("username",jsonObject.getString("username"))
                         .addFormDataPart("pwd",jsonObject.getString("pwd"))
                         .addFormDataPart("img_flag","1")
@@ -416,26 +294,41 @@ public class HttpGetContext {
                     .post(requestBody)
                     .build();
             Call call = okHttpClient.newCall(request);
+
+            /**
+             * 将enqueue换了，因为不知道怎么在获取数据后返回
+             * 但是这样就没法直接知道是上传成功还是失败了
+             * 虽然没有什么大碍
+             *
+             * 目前是根据返回的字符串来判断到底是不是成功了
+             * 比如如果图片上传失败了，返回的字符串，经过JsonRe返回的User对象会是null
+             * 但是正常的话是会返回一个非null的User对象的
+             */
+            ResponseBody responseBody = call.execute().body();
+            assert responseBody != null;
+            result = responseBody.string();
+            /*被取代的代码
             call.enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.i("ccc","upload failure");
                     Log.i("ccc",e.getMessage());
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         Log.i("ccc","upload success");
                         ResponseBody responseBody = response.body();
-                        String res = responseBody.string();
+                        assert responseBody != null;
+                        res = responseBody.string();
                         Log.i("ccc",res);
                     }
                 }
-            });
+            });*/
         }catch (Exception e){
             e.printStackTrace();
         }
-
+        return result;
     }
 }

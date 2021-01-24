@@ -40,13 +40,15 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     private CircleImageView profile_photo;
     private MyEditText username_tv,password_tv,confirm_tv;
     private TextView user_warn,pwd_warn,confirm_warn;
-    private User user;
+    private Button nextBtn;
+    private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private MyAsyncTask myAsyncTask;
     private Runnable skipToNext;
     private String profilePhotoPath="null";
     private boolean IsUsername=false,IsPassword=false,IsConfirm=false;
+    private HashMap<String,Object> returnedData = new HashMap<>();
 
     public Register0Fragment() {
         // Required empty public constructor
@@ -70,7 +72,7 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         confirm_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_tv);
         confirm_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_warn);
 
-        Button nextBtn = Objects.requireNonNull(getActivity()).findViewById(R.id.nextBtn);
+        nextBtn = Objects.requireNonNull(getActivity()).findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
 
@@ -99,16 +101,20 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.nextBtn:
-                mListener.Register0FragmentInteraction(1);
-//                if(!judge()){
-//                    break;
-//                }
-//                //注册用户
-//                registerUser();
+//                mListener.Register0FragmentInteraction(1);
+                if(!judge()){
+                    break;
+                }
+                //使“下一步”按钮无法点击
+                mHandler.sendEmptyMessage(7);
+                //注册用户
+                registerUser();
                 break;
             case R.id.profile_photo:
                 if (mListener != null) {
-                    mListener.Register0FragmentInteraction(0);
+                    returnedData.clear();
+                    returnedData.put("what",0);
+                    mListener.Register0FragmentInteraction(returnedData);
                 }
                 break;
         }
@@ -120,27 +126,36 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     private void registerUser() {
         JSONObject jsonObject = new JSONObject();
         try{
+            jsonObject.put("what",101);
             jsonObject.put("username",username_tv.getText().toString());
             jsonObject.put("pwd",md5Utils.getMD5Code(password_tv.getText().toString()));
             jsonObject.put("imgpath",profilePhotoPath);
         }catch (JSONException e) {
             e.printStackTrace();
         }
-        new Thread(() -> {
-            HttpGetContext httpGetContext = new HttpGetContext();
-            httpGetContext.userRegister(jsonObject);
-            Looper.prepare();
-            Toast.makeText(context,"注册成功",Toast.LENGTH_SHORT).show();
-            mHandler.postDelayed(skipToNext,2000);
-            Looper.loop();
-        }).start();
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            user = jsonRe.userData(result);
+            if(user!=null){
+                Toast.makeText(context,"注册成功",Toast.LENGTH_SHORT).show();
+                mHandler.postDelayed(skipToNext,2000);
+            }else{
+                Toast.makeText(context,"注册失败:"+result,Toast.LENGTH_SHORT).show();
+                Log.i("ccc","error:"+result);
+            }
+
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private void init(){
 
         skipToNext = () -> {
             if (mListener != null) {
-                mListener.Register0FragmentInteraction(1);
+                returnedData.clear();
+                returnedData.put("what",1);
+                returnedData.put("user",user);
+                mListener.Register0FragmentInteraction(returnedData);
             }
         };
         username_tv.addTextChangedListener(new TextWatcher() {
@@ -254,6 +269,10 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
             case 6:
                 profile_photo.setImageBitmap((Bitmap)message.obj);
                 break;
+            case 7:
+                nextBtn.setText("注册中...");
+                nextBtn.setClickable(false);
+                break;
         }
         return false;
     });
@@ -271,8 +290,8 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            user = jsonRe.userData(result);
-            if(user!=null){
+            User userData = jsonRe.userData(result);
+            if(userData!=null){
                 IsUsername = false;
                 mHandler.obtainMessage(1).sendToTarget();
             }else{
@@ -296,6 +315,6 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     }
 
     public interface OnFragmentInteractionListener {
-        void Register0FragmentInteraction(int what);
+        void Register0FragmentInteraction(HashMap<String,Object> data);
     }
 }

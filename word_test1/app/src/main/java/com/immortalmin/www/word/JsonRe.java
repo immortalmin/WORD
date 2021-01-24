@@ -184,7 +184,7 @@ public class JsonRe {
         return sentences;
     }
 
-    public User userData(String jsonStr){
+    User userData(String jsonStr){
         User user = null;
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);

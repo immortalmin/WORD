@@ -69,6 +69,11 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  25:upload_picture  上传用户头像
      *  26:getfeedbacklist 获取用户反馈列表
      *
+     *
+     *
+     *
+     *  101:register        注册
+     *
      * @param params
      * @return
      */
@@ -88,12 +93,18 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
         }catch (JSONException e) {
             e.printStackTrace();
         }
+        String jsonStr="";
         HttpGetContext httpGetContext = new HttpGetContext();
-        String json_str = httpGetContext.getData("http://47.98.239.237/word/php_file2/"+php_name[what]+".php",params[0]);
+        if(what<php_name.length){
+            jsonStr = httpGetContext.getData("http://47.98.239.237/word/php_file2/"+php_name[what]+".php",params[0]);
+        }else if(what==101){//register
+            jsonStr = httpGetContext.userRegister(params[0]);
+        }
+
 //        String word = jsonRe.wordData(wordjson).toString();
         // 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）
 //        publishProgress(30);
-        return json_str;
+        return jsonStr;
     }
 
     // 方法3：onProgressUpdate（）
