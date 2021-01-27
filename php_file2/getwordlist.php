@@ -1,7 +1,10 @@
 <?php
 header('content-type:application/json;charset=utf8');
 include './include/conn.php'; //数据库链接
-$result =mysqli_query($conn,"SELECT word_table.`wid`,word_table.`word_group`,word_table.`C_meaning`,word_table.`page`,word_table.`collect`,recite_table.`correct_times`,recite_table.`error_times`,recite_table.`prof_flag`,recite_table.`last_date` FROM word_table,recite_table WHERE word_table.`wid`=recite_table.`wid`");
+$json_string = file_get_contents('php://input');
+$body = json_decode($json_string,true);
+$uid = $body['uid'];
+$result =mysqli_query($conn,"SELECT words.`wid`,words.`word_group`,words.`C_meaning`,user.`username` 'source',recite.`collect`,recite.`correct_times`,recite.`error_times`,recite.`prof_flag`,recite.`last_date` FROM words,recite,user WHERE user.`uid`=words.`source` AND words.`wid`=recite.`wid` and recite.uid=".$uid);
 
 while ($shopInfo = mysqli_fetch_array($result,MYSQLI_ASSOC)){ //返回查询结果到数组
 	$output[]=$shopInfo;

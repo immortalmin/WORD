@@ -2,7 +2,10 @@
 header('content-type:application/json;charset=utf8');
 include './include/conn.php'; //数据库链接
 //$id = $_GET["id"];
-$result =mysqli_query($conn,"SELECT COUNT(*)sum,SUM(CASE WHEN prof_flag=1 THEN 1 ELSE 0 END)prof_count FROM recite_table;");
+$json_string = file_get_contents('php://input');
+$body = json_decode($json_string,true);
+$uid = $body['uid'];
+$result =mysqli_query($conn,"SELECT COUNT(*) AS sum,SUM(CASE WHEN correct_times>=5 THEN 1 ELSE 0 END) AS prof_count FROM collect WHERE uid=".$uid);
 /*
  mysql_fetch_array:从结果集中取得一行作为关联数组，或数字数组，或二者兼有。
  除了将数据以数字索引方式储存在数组中之外
