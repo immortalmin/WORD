@@ -98,6 +98,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
                     if(xDown >= (getWidth() - btn_length-btn_padding) && xDown < getWidth()-btn_padding){
                         setText("");
                     }else if(xDown >= getWidth()-btn_length*2-btn_padding*2 && xDown < getWidth()-btn_length-btn_padding*2){
+                        if(mVisible!=null) mVisible.OnVisible();
                         if(isVisible){
                             setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
                         }else{
@@ -105,7 +106,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
                         }
                         setSelection(getText().length());
                         isVisible = !isVisible;
-                        if(mVisible!=null) mVisible.OnVisible();
+
                     }
                 }
             }else{//多行情况下

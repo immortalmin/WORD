@@ -117,6 +117,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void afterTextChanged(Editable s) {
+                //显示或隐藏清除按钮
+                if(s.toString().length()>0&&!suspend_flag){
+                    mHandler.obtainMessage(5).sendToTarget();
+                }else{
+                    mHandler.obtainMessage(6).sendToTarget();
+                }
                 if(suspend_flag){
                     suspend_flag = false;
                     Message msg = new Message();
@@ -125,12 +131,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     msg.obj = s.charAt(eword.getSelectionStart()-1);
                     mHandler.sendMessage(msg);
                 }
-                //显示或隐藏清除按钮
-                if(s.toString().length()>0){
-                    mHandler.obtainMessage(5).sendToTarget();
-                }else{
-                    mHandler.obtainMessage(6).sendToTarget();
-                }
+
             }
         });
         //music
@@ -173,7 +174,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     suspend_flag = false;
                     btn_lock = true;
                     eword.setEnabled(false);
-                    scheduledThreadPool.schedule(music_delay,mediaPlayerUtil.getDuration()+200, TimeUnit.MILLISECONDS);
+                    scheduledThreadPool.schedule(music_delay,Math.max(mediaPlayerUtil.getDuration()+200,1000), TimeUnit.MILLISECONDS);
                 }else{
                     WrongTimes++;
                     soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);

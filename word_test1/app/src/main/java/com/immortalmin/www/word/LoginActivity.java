@@ -15,6 +15,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -31,7 +32,6 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-//XXX:这段代码太烂了，待完善。特别是isVisible和isChanged
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private MyEditText username_et,password_et;
@@ -45,14 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Intent intent;
     private Runnable toMain;
     private Context context;
-    private boolean unseen_flag = true;
-    private Drawable d;
-    private int action_mode = 0;
-    /**
-     * isVisible:如果是退出登录的，将无法显示密码
-     * isChanged:是否修改用户名或者密码
-     */
-    private boolean isVisible = true,isChanged = false;
+    private boolean canDirectLogin=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +66,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         username_et.setText(sp.getString("username", null));
         if(sp.getString("password", null)!=null){
             password_et.setText("********");
-            isVisible = false;
+            canDirectLogin = true;
         } else{
             password_et.setText("");
-            isVisible = true;
+            canDirectLogin = false;
         }
         getImage(sp.getString("profile_photo",null));
         login();
@@ -102,17 +95,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void afterTextChanged(Editable editable) {
-                isChanged = true;
-                if(!isVisible){
-                    password_et.setText("");
-                }
+                if(canDirectLogin) password_et.setText("");
+                canDirectLogin = false;
                 login();
             }
         });
         password_et.setOnVisibleActionListener(() -> {
-            if(!isVisible){
+            if(canDirectLogin){
                 password_et.setText("");
-                isVisible = true;
+                canDirectLogin = false;
             }
         });
         password_et.addTextChangedListener(new TextWatcher() {
@@ -128,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void afterTextChanged(Editable s) {
-                isChanged = true;
+                canDirectLogin = false;
             }
         });
     }
@@ -136,14 +127,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_btn:
-//                login();
                 judge();
                 break;
             case R.id.reg_btn:
                 intent = new Intent(LoginActivity.this, Register2Activity.class);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-//                LoginActivity.this.finish();
                 break;
             case R.id.login_profile_photo:
 
@@ -213,7 +202,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
             }else{
                 //用户名和密码未修改并且用户没有点击过密码可见的按钮
-                if(!isVisible&&!isChanged){
+                if(canDirectLogin){
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
                     sp.edit().putString("status","1").apply();
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
@@ -235,26 +224,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
-
-                //old
-//                    if(pwd.equals(userdata.get("password")) || password_et.getText().toString().equals(userdata.get("password"))){
-//                        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//                        sp.edit().putString("username", userdata.get("username").toString())
-//                                .putString("password", userdata.get("password").toString())
-//                                .putString("profile_photo", userdata.get("profile_photo").toString())
-//                                .putString("status","1")
-//                                .putString("email",userdata.get("email").toString())
-//                                .putString("telephone",userdata.get("telephone").toString())
-//                                .putString("motto",userdata.get("motto").toString())
-//                                .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
-//                                .apply();
-//
-//                        get_setting();
-//                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-//                        mHandler.obtainMessage(1).sendToTarget();
-//                    }else{
-//                        Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
-//                    }
             }
             Looper.loop();
         }).start();

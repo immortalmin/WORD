@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyAsyncTask myAsyncTask;
     private Context context;
     private List<Map<String,Object>> word_list=null;
-    private Button btn_collect,btn_recite,btn_review,btn_spell,search1;
+    private Button btn_collect,btn_recite,btn_review,btn_spell;
     private ImageView imgview;
     private EditText editText;
     private SearchView search_bar;
@@ -79,32 +79,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         screen_width = metric.widthPixels;     // 屏幕宽度（像素）
         screen_height = metric.heightPixels;   // 屏幕高度（像素）
         context = this;
-        btn_collect = (Button)findViewById(R.id.btn_collect);
-        btn_recite = (Button)findViewById(R.id.btn_recite);
-        btn_spell = (Button)findViewById(R.id.btn_spell);
-        btn_review = (Button)findViewById(R.id.btn_review);
-        search_bar = (SearchView) findViewById(R.id.search_bar);
-        profile_photo = (CircleImageView) findViewById(R.id.profile_photo);
-        main_relative = (RelativeLayout)findViewById(R.id.main_relative);
-        imgview = (ImageView)findViewById(R.id.imgview);
+        btn_collect = findViewById(R.id.btn_collect);
+        btn_recite = findViewById(R.id.btn_recite);
+        btn_spell = findViewById(R.id.btn_spell);
+        btn_review = findViewById(R.id.btn_review);
+        search_bar = findViewById(R.id.search_bar);
+        profile_photo = findViewById(R.id.profile_photo);
+        main_relative = findViewById(R.id.main_relative);
+        imgview = findViewById(R.id.imgview);
         btn_collect.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_review.setOnClickListener(this);
         btn_spell.setOnClickListener(this);
-//        search1.setOnClickListener(this);
         search_bar.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
-        search_bar.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                intent = new Intent(MainActivity.this,SearchActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-            }
+        search_bar.setOnSearchClickListener(view -> {
+            intent = new Intent(MainActivity.this,SearchActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
-//        dbAdapter = new DBAdapter(this);
-//        dbAdapter.open();
-
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
@@ -318,11 +311,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",11);
-            jsonObject.put("uid",4);
+            jsonObject.put("uid",user.getUid());
             //获取当前时间
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
             jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-//            jsonObject.put("review_date","2020-07-01");
         }catch (JSONException e){
             e.printStackTrace();
         }

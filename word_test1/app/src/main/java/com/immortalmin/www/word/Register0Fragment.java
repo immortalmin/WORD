@@ -101,14 +101,16 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.nextBtn:
-//                mListener.Register0FragmentInteraction(1);
-                if(!judge()){
+                returnedData.clear();
+                returnedData.put("what","1");
+                mListener.Register0FragmentInteraction(returnedData);
+                /*if(!judge()){
                     break;
                 }
                 //使“下一步”按钮无法点击
                 mHandler.sendEmptyMessage(7);
                 //注册用户
-                registerUser();
+                registerUser();*/
                 break;
             case R.id.profile_photo:
                 if (mListener != null) {
