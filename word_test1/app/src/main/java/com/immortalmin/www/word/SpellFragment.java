@@ -40,26 +40,20 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
     private OnFragmentInteractionListener mListener;
     private String word_en,word_ch;
-    private CountDownProgressBar cpb_countdown;
     private MediaPlayerUtil mediaPlayerUtil;
     private AudioManager audioManager;//音量调整器
     private int changed_volume=0;//通过点击单词调整的音量
     private SoundPool soundPool;
     private int sound_success,sound_fail;
-    private Runnable music_delay,correct_action,wrong_action;
+    private Runnable music_delay;
     private TextView cword,correct_word;//display word_ch
     private EditText eword;//spell word_en
     private Button clean_btn;
     private int WrongTimes=0;//拼写错误的次数
-    private Boolean suspend_flag = false;//拼写错误的话，显示正确结果，等用户再次回车或输入，再清除。true代表正在显示正确结果
-    private Boolean btn_lock = false;//用来禁止连续的回车。true表示开启，等新一轮开启时，再关闭
+    private Boolean isTyping = true;//是否在等待用户输入
+    private Boolean userAns = true;//用户回答是否正确
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
-    /**
-     * Activity绑定上Fragment时，调用该方法
-     * 这个是第一次被调用的
-     * @param context
-     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -72,18 +66,10 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    /**
-     * Fragment显示的内容是怎样的，就是通过下面这个方法返回回去的(view)
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.activity_spell,null);
-        return view;
+        return inflater.inflate(R.layout.activity_spell, null);
     }
 
     @Override
@@ -98,7 +84,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.setOnEditorActionListener(ewordEd);
 
 
-        // XXX:让其合并到OnEditorActionListener中
         /**
          * 在拼写错误并显示答案后，键盘有输入就清除单词
          * 现在这样会先打出字，再清除，不美观
@@ -117,21 +102,18 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void afterTextChanged(Editable s) {
-                //显示或隐藏清除按钮
-                if(s.toString().length()>0&&!suspend_flag){
-                    mHandler.obtainMessage(5).sendToTarget();
+                if(s.toString().length()>0&&isTyping){
+                    mHandler.sendEmptyMessage(5);
                 }else{
-                    mHandler.obtainMessage(6).sendToTarget();
+                    mHandler.sendEmptyMessage(6);
                 }
-                if(suspend_flag){
-                    suspend_flag = false;
+                if(!isTyping&&!userAns){//拼写错误后用户又继续输入时
                     Message msg = new Message();
                     msg.what = 2;
                     //只保留下标前的一个字符，即刚输入的字符
                     msg.obj = s.charAt(eword.getSelectionStart()-1);
                     mHandler.sendMessage(msg);
                 }
-
             }
         });
         //music
@@ -158,30 +140,33 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            if(btn_lock) return true;
-            if(suspend_flag && keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
-                suspend_flag = false;
-                btn_lock = true;
-                mHandler.sendEmptyMessage(2);//重新显示题目
-                return true;
-            }
-            if (!btn_lock && keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
-                resetVolume();
-                mediaPlayerUtil.start();
-                if(Comparison(eword.getText().toString(),word_en)){
-                    soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
-                    mHandler.obtainMessage(0).sendToTarget();
-                    suspend_flag = false;
-                    btn_lock = true;
-                    eword.setEnabled(false);
-                    scheduledThreadPool.schedule(music_delay,Math.max(mediaPlayerUtil.getDuration()+200,1000), TimeUnit.MILLISECONDS);
-                }else{
-                    WrongTimes++;
-                    soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
-                    mHandler.obtainMessage(1).sendToTarget();
-                    suspend_flag = true;
+            if(isTyping){
+                //点击回车，判断答案是否正确
+                if (keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+                    isTyping = false;
+                    resetVolume();
+                    mediaPlayerUtil.start();
+                    mHandler.sendEmptyMessage(6);
+                    if(Comparison(eword.getText().toString(),word_en)){
+                        userAns = true;
+                        soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
+                        mHandler.obtainMessage(0).sendToTarget();
+                        eword.setEnabled(false);
+                        scheduledThreadPool.schedule(music_delay,Math.max(mediaPlayerUtil.getDuration()+200,1000), TimeUnit.MILLISECONDS);
+                    }else{
+                        userAns = false;
+                        WrongTimes++;
+                        soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+                        mHandler.sendEmptyMessage(1);
+                    }
+                    return true;
                 }
-                return true;
+            }else{
+                //回答错误后用户点击了回车
+                if(keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+                    mHandler.sendEmptyMessage(2);//重新显示题目
+                    return true;
+                }
             }
             return false;
         }
@@ -226,6 +211,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     }else{
                         cword.setText(word_ch);
                     }
+                    isTyping = true;
                     if(message.obj!=null){
                         eword.setText(message.obj.toString());
                         eword.setSelection(message.obj.toString().length());
@@ -234,7 +220,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     }
                     eword.setTextColor(Color.parseColor("#000000"));
                     correct_word.setVisibility(View.INVISIBLE);
-                    btn_lock = false;
                     break;
                 case 3://go back to recite_word_activity
                     //关闭键盘

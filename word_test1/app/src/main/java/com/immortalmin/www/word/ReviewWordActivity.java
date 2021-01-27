@@ -64,7 +64,6 @@ public class ReviewWordActivity extends AppCompatActivity
     private int finish_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
     private int current_ind = -1;
-    private int mode = 0;
     private Boolean pron_lock = false;
     private HashMap<String, Object> now_words = null;
     private static int group_num = 20;//每组复习的单词数
@@ -73,14 +72,14 @@ public class ReviewWordActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_word);
-        total_times = (TextView) findViewById(R.id.total_times);
-        word_times = (TextView) findViewById(R.id.word_times);
-        turn_mode = (Button) findViewById(R.id.turn_mode);
-        ret_btn = (Button) findViewById(R.id.ret_btn);
-        imgview = (ImageView)findViewById(R.id.imgview);
+        total_times = findViewById(R.id.total_times);
+        word_times = findViewById(R.id.word_times);
+        turn_mode = findViewById(R.id.turn_mode);
+        ret_btn = findViewById(R.id.ret_btn);
+        imgview = findViewById(R.id.imgview);
         turn_mode.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
-        total_progress = (ProgressBar) findViewById(R.id.total_progress);
+        total_progress = findViewById(R.id.total_progress);
         initialize();
     }
 
