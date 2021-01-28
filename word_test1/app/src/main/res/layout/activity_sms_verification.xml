@@ -4,25 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/launch2"
     tools:context=".SMSVerificationActivity">
 
     <Button
-        android:id="@+id/return_btn"
+        android:id="@+id/returnBtn"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:background="@drawable/return3"
         android:text="" />
 
     <TextView
-        android:id="@+id/nav_text"
+        android:id="@+id/navTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="#303133"
         android:textStyle="bold"
         android:text="验 证 界 面" />
@@ -34,66 +33,65 @@
         android:layout_centerHorizontal="true"
         >
 
-        <EditText
-            android:id="@+id/telephone"
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/telephoneEt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/login_edittext"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:textSize="19dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:textSize="16sp"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
-            android:hint="telephone" />
+            android:hint="手机号码"
+            android:inputType="number"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
 
-        <EditText
-            android:id="@+id/verification"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/telephone"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/login_edittext"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:textSize="19dp"
+        <com.immortalmin.www.word.MyEditText
+            android:id="@+id/codeEt"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/telephoneEt"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="5dp"
+            android:textSize="16sp"
             android:textColor="#eef1f2"
             android:textColorHint="#aeacb6"
             android:textCursorDrawable="@drawable/cursor"
-            android:hint="verification code" />
+            android:hint="验证码"
+            android:inputType="number"
+            app:DisplayStyle="0"
+            app:TextType="0"/>
 
         <Button
-            android:id="@+id/get_btn"
+            android:id="@+id/getCodeBtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/verification"
-            android:layout_marginRight="10dp"
-            android:layout_alignBaseline="@+id/verification"
+            android:layout_height="35dp"
+            android:layout_toEndOf="@+id/codeEt"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignTop="@+id/codeEt"
             android:background="@drawable/rounded_corners_gray"
             android:textColor="#000000"
-            android:textSize="10dp"
+            android:padding="3dp"
+            android:textSize="13sp"
             android:text="获取验证码" />
 
         <Button
-            android:id="@+id/commit_btn"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_below="@+id/verification"
+            android:id="@+id/commitBtn"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/codeEt"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
             android:textAllCaps="false"
             android:background="@drawable/login_btn"
             android:textColor="#FFFFFF"
-            android:text="commit" />
+            android:text="确定" />
     </RelativeLayout>
 
 

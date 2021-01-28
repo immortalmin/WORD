@@ -9,11 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,34 +26,34 @@ import java.util.regex.Pattern;
 
 public class UpdatePwdActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button commit_btn,return_btn;
-    private EditText new_pwd,confirm_pwd;
-    private TextView pwd_warn,confirm_warn;
+    private Button commitBtn,returnBtn;
+    private MyEditText newPwdEt,confirmPwdEt;
+    private TextView pwdWarn,confirmWarn;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
+    private MyAsyncTask myAsyncTask;
     private String telephone = null;
     private Intent intent;
-//    private HashMap<String,Object> userdata=null;
+    private boolean pwdFlag = false,confirmFlag = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_pwd);
-        commit_btn = (Button)findViewById(R.id.commit_btn);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        new_pwd = (EditText)findViewById(R.id.new_pwd);
-        confirm_pwd = (EditText)findViewById(R.id.confirm_pwd);
-        pwd_warn = (TextView)findViewById(R.id.pwd_warn);
-        confirm_warn = (TextView)findViewById(R.id.confirm_warn);
-        commit_btn.setOnClickListener(this);
-        return_btn.setOnClickListener(this);
+        commitBtn = findViewById(R.id.commitBtn);
+        returnBtn = findViewById(R.id.returnBtn);
+        newPwdEt = findViewById(R.id.newPwdEt);
+        confirmPwdEt = findViewById(R.id.confirmPwdEt);
+        pwdWarn = findViewById(R.id.pwdWarn);
+        confirmWarn = findViewById(R.id.confirmWarn);
+        commitBtn.setOnClickListener(this);
+        returnBtn.setOnClickListener(this);
         init();
-
-        Intent intent = getIntent();
-        telephone = intent.getStringExtra("telephone");
     }
 
     private void init(){
-        new_pwd.addTextChangedListener(new TextWatcher() {
+        Intent intent = getIntent();
+        telephone = intent.getStringExtra("telephone");
+        newPwdEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -64,16 +66,18 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String now_pwd = new_pwd.getText().toString();
+                String now_pwd = newPwdEt.getText().toString();
                 if(!isPassword(now_pwd)){
                     mHandler.obtainMessage(0).sendToTarget();
+                    pwdFlag = false;
                 }else{
                     mHandler.obtainMessage(1).sendToTarget();
+                    pwdFlag = true;
                 }
             }
         });
 
-        confirm_pwd.addTextChangedListener(new TextWatcher() {
+        confirmPwdEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -86,10 +90,12 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(confirm_pwd.getText().toString().equals(new_pwd.getText().toString())){
+                if(confirmPwdEt.getText().toString().equals(newPwdEt.getText().toString())){
                     mHandler.obtainMessage(2).sendToTarget();
+                    confirmFlag = true;
                 }else{
                     mHandler.obtainMessage(3).sendToTarget();
+                    confirmFlag = false;
                 }
             }
         });
@@ -99,8 +105,7 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
         String regex="^(?![0-9])(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$";
         Pattern p= Pattern.compile(regex);
         Matcher m=p.matcher(password);
-        boolean isMatch=m.matches();
-        return isMatch;
+        return m.matches();
     }
 
     Handler mHandler = new Handler(new Handler.Callback() {
@@ -108,16 +113,16 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    pwd_warn.setVisibility(View.VISIBLE);
+                    pwdWarn.setVisibility(View.VISIBLE);
                     break;
                 case 1:
-                    pwd_warn.setVisibility(View.INVISIBLE);
+                    pwdWarn.setVisibility(View.INVISIBLE);
                     break;
                 case 2:
-                    confirm_warn.setVisibility(View.INVISIBLE);
+                    confirmWarn.setVisibility(View.INVISIBLE);
                     break;
                 case 3:
-                    confirm_warn.setVisibility(View.VISIBLE);
+                    confirmWarn.setVisibility(View.VISIBLE);
                     break;
                 case 4:
                     intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
@@ -135,43 +140,45 @@ public class UpdatePwdActivity extends AppCompatActivity implements View.OnClick
 
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.commit_btn:
-
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("telephone",telephone);
-                    jsonObject.put("pwd",md5Utils.getMD5Code(confirm_pwd.getText().toString()));
-                }catch (JSONException e){
-                    e.printStackTrace();
+            case R.id.commitBtn:
+                if(pwdFlag&&confirmFlag){
+                    updatePwd();
+                }else if(!pwdFlag){
+                    Toast.makeText(UpdatePwdActivity.this,"密码格式错误",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(UpdatePwdActivity.this,"密码不一致",Toast.LENGTH_SHORT).show();
                 }
-                update_password(jsonObject);
                 break;
-            case R.id.return_btn:
-//                intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
+            case R.id.returnBtn:
+                intent = new Intent(UpdatePwdActivity.this,LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }
     }
 
-    private void update_password(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String jsonString = httpGetContext.getData("http://47.98.239.237/word/php_file2/update_password.php",jsonObject);
-                User user = jsonRe.userData(jsonString);
-                set_sp(user);
-            }
-        }).start();
+    private void updatePwd(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",19);
+            jsonObject.put("telephone",telephone);
+            jsonObject.put("pwd",md5Utils.getMD5Code(confirmPwdEt.getText().toString()));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            User user = jsonRe.userData(result);
+            set_sp(user);
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private void set_sp(User user){
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         sp.edit().putString("username",user.getUsername())
-//                .putString("password",userdata.get("pwd").toString())
                 .putString("profile_photo",user.getProfile_photo())
                 .putString("password",null)
                 .putString("status","0")

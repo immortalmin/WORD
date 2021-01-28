@@ -98,4 +98,5 @@
         android:drawableRight="@drawable/right_arrow1"
         android:text="其他方式"/>
 
+
 </RelativeLayout>

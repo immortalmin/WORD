@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,8 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.mob.MobSDK;
 import com.mob.OperationCallback;
 
@@ -34,8 +37,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 
 /**
@@ -49,11 +56,15 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
     private EventHandler eventHandler;
     private MyAsyncTask myAsyncTask;
     private Runnable skipToLogin;
+    private SweetAlertDialog notBindingWarn;
     private User user;
     private JsonRe jsonRe = new JsonRe();
+    private CaptureUtil captureUtil = new CaptureUtil();
     private MyEditText telephone_tv,code_tv;
     private Button getCodeBtn;
+    private ImageView imgview;
     private boolean got_flag = false;
+
 
     public Register1Fragment() {
         // Required empty public constructor
@@ -74,6 +85,7 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
         Button otherWaysBtn = Objects.requireNonNull(getActivity()).findViewById(R.id.otherWaysBtn);
         telephone_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.telephone_tv);
         code_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.code_tv);
+        imgview = Objects.requireNonNull(getActivity()).findViewById(R.id.imgview);
 
         getCodeBtn.setOnClickListener(this);
         commitBtn.setOnClickListener(this);
@@ -150,6 +162,24 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
 
         //注册一个事件回调监听，用于处理SMSSDK接口请求的结果
         SMSSDK.registerEventHandler(eventHandler);
+
+        dialog_init();
+    }
+
+    private void dialog_init(){
+        notBindingWarn = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Warning")
+                .setContentText("绑定手机号码是为了在忘记密码后可以重置密码\n如果选择不绑定手机号，您忘记密码后，将无法继续使用该账号")
+                .setConfirmText("继续绑定")
+                .setCancelText("好的")
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    mHandler.sendEmptyMessage(3);
+                    sweetAlertDialog.dismiss();
+                })
+                .setCancelClickListener(sweetAlertDialog -> {
+                    mListener.Register1FragmentInteraction(1);
+                });
+        notBindingWarn.setCancelable(false);
     }
 
     private void submitPrivacyGrantResult(boolean granted) {
@@ -201,6 +231,14 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
                         }
                     });
                     mAnimator.start();
+                    break;
+                case 2:
+                    Glide.with((Activity)context).load(captureUtil.getcapture((Activity)context))
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
+                    imgview.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    imgview.setVisibility(View.INVISIBLE);
                     break;
             }
 
@@ -262,7 +300,9 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
                 }
                 break;
             case R.id.notBindingBtn:
-                mListener.Register1FragmentInteraction(1);
+                mHandler.sendEmptyMessage(2);
+                notBindingWarn.show();
+//                mListener.Register1FragmentInteraction(1);
                 break;
             case R.id.otherWaysBtn:
                 mListener.Register1FragmentInteraction(2);

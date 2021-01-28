@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,8 +18,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +33,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class Register2Activity extends AppCompatActivity
         implements View.OnClickListener, Register0Fragment.OnFragmentInteractionListener,
@@ -39,9 +46,6 @@ public class Register2Activity extends AppCompatActivity
 
     private Button return_btn;
     private TextView nav_text;
-    private JsonRe jsonRe = new JsonRe();
-    private MD5Utils md5Utils = new MD5Utils();
-    private Runnable toLogin;
     private User user = new User();
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();

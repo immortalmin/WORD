@@ -32,7 +32,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
-        <activity android:name=".ProgressTestActivity"></activity>
         <activity android:name=".CommitFeedbackActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".ChangePwdActivity" />
@@ -47,7 +46,6 @@
         </activity>
         <activity android:name=".SearchActivity" />
         <activity android:name=".ReciteWordActivity" />
-        <activity android:name=".WordViewTestActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
@@ -59,6 +57,24 @@
         <activity android:name=".ExampleActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".ReviewWordActivity" />
+
+<!--        QQ第三方登录-->
+<!--        <activity-->
+<!--            android:name="com.tencent.tauth.AuthActivity"-->
+<!--            android:noHistory="true"-->
+<!--            android:launchMode="singleTask" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <data android:scheme="tencent你的AppId" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.tencent.connect.common.AssistActivity"-->
+<!--            android:configChanges="orientation|keyboardHidden"-->
+<!--            android:screenOrientation="behind"-->
+<!--            android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
     </application>
 
 </manifest>

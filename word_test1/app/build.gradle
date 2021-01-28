@@ -73,4 +73,5 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+    implementation 'com.tencent.tauth:qqopensdk:3.52.0'//QQ第三方登录
 }

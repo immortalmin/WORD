@@ -5,7 +5,6 @@ buildscript {
     repositories {
         google()
         //在把minSdkVersion 从21换成24后的第二天，启动就出错，所以就改成下面三行。26-28也是。
-//        jcenter()
         maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
     }
@@ -23,7 +22,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-//        jcenter()
+        jcenter()//QQ第三方登录
         maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
     }

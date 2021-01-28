@@ -285,22 +285,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param jsonObject
      */
     private void update_time(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
         }).start();
     }
 
     private void update_last_login(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
         }).start();
     }
 
@@ -352,7 +346,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-                intent = new Intent(MainActivity.this,Register2Activity.class);
+                intent = new Intent(MainActivity.this,UpdatePwdActivity.class);
+                intent.putExtra("telephone","19883833363");
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;

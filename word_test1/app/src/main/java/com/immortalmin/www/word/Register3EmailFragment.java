@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 /**
  * 绑定邮箱
+ * 参考博客：https://blog.csdn.net/qiujiaxin050/article/details/81081651
  */
 public class Register3EmailFragment extends Fragment {
 

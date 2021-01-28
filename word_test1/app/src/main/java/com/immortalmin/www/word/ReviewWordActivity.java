@@ -220,12 +220,7 @@ public class ReviewWordActivity extends AppCompatActivity
                     current_ind = -1;
                     Arrays.fill(finish_ind, 0);
                     finish_num = 0;
-                    total_progress.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            total_progress.setProgress(0);
-                        }
-                    });
+                    total_progress.post(() -> total_progress.setProgress(0));
                     for(int i=0;i<review_num;i++) review_list.remove(0);
                     review_num = Math.min(review_list.size(),group_num);
                     startReview();
