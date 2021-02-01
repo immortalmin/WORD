@@ -38,7 +38,9 @@ public class DataUtil {
         JSONObject jsonObject = new JSONObject();
         try {
             SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
+            //这里应该根据uid获取用户信息
             jsonObject.put("username",sp.getString("username",null));
+            jsonObject.put("login_mode",0);
             jsonObject.put("what",14);
         }catch (JSONException e){
             e.printStackTrace();
@@ -51,44 +53,13 @@ public class DataUtil {
             sp.edit().putString("username", user.getUsername())
                     .putString("password",user.getPassword())
                     .putString("profile_photo", user.getProfile_photo())
-                    .putString("status","1")
-                    .putString("email",user.getEmail())
-                    .putString("telephone",user.getTelephone())
-                    .putString("motto",user.getMotto())
+                    .putString("motto", user.getMotto())
+                    .putInt("status",1)
                     .putLong("last_login",Long.valueOf(user.getLast_login()))
                     .apply();
             getSetting(listener);
         });
         myAsyncTask.execute(jsonObject);
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-
-//                HttpGetContext httpGetContext = new HttpGetContext();
-//                String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-//                userdata = jsonRe.userData(wordjson);
-//                //将用户数据保存到本地
-//                SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
-//                sp.edit().putString("username", userdata.get("username").toString())
-//                        .putString("profile_photo", userdata.get("profile_photo").toString())
-//                        .putString("status","1")
-//                        .putString("email",userdata.get("email").toString())
-//                        .putString("telephone",userdata.get("telephone").toString())
-//                        .putString("motto",userdata.get("motto").toString())
-//                        .putLong("last_login",Long.valueOf(userdata.get("last_login").toString()))
-//                        .apply();
-                //获取setting
-//                ...
-//                httpGetContext = new HttpGetContext();
-//                String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
-//                userSetting = jsonRe.userSetting(s);
-//                sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-//                sp.edit().putString("uid",userSetting.get("uid").toString())
-//                        .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-//                        .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-//                        .apply();
-//            }
-//        }).start();
         return ;
     }
 
@@ -128,7 +99,7 @@ public class DataUtil {
         user.setUsername(sp.getString("username",null));
         user.setPassword(sp.getString("password",null));
         user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getString("status","0"));
+        user.setStatus(sp.getInt("status",0));
         user.setLast_login(sp.getLong("last_login",946656000000L));
         user.setEmail(sp.getString("email",null));
         user.setTelephone(sp.getString("telephone",null));

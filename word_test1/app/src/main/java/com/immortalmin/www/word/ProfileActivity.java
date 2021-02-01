@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.tencent.tauth.Tencent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,17 +54,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        logout_btn = (Button)findViewById(R.id.logout_btn);
-        motto_edit_btn = (Button)findViewById(R.id.motto_edit_btn);
-        setting_btn = (Button)findViewById(R.id.setting_btn);
-        nickname = (TextView) findViewById(R.id.nickname);
-        motto = (TextView) findViewById(R.id.motto);
-        changePwd = (TextView) findViewById(R.id.changePwd);
-        feedback = (TextView) findViewById(R.id.feedback);
-        photo = (CircleImageView) findViewById(R.id.photo);
-        signIn = (SignIn) findViewById(R.id.signIn);
-        backdrop = (ImageView)findViewById(R.id.backdrop);
+        return_btn = findViewById(R.id.return_btn);
+        logout_btn = findViewById(R.id.logout_btn);
+        motto_edit_btn = findViewById(R.id.motto_edit_btn);
+        setting_btn = findViewById(R.id.setting_btn);
+        nickname = findViewById(R.id.nickname);
+        motto = findViewById(R.id.motto);
+        changePwd = findViewById(R.id.changePwd);
+        feedback = findViewById(R.id.feedback);
+        photo = findViewById(R.id.photo);
+        signIn = findViewById(R.id.signIn);
+        backdrop = findViewById(R.id.backdrop);
         photo.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         logout_btn.setOnClickListener(this);
@@ -77,12 +78,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-//        init_user();
         dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
             @Override
             public void onFinish(User userdata) {
                 user = userdata;
-                mHandler.obtainMessage(1).sendToTarget();
+                Log.i("ccc",user.toString());
+                mHandler.sendEmptyMessage(1);
                 //获取使用时间并显示
                 getusetime();
             }
@@ -94,22 +95,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-//    private void init_user(){
-//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//        user.setUid(sp.getString("uid",null));
-//        user.setRecite_num(sp.getInt("recite_num",20));
-//        user.setRecite_scope(sp.getInt("recite_scope",10));
-//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        user.setUsername(sp.getString("username",null));
-//        user.setPassword(sp.getString("password",null));
-//        user.setProfile_photo(sp.getString("profile_photo",null));
-//        user.setStatus(sp.getString("status","0"));
-//        user.setLast_login(sp.getLong("last_login",946656000000L));
-//        user.setEmail(sp.getString("email",null));
-//        user.setTelephone(sp.getString("telephone",null));
-//        user.setMotto(sp.getString("motto",null));
-//    }
-
     public void onClick(View view){
         switch (view.getId()){
             case R.id.return_btn:
@@ -120,7 +105,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.logout_btn:
                 SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putString("status","0").apply();
+                int login_mode = sp.getInt("login_mode",0);
+                if(login_mode==0){
+                    sp.edit().putInt("status",0).apply();
+                }else{
+                    Tencent tencent = Tencent.createInstance("101933564", this.getApplicationContext());
+                    tencent.logout(this);
+                    sp.edit().putString("open_id",null).putString("access_token",null).putString("expires_in",null).apply();
+                }
                 intent = new Intent();
                 intent.setAction("com.immortalmin.www.MainActivity");
                 sendBroadcast(intent);
@@ -180,33 +172,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void update_userdata(JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
         }).start();
     }
 
     private void getusetime(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid", user.getUid());
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String res = httpGetContext.getData("http://47.98.239.237/word/php_file2/getusetime.php",jsonObject);
-                if(res!=null){
-                    ArrayList<Integer> usetime = jsonRe.usetimeData(res);
-                    //加入今天的数据
-                    usetime.add(0,get_today_usetime());
-                    signIn.setSign_in_times(usetime);
-                }
+        new Thread(() -> {
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("uid", user.getUid());
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            HttpGetContext httpGetContext = new HttpGetContext();
+            String res = httpGetContext.getData("http://47.98.239.237/word/php_file2/getusetime.php",jsonObject);
+            if(res!=null){
+                ArrayList<Integer> usetime = jsonRe.usetimeData(res);
+                //加入今天的数据
+                usetime.add(0,get_today_usetime());
+                signIn.setSign_in_times(usetime);
             }
         }).start();
     }
@@ -232,7 +218,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void setImage(String pic) {
-        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
+        Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage(pic);
@@ -244,8 +230,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void getImage(final String pic){
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
-            Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
-            imageUtils.savePhotoToStorage(bitmap,pic);
+            Bitmap bitmap;
+            if(user.getLogin_mode()==0){
+                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+            }else{
+                bitmap = HttpGetContext.getbitmap(user.getProfile_photo());
+            }
+            ImageUtils.savePhotoToStorage(bitmap,user.getUid()+".jpg");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }).start();
     }
@@ -266,8 +257,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     break;
                 case 1:
                     nickname.setText(user.getUsername());
-                    motto.setText(user.getMotto());
-                    setImage(user.getProfile_photo());
+                    if(user.getMotto()==null||"".equals(user.getMotto())||"null".equals(user.getMotto())){
+                        motto.setText("你还没有设置个性签名");
+                    }else{
+                        motto.setText(user.getMotto());
+                    }
+                    setImage(user.getUid()+".jpg");
                     break;
                 case 2:
                     Glide.with(ProfileActivity.this).load(captureUtil.getcapture(ProfileActivity.this))

@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.auth.QQToken;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +42,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private Handler handler = new Handler();
+    private Tencent tencent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,117 +67,73 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 //            }
 //        }).start();
 
-
-
-
-    }
-    private void jump_activity(){
-        if("1".equals(user.getStatus())){
-            getuserdata();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(LaunchActivity.this, MainActivity.class));
-                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    LaunchActivity.this.finish();
-                }
-            });
-        }else{
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    LaunchActivity.this.finish();
-                }
-            });
-        }
     }
 
     private void init() {
-        //读取文件中用户的信息
-        init_user();
-
         //检查权限
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(judgePermission()){
-                    jump_activity();
-                }
+        handler.postDelayed(() -> {
+            if(judgePermission()){
+                jump_activity();
             }
         },2000);
     }
 
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getString("status","0"));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
-    }
-
-    private void getuserdata() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    jsonObject.put("username",sp.getString("username",null));
-                }catch (JSONException e){
-                    e.printStackTrace();
+    private void jump_activity() {
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        int login_mode = sp.getInt("login_mode",0);
+        switch (login_mode){
+            case -1://首次进入APP
+                //直接跳转到登录界面
+                mHandler.sendEmptyMessage(0);
+                break;
+            case 0://传统的账号密码
+                int status = sp.getInt("status",0);
+                if(status==0){//登出状态
+                    //跳转到登录界面
+                    mHandler.sendEmptyMessage(0);
+                }else{//登入状态
+                    //跳转到主界面
+                    mHandler.sendEmptyMessage(1);
                 }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-                user = jsonRe.userData(wordjson);
-                //将用户数据保存到本地
-                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putString("username", user.getUsername())
-                        .putString("password", user.getPassword())
-                        .putString("profile_photo", user.getProfile_photo())
-                        .putString("status","1")
-                        .putString("email",user.getEmail())
-                        .putString("telephone",user.getTelephone())
-                        .putString("motto",user.getMotto())
-                        .putLong("last_login",user.getLast_login())
-                        .apply();
-                get_setting();
-            }
-        }).start();
-
-    }
-
-    private void get_setting(){
-        new Thread(new Runnable() {
-            @Override
-            public void run()  {
-                JSONObject jsonObject = new JSONObject();
-                try{
-                    jsonObject.put("uid",user.getUid());
-                }catch (JSONException e){
-                    e.printStackTrace();
+                break;
+            case 1://QQ
+                tencent = Tencent.createInstance("101933564", this.getApplicationContext());
+                String openid = sp.getString("open_id",null);
+                String access_token = sp.getString("access_token",null);
+                String expires_in = sp.getString("expires_in",null);
+                if(openid!=null){
+                    tencent.setOpenId(openid);
+                    tencent.setAccessToken(access_token,expires_in);
+                    if (tencent.isSessionValid()){//登入状态
+                        //跳转到主界面
+                        mHandler.sendEmptyMessage(1);
+                    }else{//登出状态：已过期，需要重新授权
+                        //跳转到登录界面
+                        mHandler.sendEmptyMessage(0);
+                    }
+                }else{
+                    //跳转到登录界面
+                    mHandler.sendEmptyMessage(0);
                 }
-                HttpGetContext httpGetContext = new HttpGetContext();
-                String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
-                userSetting = jsonRe.userSetting(s);
-                SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-                sp.edit().putString("uid",userSetting.get("uid").toString())
-                        .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-                        .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-                        .apply();
-
-            }
-        }).start();
+                break;
+        }
     }
+
+    private Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
+                startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                finish();
+                break;
+            case 1:
+                startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                finish();
+                break;
+        }
+        return false;
+    });
 
     //6.0之后要动态获取权限，重要！！！
     protected Boolean judgePermission() {
@@ -198,34 +164,31 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
                 return false;
             }
 
-            /**/
             //定位权限
-            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
-            if (ContextCompat.checkSelfPermission(this, locationPermission[0]) != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
-                ActivityCompat.requestPermissions(this, locationPermission, 300);
-                return false;
-            }
+//            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
+//            if (ContextCompat.checkSelfPermission(this, locationPermission[0]) != PackageManager.PERMISSION_GRANTED) {
+//                // 如果没有授予该权限，就去提示用户请求
+//                ActivityCompat.requestPermissions(this, locationPermission, 300);
+//                return false;
+//            }
 
 
-            String[] ACCESS_COARSE_LOCATION = {Manifest.permission.ACCESS_COARSE_LOCATION};
-            if (ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION[0]) != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
-                ActivityCompat.requestPermissions(this, ACCESS_COARSE_LOCATION, 400);
-                return false;
-            }
+//            String[] ACCESS_COARSE_LOCATION = {Manifest.permission.ACCESS_COARSE_LOCATION};
+//            if (ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION[0]) != PackageManager.PERMISSION_GRANTED) {
+//                // 如果没有授予该权限，就去提示用户请求
+//                ActivityCompat.requestPermissions(this, ACCESS_COARSE_LOCATION, 400);
+//                return false;
+//            }
 
 
             String[] READ_EXTERNAL_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE};
             if (ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE[0]) != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
                 ActivityCompat.requestPermissions(this, READ_EXTERNAL_STORAGE, 500);
                 return false;
             }
 
             String[] WRITE_EXTERNAL_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
             if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE[0]) != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
                 ActivityCompat.requestPermissions(this, WRITE_EXTERNAL_STORAGE, 600);
                 return false;
             }
@@ -240,11 +203,8 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     private void show_img_tip_dialog(Bitmap img){
         ImgTipDialog imgTipDialog = new ImgTipDialog(this,R.style.MyDialog,img);
         imgTipDialog.setCancelable(false);
-        imgTipDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
+        imgTipDialog.setOnDismissListener(dialogInterface -> {
 
-            }
         });
         imgTipDialog.show();
     }
@@ -292,7 +252,6 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 
     /**
      * 子页面跳回
-     *
      * @param requestCode
      * @param resultCode
      * @param data

@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +87,25 @@ public class HttpGetContext {
             Log.i("***httpclientgettext***","HttpClient执行异常应");
         }
         return result;
+    }
+
+    public static Bitmap getbitmap(String imageUri) {
+        Bitmap bitmap = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(imageUri);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            InputStream is = urlConnection.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            urlConnection.disconnect();
+        }
+        return bitmap;
     }
 
     //XXX:本来想直接将图片返回的，要怎么处理获取端再自己处理，可是似乎容易图片还没获取到，就开始处理了

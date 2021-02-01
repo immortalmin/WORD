@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        setImage(sp.getString("profile_photo",null));
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        setImage(sp.getString("profile_photo",null));
 
         //设置按钮高斯模糊
         mHandler.obtainMessage(2).sendToTarget();
@@ -133,32 +133,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user.setUsername(sp.getString("username",null));
         user.setPassword(sp.getString("password",null));
         user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getString("status","0"));
+        user.setStatus(sp.getInt("status",0));
         user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
+        user.setLogin_mode(sp.getInt("login_mode",0));
+        //设置头像
+        setImage(user.getUid()+".jpg");
     }
     private void setImage(String pic) {
-        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
+        Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage(pic);
         }else{
-//            Log.i("ccc","照片存在");
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }
 
     private void getImage(final String pic){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
-                imageUtils.savePhotoToStorage(bitmap,pic);
-                mHandler.obtainMessage(0,bitmap).sendToTarget();
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            Bitmap bitmap;
+            if(user.getLogin_mode()==0){
+                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+            }else{
+                bitmap = HttpGetContext.getbitmap(user.getProfile_photo());
             }
+            ImageUtils.savePhotoToStorage(bitmap,user.getUid()+".jpg");
+            mHandler.obtainMessage(0,bitmap).sendToTarget();
         }).start();
     }
 
@@ -346,10 +347,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-                intent = new Intent(MainActivity.this,UpdatePwdActivity.class);
-                intent.putExtra("telephone","19883833363");
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                intent = new Intent(MainActivity.this,QQTestActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);

@@ -25,8 +25,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.auth.QQToken;
+import com.tencent.connect.common.Constants;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -36,15 +46,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private MyEditText username_et,password_et;
     private Button login_btn,reg_btn,forget_pwd;
-    private CircleImageView login_profile_photo;
+    private CircleImageView login_profile_photo,QQLoginBtn;
     private User user;
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private ImageUtils imageUtils = new ImageUtils();
+    private MyAsyncTask myAsyncTask;
     private Intent intent;
     private Runnable toMain;
     private Context context;
+    private Tencent tencent;
+    private UserInfo userInfo;
+    private IUiListener iUiListener;
     private boolean canDirectLogin=false;
 
     @Override
@@ -55,24 +69,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         username_et = findViewById(R.id.username_et);
         password_et = findViewById(R.id.password_et);
         login_btn = findViewById(R.id.login_btn);
+        QQLoginBtn = findViewById(R.id.QQLoginBtn);
         reg_btn = findViewById(R.id.reg_btn);
         forget_pwd = findViewById(R.id.forget_pwd);
         login_profile_photo = findViewById(R.id.login_profile_photo);
         login_btn.setOnClickListener(this);
+        QQLoginBtn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        username_et.setText(sp.getString("username", null));
-        if(sp.getString("password", null)!=null){
-            password_et.setText("********");
-            canDirectLogin = true;
-        } else{
-            password_et.setText("");
-            canDirectLogin = false;
+        int login_mode = sp.getInt("login_mode",0);
+        if (login_mode == 0) {
+            username_et.setText(sp.getString("username", null));
+            if(sp.getString("password", null)!=null){
+                password_et.setText("********");
+                canDirectLogin = true;
+            } else{
+                password_et.setText("");
+                canDirectLogin = false;
+            }
         }
         getImage(sp.getString("profile_photo",null));
-        login();
+//        login();
+        getUserDataForTradition();
         init();
     }
 
@@ -97,7 +117,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void afterTextChanged(Editable editable) {
                 if(canDirectLogin) password_et.setText("");
                 canDirectLogin = false;
-                login();
+//                login();
+                getUserDataForTradition();
             }
         });
         password_et.setOnVisibleActionListener(() -> {
@@ -142,37 +163,142 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
+            case R.id.QQLoginBtn:
+                loginForQQ();
+                break;
+        }
+    }
+
+    private void loginForQQ() {
+        tencent = Tencent.createInstance("101933564", this.getApplicationContext());
+        if (!tencent.isSessionValid()) {
+            iUiListener = new BaseUiListener();
+            tencent.login(this, "all", iUiListener);
+        }else{
+            Log.i("ccc","已登录");
         }
     }
 
     /**
-     * 写好jsonObject后，获取userdata
-     * 名字难取
+     * 调用SDK封装好的借口，需要传入回调的实例 会返回服务器的消息
      */
-    private void login(){
-        String uname = username_et.getText().toString();
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("username",uname);
-        }catch (JSONException e) {
-            e.printStackTrace();
+    private class BaseUiListener implements IUiListener {
+        @Override
+        public void onComplete(Object response) {
+            JSONObject obj = (JSONObject) response;
+            try {
+                String open_id = obj.getString("openid");
+                String accessToken = obj.getString("access_token");
+                String expires = obj.getString("expires_in");
+                tencent.setOpenId(open_id);
+                tencent.setAccessToken(accessToken,expires);
+                //将数据保存至本地
+                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putString("access_token",accessToken)
+                        .putString("expires_in",expires)
+                        .apply();
+                QQToken qqToken = tencent.getQQToken();
+                userInfo = new UserInfo(getApplicationContext(),qqToken);
+                userInfo.getUserInfo(new IUiListener() {
+                    @Override
+                    public void onComplete(Object response) {
+                        JSONObject jsonObject = new JSONObject();
+                        try{
+                            jsonObject.put("what",14);
+                            jsonObject.put("login_mode",1);
+                            jsonObject.put("open_id",open_id);
+                            jsonObject.put("username",((JSONObject)response).getString("nickname"));
+                            jsonObject.put("profile_photo",((JSONObject)response).getString("figureurl_qq"));
+                            getUserDataForQQ(jsonObject);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(UiError uiError) {
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onWarning(int i) {
+
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        getuserdata(jsonObject);
+
+        @Override
+        public void onError(UiError e) {
+            Toast.makeText(LoginActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onCancel() {
+            Toast.makeText(LoginActivity.this, "cancel", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onWarning(int i) {
+        }
     }
 
-    private void getuserdata(final JSONObject jsonObject) {
-        new Thread(() -> {
-            HttpGetContext httpGetContext = new HttpGetContext();
-            String wordjson = httpGetContext.getData("http://47.98.239.237/word/php_file2/getuserdata.php",jsonObject);
-            user = jsonRe.userData(wordjson);
+
+    /**
+     * 根据用户名来判断用户是否存在
+     * 上传的数据有login_mode,username
+     */
+    private void getUserDataForTradition(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",14);
+            jsonObject.put("login_mode",0);
+            jsonObject.put("username",username_et.getText());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            user = jsonRe.userData(result);
             if(user!=null){
                 setImage(user.getProfile_photo());
             }else{
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unload);
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
-        }).start();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
 
+    /**
+     * 根据open_id来判断用户是否是新用户
+     * 上传的数据有login_mode,open_id,username,profile_photo
+     * 如果用户不存在的话，就会新注册一个账号
+     * @param jsonObject
+     */
+    private void getUserDataForQQ(final JSONObject jsonObject){
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            User user = jsonRe.userData(result);
+            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putString("uid",user.getUid())
+                    .putString("open_id",user.getOpen_id())
+                    .putInt("login_mode",user.getLogin_mode())
+                    .putString("username",user.getUsername())
+                    .putString("profile_photo",user.getProfile_photo())
+                    .putLong("last_login",user.getLast_login())
+                    .apply();
+            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+            mHandler.sendEmptyMessage(1);
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     private void get_setting(){
@@ -204,19 +330,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //用户名和密码未修改并且用户没有点击过密码可见的按钮
                 if(canDirectLogin){
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("status","1").apply();
+                    sp.edit().putInt("status",1).apply();
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                     mHandler.obtainMessage(1).sendToTarget();
                 }else if(pwd.equals(user.getPassword())){
                     SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("username", user.getUsername())
+                    sp.edit().putString("uid", user.getUid())
+                            .putString("username", user.getUsername())
                             .putString("password", user.getPassword())
                             .putString("profile_photo", user.getProfile_photo())
-                            .putString("status","1")
-                            .putString("email",user.getEmail())
-                            .putString("telephone",user.getTelephone())
-                            .putString("motto",user.getMotto())
+                            .putInt("status",1)
                             .putLong("last_login",user.getLast_login())
+                            .putInt("login_mode",0)
                             .apply();
                     get_setting();
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
@@ -282,6 +407,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             username_et.setText(u.getUsername());
             password_et.setText("");
             setfocus(password_et);
+        }
+        if(requestCode == Constants.REQUEST_LOGIN){
+            Tencent.onActivityResultData(requestCode,resultCode,data,iUiListener);
         }
     }
 }

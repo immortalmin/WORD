@@ -191,7 +191,9 @@ public class JsonRe {
             if(!jsonArray.isNull(0)){
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
                 user = new User();
+                user.setLogin_mode(Integer.parseInt(jsonObject.getString("login_mode")));
                 user.setUid(jsonObject.getString("uid"));
+                user.setOpen_id(jsonObject.getString("open_id"));
                 user.setUsername(jsonObject.getString("username"));
                 user.setPassword(jsonObject.getString("pwd"));
                 user.setProfile_photo(jsonObject.getString("profile_photo"));

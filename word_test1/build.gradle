@@ -7,22 +7,18 @@ buildscript {
         //在把minSdkVersion 从21换成24后的第二天，启动就出错，所以就改成下面三行。26-28也是。
         maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
 //        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "com.mob.sdk:MobSDK:2018.0319.1724"
-
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()//QQ第三方登录
         maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
     }

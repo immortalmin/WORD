@@ -322,7 +322,7 @@ public class ReciteWordActivity extends AppCompatActivity
         user.setUsername(sp.getString("username",null));
         user.setPassword(sp.getString("password",null));
         user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getString("status","0"));
+        user.setStatus(sp.getInt("status",0));
         user.setLast_login(sp.getLong("last_login",946656000000L));
         user.setEmail(sp.getString("email",null));
         user.setTelephone(sp.getString("telephone",null));
