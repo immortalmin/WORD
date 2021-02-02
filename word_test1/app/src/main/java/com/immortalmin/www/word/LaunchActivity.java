@@ -38,9 +38,6 @@ import java.util.List;
 
 public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.OnDialogInteractionListener{
 
-    private User user = new User();
-    private HashMap<String,Object> userSetting=null;
-    private JsonRe jsonRe = new JsonRe();
     private Handler handler = new Handler();
     private Tencent tencent;
 
@@ -49,36 +46,18 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         init();
-        //后台处理耗时任务
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //耗时任务，比如加载网络数据
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //跳转至 MainActivity
-//                        Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
-//                        startActivity(intent);
-//                        //结束当前的 Activity
-//                        LaunchActivity.this.finish();
-//                    }
-//                });
-//            }
-//        }).start();
-
     }
 
     private void init() {
         //检查权限
         handler.postDelayed(() -> {
             if(judgePermission()){
-                jump_activity();
+                jumpToNext();
             }
         },2000);
     }
 
-    private void jump_activity() {
+    private void jumpToNext() {
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         int login_mode = sp.getInt("login_mode",0);
         switch (login_mode){
@@ -135,7 +114,10 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
         return false;
     });
 
-    //6.0之后要动态获取权限，重要！！！
+    /**
+     * 获取手机权限（6.0之后要动态获取权限）
+     * 权限还是到要用的时候再向用户申请比较好
+     */
     protected Boolean judgePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 检查该权限是否已经获取
@@ -157,12 +139,12 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
             }
 
             //手机状态权限
-            String[] readPhoneStatePermission = {Manifest.permission.READ_PHONE_STATE};
-            if (ContextCompat.checkSelfPermission(this, readPhoneStatePermission[0]) != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
-                ActivityCompat.requestPermissions(this, readPhoneStatePermission, 200);
-                return false;
-            }
+//            String[] readPhoneStatePermission = {Manifest.permission.READ_PHONE_STATE};
+//            if (ContextCompat.checkSelfPermission(this, readPhoneStatePermission[0]) != PackageManager.PERMISSION_GRANTED) {
+//                // 如果没有授予该权限，就去提示用户请求
+//                ActivityCompat.requestPermissions(this, readPhoneStatePermission, 200);
+//                return false;
+//            }
 
             //定位权限
 //            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
@@ -246,7 +228,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(judgePermission()){
-            jump_activity();
+            jumpToNext();
         }
     }
 
@@ -260,7 +242,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(judgePermission()){
-            jump_activity();
+            jumpToNext();
         }
     }
 }

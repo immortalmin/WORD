@@ -136,7 +136,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
             HttpGetContext httpGetContext = new HttpGetContext();
             String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
             HashMap<String,Object> count = null;
-            count = jsonRe.getcount(recitejson);
+            count = jsonRe.getCount(recitejson);
             mHandler.obtainMessage(1,count).sendToTarget();
         }).start();
 

@@ -42,11 +42,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private CircleImageView photo;
     private ImageView backdrop;
     private SignIn signIn;
-    private ImageUtils imageUtils = new ImageUtils();
     private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private DataUtil dataUtil = new DataUtil(ProfileActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
+    private MyAsyncTask myAsyncTask;
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private HashMap<String,Object> edit_data;
 
@@ -82,10 +82,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onFinish(User userdata) {
                 user = userdata;
-                Log.i("ccc",user.toString());
                 mHandler.sendEmptyMessage(1);
                 //获取使用时间并显示
-                getusetime();
+                getUseTime();
             }
 
             @Override
@@ -151,15 +150,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
-//            case R.id.motto:
-//                edit_data = new HashMap<>();
-//                edit_data.put("attr","motto");
-//                edit_data.put("title","修改个性签名");
-//                edit_data.put("max_length",50);
-//                edit_data.put("content",motto.getText());
-//                show_edit_dialog(edit_data);
-//                mHandler.obtainMessage(2).sendToTarget();
-//                break;
             case R.id.setting_btn:
                 intent = new Intent(ProfileActivity.this,SettingActivity.class);
                 startActivity(intent);
@@ -175,45 +165,47 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
-
         }
     }
 
-    private void update_userdata(JSONObject jsonObject){
-        new Thread(() -> {
-            HttpGetContext httpGetContext = new HttpGetContext();
-            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
-        }).start();
+    /**
+     * 更新用户数据
+     * @param jsonObject
+     */
+    private void updateUserdata(JSONObject jsonObject){
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute(jsonObject);
     }
 
-    private void getusetime(){
-        new Thread(() -> {
-            JSONObject jsonObject = new JSONObject();
-            try{
-                jsonObject.put("uid", user.getUid());
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            HttpGetContext httpGetContext = new HttpGetContext();
-            String res = httpGetContext.getData("http://47.98.239.237/word/php_file2/getusetime.php",jsonObject);
-            if(res!=null){
-                ArrayList<Integer> usetime = jsonRe.usetimeData(res);
-                //加入今天的数据
-                usetime.add(0,get_today_usetime());
-                signIn.setSign_in_times(usetime);
-            }
-        }).start();
+    /**
+     * 获取用户每天的使用时长
+     */
+    private void getUseTime(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",15);
+            jsonObject.put("uid",user.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            ArrayList<Integer> usetime = jsonRe.useTimeData(result);
+            //加入今天的数据
+            usetime.add(0,getTodayUseTime());
+            signIn.setSign_in_times(usetime);
+        });
+        myAsyncTask.execute(jsonObject);
     }
 
     /**
      * 获取今天已使用的时间
      * @return
      */
-    private int get_today_usetime(){
+    private int getTodayUseTime(){
         int minutes = 0;
         mUseTimeDataManager = UseTimeDataManager.getInstance(ProfileActivity.this);
         mUseTimeDataManager.refreshData(user.getLast_login(),System.currentTimeMillis());
-        JSONObject jsonObject = new JSONObject();
         List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
         for (int i = 0; i < packageInfos.size(); i++) {
             if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
@@ -298,22 +290,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void EditInteraction(HashMap<String,Object> res){
         JSONObject jsonObject = new JSONObject();
         try{
+            jsonObject.put("what",23);
             jsonObject.put("uid", user.getUid());
             jsonObject.put(res.get("attr").toString(),res.get("content").toString());
         }catch (JSONException e){
             e.printStackTrace();
         }
         //更新用户数据
-        update_userdata(jsonObject);
-
-
+        updateUserdata(jsonObject);
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-
         //如果修改了数据，显示toast
         if(!sp.getString(res.get("attr").toString(),"none").equals(res.get("content").toString())){
             Toast.makeText(ProfileActivity.this,"修改成功",Toast.LENGTH_SHORT).show();
         }
-
         //修改本地用户数据
         sp.edit().putString(res.get("attr").toString(),res.get("content").toString()).apply();
         switch (res.get("attr").toString()){
@@ -324,48 +313,42 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 user.setMotto(res.get("content").toString());
                 break;
         }
-
         //刷新界面的数据
         mHandler.obtainMessage(1).sendToTarget();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 0:
-                if(data==null){
-                    Log.i("ccc","数据为空");
-                    break;
-                }
-                //打开相册并选择照片，这个方式选择单张
-                // 获取返回的数据，这里是android自定义的Uri地址
-                Uri selectedImage = data.getData();
-                // 获取选择照片的数据视图
-                if(selectedImage!=null){
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                    Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    // 从数据视图中获取已选择图片的路径
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
-                    // 将图片显示到界面上
-                    Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
-                    //上传图片到服务器
-//                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",android.os.Environment.getExternalStorageDirectory()+"/temp.jpg");
-                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php",picturePath);
-
-                    //删除老的，添加新的
-                    ImageUtils imageUtils = new ImageUtils();
-                    imageUtils.deletePhotoFromStorage(user.getProfile_photo());
-                    imageUtils.savePhotoToStorage(bitmap, user.getProfile_photo());
-                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("profile_photo", user.getProfile_photo()).apply();
-                    mHandler.obtainMessage(0,bitmap).sendToTarget();
-                    cursor.close();
-                }else{
-                    Log.i("ccc","数据为空");
-                }
-                break;
+        if (requestCode == 0) {
+            if (data == null) {
+                Log.i("ccc", "数据为空");
+                return;
+            }
+            //打开相册并选择照片，这个方式选择单张
+            // 获取返回的数据，这里是android自定义的Uri地址
+            Uri selectedImage = data.getData();
+            // 获取选择照片的数据视图
+            if (selectedImage != null) {
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                // 从数据视图中获取已选择图片的路径
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                // 将图片显示到界面上
+                Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+                //上传图片到服务器
+                uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php", picturePath);
+                //删除老的，添加新的
+                ImageUtils.deletePhotoFromStorage(user.getProfile_photo());
+                ImageUtils.savePhotoToStorage(bitmap, user.getProfile_photo());
+                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putString("profile_photo", user.getProfile_photo()).apply();
+                mHandler.obtainMessage(0, bitmap).sendToTarget();
+                cursor.close();
+            } else {
+                Log.i("ccc", "数据为空");
+            }
         }
     }
 
@@ -381,6 +364,4 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return super.onKeyDown(keyCode, event);
         }
     }
-
-
 }

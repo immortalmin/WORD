@@ -1,22 +1,19 @@
 package com.immortalmin.www.word;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 将JSON字符串转换成相应数据的工具类
  */
 public class JsonRe {
 
+    /**
+     * 获取用户反馈的数据
+     */
     public ArrayList<HashMap<String,Object>> feedbackData(String jsonStr){
         ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
         try {
@@ -44,7 +41,10 @@ public class JsonRe {
         return feedbackList;
     }
 
-    public HashMap<String,Object>getcount(String jsonStr){
+    /**
+     * 获取用户收藏的单词数和掌握的单词数
+     */
+    public HashMap<String,Object> getCount(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -57,7 +57,9 @@ public class JsonRe {
         return word;
     }
 
-
+    /**
+     * 恋练有词及用户添加的单词（不包含单词来源）
+     */
     public ArrayList<DetailWord> detailWordData(String jsonStr){
         ArrayList<DetailWord> words = new ArrayList<>();
         try {
@@ -83,6 +85,9 @@ public class JsonRe {
         return words;
     }
 
+    /**
+     * 恋练有词及用户添加的单词（包含单词来源）
+     */
     public DetailWord wordData(String jsonStr){
         DetailWord word = new DetailWord();
         try {
@@ -105,7 +110,9 @@ public class JsonRe {
         return word;
     }
 
-
+    /**
+     * 柯林斯词典
+     */
     public KelinsiWord kelinsiWordData(String jsonStr){
         KelinsiWord kelinsiWord = new KelinsiWord();
         try {
@@ -151,7 +158,9 @@ public class JsonRe {
         return kelinsiWord;
     }
 
-
+    /**
+     * 例句
+     */
     public ArrayList<OtherSentence> exampleData(String jsonStr){
         ArrayList<OtherSentence> sentences = new ArrayList<>();
         try {
@@ -185,6 +194,9 @@ public class JsonRe {
         return sentences;
     }
 
+    /**
+     * 用户数据
+     */
     User userData(String jsonStr){
         User user = null;
         try {
@@ -210,6 +222,9 @@ public class JsonRe {
         return user;
     }
 
+    /**
+     * 用户设置
+     */
     public HashMap<String,Object> userSetting(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
@@ -224,92 +239,20 @@ public class JsonRe {
         return word;
     }
 
-    public ArrayList<Integer> usetimeData(String jsonStr){
-        ArrayList<Integer> usetime = new ArrayList<Integer>();
+    /**
+     * 用户使用时间
+     */
+    public ArrayList<Integer> useTimeData(String jsonStr){
+        ArrayList<Integer> useTime = new ArrayList<Integer>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-                usetime.add(Integer.valueOf(jsonObject.get("utime").toString()));
+                useTime.add(Integer.valueOf(jsonObject.get("utime").toString()));
             }
         }catch (JSONException e) {
             e.printStackTrace();
         }
-        return usetime;
+        return useTime;
     }
-
-    /*
-    stopping using from 2021/1/15
-    public ArrayList<Integer> return_id(String jsonstr){
-        ArrayList<Integer> id_list = new ArrayList<>();
-        try{
-            JSONArray jsonArray = new JSONArray(jsonstr);
-            for(int i=0;i<jsonArray.length();i++){
-                id_list.add(Integer.valueOf(jsonArray.opt(i).toString()));
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        return id_list;
-    }*/
-
-    /*
-    stopping using from 2021/1/15
-    public List<Map<String, Object>>  getSpanish(String jsonStr) {
-        wordList = new ArrayList<Map<String, Object>>();//保存商家数据的list容器对象
-        Map<String, Object> map = new HashMap<String, Object>();
-        List<String> shitai = new ArrayList<String>();
-        shitai.add("陈述式-现在时");
-        shitai.add("虚拟式-现在时");
-        shitai.add("陈述式-现在完成时");
-        shitai.add("虚拟式-现在完成时");
-        shitai.add("陈述式-将来完成时");
-        shitai.add("虚拟式-将来完成时");
-        shitai.add("陈述式-将来时");
-        shitai.add("虚拟式-将来时");
-        shitai.add("陈述式-过去未完成时");
-        shitai.add("虚拟式-过去未完成时A");
-        shitai.add("陈述式-简单过去时");
-        shitai.add("虚拟式-过去未完成时B");
-        shitai.add("陈述式-过去完成时");
-        shitai.add("虚拟式-过去完成时A");
-        shitai.add("陈述式-先过去时");
-        shitai.add("虚拟式-过去完成时B");
-        shitai.add("简单条件式");
-        shitai.add("复合条件式");
-        shitai.add("命令式-肯定时");
-        shitai.add("命令式-否定时");
-        try {
-            JSONArray  jsonArray=new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++)
-            {
-                //jsonArray.length()获取json中数组元素的个数
-                map = new HashMap<String, Object>();
-                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);//获取数组中第i个数组元素
-                String word = jsonObject.getString("word");
-                String va_b = jsonObject.getString("variable bit");
-                JSONObject variable_bit = new JSONObject(va_b);
-//                Log.i("variable_bit",variable_bit.toString());
-                Map<String, Object> v_bit = new HashMap<String, Object>();
-                for(int j=0;j<shitai.size();j++){
-                    String st = variable_bit.getString(shitai.get(j));
-                    Map<String, Object> six = new HashMap<String, Object>();
-                    JSONObject va_b2 = new JSONObject(st);
-                    six.put("yo",va_b2.get("yo"));
-                    six.put("tú",va_b2.get("tú"));
-                    six.put("él",va_b2.get("él"));
-                    six.put("nos.",va_b2.get("nos."));
-                    six.put("vos.",va_b2.get("vos."));
-                    six.put("ellos.",va_b2.get("ellos."));
-                    v_bit.put(shitai.get(j),six);
-                }
-                map.put("word",word);
-                map.put("va_b",v_bit);
-                wordList.add(map);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return wordList;
-    }*/
 }

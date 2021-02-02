@@ -91,7 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
         getImage(sp.getString("profile_photo",null));
-//        login();
         getUserDataForTradition();
         init();
     }
