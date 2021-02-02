@@ -130,6 +130,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 edit_data.put("attr","username");
                 edit_data.put("title","修改用户名");
                 edit_data.put("max_length",15);
+                edit_data.put("is_null",false);
+                edit_data.put("hint","昵称不能为空");
                 edit_data.put("content",nickname.getText());
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
@@ -139,7 +141,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 edit_data.put("attr","motto");
                 edit_data.put("title","修改个性签名");
                 edit_data.put("max_length",50);
-                edit_data.put("content",motto.getText());
+                edit_data.put("is_null",true);
+                edit_data.put("hint","为这里的荒凉增添生气");
+                if("你还没有设置个性签名".equals(motto.getText().toString())){
+                    edit_data.put("content","");
+                }else{
+                    edit_data.put("content",motto.getText());
+                }
                 show_edit_dialog(edit_data);
                 mHandler.obtainMessage(2).sendToTarget();
                 break;
@@ -244,7 +252,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void show_edit_dialog(HashMap<String,Object> data){
         EditDialog editDialog = new EditDialog(this,R.style.MyDialog,data);
         editDialog.setCancelable(false);
-        editDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(3).sendToTarget());
+        editDialog.setOnDismissListener(dialogInterface -> mHandler.sendEmptyMessage(3));
         editDialog.show();
     }
 

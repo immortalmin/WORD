@@ -39,6 +39,14 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         this.context=context;
     }
 
+    /**
+     * @param data
+     *      title:       标题
+     *      max_length:  最大长度
+     *      is_null:     是否可以为空
+     *      hint:        提示文
+     *      content:     初始内容
+    */
     public EditDialog(Context context, int themeResId,HashMap<String,Object> data) {
         super(context, themeResId);
         this.context = context;
@@ -55,12 +63,12 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.edit_dialog,null);
         listener = (EditDialog.OnDialogInteractionListener) context;//绑定回调函数的监听器
-        edit_title = (TextView)view.findViewById(R.id.edit_title);
-        stat_tv = (TextView)view.findViewById(R.id.stat_tv);
-        edit_et = (EditText)view.findViewById(R.id.edit_et);
-        confirm_btn = (Button)view.findViewById(R.id.confirm_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
-        clean_btn = (Button)view.findViewById(R.id.clean_btn);
+        edit_title = view.findViewById(R.id.edit_title);
+        stat_tv = view.findViewById(R.id.stat_tv);
+        edit_et = view.findViewById(R.id.edit_et);
+        confirm_btn = view.findViewById(R.id.confirm_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
+        clean_btn = view.findViewById(R.id.clean_btn);
 
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
@@ -106,7 +114,10 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.confirm_btn:
-                judge();
+                if("false".equals(data.get("is_null").toString())&&edit_et.getText().toString().length()==0){
+                    break;
+                }
+                commitData();
                 break;
             case R.id.cancel_btn:
                 dismiss();
@@ -117,7 +128,7 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    private void judge() {
+    private void commitData() {
         data.put("content",edit_et.getText().toString());
         dismiss();
         listener.EditInteraction(data);
@@ -130,19 +141,16 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             switch (message.what) {
                 case 0:
                     max_length = Integer.valueOf(data.get("max_length").toString());
-                    edit_et.setFilters(new InputFilter[]{new InputFilter() {
-                        // 这个方法，返回空字符串，就代表匹配不成功，返回null代表匹配成功
-                        @Override
-                        public CharSequence filter(CharSequence source, int start, int end,
-                                                   Spanned dest, int dstart, int dend) {
-                            // 获取字符个数(一个中文算2个字符)
-                            if (getTextLength(dest.toString()) + getTextLength(source.toString()) > max_length) {
-                                return "";
-                            }
-                            return null;
+                    // 这个方法，返回空字符串，就代表匹配不成功，返回null代表匹配成功
+                    edit_et.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+                        // 获取字符个数(一个中文算2个字符)
+                        if (getTextLength(dest.toString()) + getTextLength(source.toString()) > max_length) {
+                            return "";
                         }
+                        return null;
                     }});
                     edit_title.setText(data.get("title").toString());
+                    edit_et.setHint(data.get("hint").toString());
                     edit_et.setText(data.get("content").toString());
                     edit_et.setSelection(edit_et.getText().length());
                     break;

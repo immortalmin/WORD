@@ -76,8 +76,9 @@ public class ImageUtils {
         return bitmap;
     }
 
-    public static int calculateInSampleSize( //参2和3为ImageView期待的图片大小
-                                             BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+    //参2和3为ImageView期待的图片大小
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // 图片的实际大小
         final int height = options.outHeight;
         final int width = options.outWidth;

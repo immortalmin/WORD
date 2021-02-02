@@ -37,10 +37,10 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-        commit_feedback_btn = (Button)findViewById(R.id.commit_feedback_btn);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        feedback_tv = (TextView)findViewById(R.id.feedback_tv);
-        feedback_lv = (ListView) findViewById(R.id.feedback_lv);
+        commit_feedback_btn = findViewById(R.id.commit_feedback_btn);
+        return_btn = findViewById(R.id.return_btn);
+        feedback_tv = findViewById(R.id.feedback_tv);
+        feedback_lv = findViewById(R.id.feedback_lv);
         commit_feedback_btn.setOnClickListener(this);
         return_btn.setOnClickListener(this);
         feedback_tv.setOnClickListener(this);
@@ -59,9 +59,7 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.feedback_tv:
-//                Log.i("ccc","Product Model: " + android.os.Build.MODEL + ","
-//                        + android.os.Build.VERSION.SDK + ","
-//                        + android.os.Build.VERSION.RELEASE);
+
                 break;
         }
     }
@@ -92,16 +90,13 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         myAsyncTask.execute(jsonObject);
     }
 
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
+    private Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
 
-                    break;
-            }
-            return false;
+                break;
         }
+        return false;
     });
 
 

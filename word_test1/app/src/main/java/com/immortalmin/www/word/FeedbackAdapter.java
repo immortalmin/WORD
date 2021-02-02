@@ -33,15 +33,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FeedbackAdapter extends BaseAdapter {
 
     List<HashMap<String,Object>> mdata;
-    private LayoutInflater mInflater,img_inflater;//布局装载器对象
+    private LayoutInflater mInflater;
     private Context context;
 
     /*
     * convertView优化？
     * setTag和getTag?
-    *
     * */
-
     public FeedbackAdapter(Context context, List<HashMap<String,Object>> data) {
         this.mdata = data;
         this.context = context;
@@ -105,7 +103,11 @@ public class FeedbackAdapter extends BaseAdapter {
                 break;
         }
         //显示头像
-        getImage("http://47.98.239.237/word/img/profile/",mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo,1);
+        if("0".equals(mdata.get(position).get("login_mode").toString())){
+            getImage("http://47.98.239.237/word/img/profile/"+mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo,1);
+        }else{
+            getImage(mdata.get(position).get("profile_photo").toString(),viewHolder.profile_photo,1);
+        }
         String img_path = mdata.get(position).get("img_path").toString();
         if(!"null".equals(img_path)){
             //XXX:加载图片的代码写得有点土，似乎应该写成工具类？线程？
@@ -115,29 +117,21 @@ public class FeedbackAdapter extends BaseAdapter {
                 ImageView imageView = new ImageView(context);
                 LinearLayout.LayoutParams imageView_Params = new LinearLayout.LayoutParams(conversion(80), conversion(80));
                 imageView.setLayoutParams(imageView_Params);
-                getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageView,1);
+                getImage("http://47.98.239.237/word/img/feedback/"+image_show_path,imageView,1);
                 viewHolder.img_group.addView(imageView);
                 //XXX:因为会出现The specified child already has a parent.巴拉巴拉的问题，只能另外多弄个imageView用来放大显示
                 //不过因为listView中显示的时候是方形的，而放大的时候需要是原来的形状，所以也只能重新获取图片了，毕竟之前挖了点坑。
                 //我觉得应该上传图片的时候上传原图，下载的时候根据需求，可以下载压缩之后的图，方形的图，或者原图。
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Dialog imgDialog = new Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                        ImageView imageShow = new ImageView(context);
-                        imageShow.setBackgroundColor(Color.WHITE);
-                        getImage("http://47.98.239.237/word/img/feedback/",image_show_path,imageShow,0);
-                        imgDialog.setContentView(imageShow);
-                        Window window = imgDialog.getWindow();
-                        window.setWindowAnimations(R.style.myDialogStyle);
-                        imgDialog.show();
-                        imageShow.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                imgDialog.dismiss();
-                            }
-                        });
-                    }
+                imageView.setOnClickListener(view -> {
+                    Dialog imgDialog = new Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                    ImageView imageShow = new ImageView(context);
+                    imageShow.setBackgroundColor(Color.WHITE);
+                    getImage("http://47.98.239.237/word/img/feedback/"+image_show_path,imageShow,0);
+                    imgDialog.setContentView(imageShow);
+                    Window window = imgDialog.getWindow();
+                    window.setWindowAnimations(R.style.myDialogStyle);
+                    imgDialog.show();
+                    imageShow.setOnClickListener(view1 -> imgDialog.dismiss());
                 });
 
             }
@@ -154,40 +148,32 @@ public class FeedbackAdapter extends BaseAdapter {
     }
 
     /**
-     *
-     * @param url 图片下载地址    url:"http://47.98.239.237/word/img/feedback/"
-     * @param pic 图片名称
      * @param imageView 显示的ImageView
      * @param mode 0:不做处理； 1:方形
      */
-    private void getImage(String url,final String pic, ImageView imageView,int mode){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                Bitmap bitmap = httpGetContext.HttpclientGetImg(url+pic,mode);
-                HashMap<String,Object> img_data = new HashMap<>();
-                img_data.put("imageView",imageView);
-                img_data.put("bitmap",bitmap);
-                mHandler.obtainMessage(0,img_data).sendToTarget();
-            }
+    private void getImage(final String url, ImageView imageView,int mode){
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+
+            Bitmap bitmap = httpGetContext.HttpclientGetImg(url,mode);
+            HashMap<String,Object> img_data = new HashMap<>();
+            img_data.put("imageView",imageView);
+            img_data.put("bitmap",bitmap);
+            mHandler.obtainMessage(0,img_data).sendToTarget();
         }).start();
     }
 
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
-                    HashMap<String,Object> img_data = (HashMap<String,Object>)message.obj;
-                    ImageView imageView = (ImageView)img_data.get("imageView");
-                    Bitmap bitmap = (Bitmap)img_data.get("bitmap");
-                    imageView.setImageBitmap(bitmap);
-                    break;
+    private Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
+                HashMap<String,Object> img_data = (HashMap<String,Object>)message.obj;
+                ImageView imageView = (ImageView)img_data.get("imageView");
+                Bitmap bitmap = (Bitmap)img_data.get("bitmap");
+                imageView.setImageBitmap(bitmap);
+                break;
 
-            }
-            return false;
         }
+        return false;
     });
 
     private int conversion(int value){

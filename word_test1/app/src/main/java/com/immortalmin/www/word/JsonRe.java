@@ -26,6 +26,7 @@ public class JsonRe {
                 HashMap<String,Object> feedback = new HashMap<>();
                 feedback.put("fid",jsonObject.getString("fid"));
                 feedback.put("uid",jsonObject.getString("uid"));
+                feedback.put("login_mode",jsonObject.getString("login_mode"));
                 feedback.put("username",jsonObject.getString("username"));
                 feedback.put("profile_photo",jsonObject.getString("profile_photo"));
                 feedback.put("phone_model",jsonObject.getString("phone_model"));

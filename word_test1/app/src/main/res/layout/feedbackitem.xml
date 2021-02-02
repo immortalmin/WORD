@@ -13,7 +13,7 @@
             android:layout_height="30dp"
             app:civ_border_overlay="true"
             app:civ_fill_color="#bab3b3"
-            android:background="@drawable/trash_can"
+            android:background="@drawable/null_profile"
             />
         <TextView
             android:id="@+id/username"
