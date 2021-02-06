@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -124,6 +126,34 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         });
         myAsyncTask.execute(jsonObject);
     }
+
+    /**
+     * 缓存所有收藏的单词的音频
+     */
+    private void getAllAudio(){
+        for(int i=0;i<collect_list.size();i++){
+            DetailWord detailWord = collect_list.get(i);
+            int finalI = i;
+            new Thread(()->{
+                HttpGetContext httpGetContext = new HttpGetContext();
+                httpGetContext.saveMp3IntoSD(formatWord(detailWord.getWord_en()));
+                double percent =(double) finalI /(double)collect_list.size()*100.0;
+                Log.i("ccc",detailWord.getWord_en()+"下载完成，进度："+percent);
+            }).start();
+        }
+    }
+    public String formatWord(String word){
+        //XXX:末尾的sth没有成功替换成something
+        word = word.replaceAll("sb.","somebody").replaceAll("sb ","somebody ")
+                .replaceAll("sth.","something").replaceAll("sth ","something ")
+                .replaceAll("/"," or ");
+        //处理没有英文字母、数字的字符串
+        if(word.replaceAll("[^a-zA-Z0-9]","").length()==0){
+            word="nothing";
+        }
+        return word;
+    }
+
     private void get_amount() {
         new Thread(() -> {
             SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);

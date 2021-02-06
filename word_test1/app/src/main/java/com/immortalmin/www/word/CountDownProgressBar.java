@@ -314,14 +314,11 @@ public class CountDownProgressBar extends View {
             animator.cancel();
         } else {
             animator = ValueAnimator.ofInt(0, maxValue);
-            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    currentValue = (int) animation.getAnimatedValue();
-                    invalidate();
-                    if (maxValue == currentValue && CountDownProgressBar.this.listener != null) {
-                        CountDownProgressBar.this.listener.onFinish();
-                    }
+            animator.addUpdateListener(animation -> {
+                currentValue = (int) animation.getAnimatedValue();
+                invalidate();
+                if (maxValue == currentValue && CountDownProgressBar.this.listener != null) {
+                    CountDownProgressBar.this.listener.onFinish();
                 }
             });
         }

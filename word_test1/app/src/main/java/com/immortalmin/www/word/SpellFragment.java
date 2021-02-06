@@ -52,6 +52,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private int WrongTimes=0;//拼写错误的次数
     private Boolean isTyping = true;//是否在等待用户输入
     private Boolean userAns = true;//用户回答是否正确
+    private int duration;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
     @Override
@@ -152,7 +153,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                         soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
                         mHandler.obtainMessage(0).sendToTarget();
                         eword.setEnabled(false);
-                        scheduledThreadPool.schedule(music_delay,Math.max(mediaPlayerUtil.getDuration()+200,1000), TimeUnit.MILLISECONDS);
+                        scheduledThreadPool.schedule(music_delay,Math.max(duration+200,1000), TimeUnit.MILLISECONDS);
                     }else{
                         userAns = false;
                         WrongTimes++;
@@ -282,9 +283,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
         eword.setEnabled(true);
-        mediaPlayerUtil.reset(word_en,false);
+        mediaPlayerUtil.setFinishListener(() -> {
+            duration = mediaPlayerUtil.getDuration();
+        });
         mHandler.sendEmptyMessage(2);
         showInput(eword);
+        mediaPlayerUtil.reset(word_en,false);
     }
 
     /**

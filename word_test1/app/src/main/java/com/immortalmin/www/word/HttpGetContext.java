@@ -3,6 +3,7 @@ package com.immortalmin.www.word;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -28,8 +29,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,8 +41,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -87,6 +93,46 @@ public class HttpGetContext {
             Log.i("***httpclientgettext***","HttpClient执行异常应");
         }
         return result;
+    }
+
+    /**
+     * 获取网络音频，并保存到sd卡上
+     * @param word
+     * @return
+     */
+    public void saveMp3IntoSD(String word){
+        String filePath = Environment.getExternalStorageDirectory()+"/WORD/word-audio/";
+        File file = new File(filePath);
+        if(!file.exists()) file.mkdirs();
+        file = new File(filePath+word+".mp3");
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try{
+            URL url = new URL("http://dict.youdao.com/dictvoice?type=1&audio="+ URLEncoder.encode(word.toLowerCase()));
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.connect();
+            int contentLength = urlConnection.getContentLength();
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            OutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int count;
+            long total = 0;
+            while((count=inputStream.read(buffer))!=-1){
+                total += count;
+//                Log.i("ccc", String.format(Locale.CHINA, "Download progress: %.2f%%", 100 * (total / (double) contentLength)));//进度
+                outputStream.write(buffer,0,count);
+            }
+            outputStream.flush();
+            inputStream.close();
+            outputStream.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public static Bitmap getbitmap(String imageUri) {
@@ -231,7 +277,6 @@ public class HttpGetContext {
      * @param data 反馈数据
      * @param img_list 图片列表
      */
-
     int uploadFeedback(HashMap<String,Object> data, ArrayList<String> img_list){
         try{
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -280,7 +325,6 @@ public class HttpGetContext {
         }
         return feedback_res;
     }
-
 
     String userRegister(JSONObject jsonObject){
         String result = "";
@@ -351,4 +395,6 @@ public class HttpGetContext {
         }
         return result;
     }
+
+
 }

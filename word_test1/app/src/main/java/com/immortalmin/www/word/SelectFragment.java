@@ -51,6 +51,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     private int correct_sel = 0;//正确答案的下标
     private int user_sel;
     private float word_volume = 10f;//音频音量
+    private int duration;
 
     /**
      * Activity绑定上Fragment时，调用该方法
@@ -87,13 +88,13 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        sel1 = (Button)getActivity().findViewById(R.id.sel1);
-        sel2 = (Button)getActivity().findViewById(R.id.sel2);
-        sel3 = (Button)getActivity().findViewById(R.id.sel3);
-        sel4 = (Button)getActivity().findViewById(R.id.sel4);
-        sel5 = (Button)getActivity().findViewById(R.id.sel5);
-        wordview = (TextView) getActivity().findViewById(R.id.wordview);
-        word_times_pro = (ProgressBar) getActivity().findViewById(R.id.word_times_pro);
+        sel1 = getActivity().findViewById(R.id.sel1);
+        sel2 = getActivity().findViewById(R.id.sel2);
+        sel3 = getActivity().findViewById(R.id.sel3);
+        sel4 = getActivity().findViewById(R.id.sel4);
+        sel5 = getActivity().findViewById(R.id.sel5);
+        wordview = getActivity().findViewById(R.id.wordview);
+        word_times_pro = getActivity().findViewById(R.id.word_times_pro);
         sel1.setOnClickListener(this);
         sel2.setOnClickListener(this);
         sel3.setOnClickListener(this);
@@ -106,11 +107,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
 //        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
         sound_success = soundPool.load(getActivity(), R.raw.bubble, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.drums, 1);
-        resetColor = new Runnable(){
-            public void run(){
-                mHandler.obtainMessage(1).sendToTarget();
-            }
-        };
+        resetColor = () -> mHandler.obtainMessage(1).sendToTarget();
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -192,12 +189,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     public void judge_ring(){
         resetVolume();
         if(user_sel==correct_sel){
-            word_times_pro.post(new Runnable() {
-                @Override
-                public void run() {
-                    int pro_num = (Integer.valueOf(word_list.get("today_correct_times").toString())+1)*10/Integer.valueOf(word_list.get("c_times").toString());
-                    word_times_pro.setProgress(pro_num);
-                }
+            word_times_pro.post(() -> {
+                int pro_num = (Integer.valueOf(word_list.get("today_correct_times").toString())+1)*10/Integer.valueOf(word_list.get("c_times").toString());
+                word_times_pro.setProgress(pro_num);
             });
             soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
         }else{
@@ -249,12 +243,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
                     sel2.setText(sel2String.length()>=30?sel2String.substring(0,25)+"...":sel2String);
                     sel3.setText(sel3String.length()>=30?sel3String.substring(0,25)+"...":sel3String);
                     sel4.setText(sel4String.length()>=30?sel4String.substring(0,25)+"...":sel4String);
-                    word_times_pro.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int pro_num = Integer.valueOf(word_list.get("today_correct_times").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
-                            word_times_pro.setProgress(pro_num);
-                        }
+                    word_times_pro.post(() -> {
+                        int pro_num = Integer.valueOf(word_list.get("today_correct_times").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
+                        word_times_pro.setProgress(pro_num);
                     });
                     break;
                 case 1:
@@ -295,7 +286,9 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         living_flag = true;//激活按钮
         correct_sel = Integer.valueOf(words.get("correct_sel").toString());
         this.word_list = words;
+        mediaPlayerUtil.setFinishListener(() -> {
+            mHandler.obtainMessage(0).sendToTarget();
+        });
         mediaPlayerUtil.reset(words.get("wordview").toString(),true);
-        mHandler.obtainMessage(0).sendToTarget();
     }
 }

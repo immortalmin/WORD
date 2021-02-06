@@ -24,7 +24,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
 
     //线程任务完成监听器
     public interface isLoadDataListener {
-        public void loadComplete(String result);
+        void loadComplete(String result);
     }
 
     //设置监听器

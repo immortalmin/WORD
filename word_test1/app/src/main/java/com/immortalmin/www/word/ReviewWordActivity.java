@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -125,7 +126,7 @@ public class ReviewWordActivity extends AppCompatActivity
         }
         today_finish = review_list.get(current_ind).getToday_correct_times();
         mHandler.obtainMessage(0).sendToTarget();
-        hideInput();
+//        hideInput();
         switch(today_finish){
             case 0:
                 int countdown_mode = (int) (Math.random() * 3) + 1;
@@ -385,12 +386,9 @@ public class ReviewWordActivity extends AppCompatActivity
         if (WrongTimes == 0) {//一次就过
             finish_ind[current_ind] = 1;
             finish_num++;
-            total_progress.post(new Runnable() {
-                @Override
-                public void run() {
-                    int pro_num = finish_num * 100 / review_num;
-                    total_progress.setProgress(pro_num);
-                }
+            total_progress.post(() -> {
+                int pro_num = finish_num * 100 / review_num;
+                total_progress.setProgress(pro_num);
             });
             correct_word.setCorrect_times(co_times + 1);
             review_list.set(current_ind, correct_word);

@@ -136,6 +136,10 @@ public class WordView extends View {
 
     }
 
+    public String getmText(){
+        return this.mText;
+    }
+
     public void setmText(String mText) {
         this.mText = mText;
         mBound = new Rect();
