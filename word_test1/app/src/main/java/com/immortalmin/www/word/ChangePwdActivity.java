@@ -22,25 +22,20 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
 
     private Button return_btn,confirm_btn,SMS_btn;
     private MyEditText oldPwd_et,newPwd_et,confirmPwd_et;
-    private TextView oldPwd_warn,pwd_warn,confirm_warn;
     private User user;
     private DataUtil dataUtil;
     private MD5Utils md5Utils;
     private MyAsyncTask myAsyncTask;
-    private JsonRe jsonRe = new JsonRe();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_pwd);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        confirm_btn = (Button)findViewById(R.id.confirm_btn);
-        SMS_btn = (Button)findViewById(R.id.SMS_btn);
-        oldPwd_et = (MyEditText)findViewById(R.id.oldPwd_et);
-        newPwd_et = (MyEditText)findViewById(R.id.newPwd_et);
-        confirmPwd_et = (MyEditText)findViewById(R.id.confirmPwd_et);
-        oldPwd_warn = (TextView)findViewById(R.id.oldPwd_warn);
-        pwd_warn = (TextView)findViewById(R.id.pwd_warn);
-        confirm_warn = (TextView)findViewById(R.id.confirm_warn);
+        return_btn = findViewById(R.id.return_btn);
+        confirm_btn = findViewById(R.id.confirm_btn);
+        SMS_btn = findViewById(R.id.SMS_btn);
+        oldPwd_et = findViewById(R.id.oldPwd_et);
+        newPwd_et = findViewById(R.id.newPwd_et);
+        confirmPwd_et = findViewById(R.id.confirmPwd_et);
         return_btn.setOnClickListener(this);
         confirm_btn.setOnClickListener(this);
         SMS_btn.setOnClickListener(this);
@@ -109,7 +104,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",19);
-            jsonObject.put("telephone", user.getTelephone());
+            jsonObject.put("uid", user.getUid());
             jsonObject.put("pwd",md5Utils.getMD5Code(pwd));
         }catch (JSONException e){
             e.printStackTrace();
@@ -122,22 +117,19 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         myAsyncTask.execute(jsonObject);
     }
 
-    Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
-                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("status","0").putString("password",null).apply();
-                    Intent intent = new Intent(ChangePwdActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    break;
-            }
-            return false;
+    Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
+                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putInt("status",0).putString("password",null).apply();
+                Intent intent = new Intent(ChangePwdActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                break;
         }
+        return false;
     });
 
     public boolean isPassword(String password){

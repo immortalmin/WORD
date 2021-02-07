@@ -51,7 +51,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
-    private ImageUtils imageUtils = new ImageUtils();
     private MyAsyncTask myAsyncTask;
     private Intent intent;
     private Runnable toMain;
@@ -78,24 +77,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        int login_mode = sp.getInt("login_mode",0);
-        if (login_mode == 0) {
-            username_et.setText(sp.getString("username", null));
-            if(sp.getString("password", null)!=null){
-                password_et.setText("********");
-                canDirectLogin = true;
-            } else{
-                password_et.setText("");
-                canDirectLogin = false;
-            }
-        }
-        getImage(sp.getString("profile_photo",null));
-        getUserDataForTradition();
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        int login_mode = sp.getInt("login_mode",0);
+//        if (login_mode == 0) {
+//            username_et.setText(sp.getString("username", null));
+//            if(sp.getString("password", null)!=null){
+//                password_et.setText("********");
+//                canDirectLogin = true;
+//            } else{
+//                password_et.setText("");
+//                canDirectLogin = false;
+//            }
+//        }
+//        getImage(sp.getString("profile_photo",null));
+//        setImage(sp.getString("uid",null)+".jpg");
+//        getUserDataForTradition();
         init();
     }
 
     private void init() {
+        initUser();
         toMain = () -> {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             LoginActivity.this.finish();
@@ -142,6 +143,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 canDirectLogin = false;
             }
         });
+
+    }
+
+    /**
+     * 从SharedPreferences文件中获取用户数据
+     */
+    private void initUser() {
+        user = new User();
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        user.setUid(sp.getString("uid",null));
+        user.setUsername(sp.getString("username",null));
+        user.setPassword(sp.getString("password",null));
+        user.setLogin_mode(sp.getInt("login_mode",0));
+        user.setLast_login(sp.getLong("last_login",0L));
+        user.setMotto(sp.getString("motto",null));
+        user.setStatus(sp.getInt("status",0));
+        user.setProfile_photo(sp.getString("profile_photo",null));
+
+        if (user.getLogin_mode() == 0) {
+            username_et.setText(user.getUsername());
+            if(user.getPassword()!=null){
+                password_et.setText("********");
+                canDirectLogin = true;
+            } else{
+                password_et.setText("");
+                canDirectLogin = false;
+            }
+            getUserDataForTradition();
+        }
+        //设置用户头像
+        setImage(user.getUid()+".jpg");
     }
 
     public void onClick(View view) {
@@ -355,7 +387,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setImage(String pic) {
-        Bitmap bitmap=imageUtils.getPhotoFromStorage(pic);
+        Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);
         if(bitmap==null){
             getImage(pic);
         }else{
@@ -366,7 +398,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void getImage(final String pic){
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
-            Bitmap bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+            Bitmap bitmap = null;
+            if(user.getLogin_mode()==0){
+                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+            }else{
+                bitmap = HttpGetContext.getbitmap(user.getProfile_photo());
+            }
             ImageUtils.savePhotoToStorage(bitmap,pic);
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }).start();

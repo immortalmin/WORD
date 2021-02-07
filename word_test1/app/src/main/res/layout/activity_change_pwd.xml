@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/launch2"
     tools:context=".ChangePwdActivity">
 
     <Button
@@ -37,7 +36,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:background="#00000000"
-        android:text="短信验证▶"
+        android:text="短信验证"
+        android:drawableRight="@drawable/right_arrow1"
         android:textSize="16sp"
         android:textColor="#0C0C0C"
         />
@@ -55,73 +55,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:hint="old password"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:hint="原密码"
+            android:textSize="16sp"
             app:DisplayStyle="0"
-            app:TextType="0"
-            />
-
-        <TextView
-            android:id="@+id/oldPwd_warn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/oldPwd_et"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="2dp"
-            android:visibility="invisible"
-            android:text="密码错误"
-            android:textColor="#f70606"
+            app:TextType="2"
             />
 
         <com.immortalmin.www.word.MyEditText
             android:id="@+id/newPwd_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:layout_below="@+id/oldPwd_et"
-            android:hint="new password"
+            android:hint="新密码"
+            android:textSize="16sp"
             app:DisplayStyle="0"
-            app:TextType="0"
-            />
-
-        <TextView
-            android:id="@+id/pwd_warn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/newPwd_et"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="2dp"
-            android:visibility="invisible"
-            android:text="6-16位数字字母混合,首位不能为数字"
-            android:textColor="#f70606"
+            app:TextType="2"
             />
 
         <com.immortalmin.www.word.MyEditText
             android:id="@+id/confirmPwd_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:layout_below="@+id/newPwd_et"
-            android:hint="confirm password"
+            android:hint="确认密码"
+            android:textSize="16sp"
             app:DisplayStyle="0"
-            app:TextType="0"
-            />
-
-        <TextView
-            android:id="@+id/confirm_warn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/confirmPwd_et"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="2dp"
-            android:visibility="invisible"
-            android:text="密码不一致"
-            android:textColor="#f70606"
+            app:TextType="2"
             />
 
         <Button
@@ -129,14 +96,13 @@
             android:layout_width="140dp"
             android:layout_height="40dp"
             android:layout_below="@+id/confirmPwd_et"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="20dp"
             android:layout_centerHorizontal="true"
             android:background="@drawable/login_btn"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:text="Confirm" />
+            android:text="确定" />
     </RelativeLayout>
-
-
 
 </RelativeLayout>

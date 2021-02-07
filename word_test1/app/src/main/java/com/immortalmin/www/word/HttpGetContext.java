@@ -67,9 +67,6 @@ import okhttp3.ResponseBody;
  * */
 public class HttpGetContext {
     private static int feedback_res = -1;
-    private JsonRe jsonRe = new JsonRe();
-    private ImageUtils imageUtils = new ImageUtils();
-    private String res="";//XXX:不用全局变量没法返回得到的字符串
 
     String httpclientgettext(String url) {
         String result="";
@@ -141,7 +138,6 @@ public class HttpGetContext {
         try {
             URL url = new URL(imageUri);
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoInput(true);
             urlConnection.connect();
             InputStream is = urlConnection.getInputStream();
             bitmap = BitmapFactory.decodeStream(is);

@@ -405,7 +405,7 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             word = jsonRe.wordData(result);
-            mHandler.obtainMessage(4).sendToTarget();
+            mHandler.sendEmptyMessage(4);
         });
         myAsyncTask.execute(jsonObject);
     }

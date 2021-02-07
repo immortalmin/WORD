@@ -49,7 +49,7 @@ public class MediaPlayerUtil {
                 mediaPlayer.setDataSource(filePath);
                 mediaPlayer.prepare();
                 if(playFlag) mediaPlayer.start();
-                finishListener.finish();
+                if(finishListener!=null) finishListener.finish();
             }else{//如果不存在，就先下载网络音频，再从sd卡中读取音频
                 String finalWord = word;
                 new Thread(()->{
@@ -59,7 +59,7 @@ public class MediaPlayerUtil {
                         mediaPlayer.setDataSource(filePath);
                         mediaPlayer.prepare();
                         if(playFlag) mediaPlayer.start();
-                        finishListener.finish();
+                        if(finishListener!=null) finishListener.finish();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
