@@ -101,7 +101,6 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
     }
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void addExampleInteraction(JSONObject jsonObject);
     }
 

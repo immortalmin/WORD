@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static android.content.Context.AUDIO_SERVICE;
 
 public class SelectFragment extends Fragment implements View.OnClickListener{
-    private final static String TAG = "SelectFragment";
+
     private OnFragmentInteractionListener mListener;
     private MediaPlayerUtil mediaPlayerUtil;
     private AudioManager audioManager;//音量调整器
@@ -40,24 +40,15 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
     private SoundPool soundPool;
     private int sound_success,sound_fail;
     Runnable resetColor;
-//    private String word,res;
     private Button sel1,sel2,sel3,sel4,sel5;
     private TextView wordview;
     private ProgressBar word_times_pro;
     private HashMap<String, Object> word_list = new HashMap<String, Object>();
     Boolean living_flag=true;
-    Boolean pron_lock = false;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private int correct_sel = 0;//正确答案的下标
     private int user_sel;
-    private float word_volume = 10f;//音频音量
-    private int duration;
 
-    /**
-     * Activity绑定上Fragment时，调用该方法
-     * 这个是第一次被调用的
-     * @param context
-     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -70,19 +61,10 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    /**
-     * Fragment显示的内容是怎样的，就是通过下面这个方法返回回去的(view)
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.activity_select,null);
-        Log.d(TAG,"onCreateView");
-        return view;
+        return inflater.inflate(R.layout.activity_select,null);
     }
 
     @Override
@@ -110,7 +92,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         resetColor = () -> mHandler.obtainMessage(1).sendToTarget();
     }
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void selectonFragmentInteraction(HashMap<String,Object> res);
     }
 
@@ -204,7 +185,6 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
      * 正确选项发绿
      */
     public void correct_shine(){
-//        today_finish --;
         if(correct_sel == 0){
             sel1.setBackgroundResource(R.drawable.rounded_corners_green);
         }else if (correct_sel == 1){
@@ -266,7 +246,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         mediaPlayerUtil.stop();
         if (mListener != null) {
             HashMap<String,Object> res = new HashMap<String,Object>();
-            if(ans==-1){//select unknown
+            if(ans==-1){//unknown
                 res.put("judge",3);
                 res.put("correct_sel",correct_sel);
             }else if(ans==correct_sel){//correct

@@ -1,7 +1,6 @@
 package com.immortalmin.www.word;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * 柯林斯词典的item类
@@ -17,7 +16,7 @@ public class KelinsiItem {
     private ArrayList<String> en_tips = null;
     private ArrayList<KelinsiSentence> sentences = null;//例句
 
-    public KelinsiItem(){}
+    KelinsiItem(){}
 
     public KelinsiItem(String iid, String number, String label, String word_ch, String explanation, String gram, String wid, ArrayList<String> en_tips, ArrayList<KelinsiSentence> sentences) {
         this.iid = iid;
@@ -35,23 +34,23 @@ public class KelinsiItem {
         return iid;
     }
 
-    public void setIid(String iid) {
+    void setIid(String iid) {
         this.iid = iid;
     }
 
-    public String getNumber() {
+    String getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    void setNumber(String number) {
         this.number = number;
     }
 
-    public String getLabel() {
+    String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 
@@ -63,19 +62,19 @@ public class KelinsiItem {
         this.word_ch = word_ch;
     }
 
-    public String getExplanation() {
+    String getExplanation() {
         return explanation;
     }
 
-    public void setExplanation(String explanation) {
+    void setExplanation(String explanation) {
         this.explanation = explanation;
     }
 
-    public String getGram() {
+    String getGram() {
         return gram;
     }
 
-    public void setGram(String gram) {
+    void setGram(String gram) {
         this.gram = gram;
     }
 
@@ -91,15 +90,15 @@ public class KelinsiItem {
         return en_tips;
     }
 
-    public void setEn_tips(ArrayList<String> en_tips) {
+    void setEn_tips(ArrayList<String> en_tips) {
         this.en_tips = en_tips;
     }
 
-    public ArrayList<KelinsiSentence> getSentences() {
+    ArrayList<KelinsiSentence> getSentences() {
         return sentences;
     }
 
-    public void setSentences(ArrayList<KelinsiSentence> sentences) {
+    void setSentences(ArrayList<KelinsiSentence> sentences) {
         this.sentences = sentences;
     }
 

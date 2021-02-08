@@ -96,7 +96,6 @@ public class ImgTipDialog extends Dialog implements View.OnClickListener {
 
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void ImgTipInteraction(int res);
     }
 

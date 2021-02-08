@@ -1,7 +1,6 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +8,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.os.Handler;
-import android.os.Message;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ExampleAdapter extends BaseAdapter {
 
-    ArrayList<OtherSentence> mdata;
+    private ArrayList<OtherSentence> mdata;
     private LayoutInflater mInflater;//布局装载器对象
     private onItemListener mOnItemListener;
     private int mode = 0;//0 view,1 edit
@@ -37,12 +30,12 @@ public class ExampleAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.exampleitem,null);
-        word_meaning = (TextView)v.findViewById(R.id.word_meaning);
-        E_sentence = (TextView)v.findViewById(R.id.E_sentence);
-        C_translate = (TextView)v.findViewById(R.id.C_translate);
-        source = (TextView)v.findViewById(R.id.source);
-        del_btn = (Button)v.findViewById(R.id.example_del_btn);
-        edit_btn = (Button)v.findViewById(R.id.example_edit_btn);
+        word_meaning = v.findViewById(R.id.word_meaning);
+        E_sentence = v.findViewById(R.id.E_sentence);
+        C_translate = v.findViewById(R.id.C_translate);
+        source = v.findViewById(R.id.source);
+        del_btn = v.findViewById(R.id.example_del_btn);
+        edit_btn = v.findViewById(R.id.example_edit_btn);
 
         try{
             if(mode==1&&mdata.get(position).getSource().equals(username)){
@@ -55,24 +48,12 @@ public class ExampleAdapter extends BaseAdapter {
         }catch (NullPointerException e){
             Log.i("ccc",mdata.toString());
         }
-
-//        word_meaning.setText(mdata.get(position).get("word_meaning").toString());
         word_meaning.setText(mdata.get(position).getWord_meaning());
         E_sentence.setText(mdata.get(position).getSentence_en());
         C_translate.setText(mdata.get(position).getSentence_ch());
         source.setText("——由"+mdata.get(position).getSource()+"添加");
-        del_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mOnItemListener.onDeleteClick(position);
-            }
-        });
-        edit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mOnItemListener.onEditClick(position);
-            }
-        });
+        del_btn.setOnClickListener(view -> mOnItemListener.onDeleteClick(position));
+        edit_btn.setOnClickListener(view -> mOnItemListener.onEditClick(position));
         return v;
     }
 
@@ -85,41 +66,35 @@ public class ExampleAdapter extends BaseAdapter {
         this.mode = mode;
     }
 
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
-
-                    break;
-            }
-            return false;
-        }
-    });
+//    private Handler mHandler = new Handler(message -> {
+//        switch (message.what){
+//            case 0:
+//
+//                break;
+//        }
+//        return false;
+//    });
 
     public interface onItemListener {
         void onDeleteClick(int i);
         void onEditClick(int i);
     }
 
-    public void setOnItemClickListener(onItemListener mOnItemListener) {
+    void setOnItemClickListener(onItemListener mOnItemListener) {
         this.mOnItemListener = mOnItemListener;
     }
 
     @Override
-    //ListView需要显示的数据数量
     public int getCount() {
         return mdata.size();
     }
 
     @Override
-    //指定的索引对应的数据项
     public Object getItem(int position) {
         return mdata.get(position);
     }
 
     @Override
-    //指定的索引对应的数据项ID
     public long getItemId(int position) {
         return position;
     }

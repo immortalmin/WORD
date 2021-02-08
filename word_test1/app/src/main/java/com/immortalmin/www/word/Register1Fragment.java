@@ -67,7 +67,7 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
 
 
     public Register1Fragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -241,21 +241,6 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
                     imgview.setVisibility(View.INVISIBLE);
                     break;
             }
-
-//            int event = message.arg1;
-//            int result = message.arg2;
-//            Object data = message.obj;
-//            if (result == SMSSDK.RESULT_COMPLETE) {
-//                // 处理成功的结果
-//                HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
-//                // 国家代码，如“86”
-//                String country = (String) phoneMap.get("country");
-//                // 手机号码，如“13800138000”
-//                String phone = (String) phoneMap.get("phone");
-//                // TODO 利用国家代码和手机号码进行后续的操作
-//            } else{
-//                // TODO 处理错误的结果
-//            }
             return false;
         }
     });
@@ -302,7 +287,6 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
             case R.id.notBindingBtn:
                 mHandler.sendEmptyMessage(2);
                 notBindingWarn.show();
-//                mListener.Register1FragmentInteraction(1);
                 break;
             case R.id.otherWaysBtn:
                 mListener.Register1FragmentInteraction(2);
@@ -321,6 +305,7 @@ public class Register1Fragment extends Fragment implements View.OnClickListener 
      */
     public static boolean isChinaPhoneLegal(String str) throws PatternSyntaxException {
         String regExp = "^((13[0-9])|(15[^4])|(18[0-9])|(17[0-8])|(147,145))\\d{8}$";
+//        ^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$//还没试过，可能可以
         Pattern p = Pattern.compile(regExp);
         Matcher m = p.matcher(str);
         return m.matches();

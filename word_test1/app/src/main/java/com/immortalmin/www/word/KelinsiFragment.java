@@ -59,7 +59,6 @@ public class KelinsiFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void kelinsiFragmentInteraction(String res);
     }
 

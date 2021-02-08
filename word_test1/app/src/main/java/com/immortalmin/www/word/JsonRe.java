@@ -14,7 +14,7 @@ public class JsonRe {
     /**
      * 获取用户反馈的数据
      */
-    public ArrayList<HashMap<String,Object>> feedbackData(String jsonStr){
+    ArrayList<HashMap<String,Object>> feedbackData(String jsonStr){
         ArrayList<HashMap<String,Object>> feedbackList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -44,7 +44,7 @@ public class JsonRe {
     /**
      * 获取用户收藏的单词数和掌握的单词数
      */
-    public HashMap<String,Object> getCount(String jsonStr){
+    HashMap<String,Object> getCount(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -60,7 +60,7 @@ public class JsonRe {
     /**
      * 恋练有词及用户添加的单词（不包含单词来源）
      */
-    public ArrayList<DetailWord> detailWordData(String jsonStr){
+    ArrayList<DetailWord> detailWordData(String jsonStr){
         ArrayList<DetailWord> words = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -88,7 +88,7 @@ public class JsonRe {
     /**
      * 恋练有词及用户添加的单词（包含单词来源）
      */
-    public DetailWord wordData(String jsonStr){
+    DetailWord wordData(String jsonStr){
         DetailWord word = new DetailWord();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -113,7 +113,7 @@ public class JsonRe {
     /**
      * 柯林斯词典
      */
-    public KelinsiWord kelinsiWordData(String jsonStr){
+    KelinsiWord kelinsiWordData(String jsonStr){
         KelinsiWord kelinsiWord = new KelinsiWord();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -161,7 +161,7 @@ public class JsonRe {
     /**
      * 例句
      */
-    public ArrayList<OtherSentence> exampleData(String jsonStr){
+    ArrayList<OtherSentence> exampleData(String jsonStr){
         ArrayList<OtherSentence> sentences = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -225,7 +225,7 @@ public class JsonRe {
     /**
      * 用户设置
      */
-    public HashMap<String,Object> userSetting(String jsonStr){
+    HashMap<String,Object> userSetting(String jsonStr){
         HashMap<String,Object> word = new HashMap<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
@@ -242,8 +242,8 @@ public class JsonRe {
     /**
      * 用户使用时间
      */
-    public ArrayList<Integer> useTimeData(String jsonStr){
-        ArrayList<Integer> useTime = new ArrayList<Integer>();
+    ArrayList<Integer> useTimeData(String jsonStr){
+        ArrayList<Integer> useTime = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             for(int i=0;i<jsonArray.length();i++){

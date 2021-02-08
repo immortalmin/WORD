@@ -63,25 +63,25 @@ public class ExampleActivity extends AppCompatActivity implements
     private int fragment_mode=0;//0:example  1:kelinsi
     private String current_word="error",wid = "100",dict_source="0";
     private boolean first_coming = true;
-    private int collect_flag = 0, del_id = 1;
+    private int collect_flag = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
-        example_btn = (Button)findViewById(R.id.example_btn);
-        kelinsi_btn = (Button)findViewById(R.id.kelinsi_btn);
-        edit_btn = (Button)findViewById(R.id.edit_btn);
-        word_del_btn = (Button)findViewById(R.id.word_del_btn);
-        word_edit_btn = (Button)findViewById(R.id.word_edit_btn);
-        ban_icon = (Button)findViewById(R.id.ban_icon);
-        collect = (Button)findViewById(R.id.collect);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        backdrop = (ImageView)findViewById(R.id.backdrop);
-        word_en = (WordView)findViewById(R.id.word_en);
-        word_ch = (TextView) findViewById(R.id.word_ch);
-        source = (TextView) findViewById(R.id.source);
+        example_btn = findViewById(R.id.example_btn);
+        kelinsi_btn = findViewById(R.id.kelinsi_btn);
+        edit_btn = findViewById(R.id.edit_btn);
+        word_del_btn = findViewById(R.id.word_del_btn);
+        word_edit_btn = findViewById(R.id.word_edit_btn);
+        ban_icon = findViewById(R.id.ban_icon);
+        collect = findViewById(R.id.collect);
+        return_btn = findViewById(R.id.return_btn);
+        backdrop = findViewById(R.id.backdrop);
+        word_en = findViewById(R.id.word_en);
+        word_ch = findViewById(R.id.word_ch);
+        source = findViewById(R.id.source);
         example_btn.setOnClickListener(this);
         kelinsi_btn.setOnClickListener(this);
         edit_btn.setOnClickListener(this);
@@ -248,7 +248,6 @@ public class ExampleActivity extends AppCompatActivity implements
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
                         collect.setBackground(drawable);
                     }
-                    //set music of word
                     current_word = word.getWord_en();
                     if(first_coming){
                         mediaPlayerUtil.reset(current_word,true);
@@ -361,8 +360,7 @@ public class ExampleActivity extends AppCompatActivity implements
 
 
     /**
-     * 0:取消收藏；1:添加收藏
-     * @param sel
+     * @param sel 0:取消收藏；1:添加收藏
      */
     private void updateCollect(int sel){
         JSONObject jsonObject = new JSONObject();
@@ -484,12 +482,6 @@ public class ExampleActivity extends AppCompatActivity implements
         updateWord(jsonObject);
     }
 
-    /**
-     * 回车键事件
-     * @param keyCode
-     * @param event
-     * @return
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {

@@ -56,7 +56,7 @@ public class SMSVerificationActivity extends AppCompatActivity implements View.O
         eventHandler=new EventHandler(){
             @Override
             public void afterEvent(int event, int result, Object data) {
-                // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
+                //此处不可直接处理UI线程，处理后续操作需传到主线程中操作
                 if (result == SMSSDK.RESULT_COMPLETE){
                     //回调完成
                     if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
@@ -79,13 +79,13 @@ public class SMSVerificationActivity extends AppCompatActivity implements View.O
                             mHandler.obtainMessage(1).sendToTarget();
                         });
                     }else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES){
-                        Log.i("test","test");
+
                     }
                 }else{
                     ((Throwable)data).printStackTrace();
                     Throwable throwable = (Throwable) data;
                     throwable.printStackTrace();
-                    Log.i("ccc",throwable.toString());
+//                    Log.i("ccc",throwable.toString());
                     try {
                         JSONObject obj = new JSONObject(throwable.getMessage());
                         final String des = obj.optString("detail");

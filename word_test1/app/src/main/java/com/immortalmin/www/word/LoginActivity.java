@@ -77,21 +77,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
-//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        int login_mode = sp.getInt("login_mode",0);
-//        if (login_mode == 0) {
-//            username_et.setText(sp.getString("username", null));
-//            if(sp.getString("password", null)!=null){
-//                password_et.setText("********");
-//                canDirectLogin = true;
-//            } else{
-//                password_et.setText("");
-//                canDirectLogin = false;
-//            }
-//        }
-//        getImage(sp.getString("profile_photo",null));
-//        setImage(sp.getString("uid",null)+".jpg");
-//        getUserDataForTradition();
         init();
     }
 
@@ -117,7 +102,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void afterTextChanged(Editable editable) {
                 if(canDirectLogin) password_et.setText("");
                 canDirectLogin = false;
-//                login();
                 getUserDataForTradition();
             }
         });
@@ -437,7 +421,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 1) {
             assert data != null;
-//            username_et.setText(Objects.requireNonNull(data.getExtras()).getString("username"));
             User u = (User)(Objects.requireNonNull(data.getExtras()).get("user"));
             assert u != null;
             username_et.setText(u.getUsername());

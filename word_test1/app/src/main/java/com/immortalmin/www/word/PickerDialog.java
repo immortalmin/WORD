@@ -53,9 +53,9 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.wheelpicker,null);
         listener = (PickerDialog.OnDialogInteractionListener) context;//绑定回调函数的监听器
-        wheelpicker = (WheelPicker)view.findViewById(R.id.wheelpicker);
-        confirm_btn = (Button)view.findViewById(R.id.confirm_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
+        wheelpicker = view.findViewById(R.id.wheelpicker);
+        confirm_btn = view.findViewById(R.id.confirm_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
         wheelpicker.setDataList(data);
@@ -65,7 +65,6 @@ public class PickerDialog extends Dialog implements View.OnClickListener {
 
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void PickerInteraction(JSONObject ret);
     }
 

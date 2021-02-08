@@ -30,12 +30,12 @@ public class KelinsiAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.kelinsiitem,null);
-        number = (TextView)v.findViewById(R.id.number);
-        label = (TextView)v.findViewById(R.id.label);
-        word_ch = (TextView)v.findViewById(R.id.word_ch);
-        explanation = (TextView)v.findViewById(R.id.explanation);
-        gram = (TextView)v.findViewById(R.id.gram);
-        sentences_listview = (MyListView)v.findViewById(R.id.sentences_listview);
+        number = v.findViewById(R.id.number);
+        label = v.findViewById(R.id.label);
+        word_ch = v.findViewById(R.id.word_ch);
+        explanation = v.findViewById(R.id.explanation);
+        gram = v.findViewById(R.id.gram);
+        sentences_listview = v.findViewById(R.id.sentences_listview);
         number.setText(mdata.get(position).getNumber());
         label.setText(mdata.get(position).getLabel());
         word_ch.setText(mdata.get(position).getWord_ch());
@@ -47,32 +47,26 @@ public class KelinsiAdapter extends BaseAdapter {
     }
 
 
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
-
-                    break;
-            }
-            return false;
-        }
-    });
+//    private Handler mHandler = new Handler(message -> {
+//        switch (message.what){
+//            case 0:
+//
+//                break;
+//        }
+//        return false;
+//    });
 
     @Override
-    //ListView需要显示的数据数量
     public int getCount() {
         return mdata.size();
     }
 
     @Override
-    //指定的索引对应的数据项
     public Object getItem(int position) {
         return mdata.get(position);
     }
 
     @Override
-    //指定的索引对应的数据项ID
     public long getItemId(int position) {
         return position;
     }

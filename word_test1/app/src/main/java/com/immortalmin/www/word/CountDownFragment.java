@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.AUDIO_SERVICE;
 
-//XXX:发音逻辑有点混乱，之后记得重写
 public class CountDownFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
@@ -73,8 +72,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.activity_countdown,null);
-        return view;
+        return inflater.inflate(R.layout.activity_countdown,null);
     }
 
     @Override
@@ -100,7 +98,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void countdownonFragmentInteraction(HashMap<String,Object> res);
     }
 

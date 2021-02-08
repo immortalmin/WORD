@@ -1,27 +1,18 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FeedbackActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -90,21 +81,19 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         myAsyncTask.execute(jsonObject);
     }
 
-    private Handler mHandler = new Handler(message -> {
-        switch (message.what){
-            case 0:
-
-                break;
-        }
-        return false;
-    });
+//    private Handler mHandler = new Handler(message -> {
+//        switch (message.what){
+//            case 0:
+//
+//                break;
+//        }
+//        return false;
+//    });
 
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//            Intent intent = new Intent();
-//            setResult(1,intent);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             return false;

@@ -179,7 +179,6 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     }
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void EditInteraction(HashMap<String,Object> res);
     }
 

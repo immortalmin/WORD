@@ -68,29 +68,29 @@ import okhttp3.ResponseBody;
 public class HttpGetContext {
     private static int feedback_res = -1;
 
-    String httpclientgettext(String url) {
-        String result="";
-
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse response = httpClient.execute(httpGet);
-            if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                // 使用utf-8参数保证从网页获取的内容中文能正常显示
-                result = EntityUtils.toString(entity, "utf-8");
-                //去除返回文本消息中的换行回车字符
-                result = result.replace("\r\n", "");
-              //  mHandler.obtainMessage(1,result).sendToTarget();
-            } else {
-                Log.i("***httpclientgettext***","服务器未响应");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.i("***httpclientgettext***","HttpClient执行异常应");
-        }
-        return result;
-    }
+//    String httpclientgettext(String url) {
+//        String result="";
+//
+//        try {
+//            HttpClient httpClient = new DefaultHttpClient();
+//            HttpGet httpGet = new HttpGet(url);
+//            HttpResponse response = httpClient.execute(httpGet);
+//            if (response.getStatusLine().getStatusCode() == 200) {
+//                HttpEntity entity = response.getEntity();
+//                // 使用utf-8参数保证从网页获取的内容中文能正常显示
+//                result = EntityUtils.toString(entity, "utf-8");
+//                //去除返回文本消息中的换行回车字符
+//                result = result.replace("\r\n", "");
+//              //  mHandler.obtainMessage(1,result).sendToTarget();
+//            } else {
+//                Log.i("***httpclientgettext***","服务器未响应");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.i("***httpclientgettext***","HttpClient执行异常应");
+//        }
+//        return result;
+//    }
 
     /**
      * 获取网络音频，并保存到sd卡上
@@ -307,12 +307,10 @@ public class HttpGetContext {
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
-                        Log.i("ccc","upload feedback success");
                         feedback_res = 1;
                         ResponseBody responseBody = response.body();
                         assert responseBody != null;
-                        String res = responseBody.string();
-                        Log.i("ccc",res);
+//                        String res = responseBody.string();
                     }
                 }
             });

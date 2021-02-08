@@ -46,12 +46,11 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.update_example,null);
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-        word_en = (MyEditText)view.findViewById(R.id.word_en);
-        E_sentence = (MyEditText)view.findViewById(R.id.E_sentence);
-        C_translate = (MyEditText)view.findViewById(R.id.C_translate);
-        commit_btn = (Button)view.findViewById(R.id.commit_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
-
+        word_en = view.findViewById(R.id.word_en);
+        E_sentence = view.findViewById(R.id.E_sentence);
+        C_translate = view.findViewById(R.id.C_translate);
+        commit_btn = view.findViewById(R.id.commit_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
 
@@ -78,7 +77,6 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
 
 
     public interface OnDialogInteractionListener {
-        // TODO: Update argument type and name
         void updateExampleInteraction(JSONObject jsonObject);
     }
 
@@ -97,13 +95,9 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
                     dismiss();
                 }
                 break;
-
-            default:
-//                dismiss();
         }
 
     }
-
 
 
     private boolean judge(){
@@ -118,9 +112,6 @@ public class UpdateExampleDialog extends Dialog implements View.OnClickListener{
         return true;
     }
 
-    /**
-     * pack date
-     */
     private void pack_data(){
         JSONObject jsonObject = new JSONObject();
         try{

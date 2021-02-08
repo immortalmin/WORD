@@ -7,7 +7,7 @@ public class KelinsiSentence extends ExampleSentence {
     private String sid;//例句id
     private String iid;//对应item的id
 
-    public KelinsiSentence(){}
+    KelinsiSentence(){}
 
     public KelinsiSentence(String sid,String iid,String sentence_en, String sentence_ch) {
         super(sentence_en, sentence_ch);
@@ -19,7 +19,7 @@ public class KelinsiSentence extends ExampleSentence {
         return sid;
     }
 
-    public void setSid(String sid) {
+    void setSid(String sid) {
         this.sid = sid;
     }
 

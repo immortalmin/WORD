@@ -91,7 +91,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void exampleFragmentInteraction(String res);
     }
 

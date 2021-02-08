@@ -13,13 +13,12 @@ import org.json.JSONObject;
  */
 class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
 
-    private JsonRe jsonRe = new JsonRe();
     private isLoadDataListener loadDataListener;
 
     // 作用：执行线程任务前的操作
     @Override
     protected void onPreExecute() {
-//        Log.i("ccc","onPreExecute");
+
     }
 
     //线程任务完成监听器
@@ -75,7 +74,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  101:register        注册
      *
      * @param params
-     * @return
+     * @return 返回获取的JSON字符串
      */
     @Override
     protected String doInBackground(JSONObject... params) {
@@ -101,41 +100,29 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
             jsonStr = httpGetContext.userRegister(params[0]);
         }
 
-//        String word = jsonRe.wordData(wordjson).toString();
         // 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）
 //        publishProgress(30);
         return jsonStr;
     }
 
-    // 方法3：onProgressUpdate（）
     // 作用：在主线程 显示线程任务执行的进度
     @Override
     protected void onProgressUpdate(Integer... progresses) {
-//        Log.i("ccc","onProgressUpdate:"+progresses[0]);
 //        progressBar.setProgress(progresses[0]);
-//        text.setText("loading..." + progresses[0] + "%");
 
     }
 
-    // 方法4：onPostExecute（）
     // 作用：接收线程任务执行结果、将执行结果显示到UI组件
     @Override
     protected void onPostExecute(String result) {
-//        Log.i("ccc","onPostExecute");
-//        Log.i("ccc","result:"+result);
         if(loadDataListener != null){
             loadDataListener.loadComplete(result);
         }
-        // 执行完毕后，则更新UI
-//        text.setText("加载完毕");
     }
 
-    // 方法5：onCancelled()
     // 作用：将异步任务设置为：取消状态
     @Override
     protected void onCancelled() {
-//        Log.i("ccc","onCancelled");
-//        text.setText("已取消");
 //        progressBar.setProgress(0);
 
     }
@@ -153,13 +140,6 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
  e.printStackTrace();
  }
 
- //        myAsyncTask.setLoadDataComplete(new MyAsyncTask.isLoadDataListener() {
- //            @Override
- //            public void loadComplete(String result) {
- //                word = jsonRe.wordData(result);
- //                mHandler.obtainMessage(4).sendToTarget();
- //            }
- //        });
  myAsyncTask = new MyAsyncTask();
  myAsyncTask.setLoadDataComplete((result)->{
  word = jsonRe.wordData(result);
