@@ -47,7 +47,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private CaptureUtil captureUtil = new CaptureUtil();
     private User user = new User();
     private String fuzzy_str;
-    private DbDao mDbDao;
+    private RecordDbDao mRecordDbDao;
     private MyAsyncTask myAsyncTask;
     private SearchAdapter searchAdapter,historySearchAdapter;
 
@@ -55,15 +55,15 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        historyTextView = (TextView)findViewById(R.id.historyTextView);
-        newTextView = (TextView)findViewById(R.id.newTextView);
-        searchView1 = (SearchView)findViewById(R.id.searchview1);
-        listView = (ListView)findViewById(R.id.listView);
-        historyListView = (ListView)findViewById(R.id.historyListView);
-        imgview = (ImageView)findViewById(R.id.imgview);
-        add_word_btn = (Button)findViewById(R.id.add_word_btn);
-        clear_btn = (Button)findViewById(R.id.clear_btn);
-        mDbDao = new DbDao(SearchActivity.this);
+        historyTextView = findViewById(R.id.historyTextView);
+        newTextView = findViewById(R.id.newTextView);
+        searchView1 = findViewById(R.id.searchview1);
+        listView = findViewById(R.id.listView);
+        historyListView = findViewById(R.id.historyListView);
+        imgview = findViewById(R.id.imgview);
+        add_word_btn = findViewById(R.id.add_word_btn);
+        clear_btn = findViewById(R.id.clear_btn);
+        mRecordDbDao = new RecordDbDao(SearchActivity.this);
         searchView1.setOnQueryTextListener(searchlistener1);
         listView.setOnItemClickListener(listlistener);
         historyListView.setOnItemClickListener(historyListlistener);
@@ -83,7 +83,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String wid = word_list.get(position).getWid();
             String dict_source = word_list.get(position).getDict_source();
             jump_to_example(wid,dict_source);
-            mDbDao.insertData(word_list.get(position));
+            mRecordDbDao.insertData(word_list.get(position));
         }
     };
 
@@ -97,7 +97,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             String dict_source = history_list.get(position).getDict_source();
             jump_to_example(wid,dict_source);
             //更新历史记录中的查询时间
-            mDbDao.updateQueryDate(wid,dict_source);
+            mRecordDbDao.updateQueryDate(wid,dict_source);
         }
     };
 
@@ -140,7 +140,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void queryHistoryRecords(String s){
         history_list.clear();
-        history_list.addAll(mDbDao.queryData(s));
+        history_list.addAll(mRecordDbDao.queryData(s));
         if(history_list.size()>0) mHandler.obtainMessage(5,2).sendToTarget();
         else mHandler.obtainMessage(5,0).sendToTarget();
         if(historySearchAdapter==null){
@@ -183,7 +183,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.cancel();
                         mHandler.sendEmptyMessage(3);
-                        mDbDao.deleteData();
+                        mRecordDbDao.deleteData();
                         queryHistoryRecords(fuzzy_str);
                     }
                 })

@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,8 +25,10 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import okhttp3.OkHttpClient;
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
@@ -54,6 +59,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
+    private CollectDbDao collectDbDao = new CollectDbDao(this);;
     private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,inadequateDialog;
@@ -73,11 +79,11 @@ public class ReciteWordActivity extends AppCompatActivity
     private Boolean pron_lock = false;
     private HashMap<String, Object> recite_info = new HashMap<String, Object>();
     private HashMap<String, Object> now_words = null;
-    private static final String TAG = "ReciteWordActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         setContentView(R.layout.activity_recite_word);
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
@@ -88,6 +94,22 @@ public class ReciteWordActivity extends AppCompatActivity
         ret_btn.setOnClickListener(this);
         total_progress = findViewById(R.id.total_progress);
         initialize();
+    }
+
+    /**
+     * 初始化操作
+     */
+    public void initialize() {
+        init_user();
+        init_fragment();
+        dialog_init();
+        setting.put("uid", user.getUid());
+        recite_num = user.getRecite_num();
+        recite_scope = user.getRecite_scope();
+        Arrays.fill(finish_ind, 0);
+        mHandler.obtainMessage(0).sendToTarget();
+        getReciteWordFromLocal();
+//        getRecite();
     }
 
     /**
@@ -185,6 +207,24 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     /**
+     * 从本地获取背诵的单词列表
+     */
+    private void getReciteWordFromLocal(){
+        recite_list = collectDbDao.getReciteData(recite_num+recite_scope);
+        Log.i("ccc","recite_list:"+recite_list.toString());
+        if(recite_list.size()<recite_num+recite_scope){
+            Looper.prepare();
+            mHandler.obtainMessage(1).sendToTarget();
+            inadequateDialog.show();
+            Looper.loop();
+        }else{
+            //XXX:我也不知道为啥不能直接start_recite()
+            mHandler.sendEmptyMessage(3);
+//            start_recite();
+        }
+    }
+
+    /**
      * start countdown mode
      */
     private void start_countdown_mode(HashMap<String, Object> words) {
@@ -215,21 +255,6 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     /**
-     * 初始化操作
-     */
-    public void initialize() {
-        init_user();
-        init_fragment();
-        dialog_init();
-        setting.put("uid", user.getUid());
-        recite_num = user.getRecite_num();
-        recite_scope = user.getRecite_scope();
-        Arrays.fill(finish_ind, 0);
-        mHandler.obtainMessage(0).sendToTarget();
-        getRecite();
-    }
-
-    /**
      * 加载所有的fragment
      */
     private void init_fragment() {
@@ -249,15 +274,12 @@ public class ReciteWordActivity extends AppCompatActivity
                 .setTitleText("Good job!")
                 .setContentText("return to main page.")
                 .setConfirmText("fine")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
 
         finishDialog.setCancelable(false);
@@ -269,15 +291,12 @@ public class ReciteWordActivity extends AppCompatActivity
                 .setTitleText("shortage of words")
                 .setContentText("you finished all")
                 .setConfirmText("return to main")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
         inadequateDialog.setCancelable(false);
     }
@@ -292,22 +311,16 @@ public class ReciteWordActivity extends AppCompatActivity
                 .setContentText("Won't be able to recover this file!")
                 .setConfirmText("fine")
                 .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(ReciteWordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ReciteWordActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 })
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.obtainMessage(2).sendToTarget();
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.obtainMessage(2).sendToTarget();
                 });
         interrup_alert.setCancelable(false);
         interrup_alert.show();
@@ -360,6 +373,9 @@ public class ReciteWordActivity extends AppCompatActivity
                     break;
                 case 2:
                     imgview.setVisibility(View.INVISIBLE);
+                    break;
+                case 3:
+                    start_recite();
                     break;
             }
             return false;
@@ -477,8 +493,17 @@ public class ReciteWordActivity extends AppCompatActivity
                 total_progress.setProgress(pro_num);
             });
             correct_word.setCorrect_times(co_times + 1);
+            //设置下次复习的时间
+            correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
+            if(co_times>=6){
+                correct_word.setReview_date("1970-01-01");
+            }else{
+                int[] durations = {1,2,4,7,15};
+                correct_word.setReview_date(DateTransUtils.getDateAfterToday(durations[co_times]));
+            }
             recite_list.set(correct_ind, correct_word);
-            update_sql_data(correct_ind,1);
+//            update_sql_data(correct_ind,1);
+            updateLocalData(recite_list.get(correct_ind));
         } else {//不是一次就过，下回重新拼写
             correct_word.setError_times(er_times + WrongTimes);
             correct_word.setToday_correct_times(0);
@@ -493,9 +518,8 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     /**
-     * 更新数据库
-     * 传入词组在recite_list中的下标
-     * @param i
+     * 更新云数据库
+     * @param i 词组在recite_list中的下标
      */
     public void update_sql_data(int i,int what) {
         UpdateServer updateServer = new UpdateServer();
@@ -504,16 +528,55 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     /**
+     * 更新本地数据库
+     * @param word 需要更新的单词
+     */
+    public void updateLocalData(DetailWord word){
+        Log.i("ccc","updateLocalData:"+word.toString());
+        CollectDbDao collectDbDao = new CollectDbDao(this);
+        collectDbDao.updateData(word);
+    }
+
+    /**
      * update rest of word list
      */
+//    private void update_all(){
+//        for(int i=0;i<recite_num+recite_scope;i++){
+//            if(finish_ind[i]==0){
+//                update_sql_data(i,0);
+//            }
+//        }
+//        mHandler.obtainMessage(1).sendToTarget();
+//        finishDialog.show();
+//    }
     private void update_all(){
         for(int i=0;i<recite_num+recite_scope;i++){
             if(finish_ind[i]==0){
-                update_sql_data(i,0);
+//                update_sql_data(i,0);
+                updateLocalData(recite_list.get(i));
             }
         }
         mHandler.obtainMessage(1).sendToTarget();
         finishDialog.show();
+    }
+
+
+    /**
+     * 更新一条数据（本地）
+     */
+    private void updateSingleLocalData(DetailWord word){
+        collectDbDao.updateData(word);
+    }
+
+    /**
+     * 更新剩余的数据
+     */
+    private void updateRestLocalData(){
+        for(int i=0;i<recite_list.size();i++){
+            if(finish_ind[i]==0){
+                collectDbDao.updateData(recite_list.get(i));
+            }
+        }
     }
 
     /**

@@ -54,7 +54,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private DetailWord word;
     private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
-    private DbDao mDbDao;
+    private RecordDbDao mRecordDbDao;
     private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -97,7 +97,7 @@ public class ExampleActivity extends AppCompatActivity implements
     }
 
     private void init() {
-        mDbDao = new DbDao(ExampleActivity.this);
+        mRecordDbDao = new RecordDbDao(ExampleActivity.this);
         first_coming = true;
         init_user();
         getWordData();
@@ -345,7 +345,7 @@ public class ExampleActivity extends AppCompatActivity implements
             jsonObject.put("wid",word.getWid());
             jsonObject.put("what",3);
             //从历史记录中删除该条记录
-            mDbDao.deleteSingleData(jsonObject.getString("wid"),dict_source);
+            mRecordDbDao.deleteSingleData(jsonObject.getString("wid"),dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -413,7 +413,7 @@ public class ExampleActivity extends AppCompatActivity implements
             jsonObject.put("uid", user.getUid());
             jsonObject.put("what",24);
             //更新本地的数据库（历史记录）
-            mDbDao.updateData(jsonObject.get("wid").toString(),dict_source,jsonObject.get("word_group").toString(),jsonObject.get("C_meaning").toString());
+            mRecordDbDao.updateData(jsonObject.get("wid").toString(),dict_source,jsonObject.get("word_group").toString(),jsonObject.get("C_meaning").toString());
         }catch (JSONException e){
             e.printStackTrace();
         }

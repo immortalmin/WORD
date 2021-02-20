@@ -63,15 +63,20 @@ public class DateTransUtils {
     public static ArrayList<String> getSearchDays(){
         ArrayList<String> dayList = new ArrayList<>();
         for(int i = 0 ; i < 7 ; i++){
-            dayList.add(getDateString(i));
+            dayList.add(getDateAfterToday(-i));
         }
         return dayList;
     }
 
-    //获取dayNumber天前，当天的日期字符串
-    public static String getDateString(int dayNumber){
-        long time = System.currentTimeMillis() - dayNumber * DAY_IN_MILLIS;
-        Log.i("Wingbu"," DateTransUtils-getDateString()  获取查询的日期 :" + dateFormat.format(time));
-        return dateFormat.format(time);
+
+    /**
+     * 获取几天后的日期
+     * @param dayNumber 几天后？
+     * @return
+     */
+    public static String getDateAfterToday(int dayNumber){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        long time = System.currentTimeMillis() + dayNumber * DAY_IN_MILLIS;
+        return formatter.format(new Date(time));
     }
 }

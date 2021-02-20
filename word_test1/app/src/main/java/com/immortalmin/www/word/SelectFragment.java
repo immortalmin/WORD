@@ -51,6 +51,7 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onAttach(Context context){
+        Log.i("ccc","!!!");
         super.onAttach(context);
         mediaPlayerUtil = new MediaPlayerUtil(context);
         if (context instanceof OnFragmentInteractionListener) {

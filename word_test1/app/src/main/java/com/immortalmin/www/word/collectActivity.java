@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -123,11 +124,15 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
                 collect_list.addAll(jsonRe.detailWordData(result));
                 wordListAdapter.notifyDataSetChanged();
             }
+//            Log.i("ccc","collect_list:"+collect_list.get(900).toString());
+            saveAllWordsToSqlite(collect_list);
         });
         myAsyncTask.execute(jsonObject);
     }
 
+
     /**
+     * 手动更新本地缓存用
      * 缓存所有收藏的单词的音频
      */
     private void getAllAudio(){
@@ -153,6 +158,20 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         }
         return word;
     }
+
+    //数据库测试
+    public void saveAllWordsToSqlite(List<DetailWord> word){
+        CollectDbDao collectDbDao = new CollectDbDao(this);
+        for(int i=0;i<word.size();i++){
+            collectDbDao.insertData(word.get(i));
+        }
+    }
+    private void queryDataFromSqlite(){
+        CollectDbDao collectDbDao = new CollectDbDao(this);
+        List<DetailWord> list = collectDbDao.getReciteData(20);
+        Log.i("ccc",list.toString());
+    }
+
 
     private void get_amount() {
         new Thread(() -> {
@@ -188,7 +207,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
                     finished_num.setText(count.get("prof_count").toString());
                     break;
                 case 2:
-                    wordListAdapter.notifyDataSetChanged();
+//                    queryDataFromSqlite();
                     break;
             }
             return false;

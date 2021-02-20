@@ -173,7 +173,7 @@ public class DetailWord extends Word{
 
     @Override
     public String toString() {
-        return "CollectWord{" +
+        return "DetailWord{" +
                 "wid=" + getWid() +
                 ", word_en=" + getWord_en() +
                 ", word_ch=" + word_ch +
