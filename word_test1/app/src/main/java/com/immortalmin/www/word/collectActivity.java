@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
+
 /**
  * 获取单词列表
  * */
@@ -41,11 +43,13 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     private List<DetailWord> word_list=null;
     private List<DetailWord> collect_list=null;
     private WordListAdapter wordListAdapter = null;
+    private CollectDbDao collectDbDao = new CollectDbDao(this);
     private int now_position=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
+        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         listView= findViewById(R.id.ListView1);
@@ -76,9 +80,10 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
 
     private void init() {
         init_user();
-        getCollect();
-        get_amount();
-
+//        getCollect();
+        getCollectList();
+//        get_amount();
+        mHandler.sendEmptyMessage(1);
     }
 
     private void init_user(){
@@ -100,34 +105,49 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.finished_num:
-                mHandler.obtainMessage(2).sendToTarget();
+
                 break;
         }
     }
 
-    private void getCollect(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",4);
-            jsonObject.put("uid", user.getUid());
-        }catch (JSONException e){
-            e.printStackTrace();
+    //从2021/2/21开始停止使用
+//    private void getCollect(){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",4);
+//            jsonObject.put("uid", user.getUid());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result)->{
+//            if(collect_list==null){
+//                collect_list = jsonRe.detailWordData(result);
+//                wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
+//                listView.setAdapter(wordListAdapter);
+//            }else{
+//                collect_list.clear();
+//                collect_list.addAll(jsonRe.detailWordData(result));
+//                wordListAdapter.notifyDataSetChanged();
+//            }
+////            saveAllWordsToSqlite(collect_list);
+//        });
+//        myAsyncTask.execute(jsonObject);
+//    }
+
+    /**
+     * 获取收藏的单词列表
+     */
+    private void getCollectList(){
+        if(collect_list==null){
+            collect_list = collectDbDao.getCollectList();
+            wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
+            listView.setAdapter(wordListAdapter);
+        }else{
+            collect_list.clear();
+            collect_list.addAll(collectDbDao.getCollectList());
+            wordListAdapter.notifyDataSetChanged();
         }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            if(collect_list==null){
-                collect_list = jsonRe.detailWordData(result);
-                wordListAdapter = new WordListAdapter(collectActivity.this,collect_list);
-                listView.setAdapter(wordListAdapter);
-            }else{
-                collect_list.clear();
-                collect_list.addAll(jsonRe.detailWordData(result));
-                wordListAdapter.notifyDataSetChanged();
-            }
-//            Log.i("ccc","collect_list:"+collect_list.get(900).toString());
-            saveAllWordsToSqlite(collect_list);
-        });
-        myAsyncTask.execute(jsonObject);
     }
 
 
@@ -158,7 +178,6 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         }
         return word;
     }
-
     //数据库测试
     public void saveAllWordsToSqlite(List<DetailWord> word){
         CollectDbDao collectDbDao = new CollectDbDao(this);
@@ -166,30 +185,29 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
             collectDbDao.insertData(word.get(i));
         }
     }
-    private void queryDataFromSqlite(){
-        CollectDbDao collectDbDao = new CollectDbDao(this);
-        List<DetailWord> list = collectDbDao.getReciteData(20);
-        Log.i("ccc",list.toString());
-    }
 
 
-    private void get_amount() {
-        new Thread(() -> {
-            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-            JSONObject jsonObject = new JSONObject();
-            try{
-                jsonObject.put("uid",sp.getString("uid",null));
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            HttpGetContext httpGetContext = new HttpGetContext();
-            String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
-            HashMap<String,Object> count = null;
-            count = jsonRe.getCount(recitejson);
-            mHandler.obtainMessage(1,count).sendToTarget();
-        }).start();
+    //从2021/2/21开始停止使用
+//    private void get_amount() {
+//        new Thread(() -> {
+//            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//            JSONObject jsonObject = new JSONObject();
+//            try{
+//                jsonObject.put("uid",sp.getString("uid",null));
+//            }catch (JSONException e){
+//                e.printStackTrace();
+//            }
+//            HttpGetContext httpGetContext = new HttpGetContext();
+//            String recitejson = httpGetContext.getData("http://47.98.239.237/word/php_file2/get_count.php",jsonObject);
+//            HashMap<String,Object> count = null;
+//            count = jsonRe.getCount(recitejson);
+//            mHandler.obtainMessage(1,count).sendToTarget();
+//        }).start();
+//
+//    }
 
-    }
+
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -202,12 +220,13 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
                     wordListAdapter.notifyDataSetChanged();
                     break;
                 case 1:
-                    HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
-                    all_num.setText(count.get("sum").toString());
-                    finished_num.setText(count.get("prof_count").toString());
-                    break;
-                case 2:
-//                    queryDataFromSqlite();
+//                    HashMap<String,Object> count = (HashMap<String,Object>)message.obj;
+//                    all_num.setText(count.get("sum").toString());
+//                    finished_num.setText(count.get("prof_count").toString());
+                    int allCount = collectDbDao.getCollectCount();
+                    int finishCount = collectDbDao.getFinishCount();
+                    all_num.setText(String.valueOf(allCount));
+                    finished_num.setText(String.valueOf(finishCount));
                     break;
             }
             return false;
@@ -257,8 +276,10 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
         //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
         if (requestCode == 1 && resultCode == 1) {//单词数据发生改变，则更新数据
-            getCollect();
-            get_amount();
+//            getCollect();
+            getCollectList();
+//            get_amount();
+            mHandler.sendEmptyMessage(1);
         }
     }
 

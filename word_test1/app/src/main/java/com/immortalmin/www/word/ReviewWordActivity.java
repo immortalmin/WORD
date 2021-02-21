@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
@@ -48,6 +50,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private CountDownFragment countDownFragment = new CountDownFragment();
     private SpellFragment spellFragment = new SpellFragment();
+    private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Button turn_mode,ret_btn;
     private ImageView imgview;
     private TextView total_times, word_times;
@@ -72,6 +75,7 @@ public class ReviewWordActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         setContentView(R.layout.activity_review_word);
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
@@ -84,33 +88,48 @@ public class ReviewWordActivity extends AppCompatActivity
         initialize();
     }
 
-    /**
-     * 获取单词复习列表
-     */
-    private void getReviewList(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",11);
-            jsonObject.put("uid",4);
-            //获取当前时间
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            review_list =jsonRe.detailWordData(result);
-            review_num = Math.min(review_list.size(),group_num);
-            if(review_num>0){
-                startReview();
-            }else{
-                mHandler.obtainMessage(1).sendToTarget();
-                inadequateDialog.show();
-            }
+    //从2021/2/21开始停止使用
+//    /**
+//     * 获取单词复习列表
+//     */
+//    private void getReviewList(){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",11);
+//            jsonObject.put("uid",4);
+//            //获取当前时间
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+//            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result)->{
+//            review_list =jsonRe.detailWordData(result);
+//            review_num = Math.min(review_list.size(),group_num);
+//            if(review_num>0){
+//                startReview();
+//            }else{
+//                mHandler.obtainMessage(1).sendToTarget();
+//                inadequateDialog.show();
+//            }
+//
+//        });
+//        myAsyncTask.execute(jsonObject);
+//    }
 
-        });
-        myAsyncTask.execute(jsonObject);
+    /**
+     * 从本地获取复习的单词列表
+     */
+    private void getReviewListFromLocal(){
+        review_list = collectDbDao.getReviewData();
+        review_num = Math.min(review_list.size(),group_num);
+        if(review_num>0){
+            mHandler.sendEmptyMessage(3);//startReview();
+        }else{
+            mHandler.obtainMessage(1).sendToTarget();
+            inadequateDialog.show();
+        }
     }
 
     /**
@@ -176,7 +195,8 @@ public class ReviewWordActivity extends AppCompatActivity
         setting.put("uid", user.getUid());
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
-        getReviewList();
+//        getReviewList();
+        getReviewListFromLocal();
     }
 
     /**
@@ -191,9 +211,6 @@ public class ReviewWordActivity extends AppCompatActivity
     }
 
     private void dialog_init(){
-        /**
-         * shortage of words
-         */
         inadequateDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                 .setTitleText("shortage of words")
                 .setContentText("you finished all")
@@ -334,6 +351,9 @@ public class ReviewWordActivity extends AppCompatActivity
                 case 2:
                     imgview.setVisibility(View.INVISIBLE);
                     break;
+                case 3:
+                    startReview();
+                    break;
             }
             return false;
         }
@@ -391,8 +411,16 @@ public class ReviewWordActivity extends AppCompatActivity
                 total_progress.setProgress(pro_num);
             });
             correct_word.setCorrect_times(co_times + 1);
+            //设置下次复习的时间
+            correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
+            if(co_times>=5){
+                correct_word.setReview_date("1970-01-01");
+            }else{
+                int[] durations = {1,2,4,7,15};
+                correct_word.setReview_date(DateTransUtils.getDateAfterToday(durations[co_times]));
+            }
             review_list.set(current_ind, correct_word);
-            update_sql_data(current_ind,1);
+            updateSingleLocalData(correct_word);
         } else {//不是一次就过，下回重新拼写
             correct_word.setError_times(er_times + WrongTimes);
             correct_word.setToday_correct_times(0);
@@ -407,15 +435,22 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
+    //从2021/2/21开始停止使用
+//    /**
+//     * @param i
+//     * @param what 0：不更新日期  1：更新日期
+//     */
+//    public void update_sql_data(int i,int what) {
+//        UpdateServer updateServer = new UpdateServer();
+//        updateServer.sendMap(review_list.get(i),what);
+//        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
+//    }
+
     /**
-     *
-     * @param i
-     * @param what 0：不更新日期  1：更新日期
+     * 更新一条数据（本地）
      */
-    public void update_sql_data(int i,int what) {
-        UpdateServer updateServer = new UpdateServer();
-        updateServer.sendMap(review_list.get(i),what);
-        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
+    private void updateSingleLocalData(DetailWord word){
+        collectDbDao.updateData(word);
     }
 
     /**

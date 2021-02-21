@@ -29,7 +29,7 @@ public class CollectDbDao {
      * @param mount 单词数
      * @return 单词列表
      */
-    public ArrayList<DetailWord> getReciteData(int mount){
+    ArrayList<DetailWord> getReciteData(int mount){
         ArrayList<DetailWord> wordList = new ArrayList<>();
         Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect where correct_times<5 order by correct_times,error_times DESC limit "+mount,null);
         while(cursor.moveToNext()){
@@ -49,6 +49,99 @@ public class CollectDbDao {
         }
         cursor.close();
         return wordList;
+    }
+
+    /**
+     * 获取复习的单词列表
+     * @return
+     */
+    ArrayList<DetailWord> getReviewData() {
+        ArrayList<DetailWord> wordList = new ArrayList<>();
+        String review_date = DateTransUtils.getDateAfterToday(0);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect WHERE correct_times<=5 AND review_date<=\""+review_date+"\"",null);
+        while(cursor.moveToNext()){
+            DetailWord word = new DetailWord();
+            word.setHid(cursor.getString(cursor.getColumnIndex("id")));
+            word.setCid(cursor.getString(cursor.getColumnIndex("cid")));
+            word.setGid(cursor.getString(cursor.getColumnIndex("gid")));
+            word.setWid(cursor.getString(cursor.getColumnIndex("wid")));
+            word.setWord_en(cursor.getString(cursor.getColumnIndex("word_en")));
+            word.setWord_ch(cursor.getString(cursor.getColumnIndex("word_ch")));
+            word.setCorrect_times(cursor.getString(cursor.getColumnIndex("correct_times")));
+            word.setError_times(cursor.getString(cursor.getColumnIndex("error_times")));
+            word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
+            word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
+            word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            wordList.add(word);
+        }
+        cursor.close();
+        return wordList;
+    }
+
+    /**
+     * 获取所有收藏的单词
+     * @return
+     */
+    ArrayList<DetailWord> getCollectList() {
+        ArrayList<DetailWord> wordList = new ArrayList<>();
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect",null);
+        while(cursor.moveToNext()){
+            DetailWord word = new DetailWord();
+            word.setHid(cursor.getString(cursor.getColumnIndex("id")));
+            word.setCid(cursor.getString(cursor.getColumnIndex("cid")));
+            word.setGid(cursor.getString(cursor.getColumnIndex("gid")));
+            word.setWid(cursor.getString(cursor.getColumnIndex("wid")));
+            word.setWord_en(cursor.getString(cursor.getColumnIndex("word_en")));
+            word.setWord_ch(cursor.getString(cursor.getColumnIndex("word_ch")));
+            word.setCorrect_times(cursor.getString(cursor.getColumnIndex("correct_times")));
+            word.setError_times(cursor.getString(cursor.getColumnIndex("error_times")));
+            word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
+            word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
+            word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            wordList.add(word);
+        }
+        cursor.close();
+        return wordList;
+    }
+
+    /**
+     * 获取需要复习的单词数量
+     * @return 单词的数量
+     */
+    int getReviewCount(){
+        String review_date = DateTransUtils.getDateAfterToday(0);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect WHERE correct_times<=5 AND review_date<=\""+review_date+"\"",null);
+        int count = 0;
+        while(cursor.moveToNext()){
+            count = cursor.getInt(0);
+        }
+        return count;
+    }
+
+    /**
+     * 获取已经掌握的单词数量
+     * @return 已经掌握的单词数量
+     */
+    int getFinishCount(){
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect WHERE correct_times=6 AND review_date=\"1970-01-01\"",null);
+        int count = 0;
+        while(cursor.moveToNext()){
+            count = cursor.getInt(0);
+        }
+        return count;
+    }
+
+    /**
+     * 获取收藏的单词数
+     * @return 收藏的单词数
+     */
+    int getCollectCount(){
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect",null);
+        int count = 0;
+        while(cursor.moveToNext()){
+            count = cursor.getInt(0);
+        }
+        return count;
     }
 
 //    /**
@@ -125,5 +218,6 @@ public class CollectDbDao {
         db.execSQL("update records set query_date=\""+System.currentTimeMillis()+"\" where wid="+wid+" and dict_source="+dict_source);
         db.close();
     }
+
 
 }

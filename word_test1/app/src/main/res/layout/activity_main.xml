@@ -17,7 +17,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         app:civ_border_width="1dp"
         app:civ_border_overlay="true"
         app:civ_border_color="#8c8888"
@@ -60,19 +60,17 @@
             android:textStyle="bold"
             android:textColor="#f1e4e4"
             android:text="收藏\n列表" />
-
-
+        
         <Button
             android:id="@+id/btn_recite"
             android:layout_width="220px"
             android:layout_height="220px"
-            android:layout_toRightOf="@+id/btn_collect"
+            android:layout_toEndOf="@+id/btn_collect"
             android:background="#000000"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
-            android:layout_marginLeft="30px"
+            android:layout_marginStart="30px"
             android:text="开始\n背诵" />
-
         <Button
             android:id="@+id/btn_spell"
             android:layout_width="220px"

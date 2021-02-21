@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private User user = new User();
     private BlurImageView blurImageView = new BlurImageView();
     private MyAsyncTask myAsyncTask;
+    private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Context context;
     private List<Map<String,Object>> word_list=null;
     private Button btn_collect,btn_recite,btn_review,btn_spell;
@@ -109,19 +110,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        setImage(sp.getString("profile_photo",null));
-
         //设置按钮高斯模糊
         mHandler.obtainMessage(2).sendToTarget();
         //获取用户信息
         init_user();
         //检查用户登录时间并更新数据
         inspect_usetime();
-
         //更新单词复习数量
-        getReviewList();
-
+        getReviewCount();
     }
 
     private void init_user(){
@@ -283,7 +279,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 上传使用时间
-     * @param jsonObject
      */
     private void update_time(final JSONObject jsonObject) {
         new Thread(() -> {
@@ -299,32 +294,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
-    /**
-     * 获取单词复习列表
-     */
-    private void getReviewList(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",11);
-            jsonObject.put("uid",user.getUid());
-            //获取当前时间
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            ArrayList<DetailWord> review_list =jsonRe.detailWordData(result);
-            int review_num = review_list.size();
-            if(review_num == 0){
-                btn_review.setText("复习\n完成");
-            }else{
-                btn_review.setText("待复习\n"+review_num);
-            }
+    //从2021/2/21开始停止使用
+//    /**
+//     * 获取单词复习列表
+//     */
+//    private void getReviewList(){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",11);
+//            jsonObject.put("uid",user.getUid());
+//            //获取当前时间
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+//            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result)->{
+//            ArrayList<DetailWord> review_list =jsonRe.detailWordData(result);
+//            int review_num = review_list.size();
+//            if(review_num == 0){
+//                btn_review.setText("复习\n完成");
+//            }else{
+//                btn_review.setText("待复习\n"+review_num);
+//            }
+//
+//        });
+//        myAsyncTask.execute(jsonObject);
+//    }
 
-        });
-        myAsyncTask.execute(jsonObject);
+    /**
+     * 显示复习单词的数量
+     */
+    private void getReviewCount(){
+        int count = collectDbDao.getReviewCount();
+        if(count == 0){
+            btn_review.setText("复习\n完成");
+        }else{
+            btn_review.setText("待复习\n" + count);
+        }
     }
 
 
@@ -383,14 +391,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int w = bitmap.getWidth(); // 得到图片的宽，高
         int h = bitmap.getHeight();
         Double ratio = w/Double.valueOf(screen_width);
-//        int btn_h = btn_wordlist.getHeight();
-//        int btn_w = btn_wordlist.getWidth();
+//        int btn_h = DisplayUtil.dip2px(this,btn_collect.getHeight());
+//        int btn_w = DisplayUtil.dip2px(this,btn_collect.getWidth());
+//        Log.i("ccc","height:"+btn_h+",width:"+btn_w);
         int btn_h = 220;
         int btn_w = 220;
         //half margin
-        int MarginAndBtn_h = (int)((btn_h+15)*ratio);
-        int MarginAndBtn_w = (int)((btn_w+15)*ratio);
-        int justMargin = (int)(15*ratio);
+//        int border = DisplayUtil.dip2px(this,5);
+//        Log.i("ccc","border:"+border);
+        int border = 15;
+        int MarginAndBtn_h = (int)((btn_h+border)*ratio);
+        int MarginAndBtn_w = (int)((btn_w+border)*ratio);
+        int justMargin = (int)(border*ratio);
         int justBtn_h = (int)(btn_h*ratio);
         int justBtn_w = (int)(btn_w*ratio);
         Bitmap bitmap1 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);

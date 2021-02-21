@@ -59,7 +59,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
-    private CollectDbDao collectDbDao = new CollectDbDao(this);;
+    private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,inadequateDialog;
@@ -83,8 +83,8 @@ public class ReciteWordActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         setContentView(R.layout.activity_recite_word);
+        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
         turn_mode = findViewById(R.id.turn_mode);
@@ -181,37 +181,37 @@ public class ReciteWordActivity extends AppCompatActivity
 
     }
 
-    private void getRecite(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",10);
-            jsonObject.put("uid", user.getUid());
-            jsonObject.put("mount",recite_num+recite_scope);
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            recite_list =jsonRe.detailWordData(result);
-            if(recite_list.size()<recite_num+recite_scope){
-                //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
-                Looper.prepare();
-                mHandler.obtainMessage(1).sendToTarget();
-                inadequateDialog.show();
-                Looper.loop();
-            }else{
-                start_recite();
-            }
-        });
-        myAsyncTask.execute(jsonObject);
-    }
+//    从2021/2/21开始停止使用
+//    private void getRecite(){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",10);
+//            jsonObject.put("uid", user.getUid());
+//            jsonObject.put("mount",recite_num+recite_scope);
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result)->{
+//            recite_list =jsonRe.detailWordData(result);
+//            if(recite_list.size()<recite_num+recite_scope){
+//                //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
+//                Looper.prepare();
+//                mHandler.obtainMessage(1).sendToTarget();
+//                inadequateDialog.show();
+//                Looper.loop();
+//            }else{
+//                start_recite();
+//            }
+//        });
+//        myAsyncTask.execute(jsonObject);
+//    }
 
     /**
      * 从本地获取背诵的单词列表
      */
     private void getReciteWordFromLocal(){
         recite_list = collectDbDao.getReciteData(recite_num+recite_scope);
-        Log.i("ccc","recite_list:"+recite_list.toString());
         if(recite_list.size()<recite_num+recite_scope){
             Looper.prepare();
             mHandler.obtainMessage(1).sendToTarget();
@@ -219,8 +219,7 @@ public class ReciteWordActivity extends AppCompatActivity
             Looper.loop();
         }else{
             //XXX:我也不知道为啥不能直接start_recite()
-            mHandler.sendEmptyMessage(3);
-//            start_recite();
+            mHandler.sendEmptyMessage(3);//start_recite();
         }
     }
 
@@ -342,11 +341,6 @@ public class ReciteWordActivity extends AppCompatActivity
         user.setMotto(sp.getString("motto",null));
     }
 
-    /**
-     * 选项按钮点击事件
-     *
-     * @param view
-     */
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.turn_mode:
@@ -384,9 +378,6 @@ public class ReciteWordActivity extends AppCompatActivity
 
     /**
      * CountDownFragment的回调函数
-     * HashMap<String,Object> res
-     *
-     * @param res
      */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
@@ -419,36 +410,31 @@ public class ReciteWordActivity extends AppCompatActivity
 
     /**
      * SelectFragment的回调函数
-     * ArrayList<String> s
-     *
-     * @param res
      */
     @Override
     public void selectonFragmentInteraction(HashMap<String, Object> res) {
         DetailWord correct_word;
         DetailWord wrong_word;
         switch (res.get("judge").hashCode()) {
-            case 1:
+            case 1://回答正确
                 correct_word = recite_list.get(correct_ind);
                 correct_word.setToday_correct_times(correct_word.getToday_correct_times() + 1);
-                if (correct_word.getToday_correct_times() >= c_times) {
-                    finish_ind[correct_ind] = 1;
-                    finish_num++;
-                    total_progress.post(() -> {
-                        int pro_num = finish_num * 100 / recite_num;
-                        total_progress.setProgress(pro_num);
-                    });
-                    correct_word.setCorrect_times(correct_word.getCorrect_times() + 1);
-//                    if (Integer.valueOf(correct_word.get("correct_times").toString()) >= prof_times) {
-//                        correct_word.put("prof_flag", 1);
-//                    }
-                    recite_list.set(correct_ind, correct_word);
-                    update_sql_data(correct_ind,1);
-                } else {
-                    recite_list.set(correct_ind, correct_word);
-                }
+//                if (correct_word.getToday_correct_times() >= c_times) {
+//                    finish_ind[correct_ind] = 1;
+//                    finish_num++;
+//                    total_progress.post(() -> {
+//                        int pro_num = finish_num * 100 / recite_num;
+//                        total_progress.setProgress(pro_num);
+//                    });
+//                    correct_word.setCorrect_times(correct_word.getCorrect_times() + 1);
+//                    recite_list.set(correct_ind, correct_word);
+//                    update_sql_data(correct_ind,1);
+//                } else {
+//                    recite_list.set(correct_ind, correct_word);
+//                }
+                recite_list.set(correct_ind, correct_word);
                 break;
-            case 2:
+            case 2://回答错误
                 correct_word = recite_list.get(correct_ind);
                 correct_word.setToday_correct_times(0);
                 correct_word.setError_times(correct_word.getError_times() + 1);
@@ -460,7 +446,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 pron_lock = true;
                 jump_to_example(correct_ind);
                 break;
-            case 3:
+            case 3://不认识
                 correct_word = recite_list.get(correct_ind);
                 correct_word.setToday_correct_times(0);
                 correct_word.setError_times(correct_word.getError_times() + 1);
@@ -477,8 +463,7 @@ public class ReciteWordActivity extends AppCompatActivity
 
     /**
      * spellfragment的回调函数
-     *
-     * @param WrongTimes
+     * @param WrongTimes 错误的次数
      */
     @Override
     public void spellFragmentInteraction(int WrongTimes) {
@@ -495,15 +480,14 @@ public class ReciteWordActivity extends AppCompatActivity
             correct_word.setCorrect_times(co_times + 1);
             //设置下次复习的时间
             correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
-            if(co_times>=6){
+            if(co_times>=5){
                 correct_word.setReview_date("1970-01-01");
             }else{
                 int[] durations = {1,2,4,7,15};
                 correct_word.setReview_date(DateTransUtils.getDateAfterToday(durations[co_times]));
             }
             recite_list.set(correct_ind, correct_word);
-//            update_sql_data(correct_ind,1);
-            updateLocalData(recite_list.get(correct_ind));
+            updateSingleLocalData(recite_list.get(correct_ind));
         } else {//不是一次就过，下回重新拼写
             correct_word.setError_times(er_times + WrongTimes);
             correct_word.setToday_correct_times(0);
@@ -511,35 +495,26 @@ public class ReciteWordActivity extends AppCompatActivity
         }
         mHandler.obtainMessage(0).sendToTarget();
         if (finish_num >= recite_num) {
-            update_all();
+            updateRestLocalData();
         }else{
             start_recite();
         }
     }
 
-    /**
-     * 更新云数据库
-     * @param i 词组在recite_list中的下标
-     */
-    public void update_sql_data(int i,int what) {
-        UpdateServer updateServer = new UpdateServer();
-        updateServer.sendMap(recite_list.get(i),what);
-        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * 更新本地数据库
-     * @param word 需要更新的单词
-     */
-    public void updateLocalData(DetailWord word){
-        Log.i("ccc","updateLocalData:"+word.toString());
-        CollectDbDao collectDbDao = new CollectDbDao(this);
-        collectDbDao.updateData(word);
-    }
-
-    /**
-     * update rest of word list
-     */
+    /*从2021/2/21开始停止使用*/
+//    /**
+//     * 更新云数据库
+//     * @param i 词组在recite_list中的下标
+//     */
+//    public void update_sql_data(int i,int what) {
+//        UpdateServer updateServer = new UpdateServer();
+//        updateServer.sendMap(recite_list.get(i),what);
+//        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
+//    }
+//
+//    /**
+//     * 更新剩余单词的数据（云数据库）
+//     */
 //    private void update_all(){
 //        for(int i=0;i<recite_num+recite_scope;i++){
 //            if(finish_ind[i]==0){
@@ -549,16 +524,6 @@ public class ReciteWordActivity extends AppCompatActivity
 //        mHandler.obtainMessage(1).sendToTarget();
 //        finishDialog.show();
 //    }
-    private void update_all(){
-        for(int i=0;i<recite_num+recite_scope;i++){
-            if(finish_ind[i]==0){
-//                update_sql_data(i,0);
-                updateLocalData(recite_list.get(i));
-            }
-        }
-        mHandler.obtainMessage(1).sendToTarget();
-        finishDialog.show();
-    }
 
 
     /**
@@ -577,12 +542,13 @@ public class ReciteWordActivity extends AppCompatActivity
                 collectDbDao.updateData(recite_list.get(i));
             }
         }
+        mHandler.obtainMessage(1).sendToTarget();
+        finishDialog.show();
     }
 
     /**
      * 跳转到例句页面
-     *
-     * @param id
+     * @param id 单词id
      */
     public void jump_to_example(int id) {
         Intent intent = new Intent(ReciteWordActivity.this, ExampleActivity.class);
@@ -592,13 +558,6 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     //FIXME:如果是从单词详情界面返回，并且下一轮是拼写模式，键盘不会自动弹出
-    /**
-     * 子页面跳回
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -609,13 +568,6 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * 回车键事件
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
