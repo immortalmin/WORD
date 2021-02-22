@@ -2,10 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#f5f6f7"
+    android:background="#4a82c7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CommitFeedbackActivity">
+
+    <com.ocnyang.contourview.ContourView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:contour_style="Sand"
+        app:shader_endcolor="#4f68c6"
+        app:shader_mode="RadialGradient"
+        app:shader_startcolor="#61a8d4"
+        app:shader_style="Center"
+        app:smoothness="0.15"/>
 
     <TextView
         android:id="@+id/feedback_tv"

@@ -4,16 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:background="#FFFFFD"
     >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_photo"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:civ_border_overlay="true"
+            app:civ_border_color="#8c8888"
             app:civ_fill_color="#bab3b3"
-            android:background="@drawable/null_profile"
             />
         <TextView
             android:id="@+id/username"

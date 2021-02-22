@@ -32,7 +32,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
-        <activity android:name=".QQTestActivity"></activity>
+        <activity android:name=".SynchronizeActivity"></activity>
+        <activity android:name=".QQTestActivity" />
         <activity android:name=".CommitFeedbackActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".ChangePwdActivity" />
@@ -57,8 +58,7 @@
         <activity android:name=".UpdatePwdActivity" />
         <activity android:name=".ExampleActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".ReviewWordActivity" />
-        <!-- QQ第三方登录 -->
+        <activity android:name=".ReviewWordActivity" /> <!-- QQ第三方登录 -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"

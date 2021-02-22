@@ -57,7 +57,7 @@
             android:id="@+id/photo"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             app:civ_border_width="1dp"
             app:civ_border_overlay="true"
             app:civ_border_color="#8c8888"
@@ -115,7 +115,6 @@
             android:id="@+id/signIn"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
-            android:layout_below="@+id/search_bar"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"/>
 
@@ -150,7 +149,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D8D5D5"
+                android:background="#B3B1B1"
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
@@ -169,7 +168,25 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D8D5D5"
+                android:background="#B3B1B1"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
+            <TextView
+                android:id="@+id/synchronize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="同步数据"
+                android:textColor="#474D47"
+                android:textSize="16sp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B3B1B1"
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
@@ -189,8 +206,8 @@
         android:background="@drawable/rounded_corners_purple"
         android:textAllCaps="false"
         android:textColor="#d2cccc"
-        android:textSize="20dp"
-        android:text="logout" />
+        android:textSize="18dp"
+        android:text="退出登录" />
 
     <ImageView
         android:id="@+id/backdrop"

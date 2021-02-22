@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 
 /**
  * 主界面
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         screen_width = metric.widthPixels;     // 屏幕宽度（像素）

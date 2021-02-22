@@ -6,8 +6,8 @@ package com.immortalmin.www.word;
 public class DetailWord extends Word{
 
     private String word_ch;
-    private int correct_times;
-    private int error_times;
+    private int correct_times = 0;
+    private int error_times = 0;
     private String last_date;
     private String review_date;
     private String hid;
@@ -15,6 +15,7 @@ public class DetailWord extends Word{
     private String gid;
     private String dict_source;
     private String source;
+    private boolean isCollect;
     private int today_correct_times = 0;
 
     public DetailWord(){}
@@ -37,8 +38,10 @@ public class DetailWord extends Word{
         this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
-        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
-        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
+//        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
+//        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
+        this.last_date = last_date;
+        this.review_date = review_date;
         this.cid = cid;
         this.gid = gid;
         this.dict_source = dict_source;
@@ -63,8 +66,10 @@ public class DetailWord extends Word{
         this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
-        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
-        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
+//        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
+//        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
+        this.last_date = last_date;
+        this.review_date = review_date;
         this.cid = cid;
         this.gid = gid;
         this.dict_source = dict_source;
@@ -170,22 +175,28 @@ public class DetailWord extends Word{
         this.today_correct_times = Integer.parseInt(today_correct_times);
     }
 
+    public boolean isCollect() {
+        return isCollect;
+    }
+
+    public void setCollect(boolean collect) {
+        isCollect = collect;
+    }
 
     @Override
     public String toString() {
         return "DetailWord{" +
-                "wid=" + getWid() +
-                ", word_en=" + getWord_en() +
-                ", word_ch=" + word_ch +
+                "word_ch='" + word_ch + '\'' +
                 ", correct_times=" + correct_times +
                 ", error_times=" + error_times +
                 ", last_date='" + last_date + '\'' +
                 ", review_date='" + review_date + '\'' +
+                ", hid='" + hid + '\'' +
                 ", cid='" + cid + '\'' +
                 ", gid='" + gid + '\'' +
-                ", hid='" + hid + '\'' +
                 ", dict_source='" + dict_source + '\'' +
                 ", source='" + source + '\'' +
+                ", isCollect=" + isCollect +
                 ", today_correct_times=" + today_correct_times +
                 '}';
     }

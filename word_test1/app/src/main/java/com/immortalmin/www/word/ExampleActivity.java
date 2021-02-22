@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -55,6 +56,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
     private RecordDbDao mRecordDbDao;
+    private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
@@ -100,7 +102,12 @@ public class ExampleActivity extends AppCompatActivity implements
         mRecordDbDao = new RecordDbDao(ExampleActivity.this);
         first_coming = true;
         init_user();
-        getWordData();
+        if(collectDbDao.hasData(wid,dict_source)){
+            word = collectDbDao.getSingleWordByWidAndSource(wid,dict_source);
+            mHandler.sendEmptyMessage(4);
+        }else{
+            getWordDataFromServer();
+        }
         if("0".equals(dict_source)){//有例句，没有柯林斯
             fragment_mode=0;
             transaction = fragmentManager.beginTransaction();
@@ -242,7 +249,7 @@ public class ExampleActivity extends AppCompatActivity implements
                     word_ch.setText(word.getWord_ch());
                     //暂时不显示
 //                    source.setText(word.get("source").toString());
-                    if(!"null".equals(word.getCid())){//是收藏的单词
+                    if(word.isCollect()){//是收藏的单词
                         word_en.setAccount((float)(word.getCorrect_times()/5.0));
                         collect_flag=1;
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_on, null);
@@ -338,7 +345,6 @@ public class ExampleActivity extends AppCompatActivity implements
         del_alert.show();
     }
 
-
     private void deleteWord(){
         JSONObject jsonObject = new JSONObject();
         try{
@@ -358,39 +364,58 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-
     /**
      * @param sel 0:取消收藏；1:添加收藏
      */
+//    private void updateCollect(int sel){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",17);
+//            jsonObject.put("collect",sel);
+//            if(sel==0){
+//                jsonObject.put("cid",word.getCid());
+//            }else{
+//                jsonObject.put("uid", user.getUid());
+//                jsonObject.put("wid",word.getWid());
+//                jsonObject.put("dict_source",dict_source);
+//            }
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result)->{
+//            if(sel==1){
+//                word = jsonRe.wordData(result);
+//                Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
+//            }else{
+//                Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
+//            }
+//            collect.setClickable(true);
+//        });
+//        myAsyncTask.execute(jsonObject);
+//    }
+    /**
+     * 修改收藏
+     * @param sel 0:取消收藏；1:添加收藏
+     */
     private void updateCollect(int sel){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",17);
-            jsonObject.put("collect",sel);
-            if(sel==0){
-                jsonObject.put("cid",word.getCid());
-            }else{
-                jsonObject.put("uid", user.getUid());
-                jsonObject.put("wid",word.getWid());
-                jsonObject.put("dict_source",dict_source);
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
+        if(collectDbDao.hasData(word.getWid(),word.getDict_source())){
+            collectDbDao.updateCollectByWidAndSource(word.getWid(),word.getDict_source(),sel);
+        }else{//不存在本地数据库，说明还未收藏，所以直接插入数据
+            collectDbDao.insertData(word,true);
         }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            if(sel==1){
-                word = jsonRe.wordData(result);
-                Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
-            }
-            collect.setClickable(true);
-        });
-        myAsyncTask.execute(jsonObject);
+        if(sel==0){
+            Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
+        }
+        collect.setClickable(true);
     }
 
-    public void getWordData(){
+    /**
+     * 从服务器获取单词数据
+     */
+    public void getWordDataFromServer(){
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",6);

@@ -4,15 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#4a82c7"
     tools:context=".FeedbackActivity">
+
+    <com.ocnyang.contourview.ContourView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:contour_style="Sand"
+        app:shader_endcolor="#4f68c6"
+        app:shader_mode="RadialGradient"
+        app:shader_startcolor="#61a8d4"
+        app:shader_style="Center"
+        app:smoothness="0.15"/>
 
     <RelativeLayout
         android:id="@+id/head_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#E1F3CF"
         >
-
         <TextView
             android:id="@+id/feedback_tv"
             android:layout_width="wrap_content"
@@ -53,7 +62,7 @@
         android:layout_height="fill_parent"
         android:layout_below="@+id/head_layout"
         android:dividerHeight="10dp"
-        android:divider="#E1F3CF"/>
+        android:divider="#4a82c7"/>
 
 
 

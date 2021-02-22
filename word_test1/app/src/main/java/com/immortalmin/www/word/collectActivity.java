@@ -182,7 +182,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     public void saveAllWordsToSqlite(List<DetailWord> word){
         CollectDbDao collectDbDao = new CollectDbDao(this);
         for(int i=0;i<word.size();i++){
-            collectDbDao.insertData(word.get(i));
+            collectDbDao.insertData(word.get(i),false);
         }
     }
 

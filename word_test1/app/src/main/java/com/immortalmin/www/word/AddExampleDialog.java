@@ -126,16 +126,13 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         }
 
     }
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what){
-                case 0:
-                    cancel_flag=false;
-                    break;
-            }
-            return false;
+    private Handler mHandler = new Handler(message -> {
+        switch (message.what){
+            case 0:
+                cancel_flag=false;
+                break;
         }
+        return false;
     });
 
 
@@ -191,25 +188,17 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         add_btn[ind].setTextSize(20);
         add_btn[ind].setText("+");
         add_btn[ind].setId(ind);
-        add_btn[ind].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                add_view();
-            }
-        });
+        add_btn[ind].setOnClickListener(view -> add_view());
 
-        del_btn[ind].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                del_flag[ind]=false;
-                example_layout.removeView(word[ind][0]);
-                example_layout.removeView(word[ind][1]);
-                example_layout.removeView(word[ind][2]);
-                example_layout.removeView(btn_layout[ind]);
-                sum--;
-                if(sum==0){
-                    first_add_btn.setVisibility(View.VISIBLE);
-                }
+        del_btn[ind].setOnClickListener(view -> {
+            del_flag[ind]=false;
+            example_layout.removeView(word[ind][0]);
+            example_layout.removeView(word[ind][1]);
+            example_layout.removeView(word[ind][2]);
+            example_layout.removeView(btn_layout[ind]);
+            sum--;
+            if(sum==0){
+                first_add_btn.setVisibility(View.VISIBLE);
             }
         });
         btn_layout[ind].addView(add_btn[ind]);

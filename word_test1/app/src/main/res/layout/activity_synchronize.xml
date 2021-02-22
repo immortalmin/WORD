@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SynchronizeActivity">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:src="@drawable/synchronize"/>
+
+    <TextView
+        android:id="@+id/hintText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:layout_below="@id/icon"
+        android:text="你可以将本地数据上传到云端或者将云端的数据同步到本地"
+        android:textSize="15sp"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:layout_below="@+id/hintText"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/uploadBtn"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:text="上传到云端"
+        android:textSize="18sp"/>
+
+    <Button
+        android:id="@+id/downloadBtn"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:text="同步到本地"
+        android:textSize="18sp"/>
+</RelativeLayout>

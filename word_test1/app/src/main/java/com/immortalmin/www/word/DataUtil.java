@@ -89,7 +89,7 @@ public class DataUtil {
      * 从本地获取UserData?
      * @return
      */
-    private User set_user(){
+    User set_user(){
         User user = new User();
         SharedPreferences sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         user.setUid(sp.getString("uid",null));

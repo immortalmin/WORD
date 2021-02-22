@@ -68,6 +68,7 @@ public class JsonRe {
                 DetailWord word = new DetailWord();
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
                 word.setCid(jsonObject.getString("cid"));
+                word.setCollect(!("null".equals(word.getCid())||word.getCid()==null));
                 word.setGid(jsonObject.getString("gid"));
                 word.setWid(jsonObject.getString("wid"));
                 word.setWord_en(jsonObject.getString("word_en").replaceAll("\n",""));
@@ -101,6 +102,7 @@ public class JsonRe {
             word.setLast_date(jsonObject.getString("last_date"));
             word.setReview_date(jsonObject.getString("review_date"));
             word.setCid(jsonObject.getString("cid"));
+            word.setCollect(!("null".equals(word.getCid())||word.getCid()==null));
             word.setGid(jsonObject.getString("gid"));
             word.setDict_source(jsonObject.getString("dict_source"));
             word.setSource(jsonObject.getString("source"));
