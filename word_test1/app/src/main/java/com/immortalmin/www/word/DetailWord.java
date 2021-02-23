@@ -1,5 +1,7 @@
 package com.immortalmin.www.word;
 
+import android.util.Log;
+
 /**
  * 带有数据记录的单词
  */
@@ -8,8 +10,8 @@ public class DetailWord extends Word{
     private String word_ch;
     private int correct_times = 0;
     private int error_times = 0;
-    private String last_date;
-    private String review_date;
+    private String last_date = "2000-01-01";
+    private String review_date = "2000-01-01";
     private String hid;
     private String cid;
     private String gid;
@@ -38,12 +40,10 @@ public class DetailWord extends Word{
         this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
-//        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
-//        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
-        this.last_date = last_date;
-        this.review_date = review_date;
+        this.last_date = "null".equals(last_date)?"2000-01-01":last_date;
+        this.review_date = "null".equals(review_date)?"2000-01-01":review_date;
         this.cid = cid;
-        this.gid = gid;
+        this.gid = "null".equals(gid)?"0":gid;
         this.dict_source = dict_source;
     }
 
@@ -66,12 +66,10 @@ public class DetailWord extends Word{
         this.word_ch = word_ch;
         this.correct_times = "null".equals(correct_times)?0:Integer.parseInt(correct_times);
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
-//        this.last_date = "null".equals(last_date)?"1970-01-01":last_date;
-//        this.review_date = "null".equals(review_date)?"1970-01-01":review_date;
-        this.last_date = last_date;
-        this.review_date = review_date;
+        this.last_date = "null".equals(last_date)?"2000-01-01":last_date;
+        this.review_date = "null".equals(review_date)?"2000-01-01":review_date;
         this.cid = cid;
-        this.gid = gid;
+        this.gid = "null".equals(gid)?"0":gid;
         this.dict_source = dict_source;
         this.source = source;
     }
@@ -113,7 +111,7 @@ public class DetailWord extends Word{
     }
 
     public void setLast_date(String last_date) {
-        this.last_date = last_date;
+        this.last_date = "null".equals(last_date)?"2000-01-01":last_date;;
     }
 
     public String getReview_date() {
@@ -121,7 +119,7 @@ public class DetailWord extends Word{
     }
 
     public void setReview_date(String review_date) {
-        this.review_date = review_date;
+        this.review_date = "null".equals(review_date)?"2000-01-01":review_date;
     }
 
     public String getCid() {
@@ -137,7 +135,7 @@ public class DetailWord extends Word{
     }
 
     public void setGid(String gid) {
-        this.gid = gid;
+        this.gid = "null".equals(gid)?"0":gid;
     }
 
     public String getHid() {

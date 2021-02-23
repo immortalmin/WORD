@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,15 +112,13 @@ public class CollectDbDao {
      */
     ArrayList<DetailWord> getSyncList() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,isCollect from collect where isSynchronized=1",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,correct_times,error_times,last_date,review_date,dict_source,isCollect from collect where isSynchronized=0",null);
         while(cursor.moveToNext()){
             DetailWord word = new DetailWord();
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
             word.setCid(cursor.getString(cursor.getColumnIndex("cid")));
             word.setGid(cursor.getString(cursor.getColumnIndex("gid")));
             word.setWid(cursor.getString(cursor.getColumnIndex("wid")));
-            word.setWord_en(cursor.getString(cursor.getColumnIndex("word_en")));
-            word.setWord_ch(cursor.getString(cursor.getColumnIndex("word_ch")));
             word.setCorrect_times(cursor.getString(cursor.getColumnIndex("correct_times")));
             word.setError_times(cursor.getString(cursor.getColumnIndex("error_times")));
             word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
@@ -322,7 +321,17 @@ public class CollectDbDao {
     public void updateData(DetailWord word){
         db = helper.getWritableDatabase();
         String update_date = DateTransUtils.getDateAfterToday(0);
-        db.execSQL("update collect set gid="+word.getGid()+",word_en=\""+word.getWord_en()+"\",word_ch=\""+word.getWord_ch()+"\",correct_times="+word.getCorrect_times()+",error_times="+word.getError_times()+",last_date=\""+word.getLast_date()+"\",review_date=\""+word.getReview_date()+"\",update_date=\""+update_date+"\" where id="+word.getHid());
+        db.execSQL("update collect set gid="+word.getGid()+",word_en=\""+word.getWord_en()+"\",word_ch=\""+word.getWord_ch()+"\",correct_times="+word.getCorrect_times()+",error_times="+word.getError_times()+",last_date=\""+word.getLast_date()+"\",review_date=\""+word.getReview_date()+"\",update_date=\""+update_date+"\",isSynchronized=0 where id="+word.getHid());
+        db.close();
+    }
+
+    /**
+     * 执行SQL语句
+     * @param s
+     */
+    void execCommonSQL(String s){
+        db = helper.getWritableDatabase();
+        db.execSQL(s);
         db.close();
     }
 

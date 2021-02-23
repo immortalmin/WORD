@@ -40,6 +40,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 
     private Handler handler = new Handler();
     private Tencent tencent;
+    private SyncUtil syncUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +50,30 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     }
 
     private void init() {
+        syncData();
+
         //检查权限
         handler.postDelayed(() -> {
             if(judgePermission()){
                 jumpToNext();
             }
         },2000);
+    }
+
+    /**
+     * 向服务器同步数据
+     */
+    private void syncData() {
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+        int login_mode = sp.getInt("login_mode",0);
+        if(login_mode!=-1){
+            syncUtil = new SyncUtil(this);
+            syncUtil.setFinishListener(()->{
+                //XXX:处理完数据再进入主界面
+                Log.i("ccc","上传完成");
+            });
+            syncUtil.uploadData();
+        }
     }
 
     private void jumpToNext() {
@@ -106,7 +125,9 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
                 finish();
                 break;
             case 1:
-                startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+                Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
+                intent.putExtra("source","1");
+                startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 finish();
                 break;

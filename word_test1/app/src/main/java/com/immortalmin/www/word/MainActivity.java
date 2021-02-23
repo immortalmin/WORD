@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private User user = new User();
     private BlurImageView blurImageView = new BlurImageView();
     private MyAsyncTask myAsyncTask;
+    private SyncUtil syncUtil;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Context context;
     private List<Map<String,Object>> word_list=null;
@@ -101,6 +102,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
+
+        intent = getIntent();
+        String source = intent.getStringExtra("source");//0:login 1:launch
+        if("0".equals(source)){
+            Log.i("ccc","开始同步数据");
+            syncUtil = new SyncUtil(this);
+            syncUtil.setFinishListener(()->{
+                Log.i("ccc","同步成功");
+                getReviewCount();
+            });
+            syncUtil.downloadData();
+        }
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();

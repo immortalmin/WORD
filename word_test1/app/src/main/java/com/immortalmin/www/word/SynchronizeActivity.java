@@ -1,5 +1,6 @@
 package com.immortalmin.www.word;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 import java.sql.Time;
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
@@ -50,14 +52,50 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
         user = dataUtil.set_user();
     }
 
+    /**
+     * 确认上传dialog
+     */
+    private void uploadConfirmDialog(){
+        SweetAlertDialog confirm_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        confirm_alert.setTitleText("上传数据")
+                .setContentText("确定将本地数据上传到云端？")
+                .setConfirmText("是")
+                .setCancelText("否")
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    uploadData();
+                    sweetAlertDialog.cancel();
+                })
+                .setCancelClickListener(SweetAlertDialog::cancel);
+        confirm_alert.setCancelable(false);
+        confirm_alert.show();
+    }
+
+    /**
+     * 确认同步本地数据dialog
+     */
+    private void downloadConfirmDialog(){
+        SweetAlertDialog confirm_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        confirm_alert.setTitleText("同步数据")
+                .setContentText("将以云端的数据为主，同步本地的数据")
+                .setConfirmText("是")
+                .setCancelText("否")
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    downloadData();
+                    sweetAlertDialog.cancel();
+                })
+                .setCancelClickListener(SweetAlertDialog::cancel);
+        confirm_alert.setCancelable(false);
+        confirm_alert.show();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.uploadBtn:
-                uploadData();
+                uploadConfirmDialog();
                 break;
             case R.id.downloadBtn:
-                downloadData();
+                downloadConfirmDialog();
                 break;
         }
     }
@@ -70,26 +108,64 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
      */
     private void uploadData() {
         ArrayList<DetailWord> wordList = collectDbDao.getSyncList();
-        Log.i("ccc","syncList:"+wordList.toString());
-        JSONObject jsonObject = new JSONObject();
-        for(int i=0;i<wordList.size();i++){
-            try{
-                jsonObject.put("wid",wordList.get(i).getWid());
-                jsonObject.put("word_en",wordList.get(i).getWord_en());
-                jsonObject.put("word_ch",wordList.get(i).getWord_ch());
-                jsonObject.put("correct_times",wordList.get(i).getCorrect_times());
-                jsonObject.put("error_times",wordList.get(i).getError_times());
-                jsonObject.put("last_date",wordList.get(i).getLast_date());
-                jsonObject.put("review_date",wordList.get(i).getReview_date());
-                jsonObject.put("gid",wordList.get(i).getGid());
-                jsonObject.put("dict_source",wordList.get(i).getDict_source());
-                jsonObject.put("source",wordList.get(i).getSource());
-                jsonObject.put("isCollect",wordList.get(i).isCollect()?1:0);
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-
+        if(wordList.size()==0){
+            Toast.makeText(this,"没有需要的同步的数据",Toast.LENGTH_SHORT).show();
+            return ;
         }
+        mHandler.sendEmptyMessage(0);
+        progressBar.setMax(1000);
+        progressBar.setProgress(0);
+        new Thread(()->{
+            for(int i=0;i<wordList.size();i++){
+                DetailWord syncWord = wordList.get(i);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("what",27);
+                    jsonObject.put("uid",user.getUid());
+                    jsonObject.put("wid",syncWord.getWid());
+                    /**
+                     * 如果直接为null的话，似乎无法正常存入JSONObject，所以改成"null"
+                     */
+//                jsonObject.put("cid",wordList.get(i).getCid());
+                    if(wordList.get(i).getCid()==null) jsonObject.put("cid","null");
+                    else jsonObject.put("cid",syncWord.getCid());
+                    jsonObject.put("gid",syncWord.getGid());
+                    jsonObject.put("correct_times",syncWord.getCorrect_times());
+                    jsonObject.put("error_times",syncWord.getError_times());
+                    jsonObject.put("last_date",syncWord.getLast_date());
+                    jsonObject.put("review_date",syncWord.getReview_date());
+                    jsonObject.put("dict_source",syncWord.getDict_source());
+                    jsonObject.put("isCollect",syncWord.isCollect()?1:0);
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                myAsyncTask = new MyAsyncTask();
+                myAsyncTask.setLoadDataComplete((result -> {
+                    try {
+                        JSONObject jsonObject1 = new JSONObject(result);
+                        int what = jsonObject1.getInt("what");
+                        if(what==0){//在云端collect添加了新数据,需要在本地修改isSynchronized=1和cid
+                            int cid = jsonObject1.getInt("cid");
+                            collectDbDao.execCommonSQL("update collect set cid="+cid+",isSynchronized=1 where id="+syncWord.getHid());
+                        }else if(what==1||what==3){//在云端collect删除了该条记录或无效数据，需要在本地删除这条记录
+                            collectDbDao.execCommonSQL("delete from collect where id="+syncWord.getHid());
+                        }else if(what==2){//在云端collect更新了背诵数据，需要在本地修改isSynchronized=1
+                            collectDbDao.execCommonSQL("update collect set isSynchronized=1 where id="+syncWord.getHid());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }));
+                myAsyncTask.execute(jsonObject);
+                int progress = (int)(i/(float)wordList.size()*1000);
+                progressBar.setProgress(progress);
+            }
+            mHandler.sendEmptyMessage(1);
+            Looper.prepare();
+            Toast.makeText(this,"同步成功",Toast.LENGTH_SHORT).show();
+            Looper.loop();
+        }).start();
+
     }
 
     /**
@@ -121,7 +197,7 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             ArrayList<DetailWord> wordList = jsonRe.detailWordData(result);
-            collectDbDao.deleteData();
+            collectDbDao.deleteData();//清除本地的数据
             fakeThread.interrupt();
             int fakeProgress = progressBar.getProgress();
             new Thread(()->{
