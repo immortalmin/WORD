@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -105,15 +106,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
 
-
-
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
         IntentFilter intentFilter = new IntentFilter("com.immortalmin.www.MainActivity");
         registerReceiver(closeReceiver, intentFilter);
 
         init();
+    }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        //等Activity初始化完毕后设置按钮高斯模糊
+        mHandler.obtainMessage(2).sendToTarget();
     }
 
     /**
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             syncUtil.setFinishListener(new SyncUtil.FinishListener() {
                 @Override
                 public void finish() {
-                    Log.i("ccc","同步成功");
+//                    Log.i("ccc","同步成功");
                     getReviewCount();
                     intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
                 }
@@ -142,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-        //设置按钮高斯模糊
-        mHandler.obtainMessage(2).sendToTarget();
         //获取用户信息
         init_user();
         if(networkUtil.isNetworkConnected()){
@@ -423,21 +426,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void cropBitmap(Bitmap bitmap) {
         int w = bitmap.getWidth(); // 得到图片的宽，高
         int h = bitmap.getHeight();
-        Double ratio = w/Double.valueOf(screen_width);
-//        int btn_h = DisplayUtil.dip2px(this,btn_collect.getHeight());
-//        int btn_w = DisplayUtil.dip2px(this,btn_collect.getWidth());
-//        Log.i("ccc","height:"+btn_h+",width:"+btn_w);
-        int btn_h = 220;
-        int btn_w = 220;
+        Log.i("ccc","w:"+w);
+        Double ratio = w/ (double) screen_width;
+        Log.i("ccc","ratio:"+ratio);
+        int btn_h = btn_collect.getHeight();
+        int btn_w = btn_collect.getWidth();
+        Log.i("ccc","btn_h:"+btn_h);
+        Log.i("ccc","btn_w:"+btn_w);
+//        int btn_h = 220;
+//        int btn_w = 220;
         //half margin
 //        int border = DisplayUtil.dip2px(this,5);
 //        Log.i("ccc","border:"+border);
-        int border = 15;
+        int border = DisplayUtil.dip2px(this,7.5f);
         int MarginAndBtn_h = (int)((btn_h+border)*ratio);
         int MarginAndBtn_w = (int)((btn_w+border)*ratio);
         int justMargin = (int)(border*ratio);
         int justBtn_h = (int)(btn_h*ratio);
         int justBtn_w = (int)(btn_w*ratio);
+        Log.i("ccc","MarginAndBtn_w:"+MarginAndBtn_w);
+        Log.i("ccc","w / 2-MarginAndBtn_w:"+(w / 2-MarginAndBtn_w));
+        Log.i("ccc","h/2-MarginAndBtn_h:"+(h/2-MarginAndBtn_h));
+        Log.i("ccc","justBtn_w:"+justBtn_w);
+        Log.i("ccc","justBtn_h:"+justBtn_h);
         Bitmap bitmap1 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap2 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);

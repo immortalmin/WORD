@@ -21,6 +21,8 @@ import javax.xml.validation.Validator;
 public class SignIn extends View {
 
     private Paint mPaint = new Paint();
+    private DisplayUtil displayUtil = new DisplayUtil();
+    private Context context;
     private int[] color = {
             Color.parseColor("#50ebedf0"),
             Color.parseColor("#50c6e48b"),
@@ -73,13 +75,15 @@ public class SignIn extends View {
 
     public SignIn(Context context){
         this(context,null);
+        this.context = context;
     }
     public SignIn(Context context, AttributeSet attrs){
         this(context,attrs,0);
+        this.context = context;
     }
     public SignIn(Context context, AttributeSet attrs, int defStyleAttr){
         super(context,attrs,defStyleAttr);
-
+        this.context = context;
     }
 
     @Override
@@ -95,9 +99,9 @@ public class SignIn extends View {
      * @param canvas
      */
     private void drawmonth(Canvas canvas) {
-        canvas.translate(-980,-30);
+        canvas.translate(-DisplayUtil.dp2px(context,330),-DisplayUtil.dp2px(context,10));
         for(int i=0;i<month_column_num.size();i++){
-            canvas.drawText(toMonth[month_column_str.get(i)],(month_column_num.get(i)-1)*35,25,mPaint);
+            canvas.drawText(toMonth[month_column_str.get(i)],(month_column_num.get(i)-1)*DisplayUtil.dp2px(context,11),DisplayUtil.dp2px(context,8),mPaint);
         }
 
     }
@@ -110,19 +114,19 @@ public class SignIn extends View {
         canvas.save();
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setTextSize(20);
+        mPaint.setTextSize(DisplayUtil.sp2px(context,7));
         mPaint.setColor(Color.parseColor("#bddac3"));
-        canvas.translate(-250,250);
-        canvas.drawText("Less",0,30,mPaint);
-        canvas.translate(50,10);
+        canvas.translate(-DisplayUtil.dp2px(context,85),DisplayUtil.dp2px(context,80));
+        canvas.drawText("Less",0,DisplayUtil.dp2px(context,7),mPaint);
+        canvas.translate(DisplayUtil.dp2px(context,17),DisplayUtil.dp2px(context,1));
         for(int i=0;i<5;i++){
             mPaint.setColor(color[i]);
-            canvas.drawRect(0,0,20,20,mPaint);
-            canvas.translate(25,0);
+            canvas.drawRect(0,0,DisplayUtil.dp2px(context,8),DisplayUtil.dp2px(context,9),mPaint);
+            canvas.translate(DisplayUtil.dp2px(context,9),0);
         }
-        canvas.translate(5,-10);
+        canvas.translate(DisplayUtil.dp2px(context,1),-DisplayUtil.dp2px(context,1));
         mPaint.setColor(Color.parseColor("#bddac3"));
-        canvas.drawText("More",0,30,mPaint);
+        canvas.drawText("More",0,DisplayUtil.dp2px(context,8),mPaint);
         canvas.restore();
     }
 
@@ -132,14 +136,14 @@ public class SignIn extends View {
      */
     private void drawweek(Canvas canvas) {
         //为月份腾出空间
-        canvas.translate(0,30);
+        canvas.translate(0,DisplayUtil.dp2px(context,10));//30
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setTextSize(20);
+        mPaint.setTextSize(DisplayUtil.sp2px(context,7));
         mPaint.setColor(Color.parseColor("#bddac3"));
-        canvas.drawText("Mon",0,55,mPaint);
-        canvas.drawText("Wed",0,125,mPaint);
-        canvas.drawText("Fri",0,195,mPaint);
+        canvas.drawText("Mon",0,DisplayUtil.dp2px(context,20),mPaint);
+        canvas.drawText("Wed",0,DisplayUtil.dp2px(context,41),mPaint);
+        canvas.drawText("Fri",0,DisplayUtil.dp2px(context,63),mPaint);
 
     }
 
@@ -151,7 +155,7 @@ public class SignIn extends View {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        canvas.translate(50,0);
+        canvas.translate(DisplayUtil.dp2px(context,16),0);
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
 
@@ -160,7 +164,7 @@ public class SignIn extends View {
         int start_index = 7-calendar.get(Calendar.DAY_OF_WEEK);
         int column = 0;//列数
 
-        calendar.add(Calendar.DAY_OF_MONTH,start_index-196);
+        calendar.add(Calendar.DAY_OF_MONTH,start_index-210);//196
 
         for(int i=start_index,week=0;i<sign_in_times.size();i++,week++){
             if(week%7==0){
@@ -176,12 +180,12 @@ public class SignIn extends View {
             }
 
             mPaint.setColor(color[timeTocolor(sign_in_times.get(i))]);
-            canvas.drawRect(0,0,30,30,mPaint);
-            canvas.translate(0,35);
+            canvas.drawRect(0,0,DisplayUtil.dp2px(context,10),DisplayUtil.dp2px(context,10),mPaint);
+            canvas.translate(0,DisplayUtil.dp2px(context,11));
 
             if(week%7==6||i==sign_in_times.size()-1){
                 canvas.restore();
-                canvas.translate(35,0);
+                canvas.translate(DisplayUtil.dp2px(context,11),0);
             }
         }
 //        Log.i("ccc",month_column_num.toString());
@@ -200,7 +204,7 @@ public class SignIn extends View {
 
     private void dispose_data() {
         //补满
-        while(sign_in_times.size()<196){
+        while(sign_in_times.size()<210){//196
             sign_in_times.add(0);
         }
         //反转list

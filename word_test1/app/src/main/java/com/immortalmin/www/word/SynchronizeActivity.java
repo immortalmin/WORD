@@ -33,6 +33,7 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
     private MyAsyncTask myAsyncTask;
     private User user;
     private DataUtil dataUtil = new DataUtil(this);
+    private NetworkUtil networkUtil = new NetworkUtil(this);
     private JsonRe jsonRe = new JsonRe();
     private CollectDbDao collectDbDao = new CollectDbDao(this);
 
@@ -96,10 +97,18 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.uploadBtn:
-                uploadConfirmDialog();
+                if(networkUtil.isNetworkConnected()){
+                    uploadConfirmDialog();
+                }else{
+                    Toast.makeText(this,"请检查网络",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.downloadBtn:
-                downloadConfirmDialog();
+                if(networkUtil.isNetworkConnected()){
+                    downloadConfirmDialog();
+                }else{
+                    Toast.makeText(this,"请检查网络",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.returnBtn:
                 finish();

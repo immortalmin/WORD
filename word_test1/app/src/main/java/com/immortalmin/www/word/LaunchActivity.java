@@ -69,12 +69,11 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
         int login_mode = sp.getInt("login_mode",-1);
         if(login_mode!=-1){
             syncUtil = new SyncUtil(this);
-
             syncUtil.setFinishListener(new SyncUtil.FinishListener() {
                 @Override
                 public void finish() {
                     //XXX:处理完数据再进入主界面
-                    Log.i("ccc","上传完成");
+//                    Log.i("ccc","上传完成");
                 }
 
                 @Override
