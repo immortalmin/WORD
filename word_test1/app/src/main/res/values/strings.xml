@@ -17,5 +17,6 @@
         completions."
     </string>
     <string name="feedback_context">问题建议</string>
+    <string name="sync_announce">你可以将本地数据上传到云端或者将云端的数据同步到本地\n\n每次进入APP，系统都会自动同步你的数据</string>
 
 </resources>

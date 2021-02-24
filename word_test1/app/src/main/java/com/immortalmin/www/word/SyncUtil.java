@@ -2,6 +2,7 @@ package com.immortalmin.www.word;
 
 import android.content.Context;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -18,11 +19,13 @@ public class SyncUtil {
     private User user;
     private MyAsyncTask myAsyncTask;
     private JsonRe jsonRe = new JsonRe();
+    private NetworkUtil networkUtil;
 
     public SyncUtil(Context context) {
         this.context = context;
         collectDbDao = new CollectDbDao(context);
         dataUtil = new DataUtil(context);
+        networkUtil = new NetworkUtil(context);
         init();
     }
 
@@ -38,6 +41,11 @@ public class SyncUtil {
      * 单词本身数据的变化（暂时不处理）
      */
     void uploadData() {
+        //如果没有网络，则不进行同步
+        if(!networkUtil.isNetworkConnected()){
+            if(finishListener!=null) finishListener.fail();
+            return ;
+        }
         ArrayList<DetailWord> wordList = collectDbDao.getSyncList();
         if(wordList.size()==0){
             if(finishListener!=null) finishListener.finish();
@@ -95,6 +103,11 @@ public class SyncUtil {
      * 下载数据
      */
     void downloadData() {
+        //如果没有网络，则不进行同步
+        if(!networkUtil.isNetworkConnected()){
+            if(finishListener!=null) finishListener.fail();
+            return ;
+        }
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",4);
@@ -118,6 +131,7 @@ public class SyncUtil {
 
     interface FinishListener{
         void finish();
+        void fail();
     }
 
     public void setFinishListener(FinishListener finishListener) {

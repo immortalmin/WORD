@@ -28,7 +28,7 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class SynchronizeActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button uploadBtn,downloadBtn;
+    private Button uploadBtn,downloadBtn,returnBtn,onlyWifiBtn;
     private ProgressBar progressBar;
     private MyAsyncTask myAsyncTask;
     private User user;
@@ -42,9 +42,13 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_synchronize);
         uploadBtn = findViewById(R.id.uploadBtn);
         downloadBtn = findViewById(R.id.downloadBtn);
+        returnBtn = findViewById(R.id.returnBtn);
+        onlyWifiBtn = findViewById(R.id.onlyWifiBtn);
         progressBar = findViewById(R.id.progressBar);
         uploadBtn.setOnClickListener(this);
         downloadBtn.setOnClickListener(this);
+        returnBtn.setOnClickListener(this);
+        onlyWifiBtn.setOnClickListener(this);
         init();
     }
 
@@ -96,6 +100,10 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.downloadBtn:
                 downloadConfirmDialog();
+                break;
+            case R.id.returnBtn:
+                finish();
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
         }
     }

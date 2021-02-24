@@ -8,11 +8,11 @@
 
     <Button
         android:id="@+id/return_btn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
-        android:background="@drawable/return3"
+        android:background="@drawable/left_arrow"
         android:text="" />
 
     <TextView

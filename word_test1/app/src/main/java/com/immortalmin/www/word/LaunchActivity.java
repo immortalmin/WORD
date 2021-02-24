@@ -50,7 +50,8 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
     }
 
     private void init() {
-        syncData();
+
+        syncData();//将用户的背诵数据上传服务器
 
         //检查权限
         handler.postDelayed(() -> {
@@ -65,12 +66,21 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
      */
     private void syncData() {
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        int login_mode = sp.getInt("login_mode",0);
+        int login_mode = sp.getInt("login_mode",-1);
         if(login_mode!=-1){
             syncUtil = new SyncUtil(this);
-            syncUtil.setFinishListener(()->{
-                //XXX:处理完数据再进入主界面
-                Log.i("ccc","上传完成");
+
+            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
+                @Override
+                public void finish() {
+                    //XXX:处理完数据再进入主界面
+                    Log.i("ccc","上传完成");
+                }
+
+                @Override
+                public void fail() {
+                    Log.i("ccc","无网络");
+                }
             });
             syncUtil.uploadData();
         }
@@ -78,7 +88,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
 
     private void jumpToNext() {
         SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        int login_mode = sp.getInt("login_mode",0);
+        int login_mode = sp.getInt("login_mode",-1);
         switch (login_mode){
             case -1://首次进入APP
                 //直接跳转到登录界面

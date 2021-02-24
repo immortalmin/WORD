@@ -303,7 +303,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void getUserDataForQQ(final JSONObject jsonObject){
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            User user = jsonRe.userData(result);
+            user = jsonRe.userData(result);
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putString("uid",user.getUid())
                     .putString("open_id",user.getOpen_id())
@@ -312,13 +312,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .putString("profile_photo",user.getProfile_photo())
                     .putLong("last_login",user.getLast_login())
                     .apply();
-            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-            mHandler.sendEmptyMessage(1);
+            getUserSetting();
+//            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+//            mHandler.sendEmptyMessage(1);
         });
         myAsyncTask.execute(jsonObject);
     }
 
-    private void get_setting(){
+
+    /**
+     * 获取用户设置
+     */
+    private void getUserSetting(){
         new Thread(() -> {
             JSONObject jsonObject = new JSONObject();
             try{
@@ -334,6 +339,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
                     .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
                     .apply();
+            Looper.prepare();
+            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+            mHandler.sendEmptyMessage(1);
+            Looper.loop();
         }).start();
     }
 
@@ -360,9 +369,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             .putLong("last_login",user.getLast_login())
                             .putInt("login_mode",0)
                             .apply();
-                    get_setting();
-                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                    mHandler.obtainMessage(1).sendToTarget();
+                    getUserSetting();
+//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+//                    mHandler.obtainMessage(1).sendToTarget();
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }

@@ -24,8 +24,8 @@ public class SearchAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.searchitem,null);
-        WordView word_en = (WordView)v.findViewById(R.id.word_en);
-        TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
+        WordView word_en = v.findViewById(R.id.word_en);
+        TextView word_ch = v.findViewById(R.id.word_ch);
         int correct_times = mdata.get(position).getCorrect_times();
         int grasp_times = 5;
         float account = (correct_times>=grasp_times?1.0f:(float)correct_times/(float)grasp_times);

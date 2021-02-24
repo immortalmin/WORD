@@ -70,9 +70,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int sound_success,sound_fail;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
+    private NetworkUtil networkUtil = new NetworkUtil(this);
     private int screen_width,screen_height;
     private Intent intent;
     private Boolean flag=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,17 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
 
-        intent = getIntent();
-        String source = intent.getStringExtra("source");//0:login 1:launch
-        if("0".equals(source)){
-            Log.i("ccc","开始同步数据");
-            syncUtil = new SyncUtil(this);
-            syncUtil.setFinishListener(()->{
-                Log.i("ccc","同步成功");
-                getReviewCount();
-            });
-            syncUtil.downloadData();
-        }
+
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
@@ -124,23 +116,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * 如果是刚登录，则会自动将云端的数据同步到本地
+     */
+    private void SyncData(){
+        intent = getIntent();
+        String source = intent.getStringExtra("source");//0:login 1:launch
+        if("0".equals(source)){
+            syncUtil = new SyncUtil(this);
+            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
+                @Override
+                public void finish() {
+                    Log.i("ccc","同步成功");
+                    getReviewCount();
+                    intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
+                }
+
+                @Override
+                public void fail() {
+                    Log.i("ccc","无网络");
+                }
+            });
+            syncUtil.downloadData();
+        }
+    }
+
     private void init() {
         //设置按钮高斯模糊
         mHandler.obtainMessage(2).sendToTarget();
         //获取用户信息
         init_user();
-        //检查用户登录时间并更新数据
-        inspect_usetime();
+        if(networkUtil.isNetworkConnected()){
+            //同步数据
+            SyncData();
+            //检查用户登录时间并更新数据
+            inspect_usetime();
+        }
         //更新单词复习数量
         getReviewCount();
     }
 
     private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
         user.setUsername(sp.getString("username",null));
         user.setPassword(sp.getString("password",null));
         user.setProfile_photo(sp.getString("profile_photo",null));
@@ -261,9 +279,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
-            //上传今天的数据
+            //上传昨天的数据
             update_time(jsonObject);
-            //上传 上一次登录的日期 到 今天的日期 之间的 使用时间数据
+            //上传 上一次登录的日期 到 昨天（不包括昨天） 之间的 使用时间数据
             Calendar calendar = Calendar.getInstance();
             for(int i=0;i<100;i++){
                 calendar.add(Calendar.DAY_OF_MONTH,-1);
@@ -271,7 +289,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(pre_day.equals(last_day)){
                     break;
                 }else{
-                    Log.i("ccc",pre_day);
                     jsonObject = new JSONObject();
                     try{
                         jsonObject.put("uid", user.getUid());
@@ -373,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                intent = new Intent(MainActivity.this,QQTestActivity.class);
 //                startActivity(intent);
 //                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                Log.i("ccc","network:"+networkUtil.isNetworkConnected());
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);
