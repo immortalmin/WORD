@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        //FIXME:debug的时候会卡住
         //等Activity初始化完毕后设置按钮高斯模糊
         mHandler.obtainMessage(2).sendToTarget();
     }
@@ -128,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent = getIntent();
         String source = intent.getStringExtra("source");//0:login 1:launch
         if("0".equals(source)){
+            RecordDbDao recordDbDao = new RecordDbDao(this);
+            recordDbDao.deleteData();//新用户登录，清空旧的历史记录
             syncUtil = new SyncUtil(this);
             syncUtil.setFinishListener(new SyncUtil.FinishListener() {
                 @Override
@@ -169,24 +172,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user.setLast_login(sp.getLong("last_login",946656000000L));
         user.setLogin_mode(sp.getInt("login_mode",0));
         //设置头像
-        setImage(user.getUid()+".jpg");
+        setImage();
     }
-    private void setImage(String pic) {
-        Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);
+    private void setImage() {
+        Bitmap bitmap;
+        if(user.getLogin_mode()==0){
+            bitmap=ImageUtils.getPhotoFromStorage(user.getProfile_photo());
+        }else{
+            bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
+        }
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
-            getImage(pic);
+            getImage();
         }else{
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }
 
-    private void getImage(final String pic){
+    private void getImage(){
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
             Bitmap bitmap;
             if(user.getLogin_mode()==0){
-                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+user.getProfile_photo(),0);
             }else{
                 bitmap = HttpGetContext.getbitmap(user.getProfile_photo());
             }
@@ -426,29 +434,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void cropBitmap(Bitmap bitmap) {
         int w = bitmap.getWidth(); // 得到图片的宽，高
         int h = bitmap.getHeight();
-        Log.i("ccc","w:"+w);
-        Double ratio = w/ (double) screen_width;
-        Log.i("ccc","ratio:"+ratio);
+        double ratio = w/ (double) screen_width;
         int btn_h = btn_collect.getHeight();
         int btn_w = btn_collect.getWidth();
-        Log.i("ccc","btn_h:"+btn_h);
-        Log.i("ccc","btn_w:"+btn_w);
-//        int btn_h = 220;
-//        int btn_w = 220;
-        //half margin
-//        int border = DisplayUtil.dip2px(this,5);
-//        Log.i("ccc","border:"+border);
         int border = DisplayUtil.dip2px(this,7.5f);
         int MarginAndBtn_h = (int)((btn_h+border)*ratio);
         int MarginAndBtn_w = (int)((btn_w+border)*ratio);
         int justMargin = (int)(border*ratio);
         int justBtn_h = (int)(btn_h*ratio);
         int justBtn_w = (int)(btn_w*ratio);
-        Log.i("ccc","MarginAndBtn_w:"+MarginAndBtn_w);
-        Log.i("ccc","w / 2-MarginAndBtn_w:"+(w / 2-MarginAndBtn_w));
-        Log.i("ccc","h/2-MarginAndBtn_h:"+(h/2-MarginAndBtn_h));
-        Log.i("ccc","justBtn_w:"+justBtn_w);
-        Log.i("ccc","justBtn_h:"+justBtn_h);
         Bitmap bitmap1 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap2 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2-MarginAndBtn_h,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);

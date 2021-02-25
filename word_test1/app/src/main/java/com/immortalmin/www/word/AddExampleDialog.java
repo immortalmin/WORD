@@ -86,11 +86,11 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.add_example,null);
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-        commit_btn = (Button)view.findViewById(R.id.commit_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
-        first_add_btn = (Button)view.findViewById(R.id.first_add_btn);
-        example_layout = (LinearLayout) view.findViewById(R.id.example_layout);
-        tv2 = (TextView)view.findViewById(R.id.tv2);
+        commit_btn = view.findViewById(R.id.commit_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
+        first_add_btn = view.findViewById(R.id.first_add_btn);
+        example_layout = view.findViewById(R.id.example_layout);
+        tv2 = view.findViewById(R.id.tv2);
         first_add_btn.setOnClickListener(this);
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);

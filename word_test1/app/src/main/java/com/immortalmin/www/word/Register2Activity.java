@@ -221,19 +221,18 @@ public class Register2Activity extends AppCompatActivity
     public void Register1FragmentInteraction(int what) {
 
         switch(what){
-            case 0://commit 跳转到登录界面 **记得放回用户名**
+            case 0: case 1://commit 跳转到登录界面 **记得放回用户名**
                 Intent intent = new Intent();
                 intent.putExtra("user",user);
                 setResult(1,intent);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
-            case 1://not binding
-                //弹框警告一下
-                //这里先跳转到登录界面
-                finish();
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                break;
+//            case 1://not binding
+//                //这里先跳转到登录界面
+//                finish();
+//                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                break;
             case 2://other ways
                 transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_right_in,R.anim.slide_to_left);

@@ -228,6 +228,8 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
                     all_num.setText(String.valueOf(allCount));
                     finished_num.setText(String.valueOf(finishCount));
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + message.what);
             }
             return false;
         }

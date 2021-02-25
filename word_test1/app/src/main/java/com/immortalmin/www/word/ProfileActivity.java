@@ -224,22 +224,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void setImage(String pic) {
-        Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);
+    private void setImage() {
+        Bitmap bitmap;
+        if(user.getLogin_mode()==0){
+            bitmap=ImageUtils.getPhotoFromStorage(user.getProfile_photo());
+        }else{
+            bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
+        }
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
-            getImage(pic);
+            getImage();
         }else{
             mHandler.obtainMessage(0,bitmap).sendToTarget();
         }
     }
 
-    private void getImage(final String pic){
+    private void getImage(){
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
             Bitmap bitmap;
             if(user.getLogin_mode()==0){
-                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+pic,0);
+                bitmap = httpGetContext.HttpclientGetImg("http://47.98.239.237/word/img/profile/"+user.getProfile_photo(),0);
             }else{
                 bitmap = HttpGetContext.getbitmap(user.getProfile_photo());
             }
@@ -269,7 +274,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }else{
                         motto.setText(user.getMotto());
                     }
-                    setImage(user.getUid()+".jpg");
+                    setImage();
                     break;
                 case 2:
                     Glide.with(ProfileActivity.this).load(captureUtil.getcapture(ProfileActivity.this))

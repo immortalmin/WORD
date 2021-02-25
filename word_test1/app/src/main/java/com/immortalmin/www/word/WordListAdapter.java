@@ -29,15 +29,16 @@ public class WordListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.worditem,null);
 
-        WordView word_en = (WordView)v.findViewById(R.id.word_en);
-        TextView word_ch = (TextView)v.findViewById(R.id.word_ch);
-        TextView review_date = (TextView)v.findViewById(R.id.review_date);
+        WordView word_en = v.findViewById(R.id.word_en);
+        TextView word_ch = v.findViewById(R.id.word_ch);
+        TextView review_date = v.findViewById(R.id.review_date);
 
         word_en.setmText(mdata.get(position).getWord_en());
         word_en.setAccount((float)(mdata.get(position).getCorrect_times()/5.0));
         word_ch.setText(mdata.get(position).getWord_ch());
         String review_date_string = mdata.get(position).getReview_date();
         if("1970-01-01".equals(review_date_string) || "null".equals(review_date_string)) review_date.setText("");
+        else if("2000-01-01".equals(review_date_string)) review_date.setText("new");
         else review_date.setText(review_date_string);
         return v;
     }

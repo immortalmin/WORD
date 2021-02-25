@@ -178,21 +178,15 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 .setContentText("Are you sure to delete all history records?")
                 .setConfirmText("yes")
                 .setCancelText("nooo")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.sendEmptyMessage(3);
-                        mRecordDbDao.deleteData();
-                        queryHistoryRecords(fuzzy_str);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.sendEmptyMessage(3);
+                    mRecordDbDao.deleteData();
+                    queryHistoryRecords(fuzzy_str);
                 })
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.sendEmptyMessage(3);
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.sendEmptyMessage(3);
                 });
         clear_alert.setCancelable(false);
         clear_alert.show();
@@ -246,23 +240,15 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         mHandler.obtainMessage(2).sendToTarget();
         AddWordDialog addWordDialog = new AddWordDialog(this,R.style.MyDialog,fuzzy_str);
         addWordDialog.setCancelable(false);
-        addWordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(3).sendToTarget();
-            }
-        });
+        addWordDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(3).sendToTarget());
         addWordDialog.show();
     }
 
     private void add_wordandexample(final JSONObject jsonObject){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
-                getWordList(fuzzy_str);
-            }
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            httpGetContext.getData("http://47.98.239.237/word/php_file2/addword.php",jsonObject);
+            getWordList(fuzzy_str);
         }).start();
     }
 
@@ -339,7 +325,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             int searchTextId = searchPlate.getContext().getResources()
                     .getIdentifier("android:id/search_src_text", null, null);
             //文字颜色
-            TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
+            TextView searchText = searchPlate.findViewById(searchTextId);
 
             //光标颜色
             try {

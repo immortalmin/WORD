@@ -37,9 +37,9 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private Context context;
     private Paint mPaint = new Paint();
     private Bitmap visible_bitmap,invisible_bitmap,clear_bitmap,paste_bitmap;
-    private int btn_length = 50,btn_padding=10;//按钮边长、按钮边距
-    private int padding = 20;
-    private int hindTextSize = 40;
+    private int btn_length,btn_padding;//按钮边长、按钮边距
+    private int padding;
+    private int hindTextSize;
     private Paint.FontMetrics fontMetrics;
     private boolean isVisible = true;//是否是可见文本
     private boolean isFold = true;//是否折叠
@@ -131,6 +131,11 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
 
     private void init(Context context, AttributeSet attrs) {
         this.context=context;
+        padding = DisplayUtil.dp2px(context,5);
+        btn_length = DisplayUtil.dp2px(context,15);
+        btn_padding = DisplayUtil.dp2px(context,2);
+        hindTextSize = DisplayUtil.sp2px(context,14);
+        setTextSize(16);
         if (attrs != null) {
             TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MyEditText);
             //输入框类型
@@ -236,7 +241,7 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.parseColor("#b1b1b1"));
         fontMetrics = mPaint.getFontMetrics();
-        canvas.drawText(hindString,10,getScrollY()+(int)(fontMetrics.descent-fontMetrics.ascent),mPaint);
+        canvas.drawText(hindString,padding/2,getScrollY()+(int)(fontMetrics.descent-fontMetrics.ascent),mPaint);
         setHint("");
     }
 
@@ -285,12 +290,12 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
         //设置右内边距, 防止清除按钮和文字重叠
         if(DisplayStyle==0){
             if(TextType==0){
-                setPadding(20, 20, 10+btn_padding+btn_length, 20);
+                setPadding(padding, padding, padding/2+btn_padding+btn_length, padding);
             }else if(TextType==2){
-                setPadding(20, 20, 10+2*(btn_padding+btn_length), 20);
+                setPadding(padding, padding, padding/2+2*(btn_padding+btn_length), padding);
             }
         }else if(isFold){
-            setPadding(20, 20, 20,20 );
+            setPadding(padding, padding, padding,padding );
         }
     }
 
@@ -298,9 +303,9 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     private void changeFold(boolean foldFlag){
         isFold = foldFlag;
         if(foldFlag){
-            setPadding(20, 20, 20,20 );
+            setPadding(padding, padding, padding,padding );
         }else{
-            setPadding(20, btn_length+btn_padding, 20,20 );
+            setPadding(padding, btn_length+btn_padding, padding,padding );
         }
         invalidate();
     }

@@ -21,9 +21,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+//FIXME:切换到横屏的时候会闪退，现在暂时的解决办法是禁止切换到横屏
+//参考博客：https://blog.csdn.net/Naide_S/article/details/80841265
+//          https://www.cnblogs.com/YZFHKMS-X/p/11864496.html
 public class KelinsiFragment extends Fragment {
-
 
     private OnFragmentInteractionListener mListener;
     private MyAsyncTask myAsyncTask;

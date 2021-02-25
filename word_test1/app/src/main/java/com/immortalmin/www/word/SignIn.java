@@ -21,7 +21,6 @@ import javax.xml.validation.Validator;
 public class SignIn extends View {
 
     private Paint mPaint = new Paint();
-    private DisplayUtil displayUtil = new DisplayUtil();
     private Context context;
     private int[] color = {
             Color.parseColor("#50ebedf0"),
