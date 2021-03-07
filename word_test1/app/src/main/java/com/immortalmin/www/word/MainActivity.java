@@ -53,25 +53,19 @@ import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private JsonRe jsonRe = new JsonRe();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private User user = new User();
     private BlurImageView blurImageView = new BlurImageView();
-    private MyAsyncTask myAsyncTask;
     private SyncUtil syncUtil;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
-    private Context context;
-    private List<Map<String,Object>> word_list=null;
     private Button btn_collect,btn_recite,btn_review,btn_spell;
     private ImageView imgview;
-    private EditText editText;
     private SearchView search_bar;
-    private RelativeLayout main_relative;
-    private SoundPool soundPool;
-    private int sound_success,sound_fail;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
     private NetworkUtil networkUtil = new NetworkUtil(this);
+    private UsageTime usageTime;
+    private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
     private int screen_width,screen_height;
     private Intent intent;
     private Boolean flag=false;
@@ -85,14 +79,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         screen_width = metric.widthPixels;     // 屏幕宽度（像素）
         screen_height = metric.heightPixels;   // 屏幕高度（像素）
-        context = this;
         btn_collect = findViewById(R.id.btn_collect);
         btn_recite = findViewById(R.id.btn_recite);
         btn_spell = findViewById(R.id.btn_spell);
         btn_review = findViewById(R.id.btn_review);
         search_bar = findViewById(R.id.search_bar);
         profile_photo = findViewById(R.id.profile_photo);
-        main_relative = findViewById(R.id.main_relative);
         imgview = findViewById(R.id.imgview);
         btn_collect.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
@@ -128,16 +120,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void SyncData(){
         intent = getIntent();
         String source = intent.getStringExtra("source");//0:login 1:launch
-        if("0".equals(source)){
+        if("0".equals(source)){//新用户注册or新用户登录
+            //清空旧的历史记录
             RecordDbDao recordDbDao = new RecordDbDao(this);
-            recordDbDao.deleteData();//新用户登录，清空旧的历史记录
+            recordDbDao.deleteData();
+
+            //将服务器上该用户的数据同步到本地
             syncUtil = new SyncUtil(this);
             syncUtil.setFinishListener(new SyncUtil.FinishListener() {
                 @Override
                 public void finish() {
-//                    Log.i("ccc","同步成功");
                     getReviewCount();
                     intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
+//                    Log.i("ccc","上传完成");
                 }
 
                 @Override
@@ -145,19 +140,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.i("ccc","无网络");
                 }
             });
-            syncUtil.downloadData();
+            syncUtil.syncExecutor(1,false,true,false,false);
         }
     }
 
     private void init() {
         //获取用户信息
         init_user();
-        if(networkUtil.isNetworkConnected()){
+
+        //检查用户登录时间并更新数据
+        inspect_usetime();
+
+        //同步数据
+        SyncData();
+        /*if(networkUtil.isNetworkConnected()){
             //同步数据
             SyncData();
             //检查用户登录时间并更新数据
             inspect_usetime();
-        }
+        }*/
+
         //更新单词复习数量
         getReviewCount();
     }
@@ -273,25 +275,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
             for (int i = 0; i < packageInfos.size(); i++) {
                 if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
-                    try {
+                    long minutes = packageInfos.get(i).getmUsedTime()/60000;
+                    /*try {
 //                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
 //                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
 //                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
 //                        use_time = packageInfos.get(i).getmUsedTime();
-                        long minutes = packageInfos.get(i).getmUsedTime()/60000;
                         jsonObject.put("uid", user.getUid());
                         jsonObject.put("utime",(int)minutes);
                         jsonObject.put("udate",last_day);
                         jsonObject.put("utimestamp",now_time_stamp);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }
+                    }*/
+                    //上传昨天的使用时间
+                    usageTime = new UsageTime();
+                    usageTime.setUdate(last_day);
+                    usageTime.setUtime((int)minutes);
+                    usageTimeDbDao.insertUsageTime(usageTime);
                     break;
+
                 }
 
             }
             //上传昨天的数据
-            update_time(jsonObject);
+//            update_time(jsonObject);
+
             //上传 上一次登录的日期 到 昨天（不包括昨天） 之间的 使用时间数据
             Calendar calendar = Calendar.getInstance();
             for(int i=0;i<100;i++){
@@ -300,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(pre_day.equals(last_day)){
                     break;
                 }else{
-                    jsonObject = new JSONObject();
+                    /*jsonObject = new JSONObject();
                     try{
                         jsonObject.put("uid", user.getUid());
                         jsonObject.put("utime",0);
@@ -308,12 +317,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    update_time(jsonObject);
+                    update_time(jsonObject);*/
+                    usageTime = new UsageTime();
+                    usageTime.setUdate(pre_day);
+                    usageTime.setUtime(0);
+                    usageTimeDbDao.insertUsageTime(usageTime);
                 }
             }
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
             user.setLast_login(now_time_stamp);
+            //同步数据
+            syncUtil = new SyncUtil(this);
+            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
+                @Override
+                public void finish() {
+                    Log.i("ccc","上传usageTime成功");
+                }
+
+                @Override
+                public void fail() {
+                    Log.i("ccc","上传usageTime失败");
+                }
+            });
+            syncUtil.syncExecutor(1,false,false,true,false);
         }else{
 //            Log.i("ccc","是同一天");
         }
@@ -401,7 +428,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                intent = new Intent(MainActivity.this,QQTestActivity.class);
 //                startActivity(intent);
 //                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                Log.i("ccc","network:"+networkUtil.isNetworkConnected());
+                /*syncUtil = new SyncUtil(this);
+                syncUtil.setFinishListener(new SyncUtil.FinishListener() {
+                    @Override
+                    public void finish() {
+                        Log.i("ccc","success");
+                    }
+
+                    @Override
+                    public void fail() {
+                        Log.i("ccc","fail");
+                    }
+                });
+                syncUtil.syncExecutor(1,false,false,true,false);*/
+                SharedPreferences sp = this.getSharedPreferences("login", Context.MODE_PRIVATE);
+                sp.edit().putLong("last_login",1614941997000L).apply();
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);

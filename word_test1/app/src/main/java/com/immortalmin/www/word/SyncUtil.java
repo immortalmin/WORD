@@ -1,7 +1,9 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Looper;
+import android.preference.Preference;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,21 +11,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SyncUtil {
 
     private FinishListener finishListener;
     private Context context;
     private CollectDbDao collectDbDao;
+    private UsageTimeDbDao usageTimeDbDao;
     private DataUtil dataUtil;
     private User user;
     private MyAsyncTask myAsyncTask;
     private JsonRe jsonRe = new JsonRe();
     private NetworkUtil networkUtil;
+    private int execCnt;
 
     public SyncUtil(Context context) {
         this.context = context;
         collectDbDao = new CollectDbDao(context);
+        usageTimeDbDao = new UsageTimeDbDao(context);
         dataUtil = new DataUtil(context);
         networkUtil = new NetworkUtil(context);
         init();
@@ -34,23 +41,39 @@ public class SyncUtil {
     }
 
 
-    /**
-     * 上传数据
-     * 收藏的变化
-     * 背诵数据的变化
-     * 单词本身数据的变化（暂时不处理）
-     */
-    void uploadData() {
+    public void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,boolean isUploadUsageTime,boolean isDownloadUsageTime){
         //如果没有网络，则不进行同步
         if(!networkUtil.isNetworkConnected()){
             if(finishListener!=null) finishListener.fail();
             return ;
         }
-        ArrayList<DetailWord> wordList = collectDbDao.getSyncList();
-        if(wordList.size()==0){
+        this.execCnt = Cnt;
+        if(isUploadCollectData) uploadCollectData();
+        if(isDownloadCollectData) downloadCollectData();
+        if(isUploadUsageTime) uploadUsageTime();
+        if(isDownloadUsageTime) downloadUsageTime();
+    }
+
+    synchronized void syncFinish(){
+        execCnt--;
+        if(execCnt==0){
             if(finishListener!=null) finishListener.finish();
-            return ;
         }
+    }
+
+
+    /**
+     * 上传Collect数据
+     * 收藏的变化
+     * 背诵数据的变化
+     * 单词本身数据的变化（暂时不处理）
+     */
+    private void uploadCollectData() {
+        ArrayList<DetailWord> wordList = collectDbDao.getSyncList();
+//        if(wordList.size()==0){
+//            if(finishListener!=null) finishListener.finish();
+//            return ;
+//        }
         new Thread(()->{
             for(int i=0;i<wordList.size();i++){
                 DetailWord syncWord = wordList.get(i);
@@ -94,20 +117,14 @@ public class SyncUtil {
                 }));
                 myAsyncTask.execute(jsonObject);
             }
-            if(finishListener!=null) finishListener.finish();
+            syncFinish();
         }).start();
-
     }
 
     /**
-     * 下载数据
+     * 下载Collect数据
      */
-    void downloadData() {
-        //如果没有网络，则不进行同步
-        if(!networkUtil.isNetworkConnected()){
-            if(finishListener!=null) finishListener.fail();
-            return ;
-        }
+    private void downloadCollectData() {
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",4);
@@ -123,7 +140,82 @@ public class SyncUtil {
                 for(int i=0;i<wordList.size();i++){
                     collectDbDao.insertData(wordList.get(i),false);
                 }
-                if(finishListener!=null) finishListener.finish();
+                syncFinish();
+            }).start();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
+
+
+    private void uploadUsageTime() {
+        ArrayList<UsageTime> timeList = usageTimeDbDao.getSyncList();
+        new Thread(()->{
+            for(int i=0;i<timeList.size();i++){
+                UsageTime usageTime = timeList.get(i);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("what",22);
+                    jsonObject.put("uid",user.getUid());
+                    jsonObject.put("udate",usageTime.getUdate());
+                    jsonObject.put("utime",usageTime.getUtime());
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                myAsyncTask = new MyAsyncTask();
+                myAsyncTask.setLoadDataComplete((result -> {
+                    Log.i("ccc",result);
+                    try {
+                        JSONObject resultJson = new JSONObject(result);
+                        if("1".equals(resultJson.getString("what"))){//本地数据与服务器上的数据不一致，则将服务器上的数据同步到本地
+                            usageTimeDbDao.updateUtimeByUdate(resultJson.getString("udate"),resultJson.getString("utime"));
+                        }else{
+                            usageTimeDbDao.updateIsSyncByUdate(resultJson.getString("udate"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }));
+                myAsyncTask.execute(jsonObject);
+            }
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("what",23);
+                jsonObject.put("uid",user.getUid());
+                jsonObject.put("last_login",user.getLast_login());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            myAsyncTask = new MyAsyncTask();
+            myAsyncTask.setLoadDataComplete((result -> {
+
+            }));
+            myAsyncTask.execute(jsonObject);
+            syncFinish();
+        }).start();
+    }
+
+    /**
+     * 下载UsageTime
+     */
+    private void downloadUsageTime() {
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",15);
+            jsonObject.put("uid", user.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            Log.i("ccc",result);
+            ArrayList<UsageTime> usageTimeList = jsonRe.usageTimeData(result);
+            //清空旧的usageTime
+            usageTimeDbDao.deleteData();
+            new Thread(()->{
+                for(int i=0;i<usageTimeList.size();i++){
+                    usageTimeDbDao.insertUsageTime(usageTimeList.get(i));
+                }
+                syncFinish();
             }).start();
         });
         myAsyncTask.execute(jsonObject);
@@ -133,6 +225,8 @@ public class SyncUtil {
         void finish();
         void fail();
     }
+
+
 
     public void setFinishListener(FinishListener finishListener) {
         this.finishListener = finishListener;

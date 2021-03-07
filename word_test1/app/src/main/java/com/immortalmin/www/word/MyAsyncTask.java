@@ -61,7 +61,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  19:update_password 更新密码
      *  20:update_recite   更新背诵数据
      *  21:update_setting  更新设置
-     *  22:update_time     更新上次登录的时间
+     *  22:update_time     更新上次登录的时间及用户使用时间
      *  23:update_userdata 更新用户数据
      *  24:update_word     更新单词
      *

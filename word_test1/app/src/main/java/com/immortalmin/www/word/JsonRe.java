@@ -259,4 +259,21 @@ public class JsonRe {
         }
         return useTime;
     }
+
+    ArrayList<UsageTime> usageTimeData(String jsonStr){
+        ArrayList<UsageTime> usageTimeList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                UsageTime usageTime = new UsageTime();
+                usageTime.setUdate(jsonObject.get("udate").toString());
+                usageTime.setUtime(Integer.valueOf(jsonObject.get("utime").toString()));
+                usageTimeList.add(usageTime);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return usageTimeList;
+    }
 }

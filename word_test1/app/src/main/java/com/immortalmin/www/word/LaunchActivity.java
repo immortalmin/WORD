@@ -81,7 +81,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
                     Log.i("ccc","无网络");
                 }
             });
-            syncUtil.uploadData();
+            syncUtil.syncExecutor(1,true,false,false,false);
         }
     }
 
