@@ -146,7 +146,9 @@ public class SyncUtil {
         myAsyncTask.execute(jsonObject);
     }
 
-
+    /**
+     * 上传本地usageTime数据
+     */
     private void uploadUsageTime() {
         ArrayList<UsageTime> timeList = usageTimeDbDao.getSyncList();
         new Thread(()->{
@@ -163,7 +165,7 @@ public class SyncUtil {
                 }
                 myAsyncTask = new MyAsyncTask();
                 myAsyncTask.setLoadDataComplete((result -> {
-                    Log.i("ccc",result);
+//                    Log.i("ccc",result);
                     try {
                         JSONObject resultJson = new JSONObject(result);
                         if("1".equals(resultJson.getString("what"))){//本地数据与服务器上的数据不一致，则将服务器上的数据同步到本地
@@ -177,19 +179,21 @@ public class SyncUtil {
                 }));
                 myAsyncTask.execute(jsonObject);
             }
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("what",23);
-                jsonObject.put("uid",user.getUid());
-                jsonObject.put("last_login",user.getLast_login());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            myAsyncTask = new MyAsyncTask();
-            myAsyncTask.setLoadDataComplete((result -> {
+            if(timeList.size()>0){
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("what",23);
+                    jsonObject.put("uid",user.getUid());
+                    jsonObject.put("last_login",System.currentTimeMillis());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                myAsyncTask = new MyAsyncTask();
+                myAsyncTask.setLoadDataComplete((result -> {
 
-            }));
-            myAsyncTask.execute(jsonObject);
+                }));
+                myAsyncTask.execute(jsonObject);
+            }
             syncFinish();
         }).start();
     }
@@ -213,7 +217,7 @@ public class SyncUtil {
             usageTimeDbDao.deleteData();
             new Thread(()->{
                 for(int i=0;i<usageTimeList.size();i++){
-                    usageTimeDbDao.insertUsageTime(usageTimeList.get(i));
+                    usageTimeDbDao.insertUsageTime(usageTimeList.get(i),1);
                 }
                 syncFinish();
             }).start();

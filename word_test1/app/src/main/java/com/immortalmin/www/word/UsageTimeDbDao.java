@@ -31,10 +31,11 @@ public class UsageTimeDbDao {
      */
     ArrayList<Integer> getUsageTime(){
         ArrayList<Integer> timeList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select utime from usageTime order by udate desc limit 209",null);
         while(cursor.moveToNext()){
-            timeList.add(cursor.getInt(cursor.getColumnIndex("udate")));
+            timeList.add(cursor.getInt(cursor.getColumnIndex("utime")));
         }
+        cursor.close();
         return timeList;
     }
 
@@ -59,10 +60,10 @@ public class UsageTimeDbDao {
     /**
      * 添加使用时间
      */
-    void insertUsageTime(UsageTime usageTime){
+    void insertUsageTime(UsageTime usageTime,int isSynchronized){
         db = helper.getWritableDatabase();
         String update_date = DateTransUtils.getDateAfterToday(0);
-        db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\",0)");
+        db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+")");
         db.close();
     }
 

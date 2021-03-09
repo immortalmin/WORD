@@ -44,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private SignIn signIn;
     private User user = new User();
     private JsonRe jsonRe = new JsonRe();
+    private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
     private DataUtil dataUtil = new DataUtil(ProfileActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
     private MyAsyncTask myAsyncTask;
@@ -188,21 +189,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
      * 获取用户每天的使用时长
      */
     private void getUseTime(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",15);
-            jsonObject.put("uid",user.getUid());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            ArrayList<Integer> usetime = jsonRe.useTimeData(result);
-            //加入今天的数据
-            usetime.add(0,getTodayUseTime());
-            signIn.setSign_in_times(usetime);
-        });
-        myAsyncTask.execute(jsonObject);
+        ArrayList<Integer> usetime = usageTimeDbDao.getUsageTime();
+        //加入今天的数据
+        usetime.add(0,getTodayUseTime());
+        signIn.setSign_in_times(usetime);
     }
 
     /**

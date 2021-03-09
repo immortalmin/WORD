@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SearchView search_bar;
     private CircleImageView profile_photo;
     private ImageUtils imageUtils = new ImageUtils();
-    private NetworkUtil networkUtil = new NetworkUtil(this);
     private UsageTime usageTime;
     private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
     private int screen_width,screen_height;
@@ -114,54 +113,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mHandler.obtainMessage(2).sendToTarget();
     }
 
-    /**
-     * 如果是刚登录，则会自动将云端的数据同步到本地
-     */
-    private void SyncData(){
-        intent = getIntent();
-        String source = intent.getStringExtra("source");//0:login 1:launch
-        if("0".equals(source)){//新用户注册or新用户登录
-            //清空旧的历史记录
-            RecordDbDao recordDbDao = new RecordDbDao(this);
-            recordDbDao.deleteData();
-
-            //将服务器上该用户的数据同步到本地
-            syncUtil = new SyncUtil(this);
-            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
-                @Override
-                public void finish() {
-                    getReviewCount();
-                    intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
-//                    Log.i("ccc","上传完成");
-                }
-
-                @Override
-                public void fail() {
-                    Log.i("ccc","无网络");
-                }
-            });
-            syncUtil.syncExecutor(1,false,true,false,false);
-        }
-    }
-
     private void init() {
-        //获取用户信息
-        init_user();
-
-        //检查用户登录时间并更新数据
-        inspect_usetime();
-
-        //同步数据
-        SyncData();
-        /*if(networkUtil.isNetworkConnected()){
-            //同步数据
-            SyncData();
-            //检查用户登录时间并更新数据
-            inspect_usetime();
-        }*/
-
-        //更新单词复习数量
-        getReviewCount();
+        init_user();//获取用户信息
+        SyncData();//同步数据以及更新使用时间
+        getReviewCount();//更新单词复习数量
     }
 
     private void init_user(){
@@ -176,6 +131,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置头像
         setImage();
     }
+
+    /**
+     * 如果是刚登录，则会自动将云端的数据同步到本地
+     * 同时包含更新 使用时间 的操作
+     */
+    private void SyncData(){
+        intent = getIntent();
+        String source = intent.getStringExtra("source");//0:login 1:launch
+        if("0".equals(source)){//新用户注册or新用户登录
+            //清空旧的历史记录
+            RecordDbDao recordDbDao = new RecordDbDao(this);
+            recordDbDao.deleteData();
+
+            //将服务器上该用户的collect和usageTime数据同步到本地
+            syncUtil = new SyncUtil(this);
+            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
+                @Override
+                public void finish() {
+                    getReviewCount();
+                    intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
+                    //检查用户登录时间并更新数据
+                    inspect_usetime();
+                }
+
+                @Override
+                public void fail() {
+                    Log.i("ccc","无网络");
+                }
+            });
+            syncUtil.syncExecutor(2,false,true,false,true);
+        }else{
+            //检查用户登录时间并更新数据
+            inspect_usetime();
+        }
+    }
+
+
     private void setImage() {
         Bitmap bitmap;
         if(user.getLogin_mode()==0){
@@ -267,40 +259,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         date = new Date(user.getLast_login());
         String last_day = simpleDateFormat.format(date);
         if(!nowday.equals(last_day)){
-//            Log.i("ccc","不是同一天");
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
             mUseTimeDataManager.refreshData(user.getLast_login(),now_time_stamp);
-            JSONObject jsonObject = new JSONObject();
             List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
             for (int i = 0; i < packageInfos.size(); i++) {
                 if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
                     long minutes = packageInfos.get(i).getmUsedTime()/60000;
-                    /*try {
-//                        jsonObject.put("count",packageInfos.get(i).getmUsedCount());
-//                        jsonObject.put("name",packageInfos.get(i).getmPackageName());
-//                        jsonObject.put("appname",packageInfos.get(i).getmAppName());
-//                        use_time = packageInfos.get(i).getmUsedTime();
-                        jsonObject.put("uid", user.getUid());
-                        jsonObject.put("utime",(int)minutes);
-                        jsonObject.put("udate",last_day);
-                        jsonObject.put("utimestamp",now_time_stamp);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }*/
+//                  jsonObject.put("count",packageInfos.get(i).getmUsedCount());
+//                  jsonObject.put("name",packageInfos.get(i).getmPackageName());
+//                  jsonObject.put("appname",packageInfos.get(i).getmAppName());
+//                  use_time = packageInfos.get(i).getmUsedTime();
                     //上传昨天的使用时间
                     usageTime = new UsageTime();
                     usageTime.setUdate(last_day);
                     usageTime.setUtime((int)minutes);
-                    usageTimeDbDao.insertUsageTime(usageTime);
+                    usageTimeDbDao.insertUsageTime(usageTime,0);
                     break;
 
                 }
 
             }
-            //上传昨天的数据
-//            update_time(jsonObject);
-
             //上传 上一次登录的日期 到 昨天（不包括昨天） 之间的 使用时间数据
             Calendar calendar = Calendar.getInstance();
             for(int i=0;i<100;i++){
@@ -309,53 +288,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(pre_day.equals(last_day)){
                     break;
                 }else{
-                    /*jsonObject = new JSONObject();
-                    try{
-                        jsonObject.put("uid", user.getUid());
-                        jsonObject.put("utime",0);
-                        jsonObject.put("udate",pre_day);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                    update_time(jsonObject);*/
                     usageTime = new UsageTime();
                     usageTime.setUdate(pre_day);
                     usageTime.setUtime(0);
-                    usageTimeDbDao.insertUsageTime(usageTime);
+                    usageTimeDbDao.insertUsageTime(usageTime,0);
                 }
             }
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
             sp.edit().putLong("last_login",now_time_stamp).apply();
             user.setLast_login(now_time_stamp);
-            //同步数据
-            syncUtil = new SyncUtil(this);
-            syncUtil.setFinishListener(new SyncUtil.FinishListener() {
-                @Override
-                public void finish() {
-                    Log.i("ccc","上传usageTime成功");
-                }
-
-                @Override
-                public void fail() {
-                    Log.i("ccc","上传usageTime失败");
-                }
-            });
-            syncUtil.syncExecutor(1,false,false,true,false);
-        }else{
-//            Log.i("ccc","是同一天");
         }
-
     }
 
     /**
-     * 上传使用时间
+     * 上传使用时间 从2021/03/09开始停止使用
      */
-    private void update_time(final JSONObject jsonObject) {
-        new Thread(() -> {
-            HttpGetContext httpGetContext = new HttpGetContext();
-            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
-        }).start();
-    }
+//    private void update_time(final JSONObject jsonObject) {
+//        new Thread(() -> {
+//            HttpGetContext httpGetContext = new HttpGetContext();
+//            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
+//        }).start();
+//    }
 
     private void update_last_login(final JSONObject jsonObject) {
         new Thread(() -> {
@@ -363,35 +316,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
         }).start();
     }
-
-    //从2021/2/21开始停止使用
-//    /**
-//     * 获取单词复习列表
-//     */
-//    private void getReviewList(){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",11);
-//            jsonObject.put("uid",user.getUid());
-//            //获取当前时间
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-//            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result)->{
-//            ArrayList<DetailWord> review_list =jsonRe.detailWordData(result);
-//            int review_num = review_list.size();
-//            if(review_num == 0){
-//                btn_review.setText("复习\n完成");
-//            }else{
-//                btn_review.setText("待复习\n"+review_num);
-//            }
-//
-//        });
-//        myAsyncTask.execute(jsonObject);
-//    }
 
     /**
      * 显示复习单词的数量
@@ -428,21 +352,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                intent = new Intent(MainActivity.this,QQTestActivity.class);
 //                startActivity(intent);
 //                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
-                /*syncUtil = new SyncUtil(this);
-                syncUtil.setFinishListener(new SyncUtil.FinishListener() {
-                    @Override
-                    public void finish() {
-                        Log.i("ccc","success");
-                    }
-
-                    @Override
-                    public void fail() {
-                        Log.i("ccc","fail");
-                    }
-                });
-                syncUtil.syncExecutor(1,false,false,true,false);*/
-                SharedPreferences sp = this.getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putLong("last_login",1614941997000L).apply();
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);
@@ -522,42 +431,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
-    }
-
-    /**
-     * 设置圆角
-     * @param source
-     * @return
-     */
-    public Bitmap transform(Bitmap source) {
-        int size = Math.min(source.getWidth(), source.getHeight());
-
-        int x = (source.getWidth() - size) / 2;
-        int y = (source.getHeight() - size) / 2;
-
-        Bitmap squaredBitmap = Bitmap.createBitmap(source, x, y, size, size);
-        if (squaredBitmap != source) {
-            source.recycle();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
-
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP , BitmapShader.TileMode.CLAMP ));
-        paint.setAntiAlias(true);
-//        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
-//        paint.setShader(shader);
-//        paint.setAntiAlias(true);
-
-        float r = size/2f;
-        float r2 = size/1.8f;
-//        canvas.drawCircle(r, r, r, paint);
-        RectF rect = new RectF(0f, 0f, source.getWidth(), source.getHeight());
-        canvas.drawRoundRect(rect,100f,100f,paint);
-
-        squaredBitmap.recycle();
-        return bitmap;
     }
 
     @Override

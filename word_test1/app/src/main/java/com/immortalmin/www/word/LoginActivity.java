@@ -146,7 +146,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         user.setMotto(sp.getString("motto",null));
         user.setStatus(sp.getInt("status",0));
         user.setProfile_photo(sp.getString("profile_photo",null));
-
         if (user.getLogin_mode() == 0) {
             username_et.setText(user.getUsername());
             if(user.getPassword()!=null){
@@ -313,8 +312,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .putLong("last_login",user.getLast_login())
                     .apply();
             getUserSetting();
-//            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-//            mHandler.sendEmptyMessage(1);
         });
         myAsyncTask.execute(jsonObject);
     }
@@ -370,8 +367,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             .putInt("login_mode",0)
                             .apply();
                     getUserSetting();
-//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-//                    mHandler.obtainMessage(1).sendToTarget();
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }

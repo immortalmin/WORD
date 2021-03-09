@@ -13,7 +13,7 @@ public class UsageTimeSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        db.execSQL("create table usageTime(id integer primary key autoincrement,udate date not null,utime int default 0,update_date date,isSynchronized tinyint default 0)");
+        db.execSQL("create table usageTime(id integer primary key autoincrement,udate date not null unique,utime int default 0,update_date date,isSynchronized tinyint default 0)");
     }
 
     @Override
