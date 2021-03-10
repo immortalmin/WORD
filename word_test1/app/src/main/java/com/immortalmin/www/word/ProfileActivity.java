@@ -81,20 +81,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
-            @Override
-            public void onFinish(User userdata) {
-                user = userdata;
-                mHandler.sendEmptyMessage(1);
-                //获取使用时间并显示
-                getUseTime();
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
+        //从本地文件中获取用户数据
+        user = dataUtil.set_user();
+        //显示用户的昵称、个性签名等
+        mHandler.sendEmptyMessage(1);
+        //获取使用时间并显示
+        getUseTime();
     }
 
     public void onClick(View view){
@@ -216,11 +208,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setImage() {
         Bitmap bitmap;
-        if(user.getLogin_mode()==0){
-            bitmap=ImageUtils.getPhotoFromStorage(user.getProfile_photo());
-        }else{
-            bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
-        }
+        bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage();

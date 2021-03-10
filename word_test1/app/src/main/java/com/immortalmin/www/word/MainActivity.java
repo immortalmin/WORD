@@ -170,11 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setImage() {
         Bitmap bitmap;
-        if(user.getLogin_mode()==0){
-            bitmap=ImageUtils.getPhotoFromStorage(user.getProfile_photo());
-        }else{
-            bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
-        }
+        bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
         if(bitmap==null){
             Log.i("ccc","照片不存在 正从服务器下载...");
             getImage();

@@ -1,18 +1,9 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Looper;
-import android.preference.Preference;
-import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SyncUtil {
 
@@ -27,7 +18,7 @@ public class SyncUtil {
     private NetworkUtil networkUtil;
     private int execCnt;
 
-    public SyncUtil(Context context) {
+    SyncUtil(Context context) {
         this.context = context;
         collectDbDao = new CollectDbDao(context);
         usageTimeDbDao = new UsageTimeDbDao(context);
@@ -41,7 +32,7 @@ public class SyncUtil {
     }
 
 
-    public void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,boolean isUploadUsageTime,boolean isDownloadUsageTime){
+    void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,boolean isUploadUsageTime,boolean isDownloadUsageTime){
         //如果没有网络，则不进行同步
         if(!networkUtil.isNetworkConnected()){
             if(finishListener!=null) finishListener.fail();
@@ -54,7 +45,7 @@ public class SyncUtil {
         if(isDownloadUsageTime) downloadUsageTime();
     }
 
-    synchronized void syncFinish(){
+    private synchronized void syncFinish(){
         execCnt--;
         if(execCnt==0){
             if(finishListener!=null) finishListener.finish();
@@ -70,10 +61,6 @@ public class SyncUtil {
      */
     private void uploadCollectData() {
         ArrayList<DetailWord> wordList = collectDbDao.getSyncList();
-//        if(wordList.size()==0){
-//            if(finishListener!=null) finishListener.finish();
-//            return ;
-//        }
         new Thread(()->{
             for(int i=0;i<wordList.size();i++){
                 DetailWord syncWord = wordList.get(i);
@@ -165,7 +152,6 @@ public class SyncUtil {
                 }
                 myAsyncTask = new MyAsyncTask();
                 myAsyncTask.setLoadDataComplete((result -> {
-//                    Log.i("ccc",result);
                     try {
                         JSONObject resultJson = new JSONObject(result);
                         if("1".equals(resultJson.getString("what"))){//本地数据与服务器上的数据不一致，则将服务器上的数据同步到本地
@@ -184,7 +170,8 @@ public class SyncUtil {
                 try {
                     jsonObject.put("what",23);
                     jsonObject.put("uid",user.getUid());
-                    jsonObject.put("last_login",System.currentTimeMillis());
+                    //在上传使用数据之后，只是将服务器上用户的last_login与本地的数据进行同步，而不会设置成当下的时间戳
+                    jsonObject.put("last_login",user.getLast_login());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -211,7 +198,6 @@ public class SyncUtil {
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            Log.i("ccc",result);
             ArrayList<UsageTime> usageTimeList = jsonRe.usageTimeData(result);
             //清空旧的usageTime
             usageTimeDbDao.deleteData();
