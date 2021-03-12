@@ -32,6 +32,7 @@ public class SyncUtil {
     }
 
 
+    //XXX:笨办法，是有解决办法的，但是现在没什么心情弄。搜getDeclaredMethods()估计就能找到相关的博客
     void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,boolean isUploadUsageTime,boolean isDownloadUsageTime){
         //如果没有网络，则不进行同步
         if(!networkUtil.isNetworkConnected()){
@@ -176,12 +177,12 @@ public class SyncUtil {
                     e.printStackTrace();
                 }
                 myAsyncTask = new MyAsyncTask();
-                myAsyncTask.setLoadDataComplete((result -> {
-
-                }));
+                myAsyncTask.setLoadDataComplete((result -> syncFinish()));
                 myAsyncTask.execute(jsonObject);
+            }else{
+                syncFinish();
             }
-            syncFinish();
+
         }).start();
     }
 

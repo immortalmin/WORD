@@ -3,8 +3,10 @@ package com.immortalmin.www.word;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +65,11 @@ public class UsageTimeDbDao {
     void insertUsageTime(UsageTime usageTime,int isSynchronized){
         db = helper.getWritableDatabase();
         String update_date = DateTransUtils.getDateAfterToday(0);
-        db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+")");
+        try {
+            db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+")");
+        }catch (SQLException e){
+            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+        }
         db.close();
     }
 

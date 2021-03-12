@@ -296,16 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 上传使用时间 从2021/03/09开始停止使用
-     */
-//    private void update_time(final JSONObject jsonObject) {
-//        new Thread(() -> {
-//            HttpGetContext httpGetContext = new HttpGetContext();
-//            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_time.php",jsonObject);
-//        }).start();
-//    }
-
     private void update_last_login(final JSONObject jsonObject) {
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
@@ -345,9 +335,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-//                intent = new Intent(MainActivity.this,QQTestActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+                intent = new Intent(MainActivity.this,CountDownTestActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);

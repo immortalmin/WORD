@@ -32,13 +32,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
-        <activity android:name=".SynchronizeActivity"></activity>
-        <activity android:name=".QQTestActivity" />
+        <activity android:name=".SynchronizeActivity" />
         <activity android:name=".CommitFeedbackActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".ChangePwdActivity" />
-        <activity android:name=".MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity android:name=".collectActivity" />
         <activity android:name=".LaunchActivity">
             <intent-filter>
@@ -48,22 +48,26 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <activity android:name=".ReciteWordActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".ReciteWordActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".Register2Activity" />
-        <activity android:name=".ProfileActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".ProfileActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity android:name=".SMSVerificationActivity" />
         <activity android:name=".UpdatePwdActivity" />
-        <activity android:name=".ExampleActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".ExampleActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".ReviewWordActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".ReviewWordActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
