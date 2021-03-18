@@ -15,10 +15,9 @@
             android:id="@+id/word_meaning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
             android:text="指责"
-            android:textSize="15dp"
+            android:textSize="13sp"
             android:textColor="#9ef963"
         />
         <TextView
@@ -26,10 +25,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/word_meaning"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:singleLine="false"
             android:textColor="#b6daf2"
-            android:textSize="14dp"
+            android:textSize="12sp"
             android:text="The newly described languages were often so strikingly different from the well studied languages of Europe and Southeast Asia that some scholars even accused Boas and Sapir of fabricating their data."
             />
 
@@ -38,9 +37,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/E_sentence"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:singleLine="false"
-            android:textSize="13dp"
+            android:textSize="12sp"
             android:textColor="#cad8e9"
             android:text="相比经过充分研究的欧洲及东南亚语言,这些新近被描述的语言通常表现出明显差异,使得有些学者甚至指责博厄斯和沙比尔伪造数据。"
             />
@@ -50,10 +49,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/C_translate"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
             android:textColor="#e6e1e1"
+            android:textSize="12sp"
             android:text="—— 由sheng添加" />
 
         <Button
@@ -63,8 +63,8 @@
             android:padding="0dp"
             android:focusable="false"
             android:layout_alignBaseline="@+id/word_meaning"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
             android:background="@drawable/edit2"
             android:text="" />
 
@@ -75,11 +75,10 @@
             android:padding="0dp"
             android:focusable="false"
             android:layout_alignBaseline="@+id/word_meaning"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="0dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
             android:background="@drawable/del2"
             android:text="" />
-
 
         <View
             android:layout_below="@+id/source"
@@ -87,9 +86,6 @@
             android:textColor="#DCDDDF"
             android:layout_height="1dp" />
 
-
     </RelativeLayout>
-
-
 
 </FrameLayout>

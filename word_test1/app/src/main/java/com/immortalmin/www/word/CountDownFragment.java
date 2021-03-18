@@ -2,7 +2,6 @@ package com.immortalmin.www.word;
 
 import android.graphics.Color;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
@@ -10,26 +9,18 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import static android.content.Context.AUDIO_SERVICE;
 
 public class CountDownFragment extends Fragment implements View.OnClickListener{
-    private final static String TAG = "CountDownFragment";
     private OnFragmentInteractionListener mListener;
     private String word_en,word_ch,mode;
     private Button acquaint,vague,strange;
@@ -45,11 +36,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private int duration,minDuration = 3000;//倒计时的时间
 
-    /**
-     * Activity绑定上Fragment时，调用该方法
-     * 这个是第一次被调用的
-     * @param context
-     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -62,13 +48,6 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    /**
-     * Fragment显示的内容是怎样的，就是通过下面这个方法返回回去的(view)
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -78,7 +57,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        cpb_countdown = getActivity().findViewById(R.id.cpb_countdown);
+        cpb_countdown = Objects.requireNonNull(getActivity()).findViewById(R.id.cpb_countdown);
         acquaint = getActivity().findViewById(R.id.acquaint);
         vague = getActivity().findViewById(R.id.vague);
         strange = getActivity().findViewById(R.id.strange);
@@ -216,7 +195,10 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
             mListener.countdownonFragmentInteraction(s);
         }
     }
-    //String new_word
+
+    /**
+     * 更新数据
+     */
     public void update_options(HashMap<String,Object> words){
         changed_volume = 0;
         isCountdownfinish = false;

@@ -4,17 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,19 +41,20 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void init(){
-        //初始化userData
-        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
-            @Override
-            public void onFinish(User userdata) {
-                user = userdata;
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
-
+//2021/3/15
+//        //初始化userData
+//        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+//            @Override
+//            public void onFinish(User userdata) {
+//                user = userdata;
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//
+//            }
+//        });
+        user = dataUtil.set_user();
     }
 
     public void onClick(View view){

@@ -1,36 +1,27 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
-
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
@@ -56,6 +47,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private DetailWord word;
     private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
+    private DataUtil dataUtil = new DataUtil(this);
     private RecordDbDao mRecordDbDao;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
@@ -102,7 +94,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private void init() {
         mRecordDbDao = new RecordDbDao(ExampleActivity.this);
         first_coming = true;
-        init_user();
+        user = dataUtil.set_user();
         if(collectDbDao.hasData(wid,dict_source)){
             word = collectDbDao.getSingleWordByWidAndSource(wid,dict_source);
             mHandler.sendEmptyMessage(4);
@@ -127,22 +119,6 @@ public class ExampleActivity extends AppCompatActivity implements
             kelinsiFragment.setWid(Integer.valueOf(wid));
             mHandler.obtainMessage(8,1).sendToTarget();
         }
-    }
-
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
     }
 
     public void onClick(View view){
@@ -365,36 +341,6 @@ public class ExampleActivity extends AppCompatActivity implements
         myAsyncTask.execute(jsonObject);
     }
 
-    /**
-     * @param sel 0:取消收藏；1:添加收藏
-     */
-//    private void updateCollect(int sel){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",17);
-//            jsonObject.put("collect",sel);
-//            if(sel==0){
-//                jsonObject.put("cid",word.getCid());
-//            }else{
-//                jsonObject.put("uid", user.getUid());
-//                jsonObject.put("wid",word.getWid());
-//                jsonObject.put("dict_source",dict_source);
-//            }
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result)->{
-//            if(sel==1){
-//                word = jsonRe.wordData(result);
-//                Toast.makeText(this,"已收藏",Toast.LENGTH_SHORT).show();
-//            }else{
-//                Toast.makeText(this,"已取消收藏",Toast.LENGTH_SHORT).show();
-//            }
-//            collect.setClickable(true);
-//        });
-//        myAsyncTask.execute(jsonObject);
-//    }
     /**
      * 修改收藏
      * @param sel 0:取消收藏；1:添加收藏

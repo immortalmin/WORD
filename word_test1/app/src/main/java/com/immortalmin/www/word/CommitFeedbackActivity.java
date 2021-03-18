@@ -41,21 +41,14 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commit_feedback);
-
-//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-//                        .setDefaultFontPath("fonts/Roboto-ThinItalic.ttf")
-//                        .setFontAttrId(R.attr.fontPath)
-//                        .build()
-//        );
-
-        return_btn = (Button)findViewById(R.id.return_btn);
-        add_pic_btn = (Button)findViewById(R.id.add_pic_btn);
-        commit_btn = (Button)findViewById(R.id.commit_btn);
-        radiogroup1 = (RadioGroup)findViewById(R.id.radiogroup1);
-        radiogroup2 = (RadioGroup)findViewById(R.id.radiogroup2);
-        descriptionText = (MyEditText) findViewById(R.id.descriptionText);
-        contactText = (MyEditText) findViewById(R.id.contactText);
-        img_group = (AutoLineUtil) findViewById(R.id.img_group);
+        return_btn = findViewById(R.id.return_btn);
+        add_pic_btn = findViewById(R.id.add_pic_btn);
+        commit_btn = findViewById(R.id.commit_btn);
+        radiogroup1 = findViewById(R.id.radiogroup1);
+        radiogroup2 = findViewById(R.id.radiogroup2);
+        descriptionText = findViewById(R.id.descriptionText);
+        contactText = findViewById(R.id.contactText);
+        img_group = findViewById(R.id.img_group);
         return_btn.setOnClickListener(this);
         add_pic_btn.setOnClickListener(this);
         commit_btn.setOnClickListener(this);
@@ -63,24 +56,9 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         init();
     }
 
-//    @Override
-//    protected void attachBaseContext(Context newBase) {
-//        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-//    }
-
     private void init() {
         //获取用户信息
-        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
-            @Override
-            public void onFinish(User userdata) {
-                user = userdata;
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
+        user = dataUtil.set_user();
     }
 
     public void onClick(View view){
@@ -126,12 +104,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                 }
                 //去除img_list中需要被移除的图片
                 //先按下标从大到小排序
-                Collections.sort(remove_list, new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer t1, Integer t2) {
-                        return t2-t1;
-                    }
-                });
+                Collections.sort(remove_list, (t1, t2) -> t2-t1);
                 //再一个个删除
                 for(int i=0;i<remove_list.size();i++){
                     int index = remove_list.get(i);
@@ -144,13 +117,11 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     }
 
     private void commitFeedback(final HashMap<String,Object> data){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGetContext httpGetContext = new HttpGetContext();
-                int feedback_res = httpGetContext.uploadFeedback(data,img_list);
-                //XXX:应该等上传反馈结束并返回结果后再显示结果给用户，但是我不会，埋下一个坑给未来的陈大神解决
-                /*现在这样容易出现意想不到的结果，比如用户上传反馈失败了也不知道。*/
+        new Thread(() -> {
+            HttpGetContext httpGetContext = new HttpGetContext();
+            int feedback_res = httpGetContext.uploadFeedback(data,img_list);
+            //XXX:应该等上传反馈结束并返回结果后再显示结果给用户，但是我不会，埋下一个坑给未来的陈大神解决
+            /*现在这样容易出现意想不到的结果，比如用户上传反馈失败了也不知道。*/
 //                Log.i("ccc",""+feedback_res);
 //                if(feedback_res==1){
 //                    mHandler.obtainMessage(1,"十分感谢您的反馈，我们会尽快处理!").sendToTarget();
@@ -158,8 +129,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
 //                    mHandler.obtainMessage(1,"糟糕，提交回馈出错了...").sendToTarget();
 //                    //这可如何是好？
 //                }
-                mHandler.obtainMessage(1,"十分感谢您的反馈，我们会尽快处理!").sendToTarget();
-            }
+            mHandler.obtainMessage(1,"十分感谢您的反馈，我们会尽快处理!").sendToTarget();
         }).start();
 
     }
@@ -173,14 +143,11 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         feedback_dialog.setTitleText("Feedback")
                 .setContentText(res)
                 .setConfirmText("OK")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        Intent intent = new Intent();
-                        setResult(1,intent);
-                        finish();
-                        overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    Intent intent = new Intent();
+                    setResult(1,intent);
+                    finish();
+                    overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                 });
         feedback_dialog.setCancelable(false);
         feedback_dialog.show();
@@ -204,13 +171,10 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     Bitmap square_img = Bitmap.createBitmap(img,0,0,Math.min(img_width,img_height),Math.min(img_width,img_height));
                     imageview.setImageBitmap(square_img);
                     Button img_del = view1.findViewById(R.id.img_del);
-                    img_del.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            img_group.removeView(view1);
-                            remove_list.add(now_ind);
-                            count--;
-                        }
+                    img_del.setOnClickListener(view -> {
+                        img_group.removeView(view1);
+                        remove_list.add(now_ind);
+                        count--;
                     });
                     img_group.addView(view1,count++);
                     img_index++;
@@ -242,7 +206,6 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
                     // 从数据视图中获取已选择图片的路径
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
-
                     //保存到本地的临时文件中
                     String tempPath = imageUtils.compressImage(picturePath,"temp_"+img_index);
                     img_list.add(tempPath);

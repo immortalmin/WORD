@@ -1,7 +1,5 @@
 package com.immortalmin.www.word;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,21 +41,22 @@ public class JsonRe {
         return feedbackList;
     }
 
-    /**
-     * 获取用户收藏的单词数和掌握的单词数
-     */
-    HashMap<String,Object> getCount(String jsonStr){
-        HashMap<String,Object> word = new HashMap<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("sum",jsonObject.getString("sum"));
-            word.put("prof_count",jsonObject.getString("prof_count"));
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return word;
-    }
+//    2021/3/14
+//    /**
+//     * 获取用户收藏的单词数和掌握的单词数
+//     */
+//    HashMap<String,Object> getCount(String jsonStr){
+//        HashMap<String,Object> word = new HashMap<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+//            word.put("sum",jsonObject.getString("sum"));
+//            word.put("prof_count",jsonObject.getString("prof_count"));
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return word;
+//    }
 
     /**
      * 恋练有词及用户添加的单词（不包含单词来源）
@@ -243,23 +242,27 @@ public class JsonRe {
         return word;
     }
 
+//    2021/3/14
+//    /**
+//     * 用户使用时间
+//     */
+//    ArrayList<Integer> useTimeData(String jsonStr){
+//        ArrayList<Integer> useTime = new ArrayList<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            for(int i=0;i<jsonArray.length();i++){
+//                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+//                useTime.add(Integer.valueOf(jsonObject.get("utime").toString()));
+//            }
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return useTime;
+//    }
+
     /**
      * 用户使用时间
      */
-    ArrayList<Integer> useTimeData(String jsonStr){
-        ArrayList<Integer> useTime = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-                useTime.add(Integer.valueOf(jsonObject.get("utime").toString()));
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return useTime;
-    }
-
     ArrayList<UsageTime> usageTimeData(String jsonStr){
         ArrayList<UsageTime> usageTimeList = new ArrayList<>();
         try {

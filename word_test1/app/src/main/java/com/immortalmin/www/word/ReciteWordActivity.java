@@ -1,8 +1,6 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,26 +16,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
-import okhttp3.OkHttpClient;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
-
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class ReciteWordActivity extends AppCompatActivity
@@ -47,7 +31,6 @@ public class ReciteWordActivity extends AppCompatActivity
         CountDownFragment.OnFragmentInteractionListener,
         SelectFragment.OnFragmentInteractionListener {
 
-    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private SelectFragment selectFragment = new SelectFragment();
@@ -56,9 +39,8 @@ public class ReciteWordActivity extends AppCompatActivity
     private Button turn_mode,ret_btn;
     private ImageView imgview;
     private TextView total_times, word_times;
-    private JsonRe jsonRe = new JsonRe();
-    private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
+    private DataUtil dataUtil = new DataUtil(this);
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
     private ProgressBar total_progress;
@@ -77,7 +59,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private int today_finish = 0;//该单词今天背完的次数
     private int pre_ind = 0;//上一个单词的id
     private Boolean pron_lock = false;
-    private HashMap<String, Object> recite_info = new HashMap<String, Object>();
+    private HashMap<String, Object> recite_info = new HashMap<>();
     private HashMap<String, Object> now_words = null;
 
     @Override
@@ -100,7 +82,7 @@ public class ReciteWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
-        init_user();
+        user = dataUtil.set_user();
         init_fragment();
         dialog_init();
         setting.put("uid", user.getUid());
@@ -109,7 +91,6 @@ public class ReciteWordActivity extends AppCompatActivity
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
         getReciteWordFromLocal();
-//        getRecite();
     }
 
     /**
@@ -181,32 +162,6 @@ public class ReciteWordActivity extends AppCompatActivity
 
     }
 
-//    从2021/2/21开始停止使用
-//    private void getRecite(){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",10);
-//            jsonObject.put("uid", user.getUid());
-//            jsonObject.put("mount",recite_num+recite_scope);
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result)->{
-//            recite_list =jsonRe.detailWordData(result);
-//            if(recite_list.size()<recite_num+recite_scope){
-//                //主线程不允许再创建第二个Looper（暂时不懂），之后别的地方再调用myAsyncTask.setLoadDataComplete时，不需要加Looper.prepare()和Looper.loop()
-//                Looper.prepare();
-//                mHandler.obtainMessage(1).sendToTarget();
-//                inadequateDialog.show();
-//                Looper.loop();
-//            }else{
-//                start_recite();
-//            }
-//        });
-//        myAsyncTask.execute(jsonObject);
-//    }
-
     /**
      * 从本地获取背诵的单词列表
      */
@@ -266,13 +221,10 @@ public class ReciteWordActivity extends AppCompatActivity
     }
 
     private void dialog_init(){
-        /**
-         * finish recite
-         */
         finishDialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                 .setTitleText("Good job!")
-                .setContentText("return to main page.")
-                .setConfirmText("fine")
+                .setContentText("返回主界面")
+                .setConfirmText("好")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -280,16 +232,12 @@ public class ReciteWordActivity extends AppCompatActivity
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 });
-
         finishDialog.setCancelable(false);
 
-        /**
-         * shortage of words
-         */
         inadequateDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
-                .setTitleText("shortage of words")
-                .setContentText("you finished all")
-                .setConfirmText("return to main")
+                .setTitleText("单词数不够")
+                .setContentText("需要背诵的单词太少了")
+                .setConfirmText("返回主界面")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -307,9 +255,9 @@ public class ReciteWordActivity extends AppCompatActivity
         mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog interrup_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
         interrup_alert.setTitleText("Are you sure?")
-                .setContentText("Won't be able to recover this file!")
-                .setConfirmText("fine")
-                .setCancelText("nooo")
+                .setContentText("退出后数据将无法恢复")
+                .setConfirmText("退出")
+                .setCancelText("继续")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -325,21 +273,22 @@ public class ReciteWordActivity extends AppCompatActivity
         interrup_alert.show();
     }
 
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
-    }
+//2021/3/15
+//    private void init_user(){
+//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//        user.setUid(sp.getString("uid",null));
+//        user.setRecite_num(sp.getInt("recite_num",20));
+//        user.setRecite_scope(sp.getInt("recite_scope",10));
+//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        user.setUsername(sp.getString("username",null));
+//        user.setPassword(sp.getString("password",null));
+//        user.setProfile_photo(sp.getString("profile_photo",null));
+//        user.setStatus(sp.getInt("status",0));
+//        user.setLast_login(sp.getLong("last_login",946656000000L));
+//        user.setEmail(sp.getString("email",null));
+//        user.setTelephone(sp.getString("telephone",null));
+//        user.setMotto(sp.getString("motto",null));
+//    }
 
     public void onClick(View view) {
         switch (view.getId()) {
@@ -357,8 +306,9 @@ public class ReciteWordActivity extends AppCompatActivity
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    total_times.setText(String.valueOf(finish_num) + "/" + String.valueOf(recite_num));
-                    word_times.setText(String.valueOf(today_finish) + "/" + String.valueOf(c_times));
+                    String totalTimesString = finish_num + "/" + recite_num,wordTimesString = today_finish + "/" + c_times;
+                    total_times.setText(totalTimesString);
+                    word_times.setText(wordTimesString);
                     break;
                 case 1:
                     Glide.with(ReciteWordActivity.this).load(captureUtil.getcapture(ReciteWordActivity.this))
@@ -376,9 +326,6 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     });
 
-    /**
-     * CountDownFragment的回调函数
-     */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
         DetailWord now_word = recite_list.get(correct_ind);
@@ -408,9 +355,6 @@ public class ReciteWordActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * SelectFragment的回调函数
-     */
     @Override
     public void selectonFragmentInteraction(HashMap<String, Object> res) {
         DetailWord correct_word;
@@ -500,31 +444,6 @@ public class ReciteWordActivity extends AppCompatActivity
             start_recite();
         }
     }
-
-    /*从2021/2/21开始停止使用*/
-//    /**
-//     * 更新云数据库
-//     * @param i 词组在recite_list中的下标
-//     */
-//    public void update_sql_data(int i,int what) {
-//        UpdateServer updateServer = new UpdateServer();
-//        updateServer.sendMap(recite_list.get(i),what);
-//        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
-//    }
-//
-//    /**
-//     * 更新剩余单词的数据（云数据库）
-//     */
-//    private void update_all(){
-//        for(int i=0;i<recite_num+recite_scope;i++){
-//            if(finish_ind[i]==0){
-//                update_sql_data(i,0);
-//            }
-//        }
-//        mHandler.obtainMessage(1).sendToTarget();
-//        finishDialog.show();
-//    }
-
 
     /**
      * 更新一条数据（本地）

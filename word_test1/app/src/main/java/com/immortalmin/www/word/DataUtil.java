@@ -88,7 +88,6 @@ public class DataUtil {
 
     /**
      * 从本地获取UserData?
-     * @return
      */
     User set_user(){
         User user = new User();

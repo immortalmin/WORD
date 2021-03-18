@@ -1,57 +1,33 @@
 package com.immortalmin.www.word;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.v4.content.res.ResourcesCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Arrays;
-
-import jp.wasabeef.glide.transformations.BlurTransformation;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class AddExampleDialog extends Dialog implements View.OnClickListener{
 
     private Context context;
     private Button commit_btn,cancel_btn,first_add_btn;
-    private TextView tv2;
     private OnDialogInteractionListener listener;
     private MyEditText[][] word = new MyEditText[100][5];
-    private RelativeLayout[][] word_layout = new RelativeLayout[100][5];
     private RelativeLayout[] btn_layout = new RelativeLayout[100];
     private LinearLayout example_layout;
     private Button[] del_btn = new Button[100];
     private Button[] add_btn = new Button[100];
-    private Button[][] operate_btn = new Button[10][5];
-    private int id;
     private int index=0;
     private boolean[] del_flag = new boolean[100];
     private String uid="1",wid ="1",C_meaning = "null";
@@ -90,7 +66,6 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
         cancel_btn = view.findViewById(R.id.cancel_btn);
         first_add_btn = view.findViewById(R.id.first_add_btn);
         example_layout = view.findViewById(R.id.example_layout);
-        tv2 = view.findViewById(R.id.tv2);
         first_add_btn.setOnClickListener(this);
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
@@ -233,7 +208,7 @@ public class AddExampleDialog extends Dialog implements View.OnClickListener{
             s3 = word[i][2].getText().toString();
             if(!del_flag[i]||(s1.length()==0&&s2.length()==0&&s3.length()==0)){
                 continue;
-            }else if((s1.length()==0||s2.length()==0||s3.length()==0)&&(s1.length()!=0||s2.length()!=0||s3.length()!=0)){
+            }else if(s1.length()==0||s2.length()==0||s3.length()==0){
                 Toast.makeText(context,"请填写完整",Toast.LENGTH_SHORT).show();
                 return false;
             }

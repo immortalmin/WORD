@@ -20,7 +20,7 @@ public class ExampleAdapter extends BaseAdapter {
     private Button del_btn,edit_btn;
     private String username;
 
-    public ExampleAdapter(Context context, ArrayList<OtherSentence> data,int mode,String username) {
+    ExampleAdapter(Context context, ArrayList<OtherSentence> data,int mode,String username) {
         this.mdata = data;
         this.mode = mode;
         this.username = username;
@@ -46,12 +46,13 @@ public class ExampleAdapter extends BaseAdapter {
                 edit_btn.setVisibility(View.INVISIBLE);
             }
         }catch (NullPointerException e){
-            Log.i("ccc",mdata.toString());
+            e.printStackTrace();
         }
         word_meaning.setText(mdata.get(position).getWord_meaning());
         E_sentence.setText(mdata.get(position).getSentence_en());
         C_translate.setText(mdata.get(position).getSentence_ch());
-        source.setText("——由"+mdata.get(position).getSource()+"添加");
+        String sourceString = "——由"+mdata.get(position).getSource()+"添加";
+        source.setText(sourceString);
         del_btn.setOnClickListener(view -> mOnItemListener.onDeleteClick(position));
         edit_btn.setOnClickListener(view -> mOnItemListener.onEditClick(position));
         return v;
@@ -60,20 +61,10 @@ public class ExampleAdapter extends BaseAdapter {
     /**
      * 1:visible
      * 0:invisible
-     * @param mode
      */
-    public void setMode(int mode) {
+    void setMode(int mode) {
         this.mode = mode;
     }
-
-//    private Handler mHandler = new Handler(message -> {
-//        switch (message.what){
-//            case 0:
-//
-//                break;
-//        }
-//        return false;
-//    });
 
     public interface onItemListener {
         void onDeleteClick(int i);

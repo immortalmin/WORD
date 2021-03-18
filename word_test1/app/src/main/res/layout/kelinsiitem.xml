@@ -15,7 +15,7 @@
         android:layout_marginBottom="10dp"
         android:background="#80ddea"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textSize="13sp"
         android:text="1" />
 
     <TextView
@@ -24,9 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginStart="5dp"
-        android:maxWidth="180dp"
-        android:layout_toRightOf="@+id/number"
+        android:layout_toEndOf="@+id/number"
         android:textColor="#dfdede"
+        android:textSize="12sp"
         android:text="[VERB 动词]" />
 
     <TextView
@@ -36,19 +36,19 @@
         android:layout_toEndOf="@+id/label"
         android:layout_alignBaseline="@+id/label"
         android:layout_marginStart="10dp"
-        android:maxWidth="180dp"
         android:textColor="#FFFFFF"
+        android:textSize="12sp"
         android:text="检验;试验;测试；" />
 
     <TextView
         android:id="@+id/gram"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/label"
+        android:layout_below="@+id/word_ch"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/number"
-        android:maxWidth="180dp"
         android:textColor="#dad6d6"
+        android:textSize="12sp"
         android:text="[V n]" />
 
     <TextView
@@ -58,6 +58,7 @@
         android:layout_below="@+id/gram"
         android:padding="2dp"
         android:textColor="#9ea49a"
+        android:textSize="12sp"
         android:text="When you test something, you try it, for example by touching it or using it for a short time, in order to find out what it is, what condition it is in, or how well it works. " />
 
     <com.immortalmin.www.word.MyListView
@@ -65,8 +66,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="2dp"
-        android:dividerHeight="0dp"
-        android:divider="#00000000"
+        android:dividerHeight="2dp"
+        android:divider="#253ce7df"
         android:layout_below="@+id/explanation">
 
 

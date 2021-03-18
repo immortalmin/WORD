@@ -1,46 +1,26 @@
 package com.immortalmin.www.word;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Arrays;
-import java.util.HashMap;
-
-import jp.wasabeef.glide.transformations.BlurTransformation;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class AddWordDialog extends Dialog implements View.OnClickListener{
 
@@ -166,8 +146,6 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
                 add_view();
                 mHandler.obtainMessage(0).sendToTarget();
                 break;
-            default:
-//                dismiss();
         }
 
     }
@@ -246,25 +224,17 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
         add_btn[ind].setTextSize(20);
         add_btn[ind].setText("+");
         add_btn[ind].setId(ind);
-        add_btn[ind].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                add_view();
-            }
-        });
+        add_btn[ind].setOnClickListener(view -> add_view());
 
-        del_btn[ind].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                del_flag[ind]=false;
-                example_layout.removeView(word[ind][0]);
-                example_layout.removeView(word[ind][1]);
-                example_layout.removeView(word[ind][2]);
-                example_layout.removeView(btn_layout[ind]);
-                sum--;
-                if(sum==0){
-                    first_add_btn.setVisibility(View.VISIBLE);
-                }
+        del_btn[ind].setOnClickListener(view -> {
+            del_flag[ind]=false;
+            example_layout.removeView(word[ind][0]);
+            example_layout.removeView(word[ind][1]);
+            example_layout.removeView(word[ind][2]);
+            example_layout.removeView(btn_layout[ind]);
+            sum--;
+            if(sum==0){
+                first_add_btn.setVisibility(View.VISIBLE);
             }
         });
         btn_layout[ind].addView(add_btn[ind]);
@@ -291,7 +261,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             s3 = word[i][2].getText().toString();
             if(!del_flag[i]||(s1.length()==0&&s2.length()==0&&s3.length()==0)){
                 continue;
-            }else if((s1.length()==0||s2.length()==0||s3.length()==0)&&(s1.length()!=0||s2.length()!=0||s3.length()!=0)){
+            }else if(s1.length()==0||s2.length()==0||s3.length()==0){
                 Toast.makeText(context,"例句 请填写完整",Toast.LENGTH_SHORT).show();
                 return false;
             }

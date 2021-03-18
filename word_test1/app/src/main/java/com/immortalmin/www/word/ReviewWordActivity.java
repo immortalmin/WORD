@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,25 +17,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
-
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class ReviewWordActivity extends AppCompatActivity
@@ -54,8 +42,6 @@ public class ReviewWordActivity extends AppCompatActivity
     private Button turn_mode,ret_btn;
     private ImageView imgview;
     private TextView total_times, word_times;
-    private JsonRe jsonRe = new JsonRe();
-    private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
     private User user = new User();
     private ProgressBar total_progress;
@@ -87,36 +73,6 @@ public class ReviewWordActivity extends AppCompatActivity
         total_progress = findViewById(R.id.total_progress);
         initialize();
     }
-
-    //从2021/2/21开始停止使用
-//    /**
-//     * 获取单词复习列表
-//     */
-//    private void getReviewList(){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",11);
-//            jsonObject.put("uid",4);
-//            //获取当前时间
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-//            jsonObject.put("review_date",simpleDateFormat.format(new Date(System.currentTimeMillis())));
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result)->{
-//            review_list =jsonRe.detailWordData(result);
-//            review_num = Math.min(review_list.size(),group_num);
-//            if(review_num>0){
-//                startReview();
-//            }else{
-//                mHandler.obtainMessage(1).sendToTarget();
-//                inadequateDialog.show();
-//            }
-//
-//        });
-//        myAsyncTask.execute(jsonObject);
-//    }
 
     /**
      * 从本地获取复习的单词列表
@@ -195,7 +151,6 @@ public class ReviewWordActivity extends AppCompatActivity
         setting.put("uid", user.getUid());
         Arrays.fill(finish_ind, 0);
         mHandler.obtainMessage(0).sendToTarget();
-//        getReviewList();
         getReviewListFromLocal();
     }
 
@@ -232,9 +187,10 @@ public class ReviewWordActivity extends AppCompatActivity
         mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog finish_alert = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                 .setTitleText("Good job!")
-                .setContentText("There are "+(review_list.size()-review_num)+" words left unreviewed")
-                .setConfirmText("continue")
+                .setContentText("你还剩"+(review_list.size()-review_num)+"个单词没有复习")
+                .setConfirmText("继续")
                 .setConfirmClickListener(sweetAlertDialog -> {
+                    mHandler.obtainMessage(2).sendToTarget();
                     current_ind = -1;
                     Arrays.fill(finish_ind, 0);
                     finish_num = 0;
@@ -242,10 +198,9 @@ public class ReviewWordActivity extends AppCompatActivity
                     for(int i=0;i<review_num;i++) review_list.remove(0);
                     review_num = Math.min(review_list.size(),group_num);
                     startReview();
-                    mHandler.obtainMessage(2).sendToTarget();
                     sweetAlertDialog.cancel();
                 })
-                .setCancelText("later")
+                .setCancelText("再说")
                 .setCancelClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -264,8 +219,8 @@ public class ReviewWordActivity extends AppCompatActivity
         mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog finish_alert = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                 .setTitleText("Good job!")
-                .setContentText("Return to main page.")
-                .setConfirmText("fine")
+                .setContentText("返回主界面")
+                .setConfirmText("好")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -285,9 +240,9 @@ public class ReviewWordActivity extends AppCompatActivity
         mHandler.obtainMessage(1).sendToTarget();
         SweetAlertDialog interrup_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
         interrup_alert.setTitleText("Are you sure?")
-                .setContentText("Won't be able to recover this file!")
-                .setConfirmText("fine")
-                .setCancelText("nooo")
+                .setContentText("退出后数据将无法恢复")
+                .setConfirmText("退出")
+                .setCancelText("继续")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -361,9 +316,6 @@ public class ReviewWordActivity extends AppCompatActivity
 
     /**
      * CountDownFragment的回调函数
-     * HashMap<String,Object> res
-     *
-     * @param res
      */
     @Override
     public void countdownonFragmentInteraction(HashMap<String, Object> res) {
@@ -435,17 +387,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
-    //从2021/2/21开始停止使用
-//    /**
-//     * @param i
-//     * @param what 0：不更新日期  1：更新日期
-//     */
-//    public void update_sql_data(int i,int what) {
-//        UpdateServer updateServer = new UpdateServer();
-//        updateServer.sendMap(review_list.get(i),what);
-//        scheduledThreadPool.schedule(updateServer, 0, TimeUnit.MILLISECONDS);
-//    }
-
     /**
      * 更新一条数据（本地）
      */
@@ -455,8 +396,6 @@ public class ReviewWordActivity extends AppCompatActivity
 
     /**
      * 跳转到例句页面
-     *
-     * @param id
      */
     public void jump_to_example(int id) {
         Intent intent = new Intent(ReviewWordActivity.this, ExampleActivity.class);
@@ -468,10 +407,6 @@ public class ReviewWordActivity extends AppCompatActivity
 
     /**
      * 子页面跳回
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -483,13 +418,6 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * 回车键事件
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {

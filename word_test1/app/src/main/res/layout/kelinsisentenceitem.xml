@@ -14,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#d2d9d7"
+        android:textSize="12sp"
         android:text="Either measure the temperature with a bath thermometer or test the water with your wrist..." />
 
     <TextView
@@ -21,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#bfd6ce"
+        android:textSize="12sp"
         android:text="要么用浴用温度计测量水温，要么用手腕试一下。" />
 
 </LinearLayout>

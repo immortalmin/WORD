@@ -8,19 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class EditDialog extends Dialog implements View.OnClickListener {
@@ -95,20 +87,6 @@ public class EditDialog extends Dialog implements View.OnClickListener {
 
         setContentView(view);
         mHandler.obtainMessage(0).sendToTarget();
-//        word_group.setText(word_text);
-//        if(word_text.length()>0){
-//            setfocus();
-//        }
-    }
-
-    /**
-     * 为word_group自动获取焦点
-     */
-    private void setfocus() {
-//        C_meaning.setFocusable(true);
-//        C_meaning.setFocusableInTouchMode(true);
-//        C_meaning.requestFocus();
-//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     public void onClick(View view) {
@@ -161,11 +139,8 @@ public class EditDialog extends Dialog implements View.OnClickListener {
 
     /**
      * 获取字符数量 汉字占2个，英文占一个
-     *
-     * @param text
-     * @return
      */
-    public static double getTextLength(String text) {
+    static double getTextLength(String text) {
         double length = 0;
         for (int i = 0; i < text.length(); i++) {
             // text.charAt(i)获取当前字符是的chart值跟具ASCII对应关系255以前的都是英文或者符号之等而中文并不在这里面所以此方法可行</span>

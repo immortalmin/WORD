@@ -55,14 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private User user = new User();
-    private BlurImageView blurImageView = new BlurImageView();
     private SyncUtil syncUtil;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Button btn_collect,btn_recite,btn_review,btn_spell;
     private ImageView imgview;
     private SearchView search_bar;
     private CircleImageView profile_photo;
-    private ImageUtils imageUtils = new ImageUtils();
     private UsageTime usageTime;
     private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
     private int screen_width,screen_height;
@@ -128,8 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user.setStatus(sp.getInt("status",0));
         user.setLast_login(sp.getLong("last_login",946656000000L));
         user.setLogin_mode(sp.getInt("login_mode",0));
-        //设置头像
-        setImage();
+        setImage();//设置头像
     }
 
     /**
@@ -143,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //清空旧的历史记录
             RecordDbDao recordDbDao = new RecordDbDao(this);
             recordDbDao.deleteData();
-
             //将服务器上该用户的collect和usageTime数据同步到本地
             syncUtil = new SyncUtil(this);
             syncUtil.setFinishListener(new SyncUtil.FinishListener() {
@@ -151,8 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void finish() {
                     getReviewCount();
                     intent.putExtra("source", "1");//同步数据后修改source，避免重复同步
-                    //检查用户登录时间并更新数据
-                    inspect_usetime();
+                    //获取使用时间的数据
+                    getUsageTime();
                 }
 
                 @Override
@@ -162,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             syncUtil.syncExecutor(2,false,true,false,true);
         }else{
-            //检查用户登录时间并更新数据
-            inspect_usetime();
+            //获取使用时间的数据
+            getUsageTime();
         }
     }
 
@@ -172,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap bitmap;
         bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
         if(bitmap==null){
-            Log.i("ccc","照片不存在 正从服务器下载...");
+            Log.i("ccc","头像不存在 正从服务器下载...");
             getImage();
         }else{
             mHandler.obtainMessage(0,bitmap).sendToTarget();
@@ -206,11 +202,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
                     btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
                     btn_review.setBackground(new BitmapDrawable(bitmaps.get(3)));
-//                    ArrayList<Drawable> drawables = (ArrayList<Drawable>) message.obj;
-//                    btn_wordlist.setBackground(drawables.get(0));
-//                    btn_recite.setBackground(drawables.get(1));
-//                    btn_spell.setBackground(drawables.get(2));
-//                    btn_test.setBackground(drawables.get(3));
                     break;
                 case 2:
                     Resources res = getResources();
@@ -220,28 +211,94 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case 3:
                     Resources res2 = getResources();
                     Bitmap bmp2 = BitmapFactory.decodeResource(res2, R.drawable.main_img);
-                    imgview.setImageBitmap(getRoundedCornerBitmap(bmp2,500));
+                    imgview.setImageBitmap(ImageUtils.getRoundedCornerBitmap(bmp2,500));
                     break;
             }
             return false;
         }
     });
 
-    /**
-     * 检查是否需要上传时间
-     */
-    private void inspect_usetime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-        //获取当前时间
-        long now_time_stamp = System.currentTimeMillis();
-        Date date = new Date(now_time_stamp);
-        String nowday = simpleDateFormat.format(date);
+//2021/3/14
+//    /**
+//     * 检查是否需要上传时间
+//     */
+//    private void inspectUsageTime() {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+//        //获取当前时间
+//        long now_time_stamp = System.currentTimeMillis();
+//        Date date = new Date(now_time_stamp);
+//        String nowday = simpleDateFormat.format(date);
+//
+//
+//        //代表是第一次登录
+//        if(user.getLast_login()==946656000000L){
+//            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//            sp.edit().putLong("last_login",now_time_stamp).apply();
+//            user.setLast_login(now_time_stamp);
+//            JSONObject jsonObject = new JSONObject();
+//            try{
+//                jsonObject.put("uid", user.getUid());
+//                jsonObject.put("last_login", user.getLast_login());
+//            }catch (JSONException e){
+//                e.printStackTrace();
+//            }
+//            update_last_login(jsonObject);
+//            return;
+//        }
+//        date = new Date(user.getLast_login());
+//        String last_day = simpleDateFormat.format(date);
+//        if(!nowday.equals(last_day)){
+//            //获取上一次使用到现在使用的数据
+//            mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
+//            mUseTimeDataManager.refreshData(user.getLast_login(),now_time_stamp);
+//            List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
+//            for (int i = 0; i < packageInfos.size(); i++) {
+//                if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
+//                    long minutes = packageInfos.get(i).getmUsedTime()/60000;
+////                  jsonObject.put("count",packageInfos.get(i).getmUsedCount());
+////                  jsonObject.put("name",packageInfos.get(i).getmPackageName());
+////                  jsonObject.put("appname",packageInfos.get(i).getmAppName());
+////                  use_time = packageInfos.get(i).getmUsedTime();
+//                    //上传昨天的使用时间
+//                    usageTime = new UsageTime();
+//                    usageTime.setUdate(last_day);
+//                    usageTime.setUtime((int)minutes);
+//                    usageTimeDbDao.insertUsageTime(usageTime,0);
+//                    break;
+//
+//                }
+//
+//            }
+//            //上传 上一次登录的日期 到 昨天（不包括昨天） 之间的 使用时间数据
+//            Calendar calendar = Calendar.getInstance();
+//            for(int i=0;i<100;i++){
+//                calendar.add(Calendar.DAY_OF_MONTH,-1);
+//                String pre_day = simpleDateFormat.format(calendar.getTime());
+//                if(pre_day.equals(last_day)){
+//                    break;
+//                }else{
+//                    usageTime = new UsageTime();
+//                    usageTime.setUdate(pre_day);
+//                    usageTime.setUtime(0);
+//                    usageTimeDbDao.insertUsageTime(usageTime,0);
+//                }
+//            }
+//            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//            sp.edit().putLong("last_login",now_time_stamp).apply();
+//            user.setLast_login(now_time_stamp);
+//        }
+//    }
 
-        //代表是第一次登录
-        if(user.getLast_login()==946656000000L){
+    /**
+     * 获取使用时间的数据
+     */
+    private void getUsageTime() {
+        long nowTimeStamp = System.currentTimeMillis();//获取当前时间戳
+        String today = DateTransUtils.getDateAfterToday(0);//今天的日期 YYYY-MM-DD
+        if(user.getLast_login()==946656000000L){//代表是第一次登录
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putLong("last_login",now_time_stamp).apply();
-            user.setLast_login(now_time_stamp);
+            sp.edit().putLong("last_login",nowTimeStamp).apply();
+            user.setLast_login(nowTimeStamp);
             JSONObject jsonObject = new JSONObject();
             try{
                 jsonObject.put("uid", user.getUid());
@@ -249,39 +306,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            update_last_login(jsonObject);
+            updateLastLogin(jsonObject);
             return;
         }
-        date = new Date(user.getLast_login());
-        String last_day = simpleDateFormat.format(date);
-        if(!nowday.equals(last_day)){
+        String lastLogin = DateTransUtils.stampToDate(user.getLast_login());
+        if(!today.equals(lastLogin)){//如果上次登录的日期不是今天，则需要计算这之间每一天的使用时间
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
-            mUseTimeDataManager.refreshData(user.getLast_login(),now_time_stamp);
+            mUseTimeDataManager.refreshData(user.getLast_login(),nowTimeStamp);
             List<PackageInfo> packageInfos = mUseTimeDataManager.getmPackageInfoListOrderByTime();
             for (int i = 0; i < packageInfos.size(); i++) {
                 if ("com.immortalmin.www.word".equals(packageInfos.get(i).getmPackageName())) {
                     long minutes = packageInfos.get(i).getmUsedTime()/60000;
-//                  jsonObject.put("count",packageInfos.get(i).getmUsedCount());
-//                  jsonObject.put("name",packageInfos.get(i).getmPackageName());
-//                  jsonObject.put("appname",packageInfos.get(i).getmAppName());
-//                  use_time = packageInfos.get(i).getmUsedTime();
                     //上传昨天的使用时间
                     usageTime = new UsageTime();
-                    usageTime.setUdate(last_day);
+                    usageTime.setUdate(lastLogin);
                     usageTime.setUtime((int)minutes);
                     usageTimeDbDao.insertUsageTime(usageTime,0);
                     break;
-
                 }
-
             }
-            //上传 上一次登录的日期 到 昨天（不包括昨天） 之间的 使用时间数据
+            //保存上一次登录的日期 到 昨天(不包括昨天)之间的使用时间数据
             Calendar calendar = Calendar.getInstance();
             for(int i=0;i<100;i++){
                 calendar.add(Calendar.DAY_OF_MONTH,-1);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String pre_day = simpleDateFormat.format(calendar.getTime());
-                if(pre_day.equals(last_day)){
+                if(pre_day.equals(lastLogin)){
                     break;
                 }else{
                     usageTime = new UsageTime();
@@ -290,13 +341,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     usageTimeDbDao.insertUsageTime(usageTime,0);
                 }
             }
+            //更新本地文件中的last_login
             SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putLong("last_login",now_time_stamp).apply();
-            user.setLast_login(now_time_stamp);
+            sp.edit().putLong("last_login",nowTimeStamp).apply();
+            user.setLast_login(nowTimeStamp);
         }
     }
 
-    private void update_last_login(final JSONObject jsonObject) {
+    /**
+     * 上传用户上一次登录的时间
+     */
+    private void updateLastLogin(final JSONObject jsonObject) {
         new Thread(() -> {
             HttpGetContext httpGetContext = new HttpGetContext();
             httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
@@ -304,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 显示复习单词的数量
+     * 获取并显示复习单词的数量
      */
     private void getReviewCount(){
         int count = collectDbDao.getReviewCount();
@@ -335,9 +390,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_spell:
-                intent = new Intent(MainActivity.this,CountDownTestActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+//                intent = new Intent(MainActivity.this,CountDownTestActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);
@@ -363,9 +418,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 图片裁剪
-     * @param bitmap
-     * @return
+     * 将主界面背景图片的中间部分切割成四个方形，设置高斯模糊后作为按钮的背景图片
      */
     private void cropBitmap(Bitmap bitmap) {
         int w = bitmap.getWidth(); // 得到图片的宽，高
@@ -384,39 +437,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap4 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2+justMargin,justBtn_w, justBtn_h, null, false);
         ArrayList<Bitmap> bitmaps = new ArrayList<>();
-        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap1),80));
-        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap2),80));
-        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap3),80));
-        bitmaps.add(getRoundedCornerBitmap(blurImageView.BoxBlurFilter(bitmap4),80));
-
-//        ArrayList<Drawable> drawables = new ArrayList<>();
-//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap1,100)));
-//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap2,100)));
-//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap3,100)));
-//        drawables.add(blurImageView.BoxBlurFilter(getRoundedCornerBitmap(bitmap4,100)));
+        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap1),80));
+        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap2),80));
+        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap3),80));
+        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap4),80));
         mHandler.obtainMessage(1,bitmaps).sendToTarget();
-    }
-
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap,float roundPx){
-
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                .getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
     }
 
     @Override
@@ -437,5 +462,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             init();
         }
     }
-
 }

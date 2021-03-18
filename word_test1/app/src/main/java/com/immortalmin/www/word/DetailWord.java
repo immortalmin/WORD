@@ -1,7 +1,5 @@
 package com.immortalmin.www.word;
 
-import android.util.Log;
-
 /**
  * 带有数据记录的单词
  */
@@ -24,16 +22,6 @@ public class DetailWord extends Word{
 
     /**
      * 搜索框、收藏
-     * @param wid
-     * @param word_en
-     * @param word_ch
-     * @param correct_times
-     * @param error_times
-     * @param last_date
-     * @param review_date
-     * @param cid
-     * @param gid
-     * @param dict_source
      */
     public DetailWord(String wid, String word_en, String word_ch, String correct_times, String error_times, String last_date, String review_date, String cid, String gid, String dict_source) {
         super(wid, word_en);
@@ -49,17 +37,6 @@ public class DetailWord extends Word{
 
     /**
      * wordData
-     * @param wid
-     * @param word_en
-     * @param word_ch
-     * @param correct_times
-     * @param error_times
-     * @param last_date
-     * @param review_date
-     * @param cid
-     * @param gid
-     * @param dict_source
-     * @param source
      */
     public DetailWord(String wid, String word_en, String word_ch, String correct_times, String error_times, String last_date, String review_date, String cid, String gid, String dict_source, String source) {
         super(wid, word_en);
@@ -106,19 +83,19 @@ public class DetailWord extends Word{
         this.error_times =  "null".equals(error_times)?0:Integer.parseInt(error_times);
     }
 
-    public String getLast_date() {
+    String getLast_date() {
         return last_date;
     }
 
-    public void setLast_date(String last_date) {
+    void setLast_date(String last_date) {
         this.last_date = "null".equals(last_date)?"2000-01-01":last_date;;
     }
 
-    public String getReview_date() {
+    String getReview_date() {
         return review_date;
     }
 
-    public void setReview_date(String review_date) {
+    void setReview_date(String review_date) {
         this.review_date = "null".equals(review_date)?"2000-01-01":review_date;
     }
 
@@ -130,19 +107,19 @@ public class DetailWord extends Word{
         this.cid = cid;
     }
 
-    public String getGid() {
+    String getGid() {
         return gid;
     }
 
-    public void setGid(String gid) {
+    void setGid(String gid) {
         this.gid = "null".equals(gid)?"0":gid;
     }
 
-    public String getHid() {
+    String getHid() {
         return hid;
     }
 
-    public void setHid(String hid) {
+    void setHid(String hid) {
         this.hid = hid;
     }
 
@@ -162,22 +139,22 @@ public class DetailWord extends Word{
         this.source = source;
     }
 
-    public int getToday_correct_times() {
+    int getToday_correct_times() {
         return today_correct_times;
     }
 
-    public void setToday_correct_times(int today_correct_times) {
+    void setToday_correct_times(int today_correct_times) {
         this.today_correct_times = today_correct_times;
     }
     public void setToday_correct_times(String today_correct_times) {
         this.today_correct_times = Integer.parseInt(today_correct_times);
     }
 
-    public boolean isCollect() {
+    boolean isCollect() {
         return isCollect;
     }
 
-    public void setCollect(boolean collect) {
+    void setCollect(boolean collect) {
         isCollect = collect;
     }
 

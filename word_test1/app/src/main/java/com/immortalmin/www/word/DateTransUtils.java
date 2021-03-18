@@ -23,15 +23,16 @@ public class DateTransUtils {
      */
     public static String stampToDate(String stamp){
         String res;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         long lt = new Long(stamp);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;
     }
+
     public static String stampToDate(long stamp){
         String res;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(stamp);
         res = simpleDateFormat.format(date);
         return res;

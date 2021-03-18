@@ -14,6 +14,7 @@
         android:layout_marginEnd="10dp"
         android:theme="@style/MyCheckBox"
         android:text="MINE"
+        android:textSize="12sp"
         android:textColor="#CEF5CF"/>
 
     <ListView
@@ -30,11 +31,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:padding="0dp"
-        android:layout_below="@+id/view"
         android:gravity="center_horizontal"
         android:layout_gravity="center_vertical"
         android:visibility="invisible"
-        android:textSize="16dp"
+        android:textSize="14sp"
         android:textColor="#f6f7f9"
         android:text="暂无例句" />
 

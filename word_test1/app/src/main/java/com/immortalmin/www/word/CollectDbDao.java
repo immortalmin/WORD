@@ -4,13 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * 用户背单词的记录
+ * 用户背单词的数据库操作类
  */
 public class CollectDbDao {
     private Context context;
@@ -29,7 +26,6 @@ public class CollectDbDao {
     /**
      * 获取背新单词的数据
      * @param mount 单词数
-     * @return 单词列表
      */
     ArrayList<DetailWord> getReciteData(int mount){
         ArrayList<DetailWord> wordList = new ArrayList<>();
@@ -55,7 +51,6 @@ public class CollectDbDao {
 
     /**
      * 获取复习的单词列表
-     * @return
      */
     ArrayList<DetailWord> getReviewData() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
@@ -82,7 +77,6 @@ public class CollectDbDao {
 
     /**
      * 获取所有收藏的单词
-     * @return
      */
     ArrayList<DetailWord> getCollectList() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
@@ -108,7 +102,6 @@ public class CollectDbDao {
 
     /**
      * 获取所有需要同步的单词
-     * @return
      */
     ArrayList<DetailWord> getSyncList() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
@@ -133,7 +126,6 @@ public class CollectDbDao {
 
     /**
      * 获取需要复习的单词数量
-     * @return 单词的数量
      */
     int getReviewCount(){
         String review_date = DateTransUtils.getDateAfterToday(0);
@@ -148,7 +140,6 @@ public class CollectDbDao {
 
     /**
      * 获取已经掌握的单词数量
-     * @return 已经掌握的单词数量
      */
     int getFinishCount(){
         Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect WHERE isCollect=1 AND correct_times=6 AND review_date=\"1970-01-01\"",null);
@@ -162,7 +153,6 @@ public class CollectDbDao {
 
     /**
      * 获取收藏的单词数
-     * @return 收藏的单词数
      */
     int getCollectCount(){
         Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect where isCollect=1",null);
@@ -202,7 +192,6 @@ public class CollectDbDao {
      * 通过wid和dict_source获取单词
      * @param wid 单词的wid
      * @param dict_source 单词来源
-     * @return 查询到的单词
      */
     DetailWord getSingleWordByWidAndSource(String wid,String dict_source){
         Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,isCollect from collect where wid="+wid+" and dict_source="+dict_source,null);
@@ -228,7 +217,6 @@ public class CollectDbDao {
      * 检查数据库中是否已经有该条数据
      * @param wid 单词wid
      * @param dict_source 单词来源
-     * @return 是否存在该条数据
      */
     public boolean hasData(String wid,String dict_source){
         Cursor cursor = helper.getReadableDatabase().rawQuery("select wid from collect where wid=? and dict_source=?",new String[]{wid,dict_source});
@@ -269,7 +257,7 @@ public class CollectDbDao {
      */
     public int deleteSingleWordByWidAndSource(String wid,String dict_source){
         int delete = helper.getWritableDatabase().delete("collect","wid=? and dict_source=?",new String[]{wid,dict_source});
-//        db.close();
+        db.close();
         return delete;
     }
 
@@ -280,7 +268,7 @@ public class CollectDbDao {
      */
     public int deleteSingleWordById(String id){
         int delete = helper.getWritableDatabase().delete("collect","id=?",new String[]{id});
-//        db.close();
+        db.close();
         return delete;
     }
 

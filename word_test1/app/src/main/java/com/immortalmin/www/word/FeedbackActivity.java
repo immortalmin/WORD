@@ -81,16 +81,6 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
         myAsyncTask.execute(jsonObject);
     }
 
-//    private Handler mHandler = new Handler(message -> {
-//        switch (message.what){
-//            case 0:
-//
-//                break;
-//        }
-//        return false;
-//    });
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -101,7 +91,6 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
             return super.onKeyDown(keyCode, event);
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

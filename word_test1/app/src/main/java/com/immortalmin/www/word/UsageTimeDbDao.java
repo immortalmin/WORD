@@ -5,14 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
- * 用户背单词的记录
+ * 用户使用时间的数据库操作类
  */
 public class UsageTimeDbDao {
     private Context context;
@@ -69,6 +66,7 @@ public class UsageTimeDbDao {
             db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+")");
         }catch (SQLException e){
             Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+            db.close();
         }
         db.close();
     }
@@ -105,8 +103,10 @@ public class UsageTimeDbDao {
         helper.getReadableDatabase().update("usageTime",values,"udate=?",new String[]{udate});
     }
 
-
-    public void deleteData() {
+    /**
+     * 删除所有的数据
+     */
+    void deleteData() {
         db = helper.getWritableDatabase();
         db.execSQL("delete from usageTime");
         db.close();

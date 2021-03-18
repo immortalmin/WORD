@@ -1,7 +1,6 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,27 +9,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
-
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
-
 public class ExampleFragment extends Fragment implements View.OnClickListener{
-
 
     private OnFragmentInteractionListener mListener;
     private ListView example_list;
@@ -43,7 +34,6 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private int mode=0,wid=1,edit_index,del_index;
     private String dict_source="0";
     private User user = new User();
-    private JSONObject jsonObject;
     private JsonRe jsonRe = new JsonRe();
     private CaptureUtil captureUtil = new CaptureUtil();
     private MyAsyncTask myAsyncTask;
@@ -69,23 +59,20 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        example_list = (ListView)getActivity().findViewById(R.id.example_list);
-        non_example = (TextView)getActivity().findViewById(R.id.non_example);
-        checkbox = (CheckBox)getActivity().findViewById(R.id.checkbox);
-        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    //API level:21->24
-                    examplelist.removeIf(
-                            example->!"immortalmin".equals(example.getSource())
-                    );
-                    exampleAdapter.notifyDataSetChanged();
-                }else{
-                    examplelist.clear();
-                    examplelist.addAll(temp);
-                    exampleAdapter.notifyDataSetChanged();
-                }
+        example_list = getActivity().findViewById(R.id.example_list);
+        non_example = getActivity().findViewById(R.id.non_example);
+        checkbox = getActivity().findViewById(R.id.checkbox);
+        checkbox.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(b){
+                //API level:21->24
+                examplelist.removeIf(
+                        example->!"immortalmin".equals(example.getSource())
+                );
+                exampleAdapter.notifyDataSetChanged();
+            }else{
+                examplelist.clear();
+                examplelist.addAll(temp);
+                exampleAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -105,7 +92,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     public void setExamplelist(ArrayList<OtherSentence> data,boolean isTobottom){
         //如果原本是没有例句的话，添加后要把“暂无例句”去除
         if(examplelist.size()==0){
-            mHandler.obtainMessage(6,1).sendToTarget();
+            mHandler.obtainMessage(2,1).sendToTarget();
         }
         examplelist.clear();
         examplelist.addAll(data);
@@ -151,23 +138,11 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                     }
                     break;
                 case 1:
-
-                    break;
-                case 2:
-
-                    break;
-                case 3:
-
-                    break;
-                case 4:
-
-                    break;
-                case 5:
                     Glide.with(getActivity()).load(captureUtil.getcapture(getActivity()))
                             .apply(bitmapTransform(new BlurTransformation(25))).into(backdrop);
                     backdrop.setVisibility(View.VISIBLE);
                     break;
-                case 6:
+                case 2:
                     backdrop.setVisibility(View.INVISIBLE);
                     if("1".equals(message.obj.toString())){//显示例句
                         non_example.setVisibility(View.INVISIBLE);
@@ -199,7 +174,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private void getExampleData(){
         JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("what",8);//getexampledata
+            jsonObject.put("what",8);
             jsonObject.put("uid", user.getUid());
             jsonObject.put("wid",Integer.valueOf(wid));
             jsonObject.put("dict_source",dict_source);
@@ -221,26 +196,20 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
      * 删除警告
      */
     private void del_warning(String eid){
-        mHandler.obtainMessage(5).sendToTarget();
+        mHandler.sendEmptyMessage(1);
         SweetAlertDialog del_alert = new SweetAlertDialog(getActivity(),SweetAlertDialog.WARNING_TYPE);
         del_alert.setTitleText("Really?")
                 .setContentText("Data will be permanently deleted.")
                 .setConfirmText("OK")
                 .setCancelText("No,cancel del!")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        deleteExample(eid);
-                        sweetAlertDialog.cancel();
-                    }
+                .setConfirmClickListener(sweetAlertDialog -> {
+                    deleteExample(eid);
+                    sweetAlertDialog.cancel();
                 })
                 .showCancelButton(true)
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
-                        mHandler.obtainMessage(6,0).sendToTarget();
-                    }
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.cancel();
+                    mHandler.obtainMessage(2,0).sendToTarget();
                 });
         del_alert.setCancelable(false);
         del_alert.show();
@@ -263,9 +232,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
             exampleAdapter.notifyDataSetChanged();
             Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
             if(examplelist.size()==0){
-                mHandler.obtainMessage(6,2).sendToTarget();
+                mHandler.obtainMessage(2,2).sendToTarget();
             }else{
-                mHandler.obtainMessage(6,0).sendToTarget();
+                mHandler.obtainMessage(2,0).sendToTarget();
             }
 
         });
@@ -273,16 +242,11 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     }
 
     private void updateExampleDialog(OtherSentence data){
-        mHandler.obtainMessage(5).sendToTarget();
+        mHandler.sendEmptyMessage(1);
         UpdateExampleDialog updateExampleDialog = new UpdateExampleDialog(getActivity(),R.style.MyDialog,data);
         updateExampleDialog.show();
         updateExampleDialog.setCancelable(false);
-        updateExampleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHandler.obtainMessage(6,0).sendToTarget();
-            }
-        });
+        updateExampleDialog.setOnDismissListener(dialogInterface -> mHandler.obtainMessage(2,0).sendToTarget());
     }
 
 
