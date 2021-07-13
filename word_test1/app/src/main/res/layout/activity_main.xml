@@ -35,13 +35,6 @@
         android:background="@drawable/main_button"
         />
 
-    <!--<com.immortalmin.www.word.SignIn-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="100dp"-->
-        <!--android:layout_below="@+id/search_bar"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:layout_centerHorizontal="true"/>-->
-
     <RelativeLayout
         android:id="@+id/btn_layout"
         android:layout_width="wrap_content"
@@ -88,23 +81,12 @@
             android:alpha="1"
             android:textStyle="bold"
             android:textColor="#f1e4e4"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:layout_below="@+id/btn_recite"
-            android:layout_toRightOf="@+id/btn_spell"
+            android:layout_toEndOf="@+id/btn_spell"
             android:text="复习\n99" />
 
     </RelativeLayout>
-
-
-
-    <ImageView
-        android:id="@+id/imgview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:visibility="invisible"
-        android:layout_below="@+id/btn_layout"
-        android:src="@drawable/main_img"
-        />
 
 </RelativeLayout>

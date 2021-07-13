@@ -66,7 +66,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
         android:text="上传到云端"
-        android:textSize="18sp"/>
+        android:textSize="14sp"/>
 
     <Button
         android:id="@+id/downloadBtn"
@@ -77,5 +77,5 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="50dp"
         android:text="同步到本地"
-        android:textSize="18sp"/>
+        android:textSize="14sp"/>
 </RelativeLayout>

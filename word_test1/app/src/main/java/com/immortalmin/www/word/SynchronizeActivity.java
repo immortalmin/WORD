@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -247,4 +248,14 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
         }
     });
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            finish();
+            overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            return false;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 }

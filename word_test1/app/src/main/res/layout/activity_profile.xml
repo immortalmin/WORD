@@ -21,8 +21,8 @@
         android:id="@+id/prof_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"
         android:textColor="#414040"
         android:layout_centerHorizontal="true"
         android:text="PROFILE" />
@@ -31,9 +31,9 @@
         android:id="@+id/return_btn"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/left_arrow"
         />
 
@@ -41,7 +41,7 @@
         android:id="@+id/setting_btn"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:background="@drawable/setting_icon"/>
 
@@ -55,8 +55,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/photo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="10dp"
             app:civ_border_width="1dp"
             app:civ_border_overlay="true"
@@ -68,10 +68,10 @@
             android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/photo"
-            android:layout_marginLeft="15dp"
+            android:layout_toEndOf="@+id/photo"
+            android:layout_marginStart="15dp"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="18sp"
             android:text="immortalmin" />
 
         <Button
@@ -94,7 +94,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textStyle="italic"
-            android:textSize="15dp"
+            android:textSize="14sp"
             android:text="Recite English as your mother tongue" />
 
 

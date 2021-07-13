@@ -17,18 +17,18 @@
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_toEndOf="@+id/profile_photo"
             android:layout_marginTop="4dp"
             android:layout_marginStart="5dp"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:text="immortalmin"/>
 
         <ImageView
             android:id="@+id/icon_iv"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:layout_toRightOf="@+id/username"
+            android:layout_toEndOf="@+id/username"
             android:layout_alignTop="@+id/username"
             android:layout_marginTop="3dp"
             android:layout_marginStart="10dp"/>
@@ -47,9 +47,6 @@
             android:background="#04CF0C"
             />
 
-
-
-
         <TextView
             android:id="@+id/context"
             android:layout_width="match_parent"
@@ -59,6 +56,7 @@
             android:layout_marginStart="5dp"
             android:layout_below="@+id/username"
             android:layout_toEndOf="@+id/profile_photo"
+            android:textSize="13sp"
             android:text="@string/feedback_context"/>
 
         <com.immortalmin.www.word.AutoLineUtil
@@ -72,8 +70,6 @@
             android:layout_below="@+id/context"
             app:horizontalSpacing="5dp"
             app:verticalSpacing="3dp">
-
-
         </com.immortalmin.www.word.AutoLineUtil>
 
         <TextView
@@ -84,43 +80,7 @@
             android:layout_toEndOf="@+id/profile_photo"
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
+            android:textSize="12sp"
             android:text="2020-10-22 19:34"/>
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_below="@+id/profile_photo"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:layout_marginStart="7dp"-->
-<!--            >-->
-
-<!--            <Button-->
-<!--                android:id="@+id/up_btn"-->
-<!--                android:layout_width="15dp"-->
-<!--                android:layout_height="15dp"-->
-<!--                android:padding="1dp"-->
-<!--                android:background="@drawable/up_off"/>-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/vote_tv"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textSize="13sp"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:text="+11"/>-->
-
-
-<!--            <Button-->
-<!--                android:id="@+id/down_btn"-->
-<!--                android:layout_width="15dp"-->
-<!--                android:layout_height="15dp"-->
-<!--                android:padding="1dp"-->
-<!--                android:background="@drawable/down_off"-->
-<!--                android:layout_marginTop="5dp"/>-->
-
-
-<!--        </LinearLayout>-->
-
 
 </RelativeLayout>

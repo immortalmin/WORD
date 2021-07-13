@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="#414040"
         android:layout_centerHorizontal="true"
         android:text="SETTINGS" />
@@ -33,8 +33,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginTop="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/left_arrow"
         />
 
@@ -64,14 +64,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="每组要完成背诵的数量"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/recite_num"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:paddingEnd="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:text="20"/>
             </LinearLayout>
             <View
@@ -94,14 +94,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="每组额外加入的数量"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/recite_scope"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:paddingEnd="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:text="10"/>
             </LinearLayout>
             <View
@@ -124,14 +124,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="在中文提示下是否可以点击单词发音"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/PronInChineseHint_opt"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:paddingEnd="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:text="是"/>
             </LinearLayout>
             <View
@@ -154,14 +154,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="发音类型"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/PronMode_opt"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:paddingEnd="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:text="美"/>
             </LinearLayout>
             <View
@@ -184,14 +184,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="每组复习单词的数量"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/ReviewGroupNumber_opt"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:paddingEnd="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:text="20"/>
             </LinearLayout>
             <View

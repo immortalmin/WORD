@@ -141,6 +141,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+//            Log.i("ccc","1:"+KeyEvent.KEYCODE_ENTER);
+//            Log.i("ccc","2:"+keyEvent.getKeyCode());
             if(isTyping){
                 //点击回车，判断答案是否正确
                 if (keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {

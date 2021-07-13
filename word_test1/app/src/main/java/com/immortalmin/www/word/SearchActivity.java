@@ -120,7 +120,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 Message msg = new Message();
                 msg.what=1;
                 msg.obj=s;
-                mHandler.sendMessageDelayed(msg,200);
+                mHandler.sendMessageDelayed(msg,400);
             }else{
                 mHandler.obtainMessage(5,1).sendToTarget();
                 word_list.clear();

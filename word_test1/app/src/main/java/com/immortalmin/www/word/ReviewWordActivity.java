@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -33,7 +34,6 @@ public class ReviewWordActivity extends AppCompatActivity
         SpellFragment.OnFragmentInteractionListener,
         CountDownFragment.OnFragmentInteractionListener {
 
-    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction transaction = fragmentManager.beginTransaction();
     private CountDownFragment countDownFragment = new CountDownFragment();
@@ -43,6 +43,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private ImageView imgview;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
+    private DataUtil dataUtil = new DataUtil(this);
     private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog interruptDialog,inadequateDialog;
@@ -145,7 +146,7 @@ public class ReviewWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
-        init_user();
+        user = dataUtil.set_user();
         init_fragment();
         dialog_init();
         setting.put("uid", user.getUid());
@@ -258,22 +259,6 @@ public class ReviewWordActivity extends AppCompatActivity
         interrup_alert.show();
     }
 
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
-    }
-
     /**
      * 选项按钮点击事件
      *
@@ -347,8 +332,6 @@ public class ReviewWordActivity extends AppCompatActivity
 
     /**
      * spellfragment的回调函数
-     *
-     * @param WrongTimes
      */
     @Override
     public void spellFragmentInteraction(int WrongTimes) {
