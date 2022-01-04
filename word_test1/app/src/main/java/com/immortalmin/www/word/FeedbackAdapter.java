@@ -72,9 +72,9 @@ public class FeedbackAdapter extends BaseAdapter {
         viewHolder.context.setText(mdata.get(position).get("description").toString());
         viewHolder.add_time.setText(mdata.get(position).get("add_time").toString());
         if("0".equals(mdata.get(position).get("what").toString())){
-            viewHolder.icon_iv.setImageResource(R.drawable.bug_icon);
+            viewHolder.icon_iv.setImageResource(R.drawable.bug);
         }else{
-            viewHolder.icon_iv.setImageResource(R.drawable.suggestion_icon);
+            viewHolder.icon_iv.setImageResource(R.drawable.idea);
         }
         viewHolder.progress_tv.setText(mdata.get(position).get("progress").toString());
         //颜色是应该丰富一点，还是简约一点？
@@ -93,13 +93,16 @@ public class FeedbackAdapter extends BaseAdapter {
         */
         switch (mdata.get(position).get("progress").toString()){
             case "待处理":
-                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#F79C15"));
+//                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#F79C15"));
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#F79C15"));
                 break;
             case "已采纳":case "实现中":case "修复中":
-                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#2FE9D8"));
+//                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#2FE9D8"));
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#2FE9D8"));
                 break;
             case "未采纳":case "已实现":case "已修复":
-                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#04CF0C"));
+//                viewHolder.progress_tv.setBackgroundColor(Color.parseColor("#04CF0C"));
+                viewHolder.progress_tv.setTextColor(Color.parseColor("#04CF0C"));
                 break;
         }
         //显示头像

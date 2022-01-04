@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,8 +32,10 @@ public class KelinsiFragment extends Fragment {
     private JsonRe jsonRe = new JsonRe();
     private KelinsiWord kelinsiWord = null;
     private MyListView items_listview;
+    private ImageView no_network;
     private KelinsiAdapter kelinsiAdapter;
     private int wid=0;
+    private boolean network = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,15 +59,22 @@ public class KelinsiFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         items_listview = getActivity().findViewById(R.id.items_listview);
-        getKelinsiData();
+        no_network = getActivity().findViewById(R.id.no_network_KeLinSi);
+        if(network){
+            getKelinsiData();
+        }else{
+            mHandler.sendEmptyMessage(1);
+        }
+
     }
 
     public interface OnFragmentInteractionListener {
         void kelinsiFragmentInteraction(String res);
     }
 
-    public void setWid(int wid){
+    public void setData(int wid,boolean network){
         this.wid = wid;
+        this.network = network;
     }
 
     //mHandler.obtainMessage(0).sendToTarget();
@@ -78,6 +88,10 @@ public class KelinsiFragment extends Fragment {
                     kelinsiAdapter = new KelinsiAdapter(getActivity(),kelinsiWord.getItems());
                     items_listview.setAdapter(kelinsiAdapter);
                     break;
+                case 1:
+                    no_network.setVisibility(View.VISIBLE);
+                    items_listview.setVisibility(View.INVISIBLE);
+                    break;
             }
             return false;
         }
@@ -87,7 +101,6 @@ public class KelinsiFragment extends Fragment {
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",9);
-//            jsonObject.put("wid",30595);
             jsonObject.put("wid",wid);
         }catch (JSONException e){
             e.printStackTrace();

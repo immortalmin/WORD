@@ -45,6 +45,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
+    private NetworkUtil networkUtil = null;
     private User user = new User();
     private String fuzzy_str;
     private RecordDbDao mRecordDbDao;
@@ -70,6 +71,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         searchView1.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
         clear_btn.setOnClickListener(this);
+        networkUtil = new NetworkUtil(this);
         init_user();
         setCursorIcon();
     }
@@ -197,6 +199,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * @param word
      */
     private void getWordList(String word){
+        if(!networkUtil.isNetworkConnected()) return ;
         word = word.replaceAll("\"","\\\"");
         JSONObject jsonObject = new JSONObject();
         try{

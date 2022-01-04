@@ -19,6 +19,6 @@
         android:layout_height="15dp"
         android:layout_alignRight="@+id/imageView"
         android:layout_marginRight="-7dp"
-        android:background="@drawable/img_del"/>
+        android:background="@drawable/cancel"/>
 
 </RelativeLayout>

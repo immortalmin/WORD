@@ -44,7 +44,7 @@
             android:text="待处理"
             android:textColor="#FDF7F7"
             android:textSize="10sp"
-            android:background="#04CF0C"
+            android:background="#00000000"
             />
 
         <TextView

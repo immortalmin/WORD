@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".ExampleFragment">
 
+    <ImageView
+        android:id="@+id/no_network_Others"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/no_network"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="no network" />
+
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"

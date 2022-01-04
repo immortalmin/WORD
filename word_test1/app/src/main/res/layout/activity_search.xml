@@ -33,6 +33,7 @@
 
     </SearchView>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,16 +57,16 @@
             android:layout_alignBottom="@+id/clear_btn"
             android:text="历史记录"/>
 
-            <ListView
-                android:id="@+id/historyListView"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/clear_btn"
-                android:divider="#00000000"
-                android:dividerHeight="10dp"
-                >
+        <ListView
+            android:id="@+id/historyListView"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/clear_btn"
+            android:divider="#00000000"
+            android:dividerHeight="10dp"
+            >
 
         </ListView>
 
@@ -78,16 +79,16 @@
             android:textSize="17sp"
             android:text="新查询"/>
 
-            <ListView
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_below="@+id/newTextView"
-                android:divider="#00000000"
-                android:dividerHeight="10dp"
-                >
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/newTextView"
+            android:divider="#00000000"
+            android:dividerHeight="10dp"
+            >
 
         </ListView>
 
@@ -104,6 +105,7 @@
             android:text="添加新单词" />
 
     </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/imgview"

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private ListView example_list;
     private TextView non_example;
-    private ImageView backdrop;
+    private ImageView backdrop,no_network;
     private CheckBox checkbox;
     private ExampleAdapter exampleAdapter;
     private ArrayList<OtherSentence> examplelist = new ArrayList<>();
@@ -37,6 +38,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     private JsonRe jsonRe = new JsonRe();
     private CaptureUtil captureUtil = new CaptureUtil();
     private MyAsyncTask myAsyncTask;
+    private boolean network = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,11 +64,12 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         example_list = getActivity().findViewById(R.id.example_list);
         non_example = getActivity().findViewById(R.id.non_example);
         checkbox = getActivity().findViewById(R.id.checkbox);
+        no_network = getActivity().findViewById(R.id.no_network_Others);
         checkbox.setOnCheckedChangeListener((compoundButton, b) -> {
             if(b){
                 //API level:21->24
                 examplelist.removeIf(
-                        example->!"immortalmin".equals(example.getSource())
+                        example->!user.getUsername().equals(example.getSource())
                 );
                 exampleAdapter.notifyDataSetChanged();
             }else{
@@ -75,17 +78,19 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                 exampleAdapter.notifyDataSetChanged();
             }
         });
+        if(!network) mHandler.sendEmptyMessage(3);
     }
 
     public interface OnFragmentInteractionListener {
         void exampleFragmentInteraction(String res);
     }
 
-    public void setData(int wid, User user, ImageView backdrop, String dict_source){
+    public void setData(int wid, User user, ImageView backdrop, String dict_source,boolean network){
         this.wid = wid;
         this.user = user;
         this.backdrop = backdrop;
         this.dict_source = dict_source;
+        this.network = network;
         getExampleData();
     }
 
@@ -101,11 +106,9 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
         }else{
             exampleAdapter.notifyDataSetChanged();
         }
-
         if(isTobottom){
             example_list.setSelection(examplelist.size()-1);
         }
-
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -152,6 +155,10 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
                         example_list.setVisibility(View.INVISIBLE);
                     }
                     break;
+                case 3:
+                    no_network.setVisibility(View.VISIBLE);
+                    checkbox.setVisibility(View.INVISIBLE);
+                    break;
             }
             return false;
         }
@@ -172,6 +179,7 @@ public class ExampleFragment extends Fragment implements View.OnClickListener{
     }
 
     private void getExampleData(){
+        if(!network) return;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("what",8);

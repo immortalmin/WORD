@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -54,10 +55,11 @@ public class ExampleActivity extends AppCompatActivity implements
     private JsonRe jsonRe = new JsonRe();
     private MyAsyncTask myAsyncTask;
     private CaptureUtil captureUtil = new CaptureUtil();
+    private NetworkUtil networkUtil = null;
     private int mode=0;
     private int fragment_mode=0;//0:example  1:kelinsi
     private String current_word="error",wid = "100",dict_source="0";
-    private boolean first_coming = true;
+    private boolean first_coming = true,network=true;
     private int collect_flag = 0;
 
 
@@ -88,10 +90,12 @@ public class ExampleActivity extends AppCompatActivity implements
         Intent intent = getIntent();
         wid = intent.getStringExtra("wid");
         dict_source = intent.getStringExtra("dict_source");
+        networkUtil = new NetworkUtil(ExampleActivity.this);
         init();
     }
 
     private void init() {
+        network = networkUtil.isNetworkConnected();
         mRecordDbDao = new RecordDbDao(ExampleActivity.this);
         first_coming = true;
         user = dataUtil.set_user();
@@ -99,14 +103,16 @@ public class ExampleActivity extends AppCompatActivity implements
             word = collectDbDao.getSingleWordByWidAndSource(wid,dict_source);
             mHandler.sendEmptyMessage(4);
         }else{
-            getWordDataFromServer();
+            if(networkUtil.isNetworkConnected()){
+                getWordDataFromServer();
+            }
         }
         if("0".equals(dict_source)){//有例句，没有柯林斯
             fragment_mode=0;
             transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.framelayout,exampleFragment);
             transaction.commit();
-            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source);//设置例句fragment的数据
+            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source,network);//设置例句fragment的数据
             mHandler.obtainMessage(8,0).sendToTarget();
         }else{//有柯林斯，可能有例句
             fragment_mode=1;
@@ -115,8 +121,8 @@ public class ExampleActivity extends AppCompatActivity implements
             transaction.add(R.id.framelayout,kelinsiFragment);
             transaction.hide(exampleFragment);
             transaction.commit();
-            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source);//设置例句fragment的数据
-            kelinsiFragment.setWid(Integer.valueOf(wid));
+            exampleFragment.setData(Integer.valueOf(wid), user,backdrop,dict_source,network);//设置例句fragment的数据
+            kelinsiFragment.setData(Integer.valueOf(wid),network);
             mHandler.obtainMessage(8,1).sendToTarget();
         }
     }

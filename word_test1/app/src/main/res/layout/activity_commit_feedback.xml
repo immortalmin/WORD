@@ -164,7 +164,7 @@
             android:id="@+id/add_pic_btn"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/add_picture"
+            android:background="@drawable/upload_img"
             />
     </com.immortalmin.www.word.AutoLineUtil>
 
