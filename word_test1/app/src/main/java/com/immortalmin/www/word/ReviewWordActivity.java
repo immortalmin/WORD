@@ -57,7 +57,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private int current_ind = -1;
     private Boolean pron_lock = false;
     private HashMap<String, Object> now_words = null;
-    private static int group_num = 20;//每组复习的单词数
+    private static int group_num = 5;//每组复习的单词数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,20 +89,23 @@ public class ReviewWordActivity extends AppCompatActivity
         }
     }
 
+    private int get_next_ind(int ind){
+        ind++;
+        if(ind==review_num) ind=0;
+        while(finish_ind[ind]==1){
+            ind++;
+            if(current_ind==review_num) ind=0;
+        }
+        return ind;
+    }
     /**
      * 开始背诵
      * 按顺序背诵，背错的之后重背
      */
     private void startReview(){
-        current_ind++;
-        if(current_ind==review_num) current_ind=0;
-        while(finish_ind[current_ind]==1){
-            current_ind++;
-            if(current_ind==review_num) current_ind=0;
-        }
+        current_ind = get_next_ind(current_ind);
         today_finish = review_list.get(current_ind).getToday_correct_times();
         mHandler.obtainMessage(0).sendToTarget();
-//        hideInput();
         switch(today_finish){
             case 0:
                 int countdown_mode = (int) (Math.random() * 3) + 1;
@@ -117,7 +120,8 @@ public class ReviewWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", review_list.get(current_ind).getWord_en());
                 now_words.put("word_ch", review_list.get(current_ind).getWord_ch());
-                start_spell_mode(now_words);
+                int next_finish = review_list.get(get_next_ind(current_ind)).getToday_correct_times();
+                start_spell_mode(now_words, next_finish == 0);
                 break;
         }
     }
@@ -134,12 +138,13 @@ public class ReviewWordActivity extends AppCompatActivity
 
     /**
      * start spell mode
+     * @param isHide Is hide soft input?
      */
-    private void start_spell_mode(HashMap<String, Object> words) {
+    private void start_spell_mode(HashMap<String, Object> words,boolean isHide) {
         transaction = fragmentManager.beginTransaction();
         transaction.hide(countDownFragment).show(spellFragment);
         transaction.commit();
-        spellFragment.update_options(words);//update data
+        spellFragment.update_options(words,isHide);//update data
     }
 
     /**
@@ -294,6 +299,7 @@ public class ReviewWordActivity extends AppCompatActivity
                 case 3:
                     startReview();
                     break;
+
             }
             return false;
         }

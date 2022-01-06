@@ -57,7 +57,8 @@ public class ReciteWordActivity extends AppCompatActivity
     private int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     private int finish_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
-    private int pre_ind = 0;//上一个单词的id
+    private int pre_ind = 0;//上一个单词的下标，用来防止连续两次背到同样的单词
+    private int next_ind = 0;//下一个单词的下标，用来决定拼写模式后是否隐藏软键盘
     private Boolean pron_lock = false;
     private HashMap<String, Object> recite_info = new HashMap<>();
     private HashMap<String, Object> now_words = null;
@@ -93,17 +94,24 @@ public class ReciteWordActivity extends AppCompatActivity
         getReciteWordFromLocal();
     }
 
+    private int get_next_ind(){
+        int ind;
+        do {
+            ind = (int) (Math.random() * (recite_num + recite_scope));
+        } while (finish_ind[ind] != 0 || ind == pre_ind);
+        return ind;
+    }
+
     /**
      * start a new recite round
      */
     private void start_recite() {
-        do {
-            correct_ind = (int) (Math.random() * (recite_num + recite_scope));
-        } while (finish_ind[correct_ind] != 0 || correct_ind == pre_ind);
-        today_finish = recite_list.get(correct_ind).getToday_correct_times();
-        mHandler.obtainMessage(0).sendToTarget();
         pre_ind = correct_ind;
-        switch (today_finish) {//according to today_finish
+        correct_ind = next_ind;
+        next_ind = get_next_ind();
+        today_finish = recite_list.get(correct_ind).getToday_correct_times();
+        mHandler.sendEmptyMessage(0);
+        switch (today_finish) {
             case 0://select
                 hideInput();
                 select_option();
@@ -131,7 +139,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 now_words.put("once_flag", true);
                 now_words.put("word_en", recite_list.get(correct_ind).getWord_en());
                 now_words.put("word_ch", recite_list.get(correct_ind).getWord_ch());
-                start_spell_mode(now_words);
+                start_spell_mode(now_words,!(recite_list.get(correct_ind).getToday_correct_times()==2));
                 break;
         }
     }
@@ -173,6 +181,7 @@ public class ReciteWordActivity extends AppCompatActivity
             inadequateDialog.show();
             Looper.loop();
         }else{
+            next_ind = get_next_ind();
             //XXX:我也不知道为啥不能直接start_recite()
             mHandler.sendEmptyMessage(3);//start_recite();
         }
@@ -201,11 +210,11 @@ public class ReciteWordActivity extends AppCompatActivity
     /**
      * start spell mode
      */
-    private void start_spell_mode(HashMap<String, Object> words) {
+    private void start_spell_mode(HashMap<String, Object> words,boolean isHide) {
         transaction = fragmentManager.beginTransaction();
         transaction.hide(countDownFragment).hide(selectFragment).show(spellFragment);
         transaction.commit();
-        spellFragment.update_options(words);//update data
+        spellFragment.update_options(words,isHide);//update data
     }
 
     /**
@@ -272,23 +281,6 @@ public class ReciteWordActivity extends AppCompatActivity
         interrup_alert.setCancelable(false);
         interrup_alert.show();
     }
-
-//2021/3/15
-//    private void init_user(){
-//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//        user.setUid(sp.getString("uid",null));
-//        user.setRecite_num(sp.getInt("recite_num",20));
-//        user.setRecite_scope(sp.getInt("recite_scope",10));
-//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        user.setUsername(sp.getString("username",null));
-//        user.setPassword(sp.getString("password",null));
-//        user.setProfile_photo(sp.getString("profile_photo",null));
-//        user.setStatus(sp.getInt("status",0));
-//        user.setLast_login(sp.getLong("last_login",946656000000L));
-//        user.setEmail(sp.getString("email",null));
-//        user.setTelephone(sp.getString("telephone",null));
-//        user.setMotto(sp.getString("motto",null));
-//    }
 
     public void onClick(View view) {
         switch (view.getId()) {

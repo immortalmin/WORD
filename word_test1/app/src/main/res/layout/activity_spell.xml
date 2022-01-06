@@ -31,6 +31,7 @@
         android:inputType="none"
         android:textCursorDrawable="@drawable/cursor"
         android:maxLines="1"
+        android:singleLine="true"
         android:text=""/>
 
     <Button

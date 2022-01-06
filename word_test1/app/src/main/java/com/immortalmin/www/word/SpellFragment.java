@@ -52,6 +52,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private int WrongTimes=0;//拼写错误的次数
     private Boolean isTyping = true;//是否在等待用户输入
     private Boolean userAns = true;//用户回答是否正确
+    private Boolean isHide = true;//回答正确后是否隐藏键盘
     private int duration;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
@@ -82,7 +83,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         clean_btn = getActivity().findViewById(R.id.clean_btn);
         cword.setOnClickListener(this);
         clean_btn.setOnClickListener(this);
-        eword.setOnEditorActionListener(ewordEd);
+        eword.setOnKeyListener(ewordOnKeyListener);
 
 
         /**
@@ -93,11 +94,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
 
             }
 
@@ -120,75 +121,16 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         //music
         audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-//        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
-//        sound_fail = soundPool.load(getActivity(), R.raw.fail, 1);
         sound_success = soundPool.load(getActivity(), R.raw.bubble, 1);
         sound_fail = soundPool.load(getActivity(), R.raw.drums, 1);
 
         /**
          * 让其播放完音频再进行后面的处理
          */
-        music_delay = () -> mHandler.obtainMessage(3).sendToTarget();
+        music_delay = () -> mHandler.sendEmptyMessage(3);
     }
     public interface OnFragmentInteractionListener {
         void spellFragmentInteraction(int WrongTimes);
-    }
-
-    /**
-     * 输入框回车监听事件
-     * 判断答案的对错
-     */
-    TextView.OnEditorActionListener ewordEd = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-//            Log.i("ccc","1:"+KeyEvent.KEYCODE_ENTER);
-//            Log.i("ccc","2:"+keyEvent.getKeyCode());
-            if(isTyping){
-                //点击回车，判断答案是否正确
-                if (keyEvent != null && KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
-                    isTyping = false;
-                    resetVolume();
-                    mediaPlayerUtil.start();
-                    mHandler.sendEmptyMessage(6);
-                    if(Comparison(eword.getText().toString(),word_en)){
-                        userAns = true;
-                        soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
-                        mHandler.obtainMessage(0).sendToTarget();
-                        eword.setEnabled(false);
-                        scheduledThreadPool.schedule(music_delay,Math.max(duration+200,1000), TimeUnit.MILLISECONDS);
-                    }else{
-                        userAns = false;
-                        WrongTimes++;
-                        soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
-                        mHandler.sendEmptyMessage(1);
-                    }
-                    return true;
-                }
-            }else{
-                //回答错误后用户点击了回车
-                if(keyEvent != null && KeyEvent.ACTION_DOWN == keyEvent.getAction()){
-                    mHandler.sendEmptyMessage(2);//重新显示题目
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
-
-    /**
-     * 校对机制
-     * 去除除英文字母以外所有的字符
-     * 不分大小写
-     * 希望实现 /两边的单词可以互换
-     * @param s1
-     * @param s2
-     * @return
-     */
-    Boolean Comparison(String s1,String s2){
-        s1 = s1.replaceAll("[^a-zA-Z]","").toLowerCase();
-        s2 = s2.replaceAll("[^a-zA-Z]","").toLowerCase();
-        if(s1.equals(s2)) return true;
-        return false;
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -225,9 +167,11 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     correct_word.setVisibility(View.INVISIBLE);
                     break;
                 case 3://go back to recite_word_activity
-                    //关闭键盘
-                    InputMethodManager InputManger = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    InputManger.hideSoftInputFromWindow(eword.getWindowToken(), 0);
+                    if(isHide){
+                        //关闭键盘
+                        InputMethodManager InputManger = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputManger.hideSoftInputFromWindow(eword.getWindowToken(), 0);
+                    }
                     //停止播放音频
                     mediaPlayerUtil.stop();
                     //向Activity返回数据
@@ -248,10 +192,72 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         }
     });
 
+//    TextView.OnEditorActionListener ewordEditorActionListener = (textView, i, keyEvent) -> {
+//        if(isTyping){
+//            //点击回车，判断答案是否正确
+//            if (keyEvent!=null&&KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
+//                Log.i("ccc","editionActionListener:judging,keycode="+keyEvent.getKeyCode());
+//                isTyping = false;
+//                JudgeAnswer();
+//                return true;
+//            }
+//        }else{
+//            //回答错误后用户点击任意键
+//            if(keyEvent!=null&&KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+//                Log.i("ccc","editionActionListener:wrong answer");
+//                mHandler.sendEmptyMessage(2);//重新显示题目
+//                return true;
+//            }
+//        }
+//        return false;
+//    };
+
     /**
-     * 选项按钮点击事件
-     * @param view
+     * 检验答案是否正确
      */
+    void JudgeAnswer(){
+        isTyping = false;
+        resetVolume();
+        mediaPlayerUtil.start();
+        mHandler.sendEmptyMessage(6);
+        if(Comparison(eword.getText().toString(),word_en)){
+            userAns = true;
+            soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
+            mHandler.sendEmptyMessage(0);
+            if(isHide) eword.setEnabled(false);
+            scheduledThreadPool.schedule(music_delay,Math.max(duration+200,1000), TimeUnit.MILLISECONDS);
+        }else{
+            userAns = false;
+            WrongTimes++;
+            soundPool.play(sound_fail, 1.0f, 1.0f, 0, 0, 1.0f);
+            mHandler.sendEmptyMessage(1);
+        }
+    }
+
+    /**
+     * 输入框回车监听事件
+     */
+    private View.OnKeyListener ewordOnKeyListener = (v, keyCode, event) -> {
+        if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if(isTyping) JudgeAnswer();
+            else mHandler.sendEmptyMessage(2);//重新显示题目
+        }
+        return true;
+    };
+
+    /**
+     * 校对机制
+     * 去除除英文字母以外所有的字符
+     * 不分大小写
+     * 希望实现'/'两边的单词可以互换
+     */
+    Boolean Comparison(String s1,String s2){
+        s1 = s1.replaceAll("[^a-zA-Z]","").toLowerCase();
+        s2 = s2.replaceAll("[^a-zA-Z]","").toLowerCase();
+        if(s1.equals(s2)) return true;
+        return false;
+    }
+
     public void onClick(View view){
         switch(view.getId()){
             case R.id.cword:
@@ -278,7 +284,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     }
 
     //String new_word
-    public void update_options(HashMap<String,Object> words){
+    public void update_options(HashMap<String,Object> words,boolean isHide){
+        this.isHide = isHide;
         changed_volume = 0;
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
