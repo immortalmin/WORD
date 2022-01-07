@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -52,7 +53,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private int c_times = 3;//每个单词变成今天背完需要的次数
     private int prof_times = 5;//达到掌握需要的次数
     private int correct_sel = 0;//正确答案的下标
-    private int correct_ind;//the index of correct word in recite_list of correct word
+    private int correct_ind = 0;//the index of correct word in recite_list of correct word
     private int[] select = null;//下标转换到在recite_list中的下标
     private int[] finish_ind = new int[10000];//今天是否已经连续背对5次
     private int finish_num = 0;//今天背完的单词数
@@ -98,7 +99,7 @@ public class ReciteWordActivity extends AppCompatActivity
         int ind;
         do {
             ind = (int) (Math.random() * (recite_num + recite_scope));
-        } while (finish_ind[ind] != 0 || ind == pre_ind);
+        } while (finish_ind[ind] != 0 || ind == correct_ind);
         return ind;
     }
 

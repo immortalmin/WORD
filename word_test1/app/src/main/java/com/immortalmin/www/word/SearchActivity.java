@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,13 +36,11 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener,
         AddWordDialog.OnDialogInteractionListener{
 
-    private SearchView searchView1;
-    private ListView listView,historyListView;
-    private ImageView imgview;
+    private SearchView searchView;
+    private ListView listView;
+    private ImageView imgView;
     private Button add_word_btn,clear_btn;
-    private TextView historyTextView,newTextView;
     private List<DetailWord> word_list= new ArrayList<>();
-    private List<DetailWord> history_list= new ArrayList<>();
     private JsonRe jsonRe= new JsonRe();
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -50,63 +49,42 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private String fuzzy_str;
     private RecordDbDao mRecordDbDao;
     private MyAsyncTask myAsyncTask;
-    private SearchAdapter searchAdapter,historySearchAdapter;
+    private SearchAdapter searchAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        historyTextView = findViewById(R.id.historyTextView);
-        newTextView = findViewById(R.id.newTextView);
-        searchView1 = findViewById(R.id.searchview1);
+        searchView = findViewById(R.id.searchView);
         listView = findViewById(R.id.listView);
-        historyListView = findViewById(R.id.historyListView);
-        imgview = findViewById(R.id.imgview);
+        imgView = findViewById(R.id.imgView);
         add_word_btn = findViewById(R.id.add_word_btn);
-        clear_btn = findViewById(R.id.clear_btn);
+//        clear_btn = findViewById(R.id.clear_btn);
+        searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
+        listView.setAdapter(searchAdapter);
         mRecordDbDao = new RecordDbDao(SearchActivity.this);
-        searchView1.setOnQueryTextListener(searchlistener1);
-        listView.setOnItemClickListener(listlistener);
-        historyListView.setOnItemClickListener(historyListlistener);
-        searchView1.onActionViewExpanded();
+        searchView.setOnQueryTextListener(searchListener);
+        listView.setOnItemClickListener(listListener);
+        searchView.onActionViewExpanded();
         add_word_btn.setOnClickListener(this);
-        clear_btn.setOnClickListener(this);
+//        clear_btn.setOnClickListener(this);
         networkUtil = new NetworkUtil(this);
         init_user();
         setCursorIcon();
     }
 
-    /**
-     * listView的点击事件
-     */
-    ListView.OnItemClickListener listlistener = new AdapterView.OnItemClickListener() {
+    ListView.OnItemClickListener listListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             String wid = word_list.get(position).getWid();
             String dict_source = word_list.get(position).getDict_source();
             jump_to_example(wid,dict_source);
-            mRecordDbDao.insertData(word_list.get(position));
+            if(!word_list.get(position).isCached()) mRecordDbDao.insertData(word_list.get(position));
         }
     };
 
-    /**
-     * historyListView的点击事件
-     */
-    ListView.OnItemClickListener historyListlistener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            String wid = history_list.get(position).getWid();
-            String dict_source = history_list.get(position).getDict_source();
-            jump_to_example(wid,dict_source);
-            //更新历史记录中的查询时间
-            mRecordDbDao.updateQueryDate(wid,dict_source);
-        }
-    };
-
-    /**
-     * 搜索框searchView1监听事件
-     */
-    SearchView.OnQueryTextListener searchlistener1 = new SearchView.OnQueryTextListener() {
+    SearchView.OnQueryTextListener searchListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
             return false;
@@ -115,6 +93,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean onQueryTextChange(String s) {
             fuzzy_str = s;
+            //查询历史记录
+            queryHistoryRecords(s);
             if(s.length()>0){
                 if(mHandler.hasMessages(1)){
                     mHandler.removeMessages(1);
@@ -124,14 +104,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 msg.obj=s;
                 mHandler.sendMessageDelayed(msg,400);
             }else{
-                mHandler.obtainMessage(5,1).sendToTarget();
-                word_list.clear();
-                if(searchAdapter!=null){
-                    searchAdapter.notifyDataSetChanged();
-                }
+                searchAdapter.notifyDataSetChanged();
             }
-            //查询历史记录
-            queryHistoryRecords(s);
             return false;
         }
     };
@@ -141,15 +115,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * @param s
      */
     private void queryHistoryRecords(String s){
-        history_list.clear();
-        history_list.addAll(mRecordDbDao.queryData(s));
-        if(history_list.size()>0) mHandler.obtainMessage(5,2).sendToTarget();
-        else mHandler.obtainMessage(5,0).sendToTarget();
-        if(historySearchAdapter==null){
-            mHandler.sendEmptyMessage(4);
-        }else{
-            historySearchAdapter.notifyDataSetChanged();
-        }
+        word_list.clear();
+        word_list.addAll(mRecordDbDao.queryData(s));
+        for(int i=0;i<word_list.size();i++) word_list.get(i).setCached(true);
+        searchAdapter.notifyDataSetChanged();
     }
 
 
@@ -167,9 +136,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_word_btn:
                 showDialog();
                 break;
-            case R.id.clear_btn:
-                clear_dialog();
-                break;
+//            case R.id.clear_btn:
+//                clear_dialog();
+//                break;
         }
     }
 
@@ -211,29 +180,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result -> {
-            word_list.clear();
-            word_list.addAll(jsonRe.detailWordData(result));
-            //去除新查询中已存在于历史记录中的单词
-            ArrayList<String> history_word = new ArrayList<>();
-            ArrayList<String> new_word = new ArrayList<>();
-            for(int i=0;i<history_list.size();i++){
-                history_word.add(history_list.get(i).getWord_en());
+            List<DetailWord> tmp_list= new ArrayList<>();
+            tmp_list.clear();
+            tmp_list.addAll(jsonRe.detailWordData(result));
+            for(int i=0;i<tmp_list.size();i++){
+                if(!word_list.contains(tmp_list.get(i))) word_list.add(tmp_list.get(i));
             }
-            for(int i=0;i<word_list.size();i++){
-                new_word.add(word_list.get(i).getWord_en());
-            }
-            for(int i=new_word.size()-1;i>=0;i--){
-                if(history_word.contains(new_word.get(i))){
-                    word_list.remove(i);
-                }
-            }
-            if(word_list.size()>0) mHandler.obtainMessage(5,3).sendToTarget();//显示newTextView
-            else mHandler.obtainMessage(5,1).sendToTarget();//隐藏newTextView
-            if(searchAdapter==null){
-                mHandler.obtainMessage(0,word_list).sendToTarget();
-            }else{
-                searchAdapter.notifyDataSetChanged();
-            }
+            searchAdapter.notifyDataSetChanged();
         }));
         myAsyncTask.execute(jsonObject);
     }
@@ -260,45 +213,16 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what){
-                case 0:
-                    word_list = (List<DetailWord>)message.obj;
-                    searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
-                    listView.setAdapter(searchAdapter);
-                    break;
                 case 1:
                     getWordList((String)message.obj);
                     break;
                 case 2:
                     Glide.with(SearchActivity.this).load(captureUtil.getcapture(SearchActivity.this))
-                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgview);
-                    imgview.setVisibility(View.VISIBLE);
+                            .apply(bitmapTransform(new BlurTransformation(25))).into(imgView);
+                    imgView.setVisibility(View.VISIBLE);
                     break;
                 case 3:
-                    imgview.setVisibility(View.INVISIBLE);
-                    break;
-                case 4:
-                    historySearchAdapter = new SearchAdapter(SearchActivity.this,history_list);
-                    historyListView.setAdapter(historySearchAdapter);
-                    break;
-                case 5:
-                    int num = (int)message.obj;
-                    switch (num){
-                        case 0:
-                            historyTextView.setVisibility(View.INVISIBLE);
-                            clear_btn.setVisibility(View.INVISIBLE);
-                            break;
-                        case 1:
-                            newTextView.setVisibility(View.INVISIBLE);
-                            break;
-                        case 2:
-                            historyTextView.setVisibility(View.VISIBLE);
-                            clear_btn.setVisibility(View.VISIBLE);
-                            historyTextView.requestLayout();
-                            break;
-                        case 3:
-                            newTextView.setVisibility(View.VISIBLE);
-                            break;
-                    }
+                    imgView.setVisibility(View.INVISIBLE);
                     break;
             }
             return false;
@@ -321,9 +245,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * 设置搜索框光标和字体的颜色
      */
     private void setCursorIcon(){
-        int searchPlateId = searchView1.getContext().getResources()
+        int searchPlateId = searchView.getContext().getResources()
                 .getIdentifier("android:id/search_plate", null, null);
-        View searchPlate = searchView1.findViewById(searchPlateId);
+        View searchPlate = searchView.findViewById(searchPlateId);
         if (searchPlate != null) {
             int searchTextId = searchPlate.getContext().getResources()
                     .getIdentifier("android:id/search_src_text", null, null);
@@ -366,11 +290,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //此处可以根据两个Code进行判断，本页面和结果页面跳过来的值
-//        if (requestCode == 1 && resultCode == 2) {
-//            queryHistoryRecords(fuzzy_str);
-//            getWordList(fuzzy_str);
-//        }
         queryHistoryRecords(fuzzy_str);
         getWordList(fuzzy_str);
     }

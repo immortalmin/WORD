@@ -17,6 +17,7 @@ public class DetailWord extends Word{
     private String source;
     private boolean isCollect;
     private int today_correct_times = 0;
+    private boolean isCached=false;
 
     public DetailWord(){}
 
@@ -158,6 +159,14 @@ public class DetailWord extends Word{
         isCollect = collect;
     }
 
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
+    }
+
     @Override
     public String toString() {
         return "DetailWord{" +
@@ -173,6 +182,7 @@ public class DetailWord extends Word{
                 ", source='" + source + '\'' +
                 ", isCollect=" + isCollect +
                 ", today_correct_times=" + today_correct_times +
+                ", isCached=" + isCached +
                 '}';
     }
 }

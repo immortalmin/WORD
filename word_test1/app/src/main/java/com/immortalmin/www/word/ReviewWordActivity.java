@@ -57,7 +57,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private int current_ind = -1;
     private Boolean pron_lock = false;
     private HashMap<String, Object> now_words = null;
-    private static int group_num = 5;//每组复习的单词数
+    private static int group_num = 20;//每组复习的单词数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,7 @@ public class ReviewWordActivity extends AppCompatActivity
         if(ind==review_num) ind=0;
         while(finish_ind[ind]==1){
             ind++;
-            if(current_ind==review_num) ind=0;
+            if(ind==review_num) ind=0;
         }
         return ind;
     }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -26,8 +27,11 @@ public class SearchAdapter extends BaseAdapter {
         View v = mInflater.inflate(R.layout.searchitem,null);
         WordView word_en = v.findViewById(R.id.word_en);
         TextView word_ch = v.findViewById(R.id.word_ch);
+        ImageView history_icon = v.findViewById(R.id.history_icon);
         int correct_times = mdata.get(position).getCorrect_times();
         int grasp_times = 5;
+        boolean isCached = mdata.get(position).isCached();
+        if(isCached) history_icon.setVisibility(View.VISIBLE);
         float account = (correct_times>=grasp_times?1.0f:(float)correct_times/(float)grasp_times);
 
         word_en.setmText(mdata.get(position).getWord_en());
