@@ -10,24 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         app:mTextSize="19dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:singleLine="true"
         android:layout_centerVertical="true"
         app:mTextFirstColor="#FFFFFF"
         app:mTextSecondColor="#494b49"
         app:mText="TextView" />
 
-
-    <!--<TextView-->
-        <!--android:id="@+id/word"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textSize="19dp"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:singleLine="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:textColor="#FFFFFF"-->
-        <!--android:text="TextView" />-->
     <TextView
         android:id="@+id/word_ch"
         android:layout_width="wrap_content"

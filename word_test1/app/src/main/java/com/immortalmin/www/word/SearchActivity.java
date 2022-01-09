@@ -63,6 +63,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 //        clear_btn = findViewById(R.id.clear_btn);
         searchAdapter = new SearchAdapter(SearchActivity.this,word_list);
         listView.setAdapter(searchAdapter);
+        searchAdapter.setmOnItemListener(i -> clear_dialog());
         mRecordDbDao = new RecordDbDao(SearchActivity.this);
         searchView.setOnQueryTextListener(searchListener);
         listView.setOnItemClickListener(listListener);
@@ -179,7 +180,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
+        String finalWord = word;
         myAsyncTask.setLoadDataComplete((result -> {
+            if (fuzzy_str.length()==0||fuzzy_str.length()!=finalWord.length()) return;//解决延迟产生的问题
             List<DetailWord> tmp_list= new ArrayList<>();
             tmp_list.clear();
             tmp_list.addAll(jsonRe.detailWordData(result));

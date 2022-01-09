@@ -16,6 +16,7 @@ public class SearchAdapter extends BaseAdapter {
 
     List<DetailWord> mdata;
     private LayoutInflater mInflater;//布局装载器对象
+    private onItemListener mOnItemListener;
 
     public SearchAdapter(Context context, List<DetailWord> data) {
         this.mdata = data;
@@ -32,10 +33,9 @@ public class SearchAdapter extends BaseAdapter {
         int grasp_times = 5;
         boolean isCached = mdata.get(position).isCached();
         if(isCached) history_icon.setVisibility(View.VISIBLE);
+        history_icon.setOnClickListener(view->mOnItemListener.onDeleteClick(position));
         float account = (correct_times>=grasp_times?1.0f:(float)correct_times/(float)grasp_times);
-
         word_en.setmText(mdata.get(position).getWord_en());
-
         word_en.setAccount(account);
         word_ch.setText(mdata.get(position).getWord_ch());
 
@@ -58,5 +58,13 @@ public class SearchAdapter extends BaseAdapter {
     //指定的索引对应的数据项ID
     public long getItemId(int position) {
         return position;
+    }
+
+    public interface onItemListener{
+        void onDeleteClick(int i);
+    }
+
+    public void setmOnItemListener(onItemListener mOnItemListener) {
+        this.mOnItemListener = mOnItemListener;
     }
 }
