@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -409,7 +410,9 @@ public class ReviewWordActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.i("ccc","onKeyDown");
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            Log.i("ccc","点击了返回键");
             interruptDialog();
             return false;
         } else {

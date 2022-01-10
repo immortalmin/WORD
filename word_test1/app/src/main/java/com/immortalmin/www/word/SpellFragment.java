@@ -53,6 +53,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Boolean isTyping = true;//是否在等待用户输入
     private Boolean userAns = true;//用户回答是否正确
     private Boolean isHide = true;//回答正确后是否隐藏键盘
+    private int endFlag=0;//用于判断此轮是否结束，便于提前进行下轮
     private int duration;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
@@ -82,6 +83,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword = getActivity().findViewById(R.id.eword);
         clean_btn = getActivity().findViewById(R.id.clean_btn);
         cword.setOnClickListener(this);
+        eword.setOnClickListener(this);
         clean_btn.setOnClickListener(this);
         eword.setOnKeyListener(ewordOnKeyListener);
 
@@ -94,11 +96,16 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(endFlag==1) endFlag = 2;
+                else if(endFlag==2){
+//                    Log.i("ccc","beforeTextChanged 提前跳转:"+s.toString()+".");
+                    if(mHandler.hasMessages(3)) mHandler.removeMessages(3);
+                    mHandler.sendEmptyMessage(3);
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
 
             }
 
@@ -127,7 +134,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         /**
          * 让其播放完音频再进行后面的处理
          */
-        music_delay = () -> mHandler.sendEmptyMessage(3);
+//        music_delay = () -> mHandler.sendEmptyMessage(3);
     }
     public interface OnFragmentInteractionListener {
         void spellFragmentInteraction(int WrongTimes);
@@ -187,6 +194,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 case 6:
                     clean_btn.setVisibility(View.INVISIBLE);
                     break;
+                case 7:
+                    eword.setText(message.obj.toString());
+                    break;
             }
             return false;
         }
@@ -222,10 +232,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         mHandler.sendEmptyMessage(6);
         if(Comparison(eword.getText().toString(),word_en)){
             userAns = true;
+            endFlag = 1;
             soundPool.play(sound_success, 1.0f, 1.0f, 0, 0, 1.0f);
             mHandler.sendEmptyMessage(0);
             if(isHide) eword.setEnabled(false);
-            scheduledThreadPool.schedule(music_delay,Math.max(duration+200,1000), TimeUnit.MILLISECONDS);
+//            scheduledThreadPool.schedule(music_delay,Math.max(duration+200,1000), TimeUnit.MILLISECONDS);
+            mHandler.sendEmptyMessageDelayed(3,Math.max(duration+200,1000));
         }else{
             userAns = false;
             WrongTimes++;
@@ -238,6 +250,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      * 输入框回车监听事件
      */
     private View.OnKeyListener ewordOnKeyListener = (v, keyCode, event) -> {
+        if(keyCode==4) eword.setFocusable(false);//点击返回键，则取消焦点，以便activity的onKeyDown起作用
         if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
             if(isTyping) JudgeAnswer();
             else mHandler.sendEmptyMessage(2);//重新显示题目
@@ -268,7 +281,9 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             case R.id.clean_btn:
                 eword.setText("");
                 break;
-
+            case R.id.eword:
+                showInput(eword);
+                break;
         }
     }
 
@@ -287,14 +302,13 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     public void update_options(HashMap<String,Object> words,boolean isHide){
         this.isHide = isHide;
         changed_volume = 0;
+        endFlag = 0;
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
         eword.setCursorVisible(true);//显示光标
         WrongTimes = 0;
         eword.setEnabled(true);
-        mediaPlayerUtil.setFinishListener(() -> {
-            duration = mediaPlayerUtil.getDuration();
-        });
+        mediaPlayerUtil.setFinishListener(() -> duration = mediaPlayerUtil.getDuration());
         mHandler.sendEmptyMessage(2);
         showInput(eword);
         mediaPlayerUtil.reset(word_en,false);
@@ -303,12 +317,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     /**
      * 为控件自动获取焦点
      */
-    private void setfocus(View view) {
-        view.setFocusable(true);
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-    }
+//    private void setfocus(View view) {
+//        view.setFocusable(true);
+//        view.setFocusableInTouchMode(true);
+//        view.requestFocus();
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//    }
 
     /**
      * 显示键盘
@@ -316,9 +330,13 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      * @param et 输入焦点
      */
     public void showInput(final EditText et) {
+        et.setFocusable(true);
+        et.setFocusableInTouchMode(true);
         et.requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
         imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
     }
+
+
 
 }

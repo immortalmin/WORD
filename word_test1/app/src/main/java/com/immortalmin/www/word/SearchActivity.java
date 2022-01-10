@@ -111,10 +111,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
     };
 
-    /**
-     * 查询历史记录
-     * @param s
-     */
     private void queryHistoryRecords(String s){
         word_list.clear();
         word_list.addAll(mRecordDbDao.queryData(s));
