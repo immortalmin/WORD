@@ -17,9 +17,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.SoundPool;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private User user = new User();
     private SyncUtil syncUtil;
+    private UpdateManager updateManager = null;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Button btn_collect,btn_recite,btn_review,btn_spell;
     private ImageView imgview;
@@ -94,12 +98,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
+        updateManager = new UpdateManager(this);
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
         IntentFilter intentFilter = new IntentFilter("com.immortalmin.www.MainActivity");
         registerReceiver(closeReceiver, intentFilter);
-
+        //FIXME:弄unregisterReceiver()
         init();
     }
 
@@ -112,9 +117,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+        check_version();//检查版本更新
         init_user();//获取用户信息
         SyncData();//同步数据以及更新使用时间
         getReviewCount();//更新单词复习数量
+
+    }
+
+    private void check_version() {
+        updateManager.checkUpdateInfo();
+//        String path = Environment.getExternalStorageDirectory()+"/WORD/version_update/beiyuedanci.apk";
+//        File file = new File(path);
+//        if(!file.exists()){
+//            Log.i("ccc","文件不存在");
+//        }
+//        Log.i("ccc","文件存在");
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setDataAndType(FileProvider.getUriForFile(this, "com.immortalmin.www.word.provider", file),
+//                "application/vnd.android.package-archive");
+//        startActivity(intent);
     }
 
     private void init_user(){

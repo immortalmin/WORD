@@ -69,11 +69,11 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  26:getfeedbacklist 获取用户反馈列表
      *
      *  27:sync_collect 同步数据
+     *  28：check_version 检查是否有新版本
      *
      *
      *  101:register        注册
      *
-     * @param params
      * @return 返回获取的JSON字符串
      */
     @Override
@@ -85,7 +85,7 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
                 "getrecitelist","getreviewlist","getsearchlist","getsetting","getuserdata",
                 "getusetime","register","update_collect","update_example","update_password",
                 "update_recite","update_setting","update_time","update_userdata","update_word",
-                "upload_picture","getfeedbacklist","sync_collect"
+                "upload_picture","getfeedbacklist","sync_collect","check_version"
         };
         try{
             what = Integer.valueOf(params[0].get("what").toString());

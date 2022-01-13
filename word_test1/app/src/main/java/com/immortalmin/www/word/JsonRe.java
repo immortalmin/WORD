@@ -242,24 +242,6 @@ public class JsonRe {
         return word;
     }
 
-//    2021/3/14
-//    /**
-//     * 用户使用时间
-//     */
-//    ArrayList<Integer> useTimeData(String jsonStr){
-//        ArrayList<Integer> useTime = new ArrayList<>();
-//        try {
-//            JSONArray jsonArray = new JSONArray(jsonStr);
-//            for(int i=0;i<jsonArray.length();i++){
-//                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-//                useTime.add(Integer.valueOf(jsonObject.get("utime").toString()));
-//            }
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return useTime;
-//    }
-
     /**
      * 用户使用时间
      */
@@ -278,5 +260,22 @@ public class JsonRe {
             e.printStackTrace();
         }
         return usageTimeList;
+    }
+
+    HashMap<String,String> versionData(String jsonStr){
+        HashMap<String,String> data = new HashMap<>();
+        try{
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            data.put("vid",jsonObject.getString("vid"));
+            data.put("version_code",jsonObject.getString("version_code"));
+            data.put("version_name",jsonObject.getString("version_name"));
+            data.put("update_url",jsonObject.getString("update_url"));
+            data.put("is_force",jsonObject.getString("is_force"));
+            data.put("description",jsonObject.getString("description"));
+            data.put("update_date",jsonObject.getString("update_date"));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return data;
     }
 }
