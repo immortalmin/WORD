@@ -32,12 +32,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        return_btn = (Button)findViewById(R.id.return_btn);
-        prof_tv = (TextView)findViewById(R.id.prof_tv);
-        recite_num = (TextView)findViewById(R.id.recite_num);
-        recite_scope = (TextView)findViewById(R.id.recite_scope);
-        finish_num_layout = (LinearLayout)findViewById(R.id.finish_num_layout);
-        scope_num_layout = (LinearLayout)findViewById(R.id.scope_num_layout);
+        return_btn = findViewById(R.id.return_btn);
+        prof_tv = findViewById(R.id.prof_tv);
+        recite_num = findViewById(R.id.recite_num);
+        recite_scope = findViewById(R.id.recite_scope);
+        finish_num_layout = findViewById(R.id.finish_num_layout);
+        scope_num_layout = findViewById(R.id.scope_num_layout);
         return_btn.setOnClickListener(this);
         prof_tv.setOnClickListener(this);
         finish_num_layout.setOnClickListener(this);
@@ -53,7 +53,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             public void onError(Exception e) {
 
             }
-        });
+        },null);
     }
 
 
@@ -120,7 +120,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 public void onError(Exception e) {
 
                 }
-            });//将用户数据保存在本地，以及userData中
+            },null);//将用户数据保存在本地，以及userData中
 
         });
         myAsyncTask.execute(jsonObject);

@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private User user = new User();
     private SyncUtil syncUtil;
+    private DataUtil dataUtil = null;
     private UpdateManager updateManager = null;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private Button btn_collect,btn_recite,btn_review,btn_spell;
@@ -99,13 +100,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
         });
         updateManager = new UpdateManager(this);
+        dataUtil = new DataUtil(this);
 
         //广播关闭
         CloseActivityReceiver closeReceiver = new CloseActivityReceiver();
         IntentFilter intentFilter = new IntentFilter("com.immortalmin.www.MainActivity");
         registerReceiver(closeReceiver, intentFilter);
         //FIXME:弄unregisterReceiver()
-        init();
+        init(true);
     }
 
     @Override
@@ -116,37 +118,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mHandler.obtainMessage(2).sendToTarget();
     }
 
-    private void init() {
-        check_version();//检查版本更新
+    private void init(boolean isCheckVersion) {
         init_user();//获取用户信息
+        if(isCheckVersion) check_version();//检查版本更新
         SyncData();//同步数据以及更新使用时间
         getReviewCount();//更新单词复习数量
 
     }
 
     private void check_version() {
-        updateManager.checkUpdateInfo();
-//        String path = Environment.getExternalStorageDirectory()+"/WORD/version_update/beiyuedanci.apk";
-//        File file = new File(path);
-//        if(!file.exists()){
-//            Log.i("ccc","文件不存在");
-//        }
-//        Log.i("ccc","文件存在");
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setDataAndType(FileProvider.getUriForFile(this, "com.immortalmin.www.word.provider", file),
-//                "application/vnd.android.package-archive");
-//        startActivity(intent);
+        updateManager.checkUpdateInfo(true);
     }
 
     private void init_user(){
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setLogin_mode(sp.getInt("login_mode",0));
+//        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        user.setUid(sp.getString("uid",null));
+//        user.setUsername(sp.getString("username",null));
+//        user.setPassword(sp.getString("password",null));
+//        user.setProfile_photo(sp.getString("profile_photo",null));
+//        user.setStatus(sp.getInt("status",0));
+//        user.setLast_login(sp.getLong("last_login",946656000000L));
+//        user.setLogin_mode(sp.getInt("login_mode",0));
+//        user.setIgnore_version(sp.getInt("ignore_version",1));
+        user = dataUtil.set_user();
         setImage();//设置头像
     }
 
@@ -480,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == 1) {
-            init();
+            init(false);
         }
     }
 }

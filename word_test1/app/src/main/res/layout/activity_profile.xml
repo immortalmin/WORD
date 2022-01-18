@@ -190,6 +190,24 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
+            <TextView
+                android:id="@+id/update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="检查更新"
+                android:textColor="#474D47"
+                android:textSize="16sp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B3B1B1"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
         </LinearLayout>
 
 

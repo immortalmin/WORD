@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.Toast;
 import java.util.ArrayList;
 
@@ -63,9 +64,11 @@ public class UsageTimeDbDao {
         db = helper.getWritableDatabase();
         String update_date = DateTransUtils.getDateAfterToday(0);
         try {
-            db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+")");
+            //FIXME:没有避免插入udate相同的数据，现在只是捕捉了异常而已
+            db.execSQL("INSERT INTO usageTime(udate,utime,update_date,isSynchronized)VALUES(\""+usageTime.getUdate()+"\",\""+usageTime.getUtime()+"\",\""+update_date+"\","+isSynchronized+") ");
         }catch (SQLException e){
-            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+            Log.i("ccc",e.toString());
             db.close();
         }
         db.close();

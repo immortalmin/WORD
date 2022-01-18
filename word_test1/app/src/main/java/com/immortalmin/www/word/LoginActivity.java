@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
+    private DataUtil dataUtil = null;
     private MyAsyncTask myAsyncTask;
     private Intent intent;
     private Runnable toMain;
@@ -77,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
+        dataUtil = new DataUtil(this);
         init();
     }
 
@@ -136,16 +138,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 从SharedPreferences文件中获取用户数据
      */
     private void initUser() {
-        user = new User();
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setLogin_mode(sp.getInt("login_mode",0));
-        user.setLast_login(sp.getLong("last_login",0L));
-        user.setMotto(sp.getString("motto",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setProfile_photo(sp.getString("profile_photo",null));
+        user = dataUtil.set_user();
         if (user.getLogin_mode() == 0) {
             username_et.setText(user.getUsername());
             if(user.getPassword()!=null){
@@ -220,15 +213,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(Object response) {
                         JSONObject jsonObject = new JSONObject();
                         try{
-                            jsonObject.put("what",14);
                             jsonObject.put("login_mode",1);
                             jsonObject.put("open_id",open_id);
                             jsonObject.put("username",((JSONObject)response).getString("nickname"));
                             jsonObject.put("profile_photo",((JSONObject)response).getString("figureurl_qq"));
-                            getUserDataForQQ(jsonObject);
+                            dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+                                @Override
+                                public void onFinish(User userdata) {
+                                    user = userdata;
+                                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                                    mHandler.sendEmptyMessage(1);
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            },jsonObject);
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
+
                     }
 
                     @Override
@@ -299,7 +304,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 如果用户不存在的话，就会新注册一个账号
      * @param jsonObject
      */
-    private void getUserDataForQQ(final JSONObject jsonObject){
+    /*private void getUserDataForQQ(final JSONObject jsonObject){
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
             user = jsonRe.userData(result);
@@ -314,34 +319,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getUserSetting();
         });
         myAsyncTask.execute(jsonObject);
-    }
+    }*/
 
 
     /**
      * 获取用户设置
      */
-    private void getUserSetting(){
-        new Thread(() -> {
-            JSONObject jsonObject = new JSONObject();
-            try{
-                jsonObject.put("uid",user.getUid());
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            HttpGetContext httpGetContext = new HttpGetContext();
-            String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
-            userSetting = jsonRe.userSetting(s);
-            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-            sp.edit().putString("uid",userSetting.get("uid").toString())
-                    .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-                    .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-                    .apply();
-            Looper.prepare();
-            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-            mHandler.sendEmptyMessage(1);
-            Looper.loop();
-        }).start();
-    }
+//    private void getUserSetting(){
+////        new Thread(() -> {
+////            JSONObject jsonObject = new JSONObject();
+////            try{
+////                jsonObject.put("uid",user.getUid());
+////            }catch (JSONException e){
+////                e.printStackTrace();
+////            }
+////            HttpGetContext httpGetContext = new HttpGetContext();
+////            String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
+////            userSetting = jsonRe.userSetting(s);
+////            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+////            sp.edit().putString("uid",userSetting.get("uid").toString())//NullPointException
+////                    .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
+////                    .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
+////                    .apply();
+////            Looper.prepare();
+////            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+////            mHandler.sendEmptyMessage(1);
+////            Looper.loop();
+////        }).start();\
+//        Log.i("ccc","getUserSetting:"+user.toString());
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",13);
+//            jsonObject.put("uid",user.getUid());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result -> {
+//            userSetting = jsonRe.userSetting(result);
+//            Log.i("ccc",userSetting.toString());
+//            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//            sp.edit().putString("uid",userSetting.get("uid").toString())//NullPointException
+//                    .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
+//                    .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
+//                    .apply();
+//            Looper.prepare();
+//            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+//            mHandler.sendEmptyMessage(1);
+//            Looper.loop();
+//        }));
+//        myAsyncTask.execute(jsonObject);
+//    }
+
 
     private void judge(){
         new Thread(() -> {
@@ -366,7 +395,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             .putLong("last_login",user.getLast_login())
                             .putInt("login_mode",0)
                             .apply();
-                    getUserSetting();
+                    saveUserDataToLocal();
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
@@ -374,6 +403,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Looper.loop();
         }).start();
 
+    }
+
+    private void saveUserDataToLocal() {
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("login_mode",0);
+            jsonObject.put("username",user.getUsername());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+            @Override
+            public void onFinish(User userdata) {
+                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                mHandler.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        },jsonObject);
     }
 
     private void setImage(String pic) {

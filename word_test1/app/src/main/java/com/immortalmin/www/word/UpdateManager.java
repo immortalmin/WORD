@@ -12,6 +12,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +36,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class UpdateManager {
     private Context mContext;
     private boolean intercept = false;
+    private boolean isPause = false;
     private String savePath = Environment.getExternalStorageDirectory()+"/WORD/version_update/";
     private String saveFileName = savePath + "beiyuedanci.apk";
     // 下载线程
@@ -46,9 +49,10 @@ public class UpdateManager {
     private JsonRe jsonRe = new JsonRe();
     private HashMap<String,String> versionData = null;
     private SweetAlertDialog download_dialog = null;
+    private User user = null;
+    private DataUtil dataUtil = null;
 
     // 进度条与通知UI刷新的handler和msg常量
-//    private ProgressBar mProgress;
     private static final int DOWN_UPDATE = 1;
     private static final int DOWN_OVER = 2;
 
@@ -59,13 +63,14 @@ public class UpdateManager {
 
     private void init() {
         networkUtil = new NetworkUtil(mContext);
+        dataUtil = new DataUtil(mContext);
+        user = dataUtil.set_user();
     }
 
     /**
-     * 检查是否更新的内容
+     * 检查是否是最新的版本
      */
-    void checkUpdateInfo() {
-//        installAPK() ;
+    void checkUpdateInfo(boolean isAutoCheck) {
         if(!networkUtil.isNetworkConnected()) return ;
         JSONObject jsonObject = new JSONObject();
         try{
@@ -76,10 +81,18 @@ public class UpdateManager {
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result->{
             versionData = jsonRe.versionData(result);
-            Log.i("ccc","新版本："+versionData.toString());
-            Log.i("ccc","旧版本："+getVersionCode(mContext));
-            if(getVersionCode(mContext)!=Integer.parseInt(versionData.get("version_code"))){
-                showUpdateDialog();
+            if(isAutoCheck){
+                //如果是自动检查更新，需要将用户选择忽略的版本号也考虑进去。另外如果没有新版本，不显示Toast
+                if(getVersionCode(mContext)!=Integer.parseInt(versionData.get("version_code"))&&user.getIgnore_version()!=Integer.parseInt(versionData.get("version_code"))){
+                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")));
+                }
+            }else{
+                //如果是用户自己手动检查更新，进行版本号比较时，忽略用户之前选择忽略的版本号。另外如果没有新版本，将显示Toast
+                if(getVersionCode(mContext)!=Integer.parseInt(versionData.get("version_code"))){
+                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")));
+                }else{
+                    Toast.makeText(mContext, "已是最新版本", Toast.LENGTH_SHORT).show();
+                }
             }
         }));
         myAsyncTask.execute(jsonObject);
@@ -100,22 +113,8 @@ public class UpdateManager {
         return versionCode;
     }
 
-    /**
-     * 显示更新程序对话框，供主程序调用
-     */
-//    private void showUpdateDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//        builder.setTitle("软件版本更新");
-//        builder.setMessage("有最新的软件包，请下载!");
-////        builder.setPositiveButton("下载", (dialog, which) -> showDownloadDialog());
-//        builder.setPositiveButton("下载", (dialog, which) -> downloadDialog());
-//        builder.setNegativeButton("以后再说",
-//                (dialog, which) -> dialog.dismiss());
-//
-//        builder.create().show();
-//    }
 
-    private void showUpdateDialog(){
+    private void showUpdateDialog(int current_version_code){
         SweetAlertDialog updateDialog = new SweetAlertDialog(mContext,SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Update")
                 .setContentText("有新版本可以更新")
@@ -126,27 +125,12 @@ public class UpdateManager {
                 })
                 .setCancelText("下次再说")
                 .setCancelClickListener(sweetAlertDialog -> {
+                    updateIgnoreVersion(current_version_code);
                     sweetAlertDialog.cancel();
                 });
         updateDialog.setCancelable(false);
         updateDialog.show();
     }
-
-    /**
-     * 显示下载进度的对话框
-     */
-    /*private void showDownloadDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("软件版本更新");
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View v = inflater.inflate(R.layout.progressbar, null);
-        mProgress = v.findViewById(R.id.progress);
-
-        builder.setView(v);
-        builder.setNegativeButton("取消", (dialog, which) -> intercept = true);
-        builder.show();
-        downloadApk();
-    }*/
 
     private void showDownloadDialog(){
 
@@ -154,16 +138,49 @@ public class UpdateManager {
         download_dialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         download_dialog.getProgressHelper().setRimColor(Color.parseColor("#bbc0c5"));
         download_dialog.setContentText("正在下载安装包...");
-        download_dialog.setNeutralText("取消");
-        download_dialog.setNeutralClickListener(sweetAlertDialog -> {
+        download_dialog.setNeutralText("暂停");
+        //FIXME:暂停下载的功能还没实现，待完成自定义dialog或学会wait()和notify()怎么用了再来搞
+//        download_dialog.setNeutralClickListener(sweetAlertDialog -> {
+//            if(!isPause){
+//                try {
+//                    downLoadThread.wait();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                sweetAlertDialog.setConfirmText("继续");
+//            }else{
+//
+//                sweetAlertDialog.setConfirmText("暂停");
+//            }
+//            isPause = !isPause;
+//        });
+        download_dialog.setCancelText("取消");
+        download_dialog.setCancelClickListener(sweetAlertDialog -> {
             intercept = true;
             download_dialog.cancel();
         });
-
-//        download_dialog.dismissWithAnimation();
         download_dialog.setCancelable(false);
         download_dialog.show();
         downloadApk();
+    }
+
+    private void updateIgnoreVersion(int current_version_code){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",23);
+            jsonObject.put("ignore_version",current_version_code);
+            jsonObject.put("uid",user.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result->{
+            Log.i("ccc","更新ignore_version完成");
+            SharedPreferences sp = mContext.getSharedPreferences("login", Context.MODE_PRIVATE);
+            sp.edit().putInt("ignore_version", current_version_code)
+                    .apply();
+        }));
+        myAsyncTask.execute(jsonObject);
     }
 
     /**
@@ -202,13 +219,13 @@ public class UpdateManager {
                     mHandler.sendEmptyMessage(DOWN_UPDATE);
                     if (numread <= 0) {
                         // 下载完成通知安装
-//                        mHandler.sendEmptyMessage(DOWN_OVER);
                         mHandler.sendEmptyMessage(3);
                         mHandler.sendEmptyMessageDelayed(DOWN_OVER,1000);
                         break;
                     }
                     fos.write(buf, 0, numread);
                 }
+                if(intercept) apkFile.delete();
                 fos.close();
                 ins.close();
                 conn.disconnect();
@@ -251,7 +268,6 @@ public class UpdateManager {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case DOWN_UPDATE:
-//                    mProgress.setProgress(progress);
                     download_dialog.getProgressHelper().setInstantProgress(progress);
                     break;
 

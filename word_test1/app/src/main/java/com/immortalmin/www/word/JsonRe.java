@@ -216,6 +216,7 @@ public class JsonRe {
                 user.setTelephone(jsonObject.getString("telephone"));
                 user.setEmail(jsonObject.getString("email"));
                 user.setMotto(jsonObject.getString("motto"));
+                user.setIgnore_version(Integer.parseInt(jsonObject.getString("ignore_version")));
                 user.setLast_login(jsonObject.getLong("last_login"));
             }
         }catch (JSONException e) {

@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class User implements Serializable{
     private String uid,open_id,username,password,profile_photo,motto=null,email,telephone,access_token=null,expires_in=null;
-    private int recite_num,recite_scope,status=0,login_mode;
+    private int recite_num,recite_scope,status=0,login_mode,ignore_version;
     private long last_login;
 
     public User(){}
@@ -132,6 +132,14 @@ public class User implements Serializable{
         this.login_mode = login_mode;
     }
 
+    public int getIgnore_version() {
+        return ignore_version;
+    }
+
+    public void setIgnore_version(int ignore_version) {
+        this.ignore_version = ignore_version;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -149,6 +157,7 @@ public class User implements Serializable{
                 ", recite_scope=" + recite_scope +
                 ", status=" + status +
                 ", login_mode=" + login_mode +
+                ", ignore_version=" + ignore_version +
                 ", last_login=" + last_login +
                 '}';
     }
