@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -42,7 +43,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private Button add_word_btn,clear_btn;
     private List<DetailWord> word_list= new ArrayList<>();
     private JsonRe jsonRe= new JsonRe();
-    private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
     private NetworkUtil networkUtil = null;
     private UserDataUtil userDataUtil = null;
@@ -74,7 +74,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         networkUtil = new NetworkUtil(this);
         userDataUtil = new UserDataUtil(this);
         user = userDataUtil.getUserDataFromSP();
-//        init_user();
         setCursorIcon();
     }
 
@@ -120,16 +119,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         for(int i=0;i<word_list.size();i++) word_list.get(i).setCached(true);
         searchAdapter.notifyDataSetChanged();
     }
-
-
-//    private void init_user(){
-//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//        user.setUid(sp.getString("uid",null));
-//        user.setRecite_num(sp.getInt("recite_num",20));
-//        user.setRecite_scope(sp.getInt("recite_scope",10));
-//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        user.setUsername(sp.getString("username",null));
-//    }
 
     public void onClick(View view){
         switch (view.getId()){
@@ -185,8 +174,17 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             List<DetailWord> tmp_list= new ArrayList<>();
             tmp_list.clear();
             tmp_list.addAll(jsonRe.detailWordData(result));
+            int word_list_len=word_list.size();
+            boolean flag;
             for(int i=0;i<tmp_list.size();i++){
-                if(!word_list.contains(tmp_list.get(i))) word_list.add(tmp_list.get(i));
+                flag=true;
+                for(int j=0;j<word_list_len;j++){
+                    if(tmp_list.get(i).getWid().equals(word_list.get(j).getWid())){
+                        flag=false;
+                        break;
+                    }
+                }
+                if(flag) word_list.add(tmp_list.get(i));
             }
             searchAdapter.notifyDataSetChanged();
         }));

@@ -110,8 +110,8 @@ public class UpdateManager {
 
     private void showUpdateDialog(int current_version_code){
         SweetAlertDialog updateDialog = new SweetAlertDialog(mContext,SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Update")
-                .setContentText("有新版本可以更新")
+                .setTitleText("有新版本可以更新")
+                .setContentText(versionData.get("description"))
                 .setConfirmText("更新")
                 .setConfirmClickListener(sweetAlertDialog -> {
                     showDownloadDialog();
@@ -133,7 +133,8 @@ public class UpdateManager {
         download_dialog = new SweetAlertDialog(mContext,SweetAlertDialog.PROGRESS_TYPE);
         download_dialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         download_dialog.getProgressHelper().setRimColor(Color.parseColor("#bbc0c5"));
-        download_dialog.setContentText("正在下载安装包...");
+        download_dialog.setTitleText("正在下载安装包...");
+        download_dialog.setContentText(versionData.get("description"));
         download_dialog.setNeutralText("暂停");
         //FIXME:暂停下载的功能还没实现，待完成自定义dialog或学会wait()和notify()怎么用了再来搞
 //        download_dialog.setNeutralClickListener(sweetAlertDialog -> {

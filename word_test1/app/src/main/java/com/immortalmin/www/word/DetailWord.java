@@ -1,5 +1,7 @@
 package com.immortalmin.www.word;
 
+import java.util.Objects;
+
 /**
  * 带有数据记录的单词
  */
@@ -165,6 +167,31 @@ public class DetailWord extends Word{
 
     public void setCached(boolean cached) {
         isCached = cached;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DetailWord that = (DetailWord) o;
+        return correct_times == that.correct_times &&
+                error_times == that.error_times &&
+                isCollect == that.isCollect &&
+                today_correct_times == that.today_correct_times &&
+                isCached == that.isCached &&
+                Objects.equals(word_ch, that.word_ch) &&
+                Objects.equals(last_date, that.last_date) &&
+                Objects.equals(review_date, that.review_date) &&
+                Objects.equals(hid, that.hid) &&
+                Objects.equals(cid, that.cid) &&
+                Objects.equals(gid, that.gid) &&
+                Objects.equals(dict_source, that.dict_source) &&
+                Objects.equals(source, that.source);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(word_ch, correct_times, error_times, last_date, review_date, hid, cid, gid, dict_source, source, isCollect, today_correct_times, isCached);
     }
 
     @Override
