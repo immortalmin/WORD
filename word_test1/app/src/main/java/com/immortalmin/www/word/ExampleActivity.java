@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -48,7 +47,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private DetailWord word;
     private ArrayList<OtherSentence> examplelist = null;
     private MediaPlayerUtil mediaPlayerUtil = new MediaPlayerUtil(this);
-    private DataUtil dataUtil = new DataUtil(this);
+    private UserDataUtil userDataUtil = new UserDataUtil(this);
     private RecordDbDao mRecordDbDao;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
@@ -98,7 +97,7 @@ public class ExampleActivity extends AppCompatActivity implements
         network = networkUtil.isNetworkConnected();
         mRecordDbDao = new RecordDbDao(ExampleActivity.this);
         first_coming = true;
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         if(collectDbDao.hasData(wid,dict_source)){
             word = collectDbDao.getSingleWordByWidAndSource(wid,dict_source);
             mHandler.sendEmptyMessage(4);

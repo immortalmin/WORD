@@ -43,11 +43,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView backdrop;
     private SignIn signIn;
     private User user = new User();
-    private JsonRe jsonRe = new JsonRe();
     private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
-    private DataUtil dataUtil = new DataUtil(ProfileActivity.this);
+    private UserDataUtil userDataUtil = new UserDataUtil(ProfileActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
-    private MyAsyncTask myAsyncTask;
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
     private HashMap<String,Object> edit_data;
 
@@ -84,7 +82,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void init() {
         //从本地文件中获取用户数据
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         //显示用户的昵称、个性签名等
         mHandler.sendEmptyMessage(1);
         //获取使用时间并显示
@@ -172,15 +170,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 updateManager.checkUpdateInfo(false);
                 break;
         }
-    }
-
-    /**
-     * 更新用户数据
-     * @param jsonObject
-     */
-    private void updateUserdata(JSONObject jsonObject){
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.execute(jsonObject);
     }
 
     /**
@@ -284,33 +273,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void EditInteraction(HashMap<String,Object> res){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",23);
-            jsonObject.put("uid", user.getUid());
-            jsonObject.put(res.get("attr").toString(),res.get("content").toString());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        //更新用户数据
-        updateUserdata(jsonObject);
-        SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        //如果修改了数据，显示toast
-        if(!sp.getString(res.get("attr").toString(),"none").equals(res.get("content").toString())){
-            Toast.makeText(ProfileActivity.this,"修改成功",Toast.LENGTH_SHORT).show();
-        }
-        //修改本地用户数据
-        sp.edit().putString(res.get("attr").toString(),res.get("content").toString()).apply();
-        switch (res.get("attr").toString()){
+        boolean isChanged = false;
+        String attr=res.get("attr").toString(),content = res.get("content").toString();
+        switch (attr){
             case "username":
-                user.setUsername(res.get("content").toString());
+                if(!content.equals(user.getUsername())){
+                    isChanged = true;
+                    user.setUsername(content);
+                }
                 break;
             case "motto":
-                user.setMotto(res.get("content").toString());
+                if(!content.equals(user.getMotto())){
+                    isChanged = true;
+                    user.setMotto(content);
+                }
                 break;
         }
-        //刷新界面的数据
-        mHandler.obtainMessage(1).sendToTarget();
+        if(isChanged){
+            userDataUtil.updateUserDataInServer(user,true);
+            Toast.makeText(ProfileActivity.this,"修改成功",Toast.LENGTH_SHORT).show();
+            //刷新界面的数据
+            mHandler.obtainMessage(1).sendToTarget();
+        }
     }
 
     @Override

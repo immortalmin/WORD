@@ -21,7 +21,7 @@ import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 public class collectActivity extends AppCompatActivity implements View.OnClickListener{
 
     private User user = new User();
-    private DataUtil dataUtil = new DataUtil(this);
+    private UserDataUtil userDataUtil = new UserDataUtil(this);
     private ListView listView;
     private TextView all_num,finished_num;
     private List<DetailWord> word_list=null;
@@ -62,7 +62,7 @@ public class collectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         getCollectList();
         mHandler.sendEmptyMessage(1);
     }

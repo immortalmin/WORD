@@ -45,6 +45,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private HttpUtil httpUtil = new HttpUtil();
     private CaptureUtil captureUtil = new CaptureUtil();
     private NetworkUtil networkUtil = null;
+    private UserDataUtil userDataUtil = null;
     private User user = new User();
     private String fuzzy_str;
     private RecordDbDao mRecordDbDao;
@@ -71,7 +72,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         add_word_btn.setOnClickListener(this);
 //        clear_btn.setOnClickListener(this);
         networkUtil = new NetworkUtil(this);
-        init_user();
+        userDataUtil = new UserDataUtil(this);
+        user = userDataUtil.getUserDataFromSP();
+//        init_user();
         setCursorIcon();
     }
 
@@ -119,14 +122,14 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    private void init_user(){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-    }
+//    private void init_user(){
+//        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
+//        user.setUid(sp.getString("uid",null));
+//        user.setRecite_num(sp.getInt("recite_num",20));
+//        user.setRecite_scope(sp.getInt("recite_scope",10));
+//        sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//        user.setUsername(sp.getString("username",null));
+//    }
 
     public void onClick(View view){
         switch (view.getId()){

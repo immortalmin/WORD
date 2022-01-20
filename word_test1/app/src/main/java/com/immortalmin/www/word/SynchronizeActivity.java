@@ -1,31 +1,22 @@
 package com.immortalmin.www.word;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import jp.wasabeef.glide.transformations.BlurTransformation;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class SynchronizeActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -33,7 +24,7 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
     private ProgressBar progressBar;
     private MyAsyncTask myAsyncTask;
     private User user;
-    private DataUtil dataUtil = new DataUtil(this);
+    private UserDataUtil userDataUtil = new UserDataUtil(this);
     private NetworkUtil networkUtil = new NetworkUtil(this);
     private JsonRe jsonRe = new JsonRe();
     private CollectDbDao collectDbDao = new CollectDbDao(this);
@@ -55,7 +46,7 @@ public class SynchronizeActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void init() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
     }
 
     /**

@@ -7,10 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,9 +19,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +44,7 @@ public class UpdateManager {
     private HashMap<String,String> versionData = null;
     private SweetAlertDialog download_dialog = null;
     private User user = null;
-    private DataUtil dataUtil = null;
+    private UserDataUtil userDataUtil = null;
 
     // 进度条与通知UI刷新的handler和msg常量
     private static final int DOWN_UPDATE = 1;
@@ -63,8 +57,8 @@ public class UpdateManager {
 
     private void init() {
         networkUtil = new NetworkUtil(mContext);
-        dataUtil = new DataUtil(mContext);
-        user = dataUtil.set_user();
+        userDataUtil = new UserDataUtil(mContext);
+        user = userDataUtil.getUserDataFromSP();
     }
 
     /**
@@ -125,7 +119,9 @@ public class UpdateManager {
                 })
                 .setCancelText("下次再说")
                 .setCancelClickListener(sweetAlertDialog -> {
-                    updateIgnoreVersion(current_version_code);
+                    user.setIgnore_version(current_version_code);
+                    userDataUtil.updateUserDataInServer(user,true);
+//                    updateIgnoreVersion(current_version_code);
                     sweetAlertDialog.cancel();
                 });
         updateDialog.setCancelable(false);
@@ -164,24 +160,24 @@ public class UpdateManager {
         downloadApk();
     }
 
-    private void updateIgnoreVersion(int current_version_code){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",23);
-            jsonObject.put("ignore_version",current_version_code);
-            jsonObject.put("uid",user.getUid());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result->{
-            Log.i("ccc","更新ignore_version完成");
-            SharedPreferences sp = mContext.getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putInt("ignore_version", current_version_code)
-                    .apply();
-        }));
-        myAsyncTask.execute(jsonObject);
-    }
+//    private void updateIgnoreVersion(int current_version_code){
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",23);
+//            jsonObject.put("ignore_version",current_version_code);
+//            jsonObject.put("uid",user.getUid());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.setLoadDataComplete((result->{
+//            Log.i("ccc","更新ignore_version完成");
+//            SharedPreferences sp = mContext.getSharedPreferences("login", Context.MODE_PRIVATE);
+//            sp.edit().putInt("ignore_version", current_version_code)
+//                    .apply();
+//        }));
+//        myAsyncTask.execute(jsonObject);
+//    }
 
     /**
      * 从服务器下载APK安装包
@@ -278,7 +274,7 @@ public class UpdateManager {
 
                 case 3:
                     download_dialog.setContentText("下载完成，即将开始安装");
-                    download_dialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+//                    download_dialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                     break;
                 default:
                     break;

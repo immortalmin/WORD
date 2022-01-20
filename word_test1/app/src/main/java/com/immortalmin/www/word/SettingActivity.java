@@ -26,7 +26,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private MyAsyncTask myAsyncTask;
     private String[] settingStr = {"recite_num","recite_scope"};
     private User user = new User();
-    private DataUtil dataUtil = new DataUtil(SettingActivity.this);
+    private UserDataUtil userDataUtil = new UserDataUtil(SettingActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         prof_tv.setOnClickListener(this);
         finish_num_layout.setOnClickListener(this);
         scope_num_layout.setOnClickListener(this);
-        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+        userDataUtil.getUserDataFromServer(null,false,new UserDataUtil.HttpCallbackStringListener() {
             @Override
             public void onFinish(User userdata) {
                 user = userdata;
@@ -53,7 +53,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             public void onError(Exception e) {
 
             }
-        },null);
+        });
     }
 
 
@@ -106,10 +106,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }
     });
 
-    private void UpdateSettings(JSONObject jsonObject){
+    /*private void UpdateSettings(JSONObject jsonObject){
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+            userDataUtil.getdata(new UserDataUtil.HttpCallbackStringListener() {
                 @Override
                 public void onFinish(User userdata) {
                     user = userdata;
@@ -124,19 +124,31 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
         });
         myAsyncTask.execute(jsonObject);
-    }
+    }*/
 
     @Override
     public void PickerInteraction(JSONObject ret){
-        JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("what",21);
-            jsonObject.put(settingStr[Integer.valueOf(ret.get("what").toString())],ret.get("value"));
-            jsonObject.put("uid", user.getUid());
+            if("0".equals(ret.get("what").toString())){
+                user.setRecite_num(Integer.parseInt(ret.get("value").toString()));
+            }else{
+                user.setRecite_scope(Integer.parseInt(ret.get("value").toString()));
+            }
+            userDataUtil.updateUserDataInServer(user,true);
+            mHandler.sendEmptyMessage(0);
         }catch (JSONException e){
             e.printStackTrace();
         }
-        UpdateSettings(jsonObject);
+
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("what",21);
+//            jsonObject.put(settingStr[Integer.valueOf(ret.get("what").toString())],ret.get("value"));
+//            jsonObject.put("uid", user.getUid());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        UpdateSettings(jsonObject);
     }
 
 

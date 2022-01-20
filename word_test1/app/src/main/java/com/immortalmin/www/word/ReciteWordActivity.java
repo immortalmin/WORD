@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -41,7 +40,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private ImageView imgview;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
-    private DataUtil dataUtil = new DataUtil(this);
+    private UserDataUtil userDataUtil = new UserDataUtil(this);
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private User user = new User();
     private ProgressBar total_progress;
@@ -84,7 +83,7 @@ public class ReciteWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         init_fragment();
         dialog_init();
         setting.put("uid", user.getUid());

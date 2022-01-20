@@ -6,24 +6,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.tencent.connect.UserInfo;
@@ -36,7 +30,6 @@ import com.tencent.tauth.UiError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -51,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private HashMap<String,Object> userSetting=null;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
-    private DataUtil dataUtil = null;
+    private UserDataUtil userDataUtil = null;
     private MyAsyncTask myAsyncTask;
     private Intent intent;
     private Runnable toMain;
@@ -78,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn.setOnClickListener(this);
         forget_pwd.setOnClickListener(this);
         login_profile_photo.setOnClickListener(this);
-        dataUtil = new DataUtil(this);
+        userDataUtil = new UserDataUtil(this);
         init();
     }
 
@@ -134,11 +127,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    /**
-     * 从SharedPreferences文件中获取用户数据
-     */
     private void initUser() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         if (user.getLogin_mode() == 0) {
             username_et.setText(user.getUsername());
             if(user.getPassword()!=null){
@@ -217,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             jsonObject.put("open_id",open_id);
                             jsonObject.put("username",((JSONObject)response).getString("nickname"));
                             jsonObject.put("profile_photo",((JSONObject)response).getString("figureurl_qq"));
-                            dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+                            userDataUtil.getUserDataFromServer(jsonObject,true,new UserDataUtil.HttpCallbackStringListener() {
                                 @Override
                                 public void onFinish(User userdata) {
                                     user = userdata;
@@ -229,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 public void onError(Exception e) {
 
                                 }
-                            },jsonObject);
+                            });
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
@@ -279,6 +269,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void getUserDataForTradition(){
         JSONObject jsonObject = new JSONObject();
         try{
+            jsonObject.put("username",username_et.getText());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        userDataUtil.getUserDataFromServer(jsonObject, false, new UserDataUtil.HttpCallbackStringListener() {
+            @Override
+            public void onFinish(User u) {
+                if(u!=null){
+                    user = u;
+                    setImage(u.getProfile_photo());
+                }else{
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unload);
+                    mHandler.obtainMessage(0,bitmap).sendToTarget();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+
+        /*JSONObject jsonObject = new JSONObject();
+        try{
             jsonObject.put("what",14);
             jsonObject.put("login_mode",0);
             jsonObject.put("username",username_et.getText());
@@ -295,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mHandler.obtainMessage(0,bitmap).sendToTarget();
             }
         });
-        myAsyncTask.execute(jsonObject);
+        myAsyncTask.execute(jsonObject);*/
     }
 
     /**
@@ -381,21 +395,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }else{
                 //用户名和密码未修改并且用户没有点击过密码可见的按钮
                 if(canDirectLogin){
-                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putInt("status",1).apply();
+                    user.setStatus(1);
+                    userDataUtil.updateUserDataInLocal(user);
+//                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//                    sp.edit().putInt("status",1).apply();
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                     mHandler.obtainMessage(1).sendToTarget();
                 }else if(pwd.equals(user.getPassword())){
-                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    sp.edit().putString("uid", user.getUid())
-                            .putString("username", user.getUsername())
-                            .putString("password", user.getPassword())
-                            .putString("profile_photo", user.getProfile_photo())
-                            .putInt("status",1)
-                            .putLong("last_login",user.getLast_login())
-                            .putInt("login_mode",0)
-                            .apply();
-                    saveUserDataToLocal();
+                    user.setStatus(1);
+                    userDataUtil.updateUserDataInLocal(user);
+                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                    mHandler.sendEmptyMessage(1);
+//                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+//                    sp.edit().putString("uid", user.getUid())
+//                            .putString("username", user.getUsername())
+//                            .putString("password", user.getPassword())
+//                            .putString("profile_photo", user.getProfile_photo())
+//                            .putInt("status",1)
+//                            .putLong("last_login",user.getLast_login())
+//                            .putInt("login_mode",0)
+//                            .apply();
+//                    saveUserDataToLocal();
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
@@ -405,27 +425,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void saveUserDataToLocal() {
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("login_mode",0);
-            jsonObject.put("username",user.getUsername());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
-            @Override
-            public void onFinish(User userdata) {
-                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                mHandler.sendEmptyMessage(1);
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        },jsonObject);
-    }
+//    private void saveUserDataToLocal() {
+//        JSONObject jsonObject = new JSONObject();
+//        try{
+//            jsonObject.put("login_mode",0);
+//            jsonObject.put("username",user.getUsername());
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//        userDataUtil.getdata(new UserDataUtil.HttpCallbackStringListener() {
+//            @Override
+//            public void onFinish(User userdata) {
+//                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+//                mHandler.sendEmptyMessage(1);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//
+//            }
+//        },jsonObject);
+//    }
 
     private void setImage(String pic) {
         Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);

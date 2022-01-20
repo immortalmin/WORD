@@ -11,7 +11,7 @@ public class SyncUtil {
     private Context context;
     private CollectDbDao collectDbDao;
     private UsageTimeDbDao usageTimeDbDao;
-    private DataUtil dataUtil;
+    private UserDataUtil userDataUtil;
     private User user;
     private MyAsyncTask myAsyncTask;
     private JsonRe jsonRe = new JsonRe();
@@ -22,13 +22,13 @@ public class SyncUtil {
         this.context = context;
         collectDbDao = new CollectDbDao(context);
         usageTimeDbDao = new UsageTimeDbDao(context);
-        dataUtil = new DataUtil(context);
+        userDataUtil = new UserDataUtil(context);
         networkUtil = new NetworkUtil(context);
         init();
     }
 
     private void init() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
     }
 
 

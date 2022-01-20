@@ -19,7 +19,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
     private Button return_btn,confirm_btn,SMS_btn;
     private MyEditText oldPwd_et,newPwd_et,confirmPwd_et;
     private User user;
-    private DataUtil dataUtil;
+    private UserDataUtil userDataUtil;
     private MD5Utils md5Utils;
     private MyAsyncTask myAsyncTask;
     @Override
@@ -35,7 +35,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         return_btn.setOnClickListener(this);
         confirm_btn.setOnClickListener(this);
         SMS_btn.setOnClickListener(this);
-        dataUtil = new DataUtil(this);
+        userDataUtil = new UserDataUtil(this);
         md5Utils = new MD5Utils();
         init();
     }
@@ -43,7 +43,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
     public void init(){
 //2021/3/15
 //        //初始化userData
-//        dataUtil.getdata(new DataUtil.HttpCallbackStringListener() {
+//        userDataUtil.getdata(new UserDataUtil.HttpCallbackStringListener() {
 //            @Override
 //            public void onFinish(User userdata) {
 //                user = userdata;
@@ -54,7 +54,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
 //
 //            }
 //        });
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
     }
 
     public void onClick(View view){

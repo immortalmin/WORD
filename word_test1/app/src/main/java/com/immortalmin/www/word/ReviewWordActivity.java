@@ -1,8 +1,6 @@
 package com.immortalmin.www.word;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -10,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,8 +20,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
@@ -44,7 +40,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private ImageView imgview;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
-    private DataUtil dataUtil = new DataUtil(this);
+    private UserDataUtil userDataUtil = new UserDataUtil(this);
     private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog interruptDialog,inadequateDialog;
@@ -152,7 +148,7 @@ public class ReviewWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
         init_fragment();
         dialog_init();
         setting.put("uid", user.getUid());

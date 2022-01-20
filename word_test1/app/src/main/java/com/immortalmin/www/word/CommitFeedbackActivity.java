@@ -19,7 +19,6 @@ import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -31,7 +30,7 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
     private AutoLineUtil img_group;
     private MyEditText descriptionText,contactText;
     private User user = new User();
-    private DataUtil dataUtil;
+    private UserDataUtil userDataUtil;
     private ImageUtils imageUtils = new ImageUtils();
     private ArrayList<String> img_list = new ArrayList<>();//需要上传的图片
     private ArrayList<Integer> remove_list = new ArrayList<>();//img_list需要移除的图片的下标
@@ -52,13 +51,13 @@ public class CommitFeedbackActivity extends AppCompatActivity implements View.On
         return_btn.setOnClickListener(this);
         add_pic_btn.setOnClickListener(this);
         commit_btn.setOnClickListener(this);
-        dataUtil = new DataUtil(this);
+        userDataUtil = new UserDataUtil(this);
         init();
     }
 
     private void init() {
         //获取用户信息
-        user = dataUtil.set_user();
+        user = userDataUtil.getUserDataFromSP();
     }
 
     public void onClick(View view){

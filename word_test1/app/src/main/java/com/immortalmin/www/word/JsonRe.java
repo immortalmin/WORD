@@ -198,7 +198,7 @@ public class JsonRe {
     }
 
     /**
-     * 用户数据
+     * 用户数据，联合user表和setting表
      */
     User userData(String jsonStr){
         User user = null;
@@ -207,17 +207,19 @@ public class JsonRe {
             if(!jsonArray.isNull(0)){
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
                 user = new User();
-                user.setLogin_mode(Integer.parseInt(jsonObject.getString("login_mode")));
                 user.setUid(jsonObject.getString("uid"));
                 user.setOpen_id(jsonObject.getString("open_id"));
                 user.setUsername(jsonObject.getString("username"));
                 user.setPassword(jsonObject.getString("pwd"));
                 user.setProfile_photo(jsonObject.getString("profile_photo"));
-                user.setTelephone(jsonObject.getString("telephone"));
-                user.setEmail(jsonObject.getString("email"));
                 user.setMotto(jsonObject.getString("motto"));
+                user.setEmail(jsonObject.getString("email"));
+                user.setTelephone(jsonObject.getString("telephone"));
+                user.setLogin_mode(Integer.parseInt(jsonObject.getString("login_mode")));
                 user.setIgnore_version(Integer.parseInt(jsonObject.getString("ignore_version")));
                 user.setLast_login(jsonObject.getLong("last_login"));
+                user.setRecite_num(Integer.parseInt(jsonObject.getString("recite_num")));
+                user.setRecite_scope(Integer.parseInt(jsonObject.getString("recite_scope")));
             }
         }catch (JSONException e) {
             e.printStackTrace();
@@ -229,19 +231,19 @@ public class JsonRe {
     /**
      * 用户设置
      */
-    HashMap<String,Object> userSetting(String jsonStr){
-        HashMap<String,Object> word = new HashMap<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-            word.put("uid",jsonObject.getString("uid"));
-            word.put("recite_num",jsonObject.getString("recite_num"));
-            word.put("recite_scope",jsonObject.getString("recite_scope"));
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return word;
-    }
+//    HashMap<String,Object> userSetting(String jsonStr){
+//        HashMap<String,Object> word = new HashMap<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(jsonStr);
+//            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+//            word.put("uid",jsonObject.getString("uid"));
+//            word.put("recite_num",jsonObject.getString("recite_num"));
+//            word.put("recite_scope",jsonObject.getString("recite_scope"));
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return word;
+//    }
 
     /**
      * 用户使用时间

@@ -39,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private CircleImageView register_profile_photo;
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
+    private UserDataUtil userDataUtil = null;
     private Runnable toLogin;
     private String profilephotoPath="null";
     private User user;
@@ -293,7 +294,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void query_user(final JSONObject jsonObject) {
-        new Thread(new Runnable() {
+        userDataUtil = new UserDataUtil(this);
+        userDataUtil.getUserDataFromServer(jsonObject,false,new UserDataUtil.HttpCallbackStringListener() {
+            @Override
+            public void onFinish(User user) {
+                if(user!=null){
+                    IsUsername = false;
+                    mHandler.obtainMessage(1).sendToTarget();
+                }else{
+                    IsUsername = true;
+                }
+            }
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpGetContext httpGetContext = new HttpGetContext();
@@ -307,7 +324,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
 
             }
-        }).start();
+        }).start();*/
+
     }
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
