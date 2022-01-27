@@ -22,6 +22,8 @@ public class SignIn extends View {
 
     private Paint mPaint = new Paint();
     private Context context;
+    private int total_column;
+
     private int[] color = {
             Color.parseColor("#50ebedf0"),
             Color.parseColor("#50c6e48b"),
@@ -93,12 +95,16 @@ public class SignIn extends View {
         drawmonth(canvas);
     }
 
+    private void calcTotalColumn() {
+        int screen_width = context.getResources().getDisplayMetrics().widthPixels;
+        total_column = screen_width/DisplayUtil.dp2px(context,11)-3;//减3是因为左边星期腾出两个方块的宽度，右边边界腾出一个方块的宽度
+    }
+
     /**
      * 绘制月份
-     * @param canvas
      */
     private void drawmonth(Canvas canvas) {
-        canvas.translate(-DisplayUtil.dp2px(context,330),-DisplayUtil.dp2px(context,10));
+        canvas.translate(-total_column*DisplayUtil.dp2px(context,11),-DisplayUtil.dp2px(context,10));
         for(int i=0;i<month_column_num.size();i++){
             canvas.drawText(toMonth[month_column_str.get(i)],(month_column_num.get(i)-1)*DisplayUtil.dp2px(context,11),DisplayUtil.dp2px(context,8),mPaint);
         }
@@ -134,15 +140,17 @@ public class SignIn extends View {
      * @param canvas
      */
     private void drawweek(Canvas canvas) {
+        int span = DisplayUtil.dp2px(context,10);
+        int margin = DisplayUtil.dp2px(context,3);
         //为月份腾出空间
-        canvas.translate(0,DisplayUtil.dp2px(context,10));//30
+        canvas.translate(0,span);
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextSize(DisplayUtil.sp2px(context,7));
         mPaint.setColor(Color.parseColor("#bddac3"));
-        canvas.drawText("Mon",0,DisplayUtil.dp2px(context,20),mPaint);
-        canvas.drawText("Wed",0,DisplayUtil.dp2px(context,41),mPaint);
-        canvas.drawText("Fri",0,DisplayUtil.dp2px(context,63),mPaint);
+        canvas.drawText("Mon",0,(float)2.1*span-margin,mPaint);
+        canvas.drawText("Wed",0,(float)4.3*span-margin,mPaint);
+        canvas.drawText("Fri",0,(float)6.5*span-margin,mPaint);
 
     }
 
@@ -151,9 +159,6 @@ public class SignIn extends View {
      * @param canvas
      */
     private void drawbody(Canvas canvas){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
         canvas.translate(DisplayUtil.dp2px(context,16),0);
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.FILL);
@@ -162,22 +167,19 @@ public class SignIn extends View {
         Calendar calendar = Calendar.getInstance();
         int start_index = 7-calendar.get(Calendar.DAY_OF_WEEK);
         int column = 0;//列数
-
-        calendar.add(Calendar.DAY_OF_MONTH,start_index-210);//196
-
+        calendar.add(Calendar.DAY_OF_MONTH,8-total_column*7-calendar.get(Calendar.DAY_OF_WEEK));//-[7*total_column-(7-calendar.get(Calendar.DAY_OF_WEEK))-1]
         for(int i=start_index,week=0;i<sign_in_times.size();i++,week++){
             if(week%7==0){
                 canvas.save();
                 column++;
             }
-
             //找出每个月一号的位置
-            calendar.add(Calendar.DAY_OF_MONTH,1);
             if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+                mPaint.setColor(Color.RED);
                 month_column_num.add(column);
                 month_column_str.add(calendar.get(Calendar.MONTH)+1);
             }
-
+            calendar.add(Calendar.DAY_OF_MONTH,1);
             mPaint.setColor(color[timeTocolor(sign_in_times.get(i))]);
             canvas.drawRect(0,0,DisplayUtil.dp2px(context,10),DisplayUtil.dp2px(context,10),mPaint);
             canvas.translate(0,DisplayUtil.dp2px(context,11));
@@ -187,8 +189,6 @@ public class SignIn extends View {
                 canvas.translate(DisplayUtil.dp2px(context,11),0);
             }
         }
-//        Log.i("ccc",month_column_num.toString());
-//        Log.i("ccc",month_column_str.toString());
     }
 
     public ArrayList<Integer> getSign_in_times() {
@@ -202,11 +202,15 @@ public class SignIn extends View {
     }
 
     private void dispose_data() {
+        calcTotalColumn();
         //补满
-        while(sign_in_times.size()<210){//196
+        while(sign_in_times.size()<total_column*7){
             sign_in_times.add(0);
         }
-        //反转list
+        //删去多出来的
+        while(sign_in_times.size()>total_column*7){
+            sign_in_times.remove(sign_in_times.size()-1);
+        }
         Collections.reverse(sign_in_times);
     }
 

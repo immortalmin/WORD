@@ -255,7 +255,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             if(isTyping) JudgeAnswer();
             else mHandler.sendEmptyMessage(2);//重新显示题目
         }
-        return true;
+        return false;
     };
 
     /**

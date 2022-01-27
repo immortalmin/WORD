@@ -78,12 +78,12 @@ public class UpdateManager {
             if(isAutoCheck){
                 //如果是自动检查更新，需要将用户选择忽略的版本号也考虑进去。另外如果没有新版本，不显示Toast
                 if(getVersionCode(mContext)!=Integer.parseInt(versionData.get("version_code"))&&user.getIgnore_version()!=Integer.parseInt(versionData.get("version_code"))){
-                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")));
+                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")),versionData.get("is_force"));
                 }
             }else{
                 //如果是用户自己手动检查更新，进行版本号比较时，忽略用户之前选择忽略的版本号。另外如果没有新版本，将显示Toast
                 if(getVersionCode(mContext)!=Integer.parseInt(versionData.get("version_code"))){
-                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")));
+                    showUpdateDialog(Integer.parseInt(versionData.get("version_code")),versionData.get("is_force"));
                 }else{
                     Toast.makeText(mContext, "已是最新版本", Toast.LENGTH_SHORT).show();
                 }
@@ -108,7 +108,12 @@ public class UpdateManager {
     }
 
 
-    private void showUpdateDialog(int current_version_code){
+    /**
+     *
+     * @param current_version_code
+     * @param is_force 如果是强制要求更新，将不显示“下次再说”选项
+     */
+    private void showUpdateDialog(int current_version_code,String is_force){
         SweetAlertDialog updateDialog = new SweetAlertDialog(mContext,SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("有新版本可以更新")
                 .setContentText(versionData.get("description"))
@@ -116,14 +121,15 @@ public class UpdateManager {
                 .setConfirmClickListener(sweetAlertDialog -> {
                     showDownloadDialog();
                     sweetAlertDialog.cancel();
-                })
-                .setCancelText("下次再说")
-                .setCancelClickListener(sweetAlertDialog -> {
-                    user.setIgnore_version(current_version_code);
-                    userDataUtil.updateUserDataInServer(user,true);
-//                    updateIgnoreVersion(current_version_code);
-                    sweetAlertDialog.cancel();
                 });
+        if("0".equals(is_force)){
+            updateDialog.setCancelText("下次再说")
+                    .setCancelClickListener(sweetAlertDialog -> {
+                        user.setIgnore_version(current_version_code);
+                        userDataUtil.updateUserDataInServer(user,true);
+                        sweetAlertDialog.cancel();
+                    });
+        }
         updateDialog.setCancelable(false);
         updateDialog.show();
     }
@@ -160,25 +166,6 @@ public class UpdateManager {
         download_dialog.show();
         downloadApk();
     }
-
-//    private void updateIgnoreVersion(int current_version_code){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",23);
-//            jsonObject.put("ignore_version",current_version_code);
-//            jsonObject.put("uid",user.getUid());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result->{
-//            Log.i("ccc","更新ignore_version完成");
-//            SharedPreferences sp = mContext.getSharedPreferences("login", Context.MODE_PRIVATE);
-//            sp.edit().putInt("ignore_version", current_version_code)
-//                    .apply();
-//        }));
-//        myAsyncTask.execute(jsonObject);
-//    }
 
     /**
      * 从服务器下载APK安装包
@@ -275,7 +262,6 @@ public class UpdateManager {
 
                 case 3:
                     download_dialog.setContentText("下载完成，即将开始安装");
-//                    download_dialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                     break;
                 default:
                     break;

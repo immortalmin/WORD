@@ -31,7 +31,7 @@ public class UsageTimeDbDao {
      */
     ArrayList<Integer> getUsageTime(){
         ArrayList<Integer> timeList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select utime from usageTime order by udate desc limit 209",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select utime from usageTime order by udate desc limit 300",null);
         while(cursor.moveToNext()){
             timeList.add(cursor.getInt(cursor.getColumnIndex("utime")));
         }
