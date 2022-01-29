@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
 
     <com.immortalmin.www.word.CountDownProgressBar
@@ -11,7 +11,7 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="170dp"
+        android:layout_margin="30dp"
         app:countDown_centerTextColor="#2395FF"
         app:countDown_centerTextSize="25dp"
         app:countDown_circleWidth="4dp"
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:layout_below="@+id/cpb_countdown">
 
         <Button
@@ -37,10 +37,10 @@
 
         <Button
             android:id="@+id/vague"
-            android:layout_toRightOf="@+id/acquaint"
+            android:layout_toEndOf="@+id/acquaint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/rounded_corners_gray"
             android:textAllCaps="false"
             android:textColor="#252222"
@@ -48,10 +48,10 @@
 
         <Button
             android:id="@+id/strange"
-            android:layout_toRightOf="@+id/vague"
+            android:layout_toEndOf="@+id/vague"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/rounded_corners_gray"
             android:textAllCaps="false"
             android:textColor="#252222"

@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="350dp"
+    android:layout_height="wrap_content">
 
 
     <TextView
@@ -11,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
         android:textSize="30sp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="60dp"
         android:textColor="#000000"
         android:text="hahaha" />
 
@@ -21,25 +22,27 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="8dp"
         android:layout_height="25dp"
+        android:layout_alignBottom="@+id/wordview"
         android:layout_toEndOf="@+id/wordview"
-        android:layout_marginTop="110dp"
-        android:layout_marginStart="10dp"
+        android:layout_margin="5dp"
         android:max="10"
         android:progress="0"
         android:progressDrawable="@drawable/progress_bar_drawable"/>
 
 
     <RelativeLayout
+        android:id="@+id/sel_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@+id/wordview"
+        android:layout_margin="20dp"
         >
 
         <Button
             android:id="@+id/sel1"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_marginTop="100sp"
+            android:layout_marginTop="30sp"
             android:background="@drawable/rounded_corners_gray"
             android:textAllCaps="false"
             android:textSize="15sp"
@@ -50,7 +53,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="20sp"
+            android:layout_marginTop="30sp"
             android:textAllCaps="false"
             android:layout_below="@+id/sel1"
             android:textSize="15sp"
@@ -61,7 +64,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="20sp"
+            android:layout_marginTop="30sp"
             android:layout_below="@+id/sel2"
             android:textAllCaps="false"
             android:textSize="15sp"
@@ -72,7 +75,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="20sp"
+            android:layout_marginTop="30sp"
             android:layout_below="@+id/sel3"
             android:textAllCaps="false"
             android:textSize="15sp"
@@ -83,7 +86,7 @@
             android:layout_width="150dp"
             android:layout_height="30dp"
             android:background="@drawable/rounded_corners_red"
-            android:layout_marginTop="15sp"
+            android:layout_marginTop="25sp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/sel4"
             android:textColor="#000000"
