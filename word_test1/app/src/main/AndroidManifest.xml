@@ -33,6 +33,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
+        <uses-library android:name="android.test.runner" />
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@drawable/switch_track_sign_in_on" />
+
         <activity android:name=".SynchronizeActivity" />
         <activity android:name=".CommitFeedbackActivity" />
         <activity android:name=".FeedbackActivity" />
@@ -87,6 +92,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="behind"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -94,7 +100,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

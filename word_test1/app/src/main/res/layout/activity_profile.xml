@@ -106,16 +106,28 @@
         android:id="@+id/sign_in_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_below="@+id/intro_layout"
         android:layout_centerHorizontal="true">
+
+        <Switch
+            android:id="@+id/sign_in_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:thumb="@drawable/switch_thumb_selector_sign_in"
+            android:track="@drawable/switch_track_selector_sign_in"
+            android:showText="true"
+            android:switchTextAppearance="@style/SwitchSignIn"
+            android:textOn="使用"
+            android:textOff="背词"
+            />
 
         <com.immortalmin.www.word.SignIn
             android:id="@+id/signIn"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sign_in_switch"
             android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>

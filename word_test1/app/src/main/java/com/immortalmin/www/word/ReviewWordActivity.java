@@ -36,6 +36,7 @@ public class ReviewWordActivity extends AppCompatActivity
     private CountDownFragment countDownFragment = new CountDownFragment();
     private SpellFragment spellFragment = new SpellFragment();
     private CollectDbDao collectDbDao = new CollectDbDao(this);
+    private DailyRecitationDbDao dailyRecitationDbDao = new DailyRecitationDbDao(this);
     private Button turn_mode,ret_btn;
     private ImageView imgview;
     private TextView total_times, word_times;
@@ -368,6 +369,8 @@ public class ReviewWordActivity extends AppCompatActivity
         if (finish_num >= review_num) {
             if(review_num == review_list.size()) finishDialog();
             else finishAGroupDialog();
+            DailyRecitation dailyRecitation = new DailyRecitation(Integer.parseInt(user.getUid()),review_num,0,0,"",false);
+            dailyRecitationDbDao.update(1,dailyRecitation);
         }else{
             startReview();
         }
@@ -406,9 +409,7 @@ public class ReviewWordActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.i("ccc","onKeyDown");
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            Log.i("ccc","点击了返回键");
             interruptDialog();
             return false;
         } else {

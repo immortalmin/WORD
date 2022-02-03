@@ -42,6 +42,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserDataUtil userDataUtil = new UserDataUtil(this);
     private CollectDbDao collectDbDao = new CollectDbDao(this);
+    private DailyRecitationDbDao dailyRecitationDbDao = new DailyRecitationDbDao(this);
     private User user = new User();
     private ProgressBar total_progress;
     private SweetAlertDialog finishDialog,inadequateDialog;
@@ -453,6 +454,8 @@ public class ReciteWordActivity extends AppCompatActivity
                 collectDbDao.updateData(recite_list.get(i));
             }
         }
+        DailyRecitation dailyRecitation = new DailyRecitation(Integer.parseInt(user.getUid()),0,recite_num,0,"",false);
+        dailyRecitationDbDao.update(0,dailyRecitation);
         mHandler.obtainMessage(1).sendToTarget();
         finishDialog.show();
     }

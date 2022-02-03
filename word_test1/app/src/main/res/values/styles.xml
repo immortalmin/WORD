@@ -50,5 +50,10 @@
         <item name="android:windowExitAnimation">@anim/dialog_exit</item>    //退出时的动画
     </style>
 
+    <style name="SwitchSignIn">
+        <item name="android:textSize">8sp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
 
 </resources>

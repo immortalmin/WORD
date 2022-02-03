@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class CollectSQLiteOpenHelper extends SQLiteOpenHelper {
-    private static String name = "collect.db";
+    private static String name = "/data/data/com.immortalmin.www.word/databases/collect.db";//
     private static Integer version = 1;
     CollectSQLiteOpenHelper(Context context){
         super(context, name,null, version);
