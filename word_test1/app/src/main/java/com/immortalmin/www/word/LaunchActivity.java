@@ -81,7 +81,7 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
                     Log.i("ccc","无网络");
                 }
             });
-            syncUtil.syncExecutor(2,true,false,true,false);
+            syncUtil.syncExecutor(3,true,false,true,false,true,false);
         }
     }
 
@@ -154,11 +154,11 @@ public class LaunchActivity extends AppCompatActivity implements ImgTipDialog.On
             // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
 
             //有权查看使用情况
-            if(isNoOption()&&!isNoSwitch()){
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.tip1);
-                show_img_tip_dialog(bitmap);
-                return false;
-            }
+//            if(isNoOption()&&!isNoSwitch()){
+//                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.tip1);
+//                show_img_tip_dialog(bitmap);
+//                return false;
+//            }
 
             // sd卡权限
             String[] SdCardPermission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};

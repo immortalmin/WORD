@@ -4,10 +4,11 @@ import java.io.Serializable;
 
 /**
  * user information
+ * sign_in_type:0-使用时间     1-背词数量
  */
 public class User implements Serializable{
     private String uid,open_id,username,password,profile_photo,motto=null,email,telephone,access_token=null,expires_in=null;
-    private int recite_num,recite_scope,status=0,login_mode,ignore_version;
+    private int recite_num,recite_scope,status=1,login_mode,ignore_version,sign_in_type;
     private long last_login;
 
     public User(){}
@@ -138,6 +139,14 @@ public class User implements Serializable{
 
     public void setIgnore_version(int ignore_version) {
         this.ignore_version = ignore_version;
+    }
+
+    public int getSign_in_type() {
+        return sign_in_type;
+    }
+
+    public void setSign_in_type(int sign_in_type) {
+        this.sign_in_type = sign_in_type;
     }
 
     @Override

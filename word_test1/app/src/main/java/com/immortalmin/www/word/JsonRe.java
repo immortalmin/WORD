@@ -218,6 +218,7 @@ public class JsonRe {
                 user.setLogin_mode(Integer.parseInt(jsonObject.getString("login_mode")));
                 user.setIgnore_version(Integer.parseInt(jsonObject.getString("ignore_version")));
                 user.setLast_login(jsonObject.getLong("last_login"));
+                user.setSign_in_type(jsonObject.getInt("sign_in_type"));
                 user.setRecite_num(Integer.parseInt(jsonObject.getString("recite_num")));
                 user.setRecite_scope(Integer.parseInt(jsonObject.getString("recite_scope")));
             }
@@ -228,22 +229,6 @@ public class JsonRe {
         return user;
     }
 
-    /**
-     * 用户设置
-     */
-//    HashMap<String,Object> userSetting(String jsonStr){
-//        HashMap<String,Object> word = new HashMap<>();
-//        try {
-//            JSONArray jsonArray = new JSONArray(jsonStr);
-//            JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-//            word.put("uid",jsonObject.getString("uid"));
-//            word.put("recite_num",jsonObject.getString("recite_num"));
-//            word.put("recite_scope",jsonObject.getString("recite_scope"));
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return word;
-//    }
 
     /**
      * 用户使用时间
@@ -263,6 +248,28 @@ public class JsonRe {
             e.printStackTrace();
         }
         return usageTimeList;
+    }
+
+    /**
+     * 每日背诵的数据
+     */
+    ArrayList<DailyRecitation> DailyRecitationData(String jsonStr){
+        ArrayList<DailyRecitation> res = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                DailyRecitation dailyRecitation = new DailyRecitation();
+                dailyRecitation.setRecord_date(jsonObject.getString("record_date"));
+                dailyRecitation.setRecite_num(jsonObject.getInt("recite_num"));
+                dailyRecitation.setReview_num(jsonObject.getInt("review_num"));
+                dailyRecitation.setGrasp_num(jsonObject.getInt("grasp_num"));
+                res.add(dailyRecitation);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     HashMap<String,String> versionData(String jsonStr){

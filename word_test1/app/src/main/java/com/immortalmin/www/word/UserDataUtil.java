@@ -78,6 +78,7 @@ public class UserDataUtil {
             sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
             user.setRecite_num(sp.getInt("recite_num",20));
             user.setRecite_scope(sp.getInt("recite_scope",10));
+            user.setSign_in_type(sp.getInt("sign_in_type",0));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -107,6 +108,7 @@ public class UserDataUtil {
         sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         sp.edit().putInt("recite_num",user.getRecite_num())
                 .putInt("recite_scope",user.getRecite_scope())
+                .putInt("sign_in_type",user.getSign_in_type())
                 .apply();
     }
 
@@ -114,6 +116,7 @@ public class UserDataUtil {
      * 更新服务器中的用户数据
      */
     public void updateUserDataInServer(User user,boolean updateLocal){
+        if(updateLocal) updateUserDataInLocal(user);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("what",23);
@@ -131,66 +134,16 @@ public class UserDataUtil {
 //            jsonObject.put("login_mode",);
             jsonObject.put("ignore_version",user.getIgnore_version());
             jsonObject.put("last_login",user.getLast_login());
-
+            jsonObject.put("sign_in_type",user.getSign_in_type());
         }catch (JSONException e){
             e.printStackTrace();
         }
         MyAsyncTask myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
-            if(updateLocal) updateUserDataInLocal(user);
+
         });
         myAsyncTask.execute(jsonObject);
     }
-
-//    private void getSetting(final HttpCallbackStringListener listener){
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("uid",user.getUid());
-//            jsonObject.put("what",13);
-//        }catch (Exception e){
-//            listener.onError(e);
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result)->{
-//            userSetting = jsonRe.userSetting(result);
-//            SharedPreferences sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-//            try{
-//                sp.edit().putString("uid",userSetting.get("uid").toString())
-//                        .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-//                        .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-//                        .apply();
-//            }catch (Exception e){
-//                listener.onError(e);
-//            }
-//            listener.onFinish(set_user());
-//        });
-//        myAsyncTask.execute(jsonObject);
-//    }
-
-
-    /**
-     * 从本地获取UserData?
-     */
-    /*User set_user(){
-        User user = new User();
-        SharedPreferences sp = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-        user.setUid(sp.getString("uid",null));
-        user.setRecite_num(sp.getInt("recite_num",20));
-        user.setRecite_scope(sp.getInt("recite_scope",10));
-        sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
-        user.setUsername(sp.getString("username",null));
-        user.setPassword(sp.getString("password",null));
-        user.setProfile_photo(sp.getString("profile_photo",null));
-        user.setStatus(sp.getInt("status",0));
-        user.setLogin_mode(sp.getInt("login_mode",0));
-        user.setOpen_id(sp.getString("open_id",null));
-        user.setLast_login(sp.getLong("last_login",946656000000L));
-        user.setEmail(sp.getString("email",null));
-        user.setTelephone(sp.getString("telephone",null));
-        user.setMotto(sp.getString("motto",null));
-        user.setIgnore_version(sp.getInt("ignore_version",1));
-        return user;
-    }*/
 
 
 }

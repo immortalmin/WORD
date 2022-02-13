@@ -48,9 +48,9 @@ public class ImgTipDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.img_tip_dialog,null);
         listener = (ImgTipDialog.OnDialogInteractionListener) context;//绑定回调函数的监听器
-        imageView = (ImageView)view.findViewById(R.id.imageview);
-        confirm_btn = (Button)view.findViewById(R.id.confirm_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
+        imageView = view.findViewById(R.id.imageview);
+        confirm_btn = view.findViewById(R.id.confirm_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
 
         confirm_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
@@ -76,6 +76,7 @@ public class ImgTipDialog extends Dialog implements View.OnClickListener {
                 listener.ImgTipInteraction(1);
                 break;
             case R.id.cancel_btn:
+                dismiss();
                 listener.ImgTipInteraction(0);
                 break;
         }

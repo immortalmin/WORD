@@ -1,6 +1,8 @@
 package com.immortalmin.www.word;
 
 import android.content.Context;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ public class SyncUtil {
     private Context context;
     private CollectDbDao collectDbDao;
     private UsageTimeDbDao usageTimeDbDao;
+    private DailyRecitationDbDao dailyRecitationDbDao;
     private UserDataUtil userDataUtil;
     private User user;
     private MyAsyncTask myAsyncTask;
@@ -22,6 +25,7 @@ public class SyncUtil {
         this.context = context;
         collectDbDao = new CollectDbDao(context);
         usageTimeDbDao = new UsageTimeDbDao(context);
+        dailyRecitationDbDao = new DailyRecitationDbDao(context);
         userDataUtil = new UserDataUtil(context);
         networkUtil = new NetworkUtil(context);
         init();
@@ -33,7 +37,9 @@ public class SyncUtil {
 
 
     //XXX:笨办法，是有解决办法的，但是现在没什么心情弄。搜getDeclaredMethods()估计就能找到相关的博客
-    void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,boolean isUploadUsageTime,boolean isDownloadUsageTime){
+    void syncExecutor(int Cnt,boolean isUploadCollectData,boolean isDownloadCollectData,
+                      boolean isUploadUsageTime,boolean isDownloadUsageTime,
+                      boolean isUploadDailyRecitation,boolean isDownloadDailyRecitation){
         //如果没有网络，则不进行同步
         if(!networkUtil.isNetworkConnected()){
             if(finishListener!=null) finishListener.fail();
@@ -44,6 +50,8 @@ public class SyncUtil {
         if(isDownloadCollectData) downloadCollectData();
         if(isUploadUsageTime) uploadUsageTime();
         if(isDownloadUsageTime) downloadUsageTime();
+        if(isUploadDailyRecitation) uploadDailyRecitation();
+        if(isDownloadDailyRecitation) downloadDailyRecitation();
     }
 
     private synchronized void syncFinish(){
@@ -212,6 +220,74 @@ public class SyncUtil {
         myAsyncTask.execute(jsonObject);
     }
 
+    /**
+     * 上传本地DailyRecitation数据
+     */
+    private void uploadDailyRecitation() {
+        ArrayList<DailyRecitation> data = dailyRecitationDbDao.getSyncList();
+        new Thread(()->{
+            for(int i=0;i<data.size();i++){
+                DailyRecitation dailyRecitation = data.get(i);
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("what",29);
+                    jsonObject.put("uid",user.getUid());
+                    jsonObject.put("record_date",dailyRecitation.getRecord_date());
+                    jsonObject.put("review_num",dailyRecitation.getReview_num());
+                    jsonObject.put("recite_num",dailyRecitation.getRecite_num());
+                    jsonObject.put("grasp_num",dailyRecitation.getGrasp_num());
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                myAsyncTask = new MyAsyncTask();
+                myAsyncTask.setLoadDataComplete((result -> {
+                    try {
+                        JSONObject resultJson = new JSONObject(result);
+                        if("1".equals(resultJson.getString("what"))){//本地数据与服务器上的数据不一致，则将服务器上的数据同步到本地
+                            DailyRecitation dailyRecitation1 = new DailyRecitation();
+                            dailyRecitation1.setRecord_date(resultJson.getString("record_date"));
+                            dailyRecitation1.setRecite_num(resultJson.getInt("recite_num"));
+                            dailyRecitation1.setReview_num(resultJson.getInt("review_num"));
+                            dailyRecitation1.setGrasp_num(resultJson.getInt("grasp_num"));
+                            dailyRecitationDbDao.updateByRecordDate(dailyRecitation1);
+                        }else{
+                            dailyRecitationDbDao.updateSyncByRecordDate(resultJson.getString("record_date"),true);
+                            usageTimeDbDao.updateIsSyncByUdate(resultJson.getString("udate"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }));
+                myAsyncTask.execute(jsonObject);
+            }
+        }).start();
+    }
+
+    /**
+     * 下载DailyRecitation
+     */
+    private void downloadDailyRecitation() {
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("what",30);
+            jsonObject.put("uid", user.getUid());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setLoadDataComplete((result)->{
+            ArrayList<DailyRecitation> data = jsonRe.DailyRecitationData(result);
+            dailyRecitationDbDao.deleteAll();
+            new Thread(()->{
+                for(int i=0;i<data.size();i++){
+                    data.get(i).setIs_synchronized(true);
+                    dailyRecitationDbDao.insertSingleData(data.get(i));
+                }
+                syncFinish();
+            }).start();
+        });
+        myAsyncTask.execute(jsonObject);
+    }
     interface FinishListener{
         void finish();
         void fail();

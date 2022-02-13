@@ -143,10 +143,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void fail() {
-                    Log.i("ccc","无网络");
+//                    Log.i("ccc","无网络");
                 }
             });
-            syncUtil.syncExecutor(2,false,true,false,true);
+            syncUtil.syncExecutor(3,false,true,false,true,false,true);
         }else{
             //获取使用时间的数据
             getUsageTime();
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap bitmap;
         bitmap=ImageUtils.getPhotoFromStorage(user.getUid()+".jpg");
         if(bitmap==null){
-            Log.i("ccc","头像不存在 正从服务器下载...");
+//            Log.i("ccc","头像不存在 正从服务器下载...");
             getImage();
         }else{
             mHandler.obtainMessage(0,bitmap).sendToTarget();
@@ -217,17 +217,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(user.getLast_login()==946656000000L){//代表是第一次登录
             user.setLast_login(nowTimeStamp);
             userDataUtil.updateUserDataInServer(user,true);
-            /*SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putLong("last_login",nowTimeStamp).apply();
-            user.setLast_login(nowTimeStamp);
-            JSONObject jsonObject = new JSONObject();
-            try{
-                jsonObject.put("uid", user.getUid());
-                jsonObject.put("last_login", user.getLast_login());
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            updateLastLogin(jsonObject);*/
             return;
         }
         String lastLogin = DateTransUtils.stampToDate(user.getLast_login());
@@ -247,38 +236,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
             }
-            //保存上一次登录的日期 到 昨天(不包括昨天)之间的使用时间数据
-            Calendar calendar = Calendar.getInstance();
-            for(int i=0;i<100;i++){
-                calendar.add(Calendar.DAY_OF_MONTH,-1);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String pre_day = simpleDateFormat.format(calendar.getTime());
-                if(pre_day.equals(lastLogin)){
-                    break;
-                }else{
-                    usageTime = new UsageTime();
-                    usageTime.setUdate(pre_day);
-                    usageTime.setUtime(0);
-                    usageTimeDbDao.insertUsageTime(usageTime,0);
-                }
-            }
-            //更新本地文件中的last_login
-//            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//            sp.edit().putLong("last_login",nowTimeStamp).apply();
             user.setLast_login(nowTimeStamp);
-            userDataUtil.updateUserDataInLocal(user);
+            userDataUtil.updateUserDataInServer(user,true);
         }
     }
-
-    /**
-     * 上传用户上一次登录的时间
-     */
-//    private void updateLastLogin(final JSONObject jsonObject) {
-//        new Thread(() -> {
-//            HttpGetContext httpGetContext = new HttpGetContext();
-//            httpGetContext.getData("http://47.98.239.237/word/php_file2/update_userdata.php",jsonObject);
-//        }).start();
-//    }
 
     /**
      * 获取并显示复习单词的数量

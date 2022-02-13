@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class DailyRecitation {
     int rid,uid,review_num=0,recite_num=0,grasp_num=0,total_num= 0;
     String record_date;
-    boolean is_synchronized;
+    boolean is_synchronized=false;
 
     DailyRecitation(){}
 

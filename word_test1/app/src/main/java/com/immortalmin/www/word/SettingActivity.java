@@ -1,13 +1,26 @@
 package com.immortalmin.www.word;
 
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -15,12 +28,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener,
-        PickerDialog.OnDialogInteractionListener{
+        PickerDialog.OnDialogInteractionListener,ImgTipDialog.OnDialogInteractionListener{
 
     private Button return_btn;
     private TextView prof_tv,recite_num,recite_scope;
+    private Switch sign_in_switch;
     private LinearLayout finish_num_layout,scope_num_layout;
     private PickerDialog pickerDialog;
     private MyAsyncTask myAsyncTask;
@@ -38,10 +53,26 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         recite_scope = findViewById(R.id.recite_scope);
         finish_num_layout = findViewById(R.id.finish_num_layout);
         scope_num_layout = findViewById(R.id.scope_num_layout);
+        sign_in_switch = findViewById(R.id.sign_in_switch);
         return_btn.setOnClickListener(this);
         prof_tv.setOnClickListener(this);
         finish_num_layout.setOnClickListener(this);
         scope_num_layout.setOnClickListener(this);
+        sign_in_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                user.setSign_in_type(1);
+                userDataUtil.updateUserDataInServer(user,true);
+            }else{
+                //获取权限
+                if(isNoOption()&&!isNoSwitch()){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.usage_authority_tip);
+                    show_img_tip_dialog(bitmap);
+                }else{
+                    user.setSign_in_type(0);
+                    userDataUtil.updateUserDataInServer(user,true);
+                }
+            }
+        });
         userDataUtil.getUserDataFromServer(null,false,new UserDataUtil.HttpCallbackStringListener() {
             @Override
             public void onFinish(User userdata) {
@@ -55,6 +86,26 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
+    private void show_img_tip_dialog(Bitmap img){
+        ImgTipDialog imgTipDialog = new ImgTipDialog(this,R.style.MyDialog,img);
+        imgTipDialog.setOnDismissListener(dialog -> sign_in_switch.setChecked(true));
+        imgTipDialog.show();
+    }
+
+    @Override
+    public void ImgTipInteraction(int res){
+        switch (res){
+            case 0:
+                sign_in_switch.setChecked(true);
+                break;
+            case 1:
+                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                this.startActivityForResult(intent,1);
+                break;
+        }
+    }
+
 
 
     public void onClick(View view){
@@ -100,31 +151,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 case 0:
                     recite_num.setText(String.valueOf(user.getRecite_num()));
                     recite_scope.setText(String.valueOf(user.getRecite_scope()));
+                    if(user.getSign_in_type()==0) sign_in_switch.setChecked(false);
+                    else sign_in_switch.setChecked(true);
                     break;
             }
             return false;
         }
     });
-
-    /*private void UpdateSettings(JSONObject jsonObject){
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            userDataUtil.getdata(new UserDataUtil.HttpCallbackStringListener() {
-                @Override
-                public void onFinish(User userdata) {
-                    user = userdata;
-                    mHandler.sendEmptyMessage(0);
-                }
-
-                @Override
-                public void onError(Exception e) {
-
-                }
-            },null);//将用户数据保存在本地，以及userData中
-
-        });
-        myAsyncTask.execute(jsonObject);
-    }*/
 
     @Override
     public void PickerInteraction(JSONObject ret){
@@ -139,18 +172,28 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }catch (JSONException e){
             e.printStackTrace();
         }
-
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",21);
-//            jsonObject.put(settingStr[Integer.valueOf(ret.get("what").toString())],ret.get("value"));
-//            jsonObject.put("uid", user.getUid());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        UpdateSettings(jsonObject);
     }
 
+    private boolean isNoOption() {
+        PackageManager packageManager = getApplicationContext()
+                .getPackageManager();
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+
+    private boolean isNoSwitch() {
+        long ts = System.currentTimeMillis();
+        UsageStatsManager usageStatsManager = (UsageStatsManager) getApplicationContext()
+                .getSystemService(Context.USAGE_STATS_SERVICE);
+        List<UsageStats> queryUsageStats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_BEST, 0, ts);
+        if (queryUsageStats == null || queryUsageStats.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -161,5 +204,20 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1){
+            if(isNoOption()&&!isNoSwitch()){
+                sign_in_switch.setChecked(true);
+            }else{
+                sign_in_switch.setChecked(false);
+                user.setSign_in_type(0);
+                userDataUtil.updateUserDataInServer(user,true);
+            }
+        }
+
     }
 }

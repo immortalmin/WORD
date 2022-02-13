@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+/**
+ * 目前只是用来同步collect的数据
+ */
 public class SynchronizeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Button uploadBtn,downloadBtn,returnBtn,onlyWifiBtn;

@@ -29,11 +29,11 @@ public class UsageTimeDbDao {
     /**
      * 获取使用时间
      */
-    ArrayList<Integer> getUsageTime(){
-        ArrayList<Integer> timeList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select utime from usageTime order by udate desc limit 300",null);
+    ArrayList<TwoTuple<String,Integer>> getUsageTime(String date){
+        ArrayList<TwoTuple<String,Integer>> timeList = new ArrayList<>();
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select udate,utime from usageTime where udate>=\""+date+"\" order by udate",null);
         while(cursor.moveToNext()){
-            timeList.add(cursor.getInt(cursor.getColumnIndex("utime")));
+            timeList.add(new TwoTuple(cursor.getString(cursor.getColumnIndex("udate")),cursor.getInt(cursor.getColumnIndex("utime"))));
         }
         cursor.close();
         return timeList;

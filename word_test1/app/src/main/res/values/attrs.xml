@@ -48,6 +48,10 @@
         <attr name="verticalSpacing" format="dimension"/>
     </declare-styleable>
 
+<!--    <declare-styleable name="SignIn">-->
+<!--        <attr name="horizontalSpacing" format="dimension"/>-->
+<!--        <attr name="verticalSpacing" format="dimension"/>-->
+<!--    </declare-styleable>-->
 </resources>
 
 

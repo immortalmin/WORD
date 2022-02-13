@@ -69,7 +69,10 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
      *  26:getfeedbacklist 获取用户反馈列表
      *
      *  27:sync_collect 同步数据
-     *  28：check_version 检查是否有新版本
+     *  28:check_version 检查是否有新版本
+     *
+     *  29:update_daily_recitation 更新每日背诵的数据
+     *  30:get_daily_recitation 获取每日背诵的数据
      *
      *
      *  101:register        注册
@@ -85,7 +88,8 @@ class MyAsyncTask extends AsyncTask<JSONObject, Integer, String> {
                 "getrecitelist","getreviewlist","getsearchlist","getsetting","getuserdata",
                 "getusetime","register","update_collect","update_example","update_password",
                 "update_recite","update_setting","update_time","update_userdata","update_word",
-                "upload_picture","getfeedbacklist","sync_collect","check_version"
+                "upload_picture","getfeedbacklist","sync_collect","check_version","update_daily_recitation",
+                "get_daily_recitation"
         };
         try{
             what = Integer.valueOf(params[0].get("what").toString());

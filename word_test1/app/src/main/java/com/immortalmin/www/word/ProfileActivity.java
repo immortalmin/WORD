@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,13 +39,14 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener,
         EditDialog.OnDialogInteractionListener{
 
-    private Button return_btn,logout_btn,motto_edit_btn,setting_btn;
-    private TextView nickname,motto,changePwd,feedback,synchronize,update;
+    private TextView nickname;
+    private TextView motto;
     private CircleImageView photo;
     private ImageView backdrop;
     private SignIn signIn;
     private User user = new User();
     private UsageTimeDbDao usageTimeDbDao = new UsageTimeDbDao(this);
+    private DailyRecitationDbDao dailyRecitationDbDao = new DailyRecitationDbDao(this);
     private UserDataUtil userDataUtil = new UserDataUtil(ProfileActivity.this);
     private CaptureUtil captureUtil = new CaptureUtil();
     private UseTimeDataManager mUseTimeDataManager = new UseTimeDataManager(this);
@@ -53,16 +56,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        return_btn = findViewById(R.id.return_btn);
-        logout_btn = findViewById(R.id.logout_btn);
-        motto_edit_btn = findViewById(R.id.motto_edit_btn);
-        setting_btn = findViewById(R.id.setting_btn);
+        Button return_btn = findViewById(R.id.return_btn);
+        Button logout_btn = findViewById(R.id.logout_btn);
+        Button motto_edit_btn = findViewById(R.id.motto_edit_btn);
+        Button setting_btn = findViewById(R.id.setting_btn);
         nickname = findViewById(R.id.nickname);
         motto = findViewById(R.id.motto);
-        changePwd = findViewById(R.id.changePwd);
-        feedback = findViewById(R.id.feedback);
-        synchronize = findViewById(R.id.synchronize);
-        update = findViewById(R.id.update);
+        TextView changePwd = findViewById(R.id.changePwd);
+        TextView feedback = findViewById(R.id.feedback);
+        TextView synchronize = findViewById(R.id.synchronize);
+        TextView update = findViewById(R.id.update);
         photo = findViewById(R.id.photo);
         signIn = findViewById(R.id.signIn);
         backdrop = findViewById(R.id.backdrop);
@@ -85,8 +88,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         user = userDataUtil.getUserDataFromSP();
         //显示用户的昵称、个性签名等
         mHandler.sendEmptyMessage(1);
-        //获取使用时间并显示
-        getUseTime();
+        //获取sign in数据并显示
+
+//        getSignInData(user.getSign_in_type());
     }
 
     public void onClick(View view){
@@ -147,7 +151,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.setting_btn:
                 intent = new Intent(ProfileActivity.this,SettingActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.slide_left_in,R.anim.slide_to_right);
                 break;
             case R.id.changePwd:
@@ -175,12 +179,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     /**
      * 获取用户每天的使用时长
      */
-    private void getUseTime(){
-        ArrayList<Integer> usetime = usageTimeDbDao.getUsageTime();
-        //加入今天的数据
-        usetime.add(0,getTodayUseTime());
-        signIn.setSign_in_times(usetime);
-    }
+    /*private void getSignInData(int type){
+        ArrayList<TwoTuple<String,Integer>> data;
+        if(type==0){
+            data = dailyRecitationDbDao.getTotalNums(10);
+//            signIn.setDataList(data);
+        }else{
+            ArrayList<Integer> usetime = usageTimeDbDao.getUsageTime();
+            //加入今天的数据
+            usetime.add(0,getTodayUseTime());
+            signIn.setDataList(usetime);
+        }
+
+    }*/
 
     /**
      * 获取今天已使用的时间
@@ -241,6 +252,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     photo.setImageBitmap((Bitmap)msg.obj);
                     break;
                 case 1:
+                    signIn.setType(user.getSign_in_type());
                     nickname.setText(user.getUsername());
                     if(user.getMotto()==null||"".equals(user.getMotto())||"null".equals(user.getMotto())){
                         motto.setText("你还没有设置个性签名");
@@ -299,37 +311,38 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0) {
-            if (data == null) {
-                Log.i("ccc", "数据为空");
-                return;
+        if (requestCode == 0) {//更换头像
+            if (data != null) {
+                //打开相册并选择照片，这个方式选择单张
+                // 获取返回的数据，这里是android自定义的Uri地址
+                Uri selectedImage = data.getData();
+                // 获取选择照片的数据视图
+                if (selectedImage != null) {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    // 从数据视图中获取已选择图片的路径
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    // 将图片显示到界面上
+                    Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
+                    //上传图片到服务器
+                    uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php", picturePath);
+                    //删除老的，添加新的
+                    ImageUtils.deletePhotoFromStorage(user.getProfile_photo());
+                    ImageUtils.savePhotoToStorage(bitmap, user.getProfile_photo());
+                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
+                    sp.edit().putString("profile_photo", user.getProfile_photo()).apply();
+                    mHandler.obtainMessage(0, bitmap).sendToTarget();
+                    cursor.close();
+                } else {
+                    Log.i("ccc", "数据为空");
+                }
             }
-            //打开相册并选择照片，这个方式选择单张
-            // 获取返回的数据，这里是android自定义的Uri地址
-            Uri selectedImage = data.getData();
-            // 获取选择照片的数据视图
-            if (selectedImage != null) {
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                // 从数据视图中获取已选择图片的路径
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                // 将图片显示到界面上
-                Bitmap bitmap = ImageUtils.getBitmapFromPath(picturePath, 80, 80);
-                //上传图片到服务器
-                uploadPic("http://47.98.239.237/word/php_file2/upload_picture.php", picturePath);
-                //删除老的，添加新的
-                ImageUtils.deletePhotoFromStorage(user.getProfile_photo());
-                ImageUtils.savePhotoToStorage(bitmap, user.getProfile_photo());
-                SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-                sp.edit().putString("profile_photo", user.getProfile_photo()).apply();
-                mHandler.obtainMessage(0, bitmap).sendToTarget();
-                cursor.close();
-            } else {
-                Log.i("ccc", "数据为空");
-            }
+        }else if(requestCode==1){//setting
+            init();
         }
+
     }
 
     @Override

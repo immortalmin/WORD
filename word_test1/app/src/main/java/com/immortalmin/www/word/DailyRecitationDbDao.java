@@ -22,9 +22,9 @@ public class DailyRecitationDbDao {
         helper = new DailyRecitationSQLiteOpenHelper(context);
     }
 
-    ArrayList<TwoTuple<String,Integer>> getTotalNums(int mount){
+    ArrayList<TwoTuple<String,Integer>> getTotalNums(String date){
         ArrayList<TwoTuple<String,Integer>> res = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select record_date,review_num+recite_num as total_num from daily_recitation order by record_date desc limit "+mount+";",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select record_date,review_num+recite_num as total_num from daily_recitation where record_date>=\""+date+"\" order by record_date;",null);
         while(cursor.moveToNext()){
             res.add(new TwoTuple(cursor.getString(cursor.getColumnIndex("record_date")),cursor.getInt(cursor.getColumnIndex("total_num"))));
         }
@@ -32,11 +32,38 @@ public class DailyRecitationDbDao {
         return res;
     }
 
-    void insert(DailyRecitation dailyRecitation){
+    /**
+     * 不上传今天的数据，仅上传今天以前的数据
+     */
+    ArrayList<DailyRecitation> getSyncList(){
+        ArrayList<DailyRecitation> res = new ArrayList<>();
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select * from daily_recitation where is_synchronized=0 and record_date!=current_date;",null);
+        DailyRecitation dailyRecitation;
+        while(cursor.moveToNext()){
+            dailyRecitation = new DailyRecitation();
+            dailyRecitation.setRid(cursor.getInt(cursor.getColumnIndex("rid")));
+            dailyRecitation.setReview_num(cursor.getInt(cursor.getColumnIndex("review_num")));
+            dailyRecitation.setRecite_num(cursor.getInt(cursor.getColumnIndex("recite_num")));
+            dailyRecitation.setGrasp_num(cursor.getInt(cursor.getColumnIndex("grasp_num")));
+            dailyRecitation.setRecord_date(cursor.getString(cursor.getColumnIndex("record_date")));
+            res.add(dailyRecitation);
+        }
+        return res;
+    }
+
+    void insertSingleData(DailyRecitation dailyRecitation){
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("insert into daily_recitation(uid,record_date,review_num,recite_num,grasp_num,is_synchronized)values("+dailyRecitation.getUid()+",current_date,"+dailyRecitation.getReview_num()+","+dailyRecitation.getRecite_num()+","+dailyRecitation.getGrasp_num()+",false);");
+        db.execSQL("insert into daily_recitation(uid,record_date,review_num,recite_num,grasp_num,is_synchronized)values("+dailyRecitation.getUid()+",\""+dailyRecitation.getRecord_date()+"\","+dailyRecitation.getReview_num()+","+dailyRecitation.getRecite_num()+","+dailyRecitation.getGrasp_num()+","+dailyRecitation.isIs_synchronized()+");");
         db.close();
     }
+
+
+    void insertTodayData(DailyRecitation dailyRecitation){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("insert into daily_recitation(uid,record_date,review_num,recite_num,grasp_num,is_synchronized)values("+dailyRecitation.getUid()+",current_date,"+dailyRecitation.getReview_num()+","+dailyRecitation.getRecite_num()+","+dailyRecitation.getGrasp_num()+","+dailyRecitation.isIs_synchronized()+");");
+        db.close();
+    }
+
 
     boolean isExist(int uid){
         Cursor cursor = helper.getReadableDatabase().rawQuery("select * from daily_recitation where record_date=current_date and uid="+uid,null);
@@ -44,12 +71,12 @@ public class DailyRecitationDbDao {
     }
 
     /**
-     *
+     * 增性update
      * @param what 0:recite     1:review
      */
     void update(int what,DailyRecitation dailyRecitation){
         if(!isExist(dailyRecitation.getUid())){
-            insert(dailyRecitation);
+            insertTodayData(dailyRecitation);
             return ;
         }
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -61,11 +88,34 @@ public class DailyRecitationDbDao {
         db.close();
     }
 
-    void delete(int rid){
+    /**
+     * 直接更新
+     */
+    void updateByRecordDate(DailyRecitation dailyRecitation){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("update daily_recitation set review_num="+dailyRecitation.getReview_num()+",recite_num="+dailyRecitation.getRecite_num()+",grasp_num="+dailyRecitation.getGrasp_num()+",is_synchronized=1 where record_date=\""+dailyRecitation.getRecord_date()+"\"");
+        db.close();
+    }
+
+    void updateSyncByRecordDate(String record_date,boolean is_synchronized){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("is_synchronized",is_synchronized);
+        db.update("daily_recitation",values,"record_date=?",new String[]{String.valueOf(record_date)});
+    }
+
+    void deleteByRid(int rid){
         SQLiteDatabase db = helper.getWritableDatabase();
         db.execSQL("delete from daily_recitation where rid="+rid);
         db.close();
     }
+
+    void deleteAll(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("delete from daily_recitation;");
+        db.close();
+    }
+
 
     /**
      * 仅测试用

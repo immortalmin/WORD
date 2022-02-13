@@ -201,6 +201,42 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
                 />
+            <LinearLayout
+                android:id="@+id/SignInType_layout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="活跃图展示内容"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+
+                <Switch
+                    android:id="@+id/sign_in_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumb="@drawable/switch_thumb_selector_sign_in"
+                    android:track="@drawable/switch_track_selector_sign_in"
+                    android:showText="true"
+                    android:switchTextAppearance="@style/SwitchSignIn"
+                    android:textOn="背词"
+                    android:textOff="使用"
+                    />
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eaeaea"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                />
         </LinearLayout>
     </ScrollView>
 
