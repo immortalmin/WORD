@@ -3,7 +3,6 @@ package com.immortalmin.www.word;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -14,11 +13,9 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -41,6 +38,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private MyAsyncTask myAsyncTask;
     private String[] settingStr = {"recite_num","recite_scope"};
     private User user = new User();
+    private ImgTipDialog imgTipDialog;
     private UserDataUtil userDataUtil = new UserDataUtil(SettingActivity.this);
 
     @Override
@@ -88,21 +86,18 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void show_img_tip_dialog(Bitmap img){
-        ImgTipDialog imgTipDialog = new ImgTipDialog(this,R.style.MyDialog,img);
-        imgTipDialog.setOnDismissListener(dialog -> sign_in_switch.setChecked(true));
+        imgTipDialog = new ImgTipDialog(this,R.style.MyDialog,img);
+        imgTipDialog.setOnDismissListener(dialog -> {
+            if(user.getSign_in_type()==1) sign_in_switch.setChecked(true);
+        });
         imgTipDialog.show();
     }
 
     @Override
     public void ImgTipInteraction(int res){
-        switch (res){
-            case 0:
-                sign_in_switch.setChecked(true);
-                break;
-            case 1:
-                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                this.startActivityForResult(intent,1);
-                break;
+        if(res==1){
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            this.startActivityForResult(intent,1);
         }
     }
 
@@ -210,6 +205,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
+            imgTipDialog.dismiss();
             if(isNoOption()&&!isNoSwitch()){
                 sign_in_switch.setChecked(true);
             }else{

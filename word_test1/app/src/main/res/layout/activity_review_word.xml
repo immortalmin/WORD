@@ -8,7 +8,7 @@
     tools:context=".ReviewWordActivity">
 
     <ProgressBar
-        android:id="@+id/total_progress"
+        android:id="@+id/total_progress1"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="15dp"
@@ -17,7 +17,19 @@
         android:layout_marginRight="50dp"
         android:max="100"
         android:progress="0"
-        android:progressDrawable="@drawable/progressbar_color"/>
+        android:progressDrawable="@drawable/progressbar_color2"/>
+
+    <ProgressBar
+        android:id="@+id/total_progress2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progressbar_color3"/>
     <TextView
         android:id="@+id/word_times"
         android:layout_width="wrap_content"

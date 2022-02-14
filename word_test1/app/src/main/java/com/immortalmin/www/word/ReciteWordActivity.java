@@ -44,7 +44,7 @@ public class ReciteWordActivity extends AppCompatActivity
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private DailyRecitationDbDao dailyRecitationDbDao = new DailyRecitationDbDao(this);
     private User user = new User();
-    private ProgressBar total_progress;
+    private ProgressBar total_progress1,total_progress2,total_progress3;
     private SweetAlertDialog finishDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private ArrayList<DetailWord> recite_list = null;//the list of word
@@ -56,7 +56,9 @@ public class ReciteWordActivity extends AppCompatActivity
     private int correct_ind = 0;//the index of correct word in recite_list of correct word
     private int[] select = null;//下标转换到在recite_list中的下标
     private int[] finish_ind = new int[10000];//今天是否已经连续背对5次
-    private int finish_num = 0;//今天背完的单词数
+    private int select_num = 0;//已经过选择模式的单词数
+    private int recall_num = 0;//已经过回忆模式的单词数
+    private int spell_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
     private int pre_ind = 0;//上一个单词的下标，用来防止连续两次背到同样的单词
     private int next_ind = 0;//下一个单词的下标，用来决定拼写模式后是否隐藏软键盘
@@ -76,7 +78,9 @@ public class ReciteWordActivity extends AppCompatActivity
         imgview = findViewById(R.id.imgview);
         turn_mode.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
-        total_progress = findViewById(R.id.total_progress);
+        total_progress1 = findViewById(R.id.total_progress1);
+        total_progress2 = findViewById(R.id.total_progress2);
+        total_progress3 = findViewById(R.id.total_progress3);
         initialize();
     }
 
@@ -299,7 +303,7 @@ public class ReciteWordActivity extends AppCompatActivity
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    String totalTimesString = finish_num + "/" + recite_num,wordTimesString = today_finish + "/" + c_times;
+                    String totalTimesString = spell_num + "/" + recite_num,wordTimesString = today_finish + "/" + c_times;
                     total_times.setText(totalTimesString);
                     word_times.setText(wordTimesString);
                     break;
@@ -327,6 +331,8 @@ public class ReciteWordActivity extends AppCompatActivity
         int co_times = now_word.getCorrect_times();
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
+                recall_num++;
+                updateProgress();
                 now_word.setToday_correct_times(to_co_times + 1);
                 recite_list.set(correct_ind, now_word);
                 break;
@@ -335,6 +341,8 @@ public class ReciteWordActivity extends AppCompatActivity
                 recite_list.set(correct_ind, now_word);
                 break;
             case 3://unknown
+                select_num--;
+                updateProgress();
                 now_word.setToday_correct_times(0);
                 now_word.setError_times(er_times + 1);
                 recite_list.set(correct_ind, now_word);
@@ -356,11 +364,13 @@ public class ReciteWordActivity extends AppCompatActivity
             case 1://回答正确
                 correct_word = recite_list.get(correct_ind);
                 correct_word.setToday_correct_times(correct_word.getToday_correct_times() + 1);
+                select_num++;
+                updateProgress();
 //                if (correct_word.getToday_correct_times() >= c_times) {
 //                    finish_ind[correct_ind] = 1;
-//                    finish_num++;
+//                    spell_num++;
 //                    total_progress.post(() -> {
-//                        int pro_num = finish_num * 100 / recite_num;
+//                        int pro_num = spell_num * 100 / recite_num;
 //                        total_progress.setProgress(pro_num);
 //                    });
 //                    correct_word.setCorrect_times(correct_word.getCorrect_times() + 1);
@@ -409,11 +419,8 @@ public class ReciteWordActivity extends AppCompatActivity
         int co_times = correct_word.getCorrect_times();
         if (WrongTimes == 0) {//一次就过
             finish_ind[correct_ind] = 1;
-            finish_num++;
-            total_progress.post(() -> {
-                int pro_num = finish_num * 100 / recite_num;
-                total_progress.setProgress(pro_num);
-            });
+            spell_num++;
+            updateProgress();
             correct_word.setCorrect_times(co_times + 1);
             //设置下次复习的时间
             correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
@@ -428,14 +435,33 @@ public class ReciteWordActivity extends AppCompatActivity
         } else {//不是一次就过，下回重新拼写
             correct_word.setError_times(er_times + WrongTimes);
             correct_word.setToday_correct_times(0);
+            select_num--;
+            recall_num--;
+            updateProgress();
             recite_list.set(correct_ind, correct_word);
         }
         mHandler.obtainMessage(0).sendToTarget();
-        if (finish_num >= recite_num) {
+        if (spell_num >= recite_num) {
             updateRestLocalData();
         }else{
             start_recite();
         }
+    }
+
+    //XXX:因为select_num和recall_num的取值范围是0~(recite_num+recite_scope)，而spell_num的取值范围是0~recite_num，所以可能会出现total_progress3超过total_progress1和total_progress2的情况，暂时没想到怎么解决这种问题
+    private void updateProgress(){
+        total_progress1.post(() -> {
+            int pro_num = select_num * 100 / (recite_num+recite_scope);
+            total_progress1.setProgress(pro_num);
+        });
+        total_progress2.post(() -> {
+            int pro_num = recall_num * 100 / (recite_num+recite_scope);
+            total_progress2.setProgress(pro_num);
+        });
+        total_progress3.post(() -> {
+            int pro_num = spell_num * 100 / recite_num;
+            total_progress3.setProgress(pro_num);
+        });
     }
 
     /**

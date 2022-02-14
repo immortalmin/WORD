@@ -43,14 +43,15 @@ public class ReviewWordActivity extends AppCompatActivity
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserDataUtil userDataUtil = new UserDataUtil(this);
     private User user = new User();
-    private ProgressBar total_progress;
+    private ProgressBar total_progress1,total_progress2;
     private SweetAlertDialog interruptDialog,inadequateDialog;
     private HashMap<String,Object> setting = new HashMap<>();
     private ArrayList<DetailWord> review_list;//the list of word
     private int review_num = 1;//the number of word today
     private int c_times = 2;//每个单词变成今天背完需要的次数
     private int[] finish_ind = new int[10000];//该单词是否完成今天的背诵
-    private int finish_num = 0;//今天背完的单词数
+    private int recall_num = 0;//完成回忆模式的单词数
+    private int spell_num = 0;//今天背完的单词数
     private int today_finish = 0;//该单词今天背完的次数
     private int current_ind = -1;
     private Boolean pron_lock = false;
@@ -69,7 +70,8 @@ public class ReviewWordActivity extends AppCompatActivity
         imgview = findViewById(R.id.imgview);
         turn_mode.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
-        total_progress = findViewById(R.id.total_progress);
+        total_progress1 = findViewById(R.id.total_progress1);
+        total_progress2 = findViewById(R.id.total_progress2);
         initialize();
     }
 
@@ -197,8 +199,9 @@ public class ReviewWordActivity extends AppCompatActivity
                     mHandler.obtainMessage(2).sendToTarget();
                     current_ind = -1;
                     Arrays.fill(finish_ind, 0);
-                    finish_num = 0;
-                    total_progress.post(() -> total_progress.setProgress(0));
+                    recall_num = 0;
+                    spell_num = 0;
+                    updateProgress();
                     for(int i=0;i<review_num;i++) review_list.remove(0);
                     review_num = Math.min(review_list.size(),group_num);
                     startReview();
@@ -214,6 +217,17 @@ public class ReviewWordActivity extends AppCompatActivity
                 });
         finish_alert.setCancelable(false);
         finish_alert.show();
+    }
+
+    private void updateProgress(){
+        total_progress1.post(() -> {
+            int pro_num = recall_num * 100 / review_num;
+            total_progress1.setProgress(pro_num);
+        });
+        total_progress2.post(() -> {
+            int pro_num = spell_num * 100 / review_num;
+            total_progress2.setProgress(pro_num);
+        });
     }
 
     /**
@@ -283,7 +297,7 @@ public class ReviewWordActivity extends AppCompatActivity
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    total_times.setText(finish_num + "/" + review_num);
+                    total_times.setText(spell_num + "/" + review_num);
                     word_times.setText(today_finish + "/" + c_times);
                     break;
                 case 1:
@@ -313,6 +327,8 @@ public class ReviewWordActivity extends AppCompatActivity
         int er_times = now_word.getError_times();
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
+                recall_num++;
+                updateProgress();
                 now_word.setToday_correct_times(to_co_times + 1);
                 review_list.set(current_ind, now_word);
                 break;
@@ -344,11 +360,8 @@ public class ReviewWordActivity extends AppCompatActivity
         int co_times = correct_word.getCorrect_times();
         if (WrongTimes == 0) {//一次就过
             finish_ind[current_ind] = 1;
-            finish_num++;
-            total_progress.post(() -> {
-                int pro_num = finish_num * 100 / review_num;
-                total_progress.setProgress(pro_num);
-            });
+            spell_num++;
+            updateProgress();
             correct_word.setCorrect_times(co_times + 1);
             //设置下次复习的时间
             correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
@@ -361,12 +374,14 @@ public class ReviewWordActivity extends AppCompatActivity
             review_list.set(current_ind, correct_word);
             updateSingleLocalData(correct_word);
         } else {//不是一次就过，下回重新拼写
+            recall_num--;
+            updateProgress();
             correct_word.setError_times(er_times + WrongTimes);
             correct_word.setToday_correct_times(0);
             review_list.set(current_ind, correct_word);
         }
         mHandler.obtainMessage(0).sendToTarget();
-        if (finish_num >= review_num) {
+        if (spell_num >= review_num) {
             if(review_num == review_list.size()) finishDialog();
             else finishAGroupDialog();
             DailyRecitation dailyRecitation = new DailyRecitation(Integer.parseInt(user.getUid()),review_num,0,0,"",false);
