@@ -1,6 +1,7 @@
 package com.immortalmin.www.word;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -9,12 +10,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
@@ -25,7 +30,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
-public class ReciteWordActivity extends AppCompatActivity
+public class ReciteWordActivity extends MyAppCompatActivity
         implements View.OnClickListener,
         SpellFragment.OnFragmentInteractionListener,
         CountDownFragment.OnFragmentInteractionListener,
@@ -36,7 +41,8 @@ public class ReciteWordActivity extends AppCompatActivity
     private SelectFragment selectFragment = new SelectFragment();
     private CountDownFragment countDownFragment = new CountDownFragment();
     private SpellFragment spellFragment = new SpellFragment();
-    private Button turn_mode,ret_btn;
+    private Button trashBtn,checkBtn,ret_btn;
+    private RelativeLayout operating_area;
     private ImageView imgview;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
@@ -71,18 +77,37 @@ public class ReciteWordActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recite_word);
         SQLiteStudioService.instance().start(this);//连接SQLiteStudio
+        View rootView = findViewById(R.id.rootView);
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
-        turn_mode = findViewById(R.id.turn_mode);
+        trashBtn = findViewById(R.id.trashBtn);
+        checkBtn = findViewById(R.id.checkBtn);
         ret_btn = findViewById(R.id.ret_btn);
         imgview = findViewById(R.id.imgview);
-        turn_mode.setOnClickListener(this);
+        trashBtn.setOnClickListener(this);
+        checkBtn.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
         total_progress1 = findViewById(R.id.total_progress1);
         total_progress2 = findViewById(R.id.total_progress2);
         total_progress3 = findViewById(R.id.total_progress3);
+        operating_area = findViewById(R.id.operating_area);
         initialize();
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
     }
+
+    ViewTreeObserver.OnGlobalLayoutListener layoutListener = () -> {
+        Rect r = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        int heightDifference = visibleHeight - (r.bottom - r.top); // 实际高度减去可视图高度即是键盘高度
+        boolean isKeyboardShowing = heightDifference > visibleHeight / 3;
+        if(isKeyboardShowing){
+            operating_area.animate().translationY(-heightDifference).setDuration(0).start();
+        }else{
+            //键盘隐藏
+            operating_area.animate().translationY(0).start();
+        }
+    };
+
 
     /**
      * 初始化操作
@@ -119,6 +144,7 @@ public class ReciteWordActivity extends AppCompatActivity
         switch (today_finish) {
             case 0://select
                 hideInput();
+                checkBtn.setVisibility(View.INVISIBLE);
                 select_option();
                 recite_info.put("wordview", recite_list.get(select[correct_sel]).getWord_en());
                 recite_info.put("today_correct_times", recite_list.get(select[correct_sel]).getToday_correct_times());
@@ -132,6 +158,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 break;
             case 1://countdown
                 hideInput();
+                checkBtn.setVisibility(View.INVISIBLE);
                 int countdown_mode = (int) (Math.random() * 3) + 1;
                 now_words = new HashMap<>();
                 now_words.put("mode", countdown_mode);
@@ -140,6 +167,7 @@ public class ReciteWordActivity extends AppCompatActivity
                 start_countdown_mode(now_words);
                 break;
             case 2://spell
+                checkBtn.setVisibility(View.VISIBLE);
                 now_words = new HashMap<>();
                 now_words.put("once_flag", true);
                 now_words.put("word_en", recite_list.get(correct_ind).getWord_en());
@@ -289,7 +317,10 @@ public class ReciteWordActivity extends AppCompatActivity
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.turn_mode:
+            case R.id.trashBtn:
+
+                break;
+            case R.id.checkBtn:
 
                 break;
             case R.id.ret_btn:

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UserDataUtil userDataUtil = null;
     private UpdateManager updateManager = null;
     private CollectDbDao collectDbDao = new CollectDbDao(this);
-    private Button btn_collect,btn_recite,btn_review,btn_spell;
+    private Button btn_collect,btn_recite,btn_review,btn_test;
     private ImageView imgview;
     private SearchView search_bar;
     private CircleImageView profile_photo;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         screen_height = metric.heightPixels;   // 屏幕高度（像素）
         btn_collect = findViewById(R.id.btn_collect);
         btn_recite = findViewById(R.id.btn_recite);
-        btn_spell = findViewById(R.id.btn_spell);
+        btn_test = findViewById(R.id.btn_test);
         btn_review = findViewById(R.id.btn_review);
         search_bar = findViewById(R.id.search_bar);
         profile_photo = findViewById(R.id.profile_photo);
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_collect.setOnClickListener(this);
         btn_recite.setOnClickListener(this);
         btn_review.setOnClickListener(this);
-        btn_spell.setOnClickListener(this);
+        btn_test.setOnClickListener(this);
         search_bar.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
         search_bar.setOnSearchClickListener(view -> {
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
                     btn_collect.setBackground(new BitmapDrawable(bitmaps.get(0)));
                     btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
-                    btn_spell.setBackground(new BitmapDrawable(bitmaps.get(2)));
+                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(2)));
                     btn_review.setBackground(new BitmapDrawable(bitmaps.get(3)));
                     break;
                 case 2:
@@ -272,10 +272,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
-            case R.id.btn_spell:
-//                intent = new Intent(MainActivity.this,CountDownTestActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
+            case R.id.btn_test:
+                intent = new Intent(MainActivity.this,TestActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
             case R.id.btn_recite:
                 intent = new Intent(MainActivity.this,ReciteWordActivity.class);

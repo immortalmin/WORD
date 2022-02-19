@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/recite_word_2"
-    tools:context=".ReciteWordActivity">
+    tools:context=".ReciteWordActivity"
+    android:id="@+id/rootView">
 
     <ProgressBar
         android:id="@+id/total_progress1"
@@ -64,6 +65,7 @@
         android:background="@drawable/return3"
         android:text="" />
 
+
     <TextView
         android:id="@+id/total_times"
         android:layout_width="wrap_content"
@@ -90,12 +92,20 @@
 
 
         <Button
-            android:id="@+id/turn_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/trashBtn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/trash" />
+
+        <Button
+            android:id="@+id/checkBtn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/check"
+            android:layout_alignParentEnd="true"
             android:visibility="invisible"
-            android:textAllCaps="false"
-            android:text="turn_model" />
+            android:layout_margin="5dp"/>
     </RelativeLayout>
     <ImageView
         android:id="@+id/imgview"
