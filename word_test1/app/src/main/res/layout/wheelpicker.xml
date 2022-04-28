@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/worddialog_round_corners">
+    android:background="@drawable/edit_background">
 
     <TextView
         android:id="@+id/title"
@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:text="设置"
-        android:textColor="#e6e3e3"
+        android:textColor="#555454"
         android:textSize="20sp"/>
 
     <com.immortalmin.www.word.WheelPicker
@@ -24,11 +24,11 @@
         android:layout_marginTop="50dp"
         android:background="#00000000"
         app:wheelCyclic="true"
-        app:itemTextColor="#af9292"
-        app:selectedTextColor="#ffffff"
-        app:indicatorTextColor="#c9c3c3"
-        app:wheelCurtainBorderColor="#70000000"
-        app:wheelCurtainColor="#50dcd7d7"
+        app:itemTextColor="#A4A7A2"
+        app:selectedTextColor="#504F4F"
+        app:indicatorTextColor="#C6C9C6"
+        app:wheelCurtainBorderColor="#C8F3C8"
+        app:wheelCurtainColor="#DAF8B8"
         >
 
     </com.immortalmin.www.word.WheelPicker>
@@ -47,10 +47,10 @@
             android:id="@+id/confirm_btn"
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:background="@drawable/rounded_corners_green"
+            android:background="@drawable/login_btn"
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
-            android:text="OK"/>
+            android:text="确认"/>
 
         <Button
             android:id="@+id/cancel_btn"
@@ -59,8 +59,8 @@
             android:layout_marginLeft="10dp"
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
-            android:background="@drawable/rounded_corners_red"
-            android:text="cancel"/>
+            android:background="@drawable/register_btn"
+            android:text="取消"/>
     </LinearLayout>
 
 </RelativeLayout>

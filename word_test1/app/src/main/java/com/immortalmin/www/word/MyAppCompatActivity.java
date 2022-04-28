@@ -3,6 +3,7 @@ package com.immortalmin.www.word;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 
+
 public class MyAppCompatActivity extends AppCompatActivity {
 
     int visibleHeight = 0;
@@ -16,4 +17,7 @@ public class MyAppCompatActivity extends AppCompatActivity {
         visibleHeight = r.bottom-r.top;
     }
 
+    public int getVisibleHeight() {
+        return visibleHeight;
+    }
 }

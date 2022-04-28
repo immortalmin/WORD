@@ -6,18 +6,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.tencent.connect.UserInfo;
@@ -35,17 +37,15 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends MyAppCompatActivity implements View.OnClickListener{
 
     private MyEditText username_et,password_et;
     private Button login_btn,reg_btn,forget_pwd;
     private CircleImageView login_profile_photo,QQLoginBtn;
+    private RelativeLayout inputLayout,rootView;
     private User user;
-    private HashMap<String,Object> userSetting=null;
-    private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
     private UserDataUtil userDataUtil = null;
-    private MyAsyncTask myAsyncTask;
     private Intent intent;
     private Runnable toMain;
     private Context context;
@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg_btn = findViewById(R.id.reg_btn);
         forget_pwd = findViewById(R.id.forget_pwd);
         login_profile_photo = findViewById(R.id.login_profile_photo);
+        rootView = findViewById(R.id.rootView);
+        inputLayout = findViewById(R.id.inputLayout);
         login_btn.setOnClickListener(this);
         QQLoginBtn.setOnClickListener(this);
         reg_btn.setOnClickListener(this);
@@ -125,7 +127,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(listener);
     }
+
+    ViewTreeObserver.OnGlobalLayoutListener listener = () -> {
+        Rect r = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        int heightDifference = visibleHeight - (r.bottom - r.top); // 实际高度减去可视图高度即是键盘高度
+        boolean isKeyboardShowing = heightDifference > visibleHeight / 3;
+        if(isKeyboardShowing){
+            int h1 = (visibleHeight-inputLayout.getHeight())/2;
+            if(h1<heightDifference){
+                inputLayout.animate().translationY(h1-heightDifference).setDuration(0).start();
+            }
+        }else{
+            inputLayout.animate().translationY(0).start();
+        }
+    };
 
     private void initUser() {
         user = userDataUtil.getUserDataFromSP();
@@ -150,7 +168,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 judge();
                 break;
             case R.id.reg_btn:
-                intent = new Intent(LoginActivity.this, Register2Activity.class);
+                intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -290,101 +308,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
-
-        /*JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("what",14);
-            jsonObject.put("login_mode",0);
-            jsonObject.put("username",username_et.getText());
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            user = jsonRe.userData(result);
-            if(user!=null){
-                setImage(user.getProfile_photo());
-            }else{
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.unload);
-                mHandler.obtainMessage(0,bitmap).sendToTarget();
-            }
-        });
-        myAsyncTask.execute(jsonObject);*/
     }
-
-    /**
-     * 根据open_id来判断用户是否是新用户
-     * 上传的数据有login_mode,open_id,username,profile_photo
-     * 如果用户不存在的话，就会新注册一个账号
-     * @param jsonObject
-     */
-    /*private void getUserDataForQQ(final JSONObject jsonObject){
-        myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setLoadDataComplete((result)->{
-            user = jsonRe.userData(result);
-            SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-            sp.edit().putString("uid",user.getUid())
-                    .putString("open_id",user.getOpen_id())
-                    .putInt("login_mode",user.getLogin_mode())
-                    .putString("username",user.getUsername())
-                    .putString("profile_photo",user.getProfile_photo())
-                    .putLong("last_login",user.getLast_login())
-                    .apply();
-            getUserSetting();
-        });
-        myAsyncTask.execute(jsonObject);
-    }*/
-
-
-    /**
-     * 获取用户设置
-     */
-//    private void getUserSetting(){
-////        new Thread(() -> {
-////            JSONObject jsonObject = new JSONObject();
-////            try{
-////                jsonObject.put("uid",user.getUid());
-////            }catch (JSONException e){
-////                e.printStackTrace();
-////            }
-////            HttpGetContext httpGetContext = new HttpGetContext();
-////            String s = httpGetContext.getData("http://47.98.239.237/word/php_file2/getsetting.php",jsonObject);
-////            userSetting = jsonRe.userSetting(s);
-////            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-////            sp.edit().putString("uid",userSetting.get("uid").toString())//NullPointException
-////                    .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-////                    .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-////                    .apply();
-////            Looper.prepare();
-////            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-////            mHandler.sendEmptyMessage(1);
-////            Looper.loop();
-////        }).start();\
-//        Log.i("ccc","getUserSetting:"+user.toString());
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("what",13);
-//            jsonObject.put("uid",user.getUid());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.setLoadDataComplete((result -> {
-//            userSetting = jsonRe.userSetting(result);
-//            Log.i("ccc",userSetting.toString());
-//            SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
-//            sp.edit().putString("uid",userSetting.get("uid").toString())//NullPointException
-//                    .putInt("recite_num",Integer.valueOf(userSetting.get("recite_num").toString()))
-//                    .putInt("recite_scope",Integer.valueOf(userSetting.get("recite_scope").toString()))
-//                    .apply();
-//            Looper.prepare();
-//            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-//            mHandler.sendEmptyMessage(1);
-//            Looper.loop();
-//        }));
-//        myAsyncTask.execute(jsonObject);
-//    }
-
 
     private void judge(){
         new Thread(() -> {
@@ -397,8 +321,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(canDirectLogin){
                     user.setStatus(1);
                     userDataUtil.updateUserDataInLocal(user);
-//                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//                    sp.edit().putInt("status",1).apply();
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                     mHandler.obtainMessage(1).sendToTarget();
                 }else if(pwd.equals(user.getPassword())){
@@ -406,16 +328,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     userDataUtil.updateUserDataInLocal(user);
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                     mHandler.sendEmptyMessage(1);
-//                    SharedPreferences sp = getSharedPreferences("login", Context.MODE_PRIVATE);
-//                    sp.edit().putString("uid", user.getUid())
-//                            .putString("username", user.getUsername())
-//                            .putString("password", user.getPassword())
-//                            .putString("profile_photo", user.getProfile_photo())
-//                            .putInt("status",1)
-//                            .putLong("last_login",user.getLast_login())
-//                            .putInt("login_mode",0)
-//                            .apply();
-//                    saveUserDataToLocal();
                 }else{
                     Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
@@ -424,28 +336,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }).start();
 
     }
-
-//    private void saveUserDataToLocal() {
-//        JSONObject jsonObject = new JSONObject();
-//        try{
-//            jsonObject.put("login_mode",0);
-//            jsonObject.put("username",user.getUsername());
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//        userDataUtil.getdata(new UserDataUtil.HttpCallbackStringListener() {
-//            @Override
-//            public void onFinish(User userdata) {
-//                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-//                mHandler.sendEmptyMessage(1);
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//
-//            }
-//        },jsonObject);
-//    }
 
     private void setImage(String pic) {
         Bitmap bitmap=ImageUtils.getPhotoFromStorage(pic);

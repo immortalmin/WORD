@@ -29,8 +29,6 @@
         android:queryHint="输入你要查询的词组"
         android:background="@drawable/rounded_corners_gray"
         >
-
-
     </SearchView>
 
 
@@ -39,52 +37,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/searchView">
 
-        <!--<Button
-            android:id="@+id/clear_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/trash_can"
-            />
-
-        <TextView
-            android:id="@+id/historyTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignBottom="@+id/clear_btn"
-            android:text="历史记录"/>
-
-        <ListView
-            android:id="@+id/historyListView"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/clear_btn"
-            android:divider="#00000000"
-            android:dividerHeight="10dp"
-            >
-
-        </ListView>
-
-        <TextView
-            android:id="@+id/newTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/historyListView"
-            android:layout_centerHorizontal="true"
-            android:textSize="17sp"
-            android:text="新查询"/>-->
-
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:divider="#00000000"
             android:dividerHeight="10dp"
             >
@@ -105,15 +62,10 @@
 
     </RelativeLayout>
 
-
     <ImageView
         android:id="@+id/imgView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"/>
-
-
-
-
 
 </RelativeLayout>

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 public class CaptureUtil {
 
@@ -23,13 +25,19 @@ public class CaptureUtil {
 
     //获取屏幕高度 不包含虚拟按键
     public static int getScreenHeight(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        assert wm != null;
+        wm.getDefaultDisplay().getRealMetrics(dm);
         return dm.heightPixels;
     }
 
     //获取屏幕宽度
     public static int getScreenWidth(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        assert wm != null;
+        wm.getDefaultDisplay().getRealMetrics(dm);
         return dm.widthPixels;
     }
 

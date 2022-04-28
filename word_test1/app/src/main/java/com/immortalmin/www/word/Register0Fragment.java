@@ -1,8 +1,10 @@
 package com.immortalmin.www.word;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +40,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Register0Fragment extends Fragment implements View.OnClickListener{
 
     private Context context;
+    private MyAppCompatActivity activity;
     private OnFragmentInteractionListener mListener;
     private CircleImageView profile_photo;
     private MyEditText username_tv,password_tv,confirm_tv;
     private TextView user_warn,pwd_warn,confirm_warn;
     private Button nextBtn;
+    private RelativeLayout f0Layout;
     private User user = new User();
     private JsonRe jsonRe = new JsonRe();
     private MD5Utils md5Utils = new MD5Utils();
@@ -52,6 +58,10 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
 
     public Register0Fragment() {
         // Required empty public constructor
+    }
+
+    public void setActivity(MyAppCompatActivity activity) {
+        this.activity = activity;
     }
 
     @Override
@@ -71,8 +81,8 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
         pwd_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.pwd_warn);
         confirm_tv = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_tv);
         confirm_warn = Objects.requireNonNull(getActivity()).findViewById(R.id.confirm_warn);
-
         nextBtn = Objects.requireNonNull(getActivity()).findViewById(R.id.nextBtn);
+        f0Layout = Objects.requireNonNull(getActivity()).findViewById(R.id.f0Layout);
         nextBtn.setOnClickListener(this);
         profile_photo.setOnClickListener(this);
 
@@ -152,6 +162,7 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
 
     private void init(){
 
+        f0Layout.getViewTreeObserver().addOnGlobalLayoutListener(listener);
         skipToNext = () -> {
             if (mListener != null) {
                 returnedData.clear();
@@ -223,6 +234,26 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
             }
         });
     }
+
+    ViewTreeObserver.OnGlobalLayoutListener listener = () -> {
+        Rect r = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        int heightDifference = activity.visibleHeight - (r.bottom - r.top); // 实际高度减去可视图高度即是键盘高度
+        boolean isKeyboardShowing = heightDifference > activity.visibleHeight / 3;
+        if(isKeyboardShowing){
+            if((activity.visibleHeight-f0Layout.getHeight())/2<heightDifference){
+                profile_photo.animate().translationY(50).setDuration(0).start();
+                nextBtn.animate().translationY(-50).setDuration(0).start();
+//                f0Layout.animate().translationY((activity.visibleHeight-f0Layout.getHeight()+100)/2-heightDifference).setDuration(0).start();
+            }
+
+        }else{
+            //键盘隐藏
+//            f0Layout.animate().translationY(0).start();
+            nextBtn.animate().translationY(0).start();
+            profile_photo.animate().translationY(0).start();
+        }
+    };
 
     private boolean judge(){
         if(username_tv.getText().toString().length()==0){
@@ -319,4 +350,6 @@ public class Register0Fragment extends Fragment implements View.OnClickListener{
     public interface OnFragmentInteractionListener {
         void Register0FragmentInteraction(HashMap<String,Object> data);
     }
+
+
 }

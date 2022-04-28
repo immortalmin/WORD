@@ -259,6 +259,7 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             s1 = word[i][0].getText().toString();
             s2 = word[i][1].getText().toString();
             s3 = word[i][2].getText().toString();
+            //XXX:???
             if(!del_flag[i]||(s1.length()==0&&s2.length()==0&&s3.length()==0)){
                 continue;
             }else if(s1.length()==0||s2.length()==0||s3.length()==0){

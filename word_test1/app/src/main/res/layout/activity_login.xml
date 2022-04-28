@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EBE9E9"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:id="@+id/rootView">
 
     <TextView
         android:id="@+id/nav_text"
@@ -29,6 +30,7 @@
         android:text="忘记密码" />
 
     <RelativeLayout
+        android:id="@+id/inputLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -80,10 +82,11 @@
             android:layout_below="@+id/password_et"
             android:layout_marginTop="50dp"
             android:layout_marginStart="40dp"
+            android:layout_marginBottom="20dp"
             android:textAllCaps="false"
             android:background="@drawable/login_btn"
             android:textColor="#FFFFFF"
-            android:text="Login" />
+            android:text="登录" />
 
         <Button
             android:id="@+id/reg_btn"
@@ -94,16 +97,26 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp"
             android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/register_btn"
             android:textColor="#FFFFFF"
-            android:text="Register"/>
+            android:text="注册"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/thirdLoginLayout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/inputLayout"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/QQLoginBtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_below="@+id/login_btn"
-            android:layout_marginTop="50dp"
             android:layout_marginStart="50dp"
             android:src="@drawable/qq_icon"/>
 
@@ -125,5 +138,6 @@
             android:layout_marginStart="20dp"
             android:src="@drawable/weibo_icon"/>
     </RelativeLayout>
+
 
 </RelativeLayout>

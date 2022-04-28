@@ -1,6 +1,7 @@
 package com.immortalmin.www.word;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -11,10 +12,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
@@ -26,7 +29,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
-public class ReviewWordActivity extends AppCompatActivity
+public class ReviewWordActivity extends MyAppCompatActivity
         implements View.OnClickListener,
         SpellFragment.OnFragmentInteractionListener,
         CountDownFragment.OnFragmentInteractionListener {
@@ -37,8 +40,10 @@ public class ReviewWordActivity extends AppCompatActivity
     private SpellFragment spellFragment = new SpellFragment();
     private CollectDbDao collectDbDao = new CollectDbDao(this);
     private DailyRecitationDbDao dailyRecitationDbDao = new DailyRecitationDbDao(this);
-    private Button turn_mode,ret_btn;
+    private RelativeLayout operating_area;
+    private Button trashBtn,checkBtn,ret_btn;
     private ImageView imgview;
+    private View rootView;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserDataUtil userDataUtil = new UserDataUtil(this);
@@ -63,17 +68,34 @@ public class ReviewWordActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         SQLiteStudioService.instance().start(this);//连接SQLiteStudio
         setContentView(R.layout.activity_review_word);
+        rootView = findViewById(R.id.rootView);
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
-        turn_mode = findViewById(R.id.turn_mode);
+        trashBtn = findViewById(R.id.trashBtn);
+        checkBtn = findViewById(R.id.checkBtn);
         ret_btn = findViewById(R.id.ret_btn);
         imgview = findViewById(R.id.imgview);
-        turn_mode.setOnClickListener(this);
+        operating_area = findViewById(R.id.operating_area);
+        trashBtn.setOnClickListener(this);
+        checkBtn.setOnClickListener(this);
         ret_btn.setOnClickListener(this);
         total_progress1 = findViewById(R.id.total_progress1);
         total_progress2 = findViewById(R.id.total_progress2);
         initialize();
     }
+
+    ViewTreeObserver.OnGlobalLayoutListener layoutListener = () -> {
+        Rect r = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        int heightDifference = visibleHeight - (r.bottom - r.top); // 实际高度减去可视图高度即是键盘高度
+        boolean isKeyboardShowing = heightDifference > visibleHeight / 3;
+        if(isKeyboardShowing){
+            operating_area.animate().translationY(-heightDifference).setDuration(0).start();
+        }else{
+            //键盘隐藏
+            operating_area.animate().translationY(0).start();
+        }
+    };
 
     /**
      * 从本地获取复习的单词列表
@@ -108,14 +130,17 @@ public class ReviewWordActivity extends AppCompatActivity
         mHandler.obtainMessage(0).sendToTarget();
         switch(today_finish){
             case 0:
+                checkBtn.setVisibility(View.INVISIBLE);
                 int countdown_mode = (int) (Math.random() * 3) + 1;
                 now_words = new HashMap<>();
                 now_words.put("mode", countdown_mode);
                 now_words.put("word_en", review_list.get(current_ind).getWord_en());
                 now_words.put("word_ch", review_list.get(current_ind).getWord_ch());
+                hideInput();
                 start_countdown_mode(now_words);
                 break;
             case 1:
+                checkBtn.setVisibility(View.VISIBLE);
                 now_words = new HashMap<>();
                 now_words.put("once_flag", true);
                 now_words.put("word_en", review_list.get(current_ind).getWord_en());
@@ -151,6 +176,7 @@ public class ReviewWordActivity extends AppCompatActivity
      * 初始化操作
      */
     public void initialize() {
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
         user = userDataUtil.getUserDataFromSP();
         init_fragment();
         dialog_init();
@@ -283,8 +309,31 @@ public class ReviewWordActivity extends AppCompatActivity
      */
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.turn_mode:
-
+            case R.id.trashBtn:
+                collectDbDao.updateCollectByWidAndSource(review_list.get(current_ind).getWid(),review_list.get(current_ind).getDict_source(),0);
+                finish_ind[current_ind]=1;
+                switch (today_finish){
+                    case 0:
+                        recall_num++;
+                        spell_num++;
+                        break;
+                    case 1:
+                        spell_num++;
+                        break;
+                }
+                updateProgress();
+                mHandler.obtainMessage(0).sendToTarget();
+                if (spell_num >= review_num) {
+                    if(review_num == review_list.size()) finishDialog();
+                    else finishAGroupDialog();
+                    DailyRecitation dailyRecitation = new DailyRecitation(Integer.parseInt(user.getUid()),review_num,0,0,"",false);
+                    dailyRecitationDbDao.update(1,dailyRecitation);
+                }else{
+                    startReview();
+                }
+                break;
+            case R.id.checkBtn:
+                spellFragment.checkAns();
                 break;
             case R.id.ret_btn:
                 interruptDialog();

@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import static android.content.Context.AUDIO_SERVICE;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
-//XXX:如果回答正确，并且下一轮也是拼写，不要关闭键盘
 public class SpellFragment extends Fragment implements View.OnClickListener{
     private final static String TAG = "SpellFragment";
     private OnFragmentInteractionListener mListener;
@@ -136,9 +135,17 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
          */
 //        music_delay = () -> mHandler.sendEmptyMessage(3);
     }
+
     public interface OnFragmentInteractionListener {
         void spellFragmentInteraction(int WrongTimes);
     }
+
+    public void checkAns(){
+        Log.i("ccc","checkAns");
+        if(isTyping) JudgeAnswer();
+        else mHandler.sendEmptyMessage(2);//重新显示题目
+    }
+
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -201,26 +208,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
             return false;
         }
     });
-
-//    TextView.OnEditorActionListener ewordEditorActionListener = (textView, i, keyEvent) -> {
-//        if(isTyping){
-//            //点击回车，判断答案是否正确
-//            if (keyEvent!=null&&KeyEvent.KEYCODE_ENTER == keyEvent.getKeyCode() && KeyEvent.ACTION_DOWN == keyEvent.getAction()) {
-//                Log.i("ccc","editionActionListener:judging,keycode="+keyEvent.getKeyCode());
-//                isTyping = false;
-//                JudgeAnswer();
-//                return true;
-//            }
-//        }else{
-//            //回答错误后用户点击任意键
-//            if(keyEvent!=null&&KeyEvent.ACTION_DOWN == keyEvent.getAction()){
-//                Log.i("ccc","editionActionListener:wrong answer");
-//                mHandler.sendEmptyMessage(2);//重新显示题目
-//                return true;
-//            }
-//        }
-//        return false;
-//    };
 
     /**
      * 检验答案是否正确

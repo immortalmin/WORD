@@ -44,6 +44,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
     private Button trashBtn,checkBtn,ret_btn;
     private RelativeLayout operating_area;
     private ImageView imgview;
+    private View rootView;
     private TextView total_times, word_times;
     private CaptureUtil captureUtil = new CaptureUtil();
     private UserDataUtil userDataUtil = new UserDataUtil(this);
@@ -77,7 +78,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recite_word);
         SQLiteStudioService.instance().start(this);//连接SQLiteStudio
-        View rootView = findViewById(R.id.rootView);
+        rootView = findViewById(R.id.rootView);
         total_times = findViewById(R.id.total_times);
         word_times = findViewById(R.id.word_times);
         trashBtn = findViewById(R.id.trashBtn);
@@ -92,7 +93,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
         total_progress3 = findViewById(R.id.total_progress3);
         operating_area = findViewById(R.id.operating_area);
         initialize();
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+
     }
 
     ViewTreeObserver.OnGlobalLayoutListener layoutListener = () -> {
@@ -113,6 +114,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
      * 初始化操作
      */
     public void initialize() {
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
         user = userDataUtil.getUserDataFromSP();
         init_fragment();
         dialog_init();
@@ -318,10 +320,32 @@ public class ReciteWordActivity extends MyAppCompatActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.trashBtn:
-
+                collectDbDao.updateCollectByWidAndSource(recite_list.get(correct_ind).getWid(),recite_list.get(correct_ind).getDict_source(),0);
+                finish_ind[correct_ind]=1;
+                switch (today_finish){
+                    case 0:
+                        select_num++;
+                        recall_num++;
+                        spell_num++;
+                        break;
+                    case 1:
+                        recall_num++;
+                        spell_num++;
+                        break;
+                    case 2:
+                        spell_num++;
+                        break;
+                }
+                updateProgress();
+                mHandler.obtainMessage(0).sendToTarget();
+                if (spell_num >= recite_num) {
+                    updateRestLocalData();
+                }else{
+                    start_recite();
+                }
                 break;
             case R.id.checkBtn:
-
+                spellFragment.checkAns();
                 break;
             case R.id.ret_btn:
                 interruptDialog();
