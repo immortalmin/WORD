@@ -35,6 +35,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
     private int user_sel;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
     private int duration,minDuration = 3000;//倒计时的时间
+    private boolean early_end = false;//用户是否在倒计时结束前点击了按钮
 
     @Override
     public void onAttach(Context context){
@@ -84,6 +85,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         isCountdownfinish = true;
         if(pron_flag){
             mediaPlayerUtil.start();
+            if(!early_end) pron_flag = false;//若在倒计时正常结束后播放了音频，则在跳转时不再播放音频
         }
     }
 
@@ -119,6 +121,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                     changed_volume++;
                     mediaPlayerUtil.start();
                 }else{
+                    early_end = true;
                     cpb_countdown.finishProgressBar();
                 }
                 living_flag = true;
@@ -126,6 +129,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
             case R.id.acquaint:
                 resetVolume();
                 if(!isCountdownfinish){
+                    early_end = true;
                     cpb_countdown.finishProgressBar();
                 }
                 soundPool.play(sound_acquaint, 0.3f, 0.3f, 0, 0, 1.0f);
@@ -143,6 +147,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
                 resetVolume();
                 if(!isCountdownfinish){
                     pron_flag=false;
+                    early_end = true;
                     cpb_countdown.finishProgressBar();
                 }
                 soundPool.play(sound_vague, 0.3f, 0.3f, 0, 0, 1.0f);
@@ -153,6 +158,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
             case R.id.strange:
                 resetVolume();
                 if(!isCountdownfinish){
+                    early_end = true;
                     pron_flag=false;
                     cpb_countdown.finishProgressBar();
                 }
@@ -203,8 +209,10 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         changed_volume = 0;
         isCountdownfinish = false;
         pron_flag=true;
+        early_end = false;
         living_flag = true;
-        mode = words.get("mode").toString();
+//        mode = words.get("mode").toString();
+        mode = "2";
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
         mediaPlayerUtil.setFinishListener(() -> {

@@ -141,7 +141,6 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     }
 
     public void checkAns(){
-        Log.i("ccc","checkAns");
         if(isTyping) JudgeAnswer();
         else mHandler.sendEmptyMessage(2);//重新显示题目
     }
