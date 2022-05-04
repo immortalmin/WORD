@@ -211,8 +211,7 @@ public class CountDownFragment extends Fragment implements View.OnClickListener{
         pron_flag=true;
         early_end = false;
         living_flag = true;
-//        mode = words.get("mode").toString();
-        mode = "2";
+        mode = words.get("mode").toString();
         word_en = words.get("word_en").toString();
         word_ch = words.get("word_ch").toString();
         mediaPlayerUtil.setFinishListener(() -> {

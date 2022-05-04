@@ -59,7 +59,7 @@ public class JsonRe {
 //    }
 
     /**
-     * 恋练有词及用户添加的单词（不包含单词来源）
+     * 恋练有词及用户添加的单词
      */
     ArrayList<DetailWord> detailWordData(String jsonStr){
         ArrayList<DetailWord> words = new ArrayList<>();
@@ -79,6 +79,7 @@ public class JsonRe {
                 word.setLast_date(jsonObject.getString("last_date"));
                 word.setReview_date(jsonObject.getString("review_date"));
                 word.setDict_source(jsonObject.getString("dict_source"));
+                word.setSource(jsonObject.getString("source"));
                 words.add(word);
             }
         }catch (JSONException e) {

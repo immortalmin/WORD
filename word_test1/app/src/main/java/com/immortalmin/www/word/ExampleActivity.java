@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -205,6 +206,8 @@ public class ExampleActivity extends AppCompatActivity implements
                     break;
                 case 2:
                     if(user.getUsername().equals(word.getSource())){
+//                    Log.i("ccc",word.getSource());
+//                    if(user.getUid().equals(word.getSource())){
                         word_del_btn.setVisibility(View.VISIBLE);
                         word_edit_btn.setVisibility(View.VISIBLE);
                     }else{

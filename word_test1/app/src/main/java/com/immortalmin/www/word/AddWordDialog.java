@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,8 +294,8 @@ public class AddWordDialog extends Dialog implements View.OnClickListener{
             e.printStackTrace();
         }
         Toast.makeText(context,"添加成功",Toast.LENGTH_SHORT).show();
-        dismiss();
         listener.addWordInteraction(jsonObject);
+        dismiss();
     }
 
 }

@@ -211,10 +211,10 @@ public class ReciteWordActivity extends MyAppCompatActivity
     private void getReciteWordFromLocal(){
         recite_list = collectDbDao.getReciteData(recite_num+recite_scope);
         if(recite_list.size()<recite_num+recite_scope){
-            Looper.prepare();
+            if(Looper.myLooper()==null) Looper.prepare();
             mHandler.obtainMessage(1).sendToTarget();
             inadequateDialog.show();
-            Looper.loop();
+//            Looper.loop();
         }else{
             next_ind = get_next_ind();
             //XXX:我也不知道为啥不能直接start_recite()

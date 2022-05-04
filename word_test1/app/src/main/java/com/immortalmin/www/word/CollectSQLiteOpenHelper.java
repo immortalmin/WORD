@@ -13,7 +13,7 @@ public class CollectSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        db.execSQL("create table collect(id integer primary key autoincrement,cid integer,gid integer default 0,wid integer,word_en text,word_ch text,correct_times integer default 0,error_times integer default 0,last_date date default \"2000-01-01\",review_date date default \"2000-01-01\",dict_source int,update_date date,isSynchronized tinyint default 0,isCollect tinyint default 1)");
+        db.execSQL("create table collect(id integer primary key autoincrement,cid integer,gid integer default 0,wid integer,word_en text,word_ch text,correct_times integer default 0,error_times integer default 0,last_date date default \"2000-01-01\",review_date date default \"2000-01-01\",dict_source int,source int,update_date date,isSynchronized tinyint default 0,isCollect tinyint default 1)");
     }
 
     @Override

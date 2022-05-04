@@ -80,7 +80,7 @@ public class CollectDbDao {
      */
     ArrayList<DetailWord> getCollectList() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect where isCollect=1",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,source from collect where isCollect=1",null);
         while(cursor.moveToNext()){
             DetailWord word = new DetailWord();
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -94,6 +94,7 @@ public class CollectDbDao {
             word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
             word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
             word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.setSource(cursor.getString(cursor.getColumnIndex("source")));
             wordList.add(word);
         }
         cursor.close();
@@ -105,7 +106,7 @@ public class CollectDbDao {
      */
     ArrayList<DetailWord> getSyncList() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,correct_times,error_times,last_date,review_date,dict_source,isCollect from collect where isSynchronized=0",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,correct_times,error_times,last_date,review_date,dict_source,source,isCollect from collect where isSynchronized=0",null);
         while(cursor.moveToNext()){
             DetailWord word = new DetailWord();
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -117,6 +118,7 @@ public class CollectDbDao {
             word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
             word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
             word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.setSource(cursor.getString(cursor.getColumnIndex("source")));
             word.setCollect("1".equals(cursor.getString(cursor.getColumnIndex("isCollect"))));
             wordList.add(word);
         }
@@ -170,7 +172,7 @@ public class CollectDbDao {
      * @return 查询到的单词
      */
     DetailWord getSingleWordById(int id){
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect where id="+id,null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,source from collect where id="+id,null);
         DetailWord word = new DetailWord();
         if(cursor.moveToNext()){
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -184,6 +186,7 @@ public class CollectDbDao {
             word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
             word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
             word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.setSource(cursor.getString(cursor.getColumnIndex("source")));
         }
         return word;
     }
@@ -194,7 +197,7 @@ public class CollectDbDao {
      * @param dict_source 单词来源
      */
     DetailWord getSingleWordByWidAndSource(String wid,String dict_source){
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,isCollect from collect where wid="+wid+" and dict_source="+dict_source,null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,source,isCollect from collect where wid="+wid+" and dict_source="+dict_source,null);
         DetailWord word = new DetailWord();
         if(cursor.moveToNext()){
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -209,6 +212,7 @@ public class CollectDbDao {
             word.setLast_date(cursor.getString(cursor.getColumnIndex("last_date")));
             word.setReview_date(cursor.getString(cursor.getColumnIndex("review_date")));
             word.setDict_source(cursor.getString(cursor.getColumnIndex("dict_source")));
+            word.setSource(cursor.getString(cursor.getColumnIndex("source")));
         }
         return word;
     }
@@ -242,10 +246,12 @@ public class CollectDbDao {
         String error_times = String.valueOf(word.getError_times());
         String last_date = word.getLast_date();
         String review_date = word.getReview_date();
+        String source = word.getSource();
         int dict_source = Integer.valueOf(word.getDict_source());
+
         String update_date = DateTransUtils.getDateAfterToday(0);
-        db.execSQL("insert into collect(wid,cid,gid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,update_date,isSynchronized) " +
-                "values("+wid+","+cid+","+gid+",\""+word_en+"\",\""+word_ch+"\","+correct_times+","+error_times+",\""+last_date+"\",\""+review_date+"\","+dict_source+",\""+update_date+"\","+(isSynchronize?0:1)+")");
+        db.execSQL("insert into collect(wid,cid,gid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source,source,update_date,isSynchronized) " +
+                "values("+wid+","+cid+","+gid+",\""+word_en+"\",\""+word_ch+"\","+correct_times+","+error_times+",\""+last_date+"\",\""+review_date+"\","+dict_source+",\""+source+"\",\""+update_date+"\","+(isSynchronize?0:1)+")");
         db.close();
     }
 

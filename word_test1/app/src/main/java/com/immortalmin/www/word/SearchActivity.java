@@ -267,9 +267,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void addWordInteraction(JSONObject jsonObject){
-        SharedPreferences sp = getSharedPreferences("setting", Context.MODE_PRIVATE);
         try{
-            jsonObject.put("uid",sp.getString("uid",null));
+            jsonObject.put("uid",user.getUid());
         }catch (JSONException e){
             e.printStackTrace();
         }
