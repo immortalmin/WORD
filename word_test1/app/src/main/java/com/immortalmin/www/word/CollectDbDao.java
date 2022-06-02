@@ -263,7 +263,6 @@ public class CollectDbDao {
      */
     public int deleteSingleWordByWidAndSource(String wid,String dict_source){
         int delete = helper.getWritableDatabase().delete("collect","wid=? and dict_source=?",new String[]{wid,dict_source});
-        db.close();
         return delete;
     }
 
@@ -303,9 +302,6 @@ public class CollectDbDao {
         helper.getReadableDatabase().update("collect",values,"wid=? and dict_source=?",new String[]{wid,dict_source});
     }
 
-    /**
-     * 清空所有历史记录
-     */
     public void deleteData(){
         db = helper.getWritableDatabase();
         db.execSQL("delete from collect");

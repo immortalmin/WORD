@@ -60,6 +60,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private int fragment_mode=0;//0:example  1:kelinsi
     private String current_word="error",wid = "100",dict_source="0";
     private boolean first_coming = true,network=true;
+    private boolean collectChanged = false;//若修改了与收藏界面相关的数据，则值为true，否则false
     private int collect_flag = 0;
 
 
@@ -97,6 +98,7 @@ public class ExampleActivity extends AppCompatActivity implements
     private void init() {
         network = networkUtil.isNetworkConnected();
         mRecordDbDao = new RecordDbDao(ExampleActivity.this);
+
         first_coming = true;
         user = userDataUtil.getUserDataFromSP();
         if(collectDbDao.hasData(wid,dict_source)){
@@ -164,6 +166,7 @@ public class ExampleActivity extends AppCompatActivity implements
             case R.id.collect:
                 collect.setClickable(false);
                 if(collect_flag==1){
+                    collectChanged = true;
                     Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.star_off, null);
                     collect.setBackground(drawable);
                     collect_flag=0;
@@ -186,6 +189,7 @@ public class ExampleActivity extends AppCompatActivity implements
                 break;
             case R.id.return_btn:
                 mediaPlayerUtil.stop();
+                if(collectChanged) setResult(1);
                 finish();
                 overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
                 break;
@@ -331,17 +335,21 @@ public class ExampleActivity extends AppCompatActivity implements
     }
 
     private void deleteWord(){
+        collectChanged = true;
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put("wid",word.getWid());
             jsonObject.put("what",3);
             //从历史记录中删除该条记录
-            mRecordDbDao.deleteSingleData(jsonObject.getString("wid"),dict_source);
+            mRecordDbDao.deleteSingleData(word.getWid(),dict_source);
+            //从本地collect表中删除该条记录
+            collectDbDao.deleteSingleWordByWidAndSource(word.getWid(),dict_source);
         }catch (JSONException e){
             e.printStackTrace();
         }
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.setLoadDataComplete((result)->{
+            if(collectChanged) setResult(1);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             Toast.makeText(ExampleActivity.this,"删除成功",Toast.LENGTH_SHORT).show();
@@ -389,11 +397,16 @@ public class ExampleActivity extends AppCompatActivity implements
     }
 
     public void updateWord(JSONObject jsonObject){
+        collectChanged = true;
         try{
             jsonObject.put("uid", user.getUid());
             jsonObject.put("what",24);
             //更新本地的数据库（历史记录）
             mRecordDbDao.updateData(jsonObject.get("wid").toString(),dict_source,jsonObject.get("word_group").toString(),jsonObject.get("C_meaning").toString());
+            //更新本地的collect表
+            word.setWord_ch(jsonObject.get("C_meaning").toString());
+            word.setWord_en(jsonObject.get("word_group").toString());
+            collectDbDao.updateData(word);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -466,6 +479,7 @@ public class ExampleActivity extends AppCompatActivity implements
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             mediaPlayerUtil.stop();
+            if(collectChanged) setResult(1);
             finish();
             overridePendingTransition(R.anim.fade_out,R.anim.fade_away);
             return false;

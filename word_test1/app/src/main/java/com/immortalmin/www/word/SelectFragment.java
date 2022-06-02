@@ -83,6 +83,14 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         sel4.setOnClickListener(this);
         sel5.setOnClickListener(this);
         wordview.setOnClickListener(this);
+
+        //TextView跑马灯效果需要
+        wordview.setSelected(true);
+        sel1.setSelected(true);
+        sel2.setSelected(true);
+        sel3.setSelected(true);
+        sel4.setSelected(true);
+
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         audioManager =   (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
 //        sound_success = soundPool.load(getActivity(), R.raw.success, 1);
@@ -213,16 +221,22 @@ public class SelectFragment extends Fragment implements View.OnClickListener{
         public boolean handleMessage(Message message) {
             switch (message.what){
                 case 0:
-                    String wordviewString = word_list.get("wordview").toString();
-                    String sel1String = word_list.get("sel1").toString();
-                    String sel2String = word_list.get("sel2").toString();
-                    String sel3String = word_list.get("sel3").toString();
-                    String sel4String = word_list.get("sel4").toString();
-                    wordview.setText(wordviewString.length()>=30?wordviewString.substring(0,25)+"...":wordviewString);
-                    sel1.setText(sel1String.length()>=30?sel1String.substring(0,25)+"...":sel1String);
-                    sel2.setText(sel2String.length()>=30?sel2String.substring(0,25)+"...":sel2String);
-                    sel3.setText(sel3String.length()>=30?sel3String.substring(0,25)+"...":sel3String);
-                    sel4.setText(sel4String.length()>=30?sel4String.substring(0,25)+"...":sel4String);
+//                    String wordviewString = word_list.get("wordview").toString();
+//                    String sel1String = word_list.get("sel1").toString();
+//                    String sel2String = word_list.get("sel2").toString();
+//                    String sel3String = word_list.get("sel3").toString();
+//                    String sel4String = word_list.get("sel4").toString();
+//                    wordview.setText(wordviewString.length()>=30?wordviewString.substring(0,25)+"...":wordviewString);
+//                    sel1.setText(sel1String.length()>=30?sel1String.substring(0,25)+"...":sel1String);
+//                    sel2.setText(sel2String.length()>=30?sel2String.substring(0,25)+"...":sel2String);
+//                    sel3.setText(sel3String.length()>=30?sel3String.substring(0,25)+"...":sel3String);
+//                    sel4.setText(sel4String.length()>=30?sel4String.substring(0,25)+"...":sel4String);
+                    wordview.setText(word_list.get("wordview").toString());
+                    sel1.setText(word_list.get("sel1").toString());
+                    sel2.setText(word_list.get("sel2").toString());
+                    sel3.setText(word_list.get("sel3").toString());
+                    sel4.setText(word_list.get("sel4").toString());
+
                     word_times_pro.post(() -> {
                         int pro_num = Integer.valueOf(word_list.get("today_correct_times").toString())*10/Integer.valueOf(word_list.get("c_times").toString());
                         word_times_pro.setProgress(pro_num);

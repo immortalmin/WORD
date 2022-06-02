@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * 搜索栏的历史记录
+ */
 public class RecordDbDao {
     private Context context;
     private RecordSQLiteOpenHelper helper;

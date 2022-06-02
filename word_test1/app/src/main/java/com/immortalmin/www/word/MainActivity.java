@@ -221,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         String lastLogin = DateTransUtils.stampToDate(user.getLast_login());
         if(!today.equals(lastLogin)){//如果上次登录的日期不是今天，则需要计算这之间每一天的使用时间
+
             //获取上一次使用到现在使用的数据
             mUseTimeDataManager = UseTimeDataManager.getInstance(MainActivity.this);
             mUseTimeDataManager.refreshData(user.getLast_login(),nowTimeStamp);

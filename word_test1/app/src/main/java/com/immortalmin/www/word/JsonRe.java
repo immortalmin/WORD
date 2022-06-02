@@ -79,7 +79,8 @@ public class JsonRe {
                 word.setLast_date(jsonObject.getString("last_date"));
                 word.setReview_date(jsonObject.getString("review_date"));
                 word.setDict_source(jsonObject.getString("dict_source"));
-                word.setSource(jsonObject.getString("source"));
+                //比如在搜索界面以及历史记录不需要保存单词的来源；而在其他情况可能需要source。简单地说就是，有则保存
+                if(jsonObject.has("source")) word.setSource(jsonObject.getString("source"));
                 words.add(word);
             }
         }catch (JSONException e) {

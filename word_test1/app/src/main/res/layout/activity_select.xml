@@ -11,10 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:maxWidth="200dp"
         android:textSize="30sp"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="60dp"
         android:textColor="#000000"
+        android:gravity="center"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
         android:text="XXX" />
 
     <ProgressBar
@@ -42,44 +47,60 @@
             android:id="@+id/sel1"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_marginTop="30sp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/rounded_corners_gray"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:textAllCaps="false"
             android:textSize="15sp"
-            android:text="" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever" />
 
         <Button
             android:id="@+id/sel2"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="30sp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:textAllCaps="false"
             android:layout_below="@+id/sel1"
             android:textSize="15sp"
-            android:text="" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever" />
 
         <Button
             android:id="@+id/sel3"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="30sp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:layout_below="@+id/sel2"
             android:textAllCaps="false"
             android:textSize="15sp"
-            android:text="" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever" />
 
         <Button
             android:id="@+id/sel4"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:background="@drawable/rounded_corners_gray"
-            android:layout_marginTop="30sp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:layout_below="@+id/sel3"
             android:textAllCaps="false"
             android:textSize="15sp"
-            android:text="" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever" />
 
         <Button
             android:id="@+id/sel5"

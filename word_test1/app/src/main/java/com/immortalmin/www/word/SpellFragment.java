@@ -81,11 +81,13 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         correct_word = getActivity().findViewById(R.id.correct_word);
         eword = getActivity().findViewById(R.id.eword);
         clean_btn = getActivity().findViewById(R.id.clean_btn);
+
         cword.setOnClickListener(this);
         eword.setOnClickListener(this);
         clean_btn.setOnClickListener(this);
         eword.setOnKeyListener(ewordOnKeyListener);
 
+        cword.setSelected(true);
 
         /**
          * 在拼写错误并显示答案后，键盘有输入就清除单词
@@ -164,11 +166,12 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     break;
                 case 2://set c_word
                     //防止中文释义太长
-                    if(word_ch.length()>=30){
-                        cword.setText(word_ch.substring(0,30)+"...");
-                    }else{
-                        cword.setText(word_ch);
-                    }
+//                    if(word_ch.length()>=30){
+//                        cword.setText(word_ch.substring(0,30)+"...");
+//                    }else{
+//                        cword.setText(word_ch);
+//                    }
+                    cword.setText(word_ch);
                     isTyping = true;
                     if(message.obj!=null){
                         eword.setText(message.obj.toString());

@@ -61,6 +61,7 @@ public class UsageTimeDbDao {
      * 添加使用时间
      */
     void insertUsageTime(UsageTime usageTime,int isSynchronized){
+//        Log.i("ccc",usageTime.toString());//FIXME:同步数据的时候会打印，插入最近一次的数据又不会打印，奇了怪了
         db = helper.getWritableDatabase();
         String update_date = DateTransUtils.getDateAfterToday(0);
         try {
@@ -73,6 +74,7 @@ public class UsageTimeDbDao {
         }
         db.close();
     }
+
 
     /**
      * 通过id修改数据为已上传

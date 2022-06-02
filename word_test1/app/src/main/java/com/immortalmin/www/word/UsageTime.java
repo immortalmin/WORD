@@ -35,4 +35,13 @@ public class UsageTime {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "UsageTime{" +
+                "id='" + id + '\'' +
+                ", udate='" + udate + '\'' +
+                ", utime=" + utime +
+                '}';
+    }
 }

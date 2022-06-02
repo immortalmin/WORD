@@ -55,10 +55,10 @@ public class UpdateWordDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         View view = View.inflate(context,R.layout.update_word,null);
         listener = (OnDialogInteractionListener) context;//绑定回调函数的监听器
-        word_group = (EditText)view.findViewById(R.id.word_group);
-        C_meaning = (EditText)view.findViewById(R.id.C_meaning);
-        commit_btn = (Button)view.findViewById(R.id.commit_btn);
-        cancel_btn = (Button)view.findViewById(R.id.cancel_btn);
+        word_group = view.findViewById(R.id.word_group);
+        C_meaning = view.findViewById(R.id.C_meaning);
+        commit_btn = view.findViewById(R.id.commit_btn);
+        cancel_btn = view.findViewById(R.id.cancel_btn);
         commit_btn.setOnClickListener(this);
         cancel_btn.setOnClickListener(this);
         mHandler.obtainMessage(0).sendToTarget();
