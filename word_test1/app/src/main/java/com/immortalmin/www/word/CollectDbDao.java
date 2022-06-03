@@ -29,7 +29,7 @@ public class CollectDbDao {
      */
     ArrayList<DetailWord> getReciteData(int mount){
         ArrayList<DetailWord> wordList = new ArrayList<>();
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect where isCollect=1 AND correct_times<5 order by correct_times,error_times DESC limit "+mount,null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect where isCollect=1 AND correct_times<5 order by correct_times ASC,error_times DESC limit "+mount,null);
         while(cursor.moveToNext()){
             DetailWord word = new DetailWord();
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -55,7 +55,7 @@ public class CollectDbDao {
     ArrayList<DetailWord> getReviewData() {
         ArrayList<DetailWord> wordList = new ArrayList<>();
         String review_date = DateTransUtils.getDateAfterToday(0);
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect WHERE isCollect=1 AND correct_times<=5 AND review_date<=\""+review_date+"\"",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select id,cid,gid,wid,word_en,word_ch,correct_times,error_times,last_date,review_date,dict_source from collect WHERE isCollect=1 AND correct_times<=5 AND correct_times>0 AND review_date<=\""+review_date+"\"",null);
         while(cursor.moveToNext()){
             DetailWord word = new DetailWord();
             word.setHid(cursor.getString(cursor.getColumnIndex("id")));
@@ -131,7 +131,7 @@ public class CollectDbDao {
      */
     int getReviewCount(){
         String review_date = DateTransUtils.getDateAfterToday(0);
-        Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect WHERE isCollect=1 AND correct_times<=5 AND review_date<=\""+review_date+"\"",null);
+        Cursor cursor = helper.getReadableDatabase().rawQuery("select count(*) as count from collect WHERE isCollect=1 AND correct_times<=5 AND correct_times>0 AND review_date<=\""+review_date+"\"",null);
         int count = 0;
         while(cursor.moveToNext()){
             count = cursor.getInt(0);

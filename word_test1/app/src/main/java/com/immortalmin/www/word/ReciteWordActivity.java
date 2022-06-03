@@ -297,8 +297,8 @@ public class ReciteWordActivity extends MyAppCompatActivity
      */
     private void interruptDialog(){
         mHandler.obtainMessage(1).sendToTarget();
-        SweetAlertDialog interrup_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
-        interrup_alert.setTitleText("Are you sure?")
+        SweetAlertDialog interrupt_alert = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        interrupt_alert.setTitleText("Are you sure?")
                 .setContentText("退出后数据将无法恢复")
                 .setConfirmText("退出")
                 .setCancelText("继续")
@@ -313,8 +313,8 @@ public class ReciteWordActivity extends MyAppCompatActivity
                     sweetAlertDialog.cancel();
                     mHandler.obtainMessage(2).sendToTarget();
                 });
-        interrup_alert.setCancelable(false);
-        interrup_alert.show();
+        interrupt_alert.setCancelable(false);
+        interrupt_alert.show();
     }
 
     public void onClick(View view) {
@@ -336,7 +336,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
                         spell_num++;
                         break;
                 }
-                updateProgress();
+                mHandler.sendEmptyMessage(4);
                 mHandler.obtainMessage(0).sendToTarget();
                 if (spell_num >= recite_num) {
                     updateRestLocalData();
@@ -373,6 +373,20 @@ public class ReciteWordActivity extends MyAppCompatActivity
                 case 3:
                     start_recite();
                     break;
+                case 4:
+                    total_progress1.post(() -> {
+                        int pro_num = select_num * 100 / (recite_num+recite_scope);
+                        total_progress1.setProgress(pro_num);
+                    });
+                    total_progress2.post(() -> {
+                        int pro_num = recall_num * 100 / (recite_num+recite_scope);
+                        total_progress2.setProgress(pro_num);
+                    });
+                    total_progress3.post(() -> {
+                        int pro_num = spell_num * 100 / recite_num;
+                        total_progress3.setProgress(pro_num);
+                    });
+                    break;
             }
             return false;
         }
@@ -387,7 +401,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
         switch (Integer.valueOf(res.get("judge").toString())) {
             case 1://acquaint
                 recall_num++;
-                updateProgress();
+                mHandler.sendEmptyMessage(4);
                 now_word.setToday_correct_times(to_co_times + 1);
                 recite_list.set(correct_ind, now_word);
                 break;
@@ -397,7 +411,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
                 break;
             case 3://unknown
                 select_num--;
-                updateProgress();
+                mHandler.sendEmptyMessage(4);
                 now_word.setToday_correct_times(0);
                 now_word.setError_times(er_times + 1);
                 recite_list.set(correct_ind, now_word);
@@ -420,7 +434,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
                 correct_word = recite_list.get(correct_ind);
                 correct_word.setToday_correct_times(correct_word.getToday_correct_times() + 1);
                 select_num++;
-                updateProgress();
+                mHandler.sendEmptyMessage(4);
 //                if (correct_word.getToday_correct_times() >= c_times) {
 //                    finish_ind[correct_ind] = 1;
 //                    spell_num++;
@@ -475,7 +489,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
         if (WrongTimes == 0) {//一次就过
             finish_ind[correct_ind] = 1;
             spell_num++;
-            updateProgress();
+            mHandler.sendEmptyMessage(4);
             correct_word.setCorrect_times(co_times + 1);
             //设置下次复习的时间
             correct_word.setLast_date(DateTransUtils.getDateAfterToday(0));
@@ -492,7 +506,7 @@ public class ReciteWordActivity extends MyAppCompatActivity
             correct_word.setToday_correct_times(0);
             select_num--;
             recall_num--;
-            updateProgress();
+            mHandler.sendEmptyMessage(4);
             recite_list.set(correct_ind, correct_word);
         }
         mHandler.obtainMessage(0).sendToTarget();
@@ -504,20 +518,21 @@ public class ReciteWordActivity extends MyAppCompatActivity
     }
 
     //XXX:因为select_num和recall_num的取值范围是0~(recite_num+recite_scope)，而spell_num的取值范围是0~recite_num，所以可能会出现total_progress3超过total_progress1和total_progress2的情况，暂时没想到怎么解决这种问题
-    private void updateProgress(){
-        total_progress1.post(() -> {
-            int pro_num = select_num * 100 / (recite_num+recite_scope);
-            total_progress1.setProgress(pro_num);
-        });
-        total_progress2.post(() -> {
-            int pro_num = recall_num * 100 / (recite_num+recite_scope);
-            total_progress2.setProgress(pro_num);
-        });
-        total_progress3.post(() -> {
-            int pro_num = spell_num * 100 / recite_num;
-            total_progress3.setProgress(pro_num);
-        });
-    }
+//    private void updateProgress(){
+//        Log.i("ccc","select:"+select_num+" recall:"+recall_num+" spell:"+spell_num);
+//        total_progress1.post(() -> {
+//            int pro_num = select_num * 100 / (recite_num+recite_scope);
+//            total_progress1.setProgress(pro_num);
+//        });
+//        total_progress2.post(() -> {
+//            int pro_num = recall_num * 100 / (recite_num+recite_scope);
+//            total_progress2.setProgress(pro_num);
+//        });
+//        total_progress3.post(() -> {
+//            int pro_num = spell_num * 100 / recite_num;
+//            total_progress3.setProgress(pro_num);
+//        });
+//    }
 
     /**
      * 更新一条数据（本地）

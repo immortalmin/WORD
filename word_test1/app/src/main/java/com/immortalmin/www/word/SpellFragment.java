@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +48,8 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Runnable music_delay;
     private TextView cword,correct_word;//display word_ch
     private EditText eword;//spell word_en
-    private Button clean_btn;
+//    private Button clean_btn;
+    private ImageButton clean_btn;
     private int WrongTimes=0;//拼写错误的次数
     private Boolean isTyping = true;//是否在等待用户输入
     private Boolean userAns = true;//用户回答是否正确
