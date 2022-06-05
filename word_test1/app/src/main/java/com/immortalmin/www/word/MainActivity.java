@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init(boolean isCheckVersion) {
+
         init_user();//获取用户信息
         if(isCheckVersion) check_version();//检查版本更新
         SyncData();//同步数据以及更新使用时间
@@ -188,15 +191,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 1:
                     ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) message.obj;
-                    btn_collect.setBackground(new BitmapDrawable(bitmaps.get(0)));
-                    btn_recite.setBackground(new BitmapDrawable(bitmaps.get(1)));
-                    btn_test.setBackground(new BitmapDrawable(bitmaps.get(2)));
-                    btn_review.setBackground(new BitmapDrawable(bitmaps.get(3)));
+                    btn_collect.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(bitmaps.get(0),80)));
+                    btn_recite.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(bitmaps.get(1),80)));
+                    btn_test.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(bitmaps.get(2),80)));
+                    btn_review.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(bitmaps.get(3),80)));
                     break;
                 case 2:
-                    Resources res = getResources();
-                    Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.main_img);
-                    cropBitmap(bmp);
+                    String mainPicPath = Environment.getExternalStorageDirectory()+"/WORD/picture/main/";
+                    File imgFile = new File(mainPicPath+"1.png");
+                    if(imgFile.exists()){
+                        btn_collect.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(com.immortalmin.www.word.utils.ImageUtils.openImage(mainPicPath+"1.png"),80)));
+                        btn_recite.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(com.immortalmin.www.word.utils.ImageUtils.openImage(mainPicPath+"2.png"),80)));
+                        btn_test.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(com.immortalmin.www.word.utils.ImageUtils.openImage(mainPicPath+"3.png"),80)));
+                        btn_review.setBackground(new BitmapDrawable(ImageUtils.getRoundedCornerBitmap(com.immortalmin.www.word.utils.ImageUtils.openImage(mainPicPath+"4.png"),80)));
+                    }else{
+                        Resources res = getResources();
+                        Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.main_img);
+                        cropBitmap(bmp);
+                    }
                     break;
                 case 3:
                     Resources res2 = getResources();
@@ -321,10 +333,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap bitmap3 = Bitmap.createBitmap(bitmap, w / 2-MarginAndBtn_w, h/2+justMargin,justBtn_w, justBtn_h, null, false);
         Bitmap bitmap4 = Bitmap.createBitmap(bitmap, w / 2+justMargin, h/2+justMargin,justBtn_w, justBtn_h, null, false);
         ArrayList<Bitmap> bitmaps = new ArrayList<>();
-        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap1),80));
-        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap2),80));
-        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap3),80));
-        bitmaps.add(ImageUtils.getRoundedCornerBitmap(BlurImageView.BoxBlurFilter(bitmap4),80));
+        bitmap1 = BlurImageView.BoxBlurFilter(bitmap1);
+        bitmap2 = BlurImageView.BoxBlurFilter(bitmap2);
+        bitmap3 = BlurImageView.BoxBlurFilter(bitmap3);
+        bitmap4 = BlurImageView.BoxBlurFilter(bitmap4);
+        String mainPicPath = Environment.getExternalStorageDirectory()+"/WORD/picture/main/";
+        com.immortalmin.www.word.utils.ImageUtils.saveImage(bitmap1,mainPicPath,"1.png");
+        com.immortalmin.www.word.utils.ImageUtils.saveImage(bitmap2,mainPicPath,"2.png");
+        com.immortalmin.www.word.utils.ImageUtils.saveImage(bitmap3,mainPicPath,"3.png");
+        com.immortalmin.www.word.utils.ImageUtils.saveImage(bitmap4,mainPicPath,"4.png");
+        bitmaps.add(bitmap1);
+        bitmaps.add(bitmap2);
+        bitmaps.add(bitmap3);
+        bitmaps.add(bitmap4);
         mHandler.obtainMessage(1,bitmaps).sendToTarget();
     }
 

@@ -54,6 +54,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     private Boolean isTyping = true;//是否在等待用户输入
     private Boolean userAns = true;//用户回答是否正确
     private Boolean isHide = true;//回答正确后是否隐藏键盘
+    private Boolean isShow = false;//用来判断当前的fragment是否正在显示
     private int endFlag=0;//用于判断此轮是否结束，便于提前进行下轮
     private int duration;
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
@@ -194,6 +195,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                     mediaPlayerUtil.stop();
                     //向Activity返回数据
                     mListener.spellFragmentInteraction(WrongTimes);
+                    isShow = false;
                     break;
                 case 4://reset
                     eword.setText("");
@@ -273,7 +275,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
                 eword.setText("");
                 break;
             case R.id.eword:
-                showInput(eword);
+                mHandler.postDelayed(showInput,200);
                 break;
         }
     }
@@ -292,6 +294,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
     //String new_word
     public void update_options(HashMap<String,Object> words,boolean isHide){
         this.isHide = isHide;
+        isShow = true;
         changed_volume = 0;
         endFlag = 0;
         word_en = words.get("word_en").toString();
@@ -301,7 +304,7 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
         eword.setEnabled(true);
         mediaPlayerUtil.setFinishListener(() -> duration = mediaPlayerUtil.getDuration());
         mHandler.sendEmptyMessage(2);
-        showInput(eword);
+        mHandler.postDelayed(showInput,200);
         mediaPlayerUtil.reset(word_en,false);
     }
 
@@ -320,14 +323,29 @@ public class SpellFragment extends Fragment implements View.OnClickListener{
      *
      * @param et 输入焦点
      */
-    public void showInput(final EditText et) {
-        et.setFocusable(true);
-        et.setFocusableInTouchMode(true);
-        et.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
-        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+//    public void showInput(final EditText et) {
+//        Log.i("ccc","show input");
+//        et.setFocusable(true);
+//        et.setFocusableInTouchMode(true);
+//        et.requestFocus();
+//        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+//    }
+
+    private Runnable showInput = new Runnable() {
+        @Override
+        public void run() {
+            eword.setFocusable(true);
+            eword.setFocusableInTouchMode(true);
+            eword.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+            imm.showSoftInput(eword, InputMethodManager.SHOW_IMPLICIT);
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(isShow) mHandler.postDelayed(showInput,200);//从其他页面返回时，显示软键盘
     }
-
-
-
 }
